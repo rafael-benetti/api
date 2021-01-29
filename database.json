@@ -1,0 +1,20 @@
+{
+  "dev": {
+    "driver": "mysql",
+    "user": {
+      "ENV": "MY_SQL_USER"
+    },
+    "password": {
+      "ENV": "MY_SQL_PASS"
+    },
+    "host": {
+      "ENV": "MY_SQL_HOST"
+    },
+    "database": {
+      "ENV": "MY_SQL_DB"
+    },
+    "port": {
+      "ENV": "MY_SQL_PORT"
+    }
+  }
+}
