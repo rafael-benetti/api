@@ -1,8 +1,8 @@
 import { Router } from 'express';
-import errorHandler from './middlewares/error-handler';
+import usersRoutes from '@modules/users/infra/http/routes/user.routes';
 
 const router = Router();
 
-router.use(errorHandler);
+router.use('/users', usersRoutes);
 
 export default router;

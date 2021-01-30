@@ -6,9 +6,15 @@ export default class AppError {
   readonly statusCode: number;
 
   static unknownError = new AppError({
-    errorCode: "UNKNOWN_CODE",
-    message: "An unknown error has occurred",
+    errorCode: 'UNKNOWN_CODE',
+    message: 'An unknown error has occurred',
     statusCode: 400,
+  });
+
+  static emailAlreadyUsed = new AppError({
+    errorCode: 'EMAIL_ALREADY_USED',
+    message: 'This email is unavailable.',
+    statusCode: 409,
   });
 
   private constructor(data: AppError) {
