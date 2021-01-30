@@ -5,24 +5,18 @@ import {
   TableForeignKey,
 } from 'typeorm';
 
-export default class company1612037079014 implements MigrationInterface {
+export default class usersCompanies1612040580894 implements MigrationInterface {
   public async up(queryRunner: QueryRunner): Promise<void> {
     await queryRunner.createTable(
       new Table({
-        name: 'companies',
+        name: 'user_company',
         columns: [
           {
-            name: 'id',
+            name: 'user_id',
             type: 'int',
-            isPrimary: true,
-            generationStrategy: 'increment',
           },
           {
-            name: 'name',
-            type: 'varchar',
-          },
-          {
-            name: 'owner_id',
+            name: 'company_id',
             type: 'int',
           },
         ],
@@ -30,11 +24,23 @@ export default class company1612037079014 implements MigrationInterface {
     );
 
     await queryRunner.createForeignKey(
-      'companies',
+      'user_company',
       new TableForeignKey({
-        name: 'companies_user',
-        columnNames: ['owner_id'],
+        name: 'user_company',
         referencedTableName: 'users',
+        columnNames: ['user_id'],
+        referencedColumnNames: ['id'],
+        onDelete: 'CASCADE',
+        onUpdate: 'CASCADE',
+      }),
+    );
+
+    await queryRunner.createForeignKey(
+      'user_company',
+      new TableForeignKey({
+        name: 'company_user',
+        referencedTableName: 'companies',
+        columnNames: ['company_id'],
         referencedColumnNames: ['id'],
         onDelete: 'CASCADE',
         onUpdate: 'CASCADE',
@@ -43,6 +49,6 @@ export default class company1612037079014 implements MigrationInterface {
   }
 
   public async down(queryRunner: QueryRunner): Promise<void> {
-    await queryRunner.dropTable('companies');
+    await queryRunner.dropTable('user_company');
   }
 }
