@@ -29,6 +29,12 @@ export default class AppError {
     statusCode: 401,
   });
 
+  static incorrectEmailOrPassword = new AppError({
+    errorCode: 'INCORRECT_EMAIL_PASSWORD_COMBINATION',
+    message: 'Incorrect email/password combination.',
+    statusCode: 401,
+  });
+
   private constructor(data: AppError) {
     this.errorCode = data.errorCode;
     this.message = data.message;
