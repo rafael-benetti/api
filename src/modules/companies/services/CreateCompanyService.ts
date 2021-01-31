@@ -16,7 +16,10 @@ class CreateCompanyService {
   ) {}
 
   public async execute({ name, ownerId }: IRequest): Promise<Company> {
-    const checkCompanyName = this.companiesRepository.findByName(name, ownerId);
+    const checkCompanyName = await this.companiesRepository.findByName(
+      name,
+      ownerId,
+    );
 
     if (checkCompanyName) {
       throw AppError.nameAlreadyInUsed;

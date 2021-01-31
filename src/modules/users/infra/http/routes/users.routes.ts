@@ -2,10 +2,10 @@ import { Router } from 'express';
 import UsersController from '../controllers/UsersController';
 import 'express-async-errors';
 
-const userRoutes = Router();
+const usersRoutes = Router();
 
 const usersController = new UsersController();
 
-userRoutes.post('/', usersController.create);
+usersRoutes.post('/', usersController.create);
 
-export default userRoutes;
+export default usersRoutes;

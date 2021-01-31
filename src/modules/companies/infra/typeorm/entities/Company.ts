@@ -1,6 +1,6 @@
 import { Column, Entity, PrimaryGeneratedColumn } from 'typeorm';
 
-@Entity()
+@Entity('companies')
 class Company {
   @PrimaryGeneratedColumn('increment')
   id: number;
@@ -8,7 +8,7 @@ class Company {
   @Column()
   name: string;
 
-  @Column('owner_id')
+  @Column({ name: 'owner_id' })
   ownerId: number;
 }
 

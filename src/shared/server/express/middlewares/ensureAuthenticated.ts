@@ -17,7 +17,7 @@ export default function ensureAuthentication(
   const authHeader = req.headers.authorization;
 
   if (!authHeader) {
-    throw AppError.unknownError;
+    throw AppError.jwtTokenIsMissing;
   }
 
   const [, token] = authHeader.split(' ');

@@ -14,7 +14,7 @@ class CompaniesRepository implements ICompaniesRepository {
     name: string,
     ownerId: number,
   ): Promise<Company | undefined> {
-    const company = this.ormRepository.findOne({
+    const company = await this.ormRepository.findOne({
       where: {
         name,
         ownerId,

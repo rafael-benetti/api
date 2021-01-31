@@ -10,7 +10,7 @@
     }
   },
   "scripts": {
-    "dev": "DEBUG=api* ts-node-dev -r dotenv/config -r tsconfig-paths/register --inspect --no-notify src/shared/server/express/server.ts",
+    "dev": "DEBUG=api* ts-node-dev -r dotenv/config -r tsconfig-paths/register  --inspect --no-notify src/shared/server/express/server.ts",
     "test": "jest --clearCache && jest --passWithNoTests",
     "typeorm": "ts-node-dev -r tsconfig-paths/register ./node_modules/typeorm/cli.js"
   },
