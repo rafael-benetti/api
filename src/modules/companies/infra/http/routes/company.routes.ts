@@ -9,5 +9,6 @@ const companiesController = new CompaniesController();
 companiesRoutes.use(ensureAuthentication);
 
 companiesRoutes.post('/', companiesController.create);
+companiesRoutes.get('/', companiesController.index);
 
 export default companiesRoutes;

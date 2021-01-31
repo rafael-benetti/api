@@ -10,6 +10,15 @@ class CompaniesRepository implements ICompaniesRepository {
     this.ormRepository = getRepository(Company);
   }
 
+  public async findAllCompanies(ownerId: string): Promise<Company[]> {
+    const companies = await this.ormRepository.find({
+      where: {
+        ownerId,
+      },
+    });
+    return companies;
+  }
+
   public async findByName(
     name: string,
     ownerId: number,
