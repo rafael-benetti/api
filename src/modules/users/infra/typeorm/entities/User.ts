@@ -1,9 +1,10 @@
-import { Column, Entity, PrimaryGeneratedColumn } from 'typeorm';
+import Company from '@modules/companies/infra/typeorm/entities/Company';
+import { Column, Entity, OneToMany, PrimaryGeneratedColumn } from 'typeorm';
 
 @Entity('users')
 class User {
   @PrimaryGeneratedColumn('increment')
-  id: string;
+  id: number;
 
   @Column()
   name: string;
@@ -31,6 +32,9 @@ class User {
 
   @Column({ nullable: true })
   picture: string;
+
+  @OneToMany(() => Company, company => company.ownerId)
+  companies: Company[];
 }
 
 export default User;

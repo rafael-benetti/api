@@ -29,6 +29,12 @@ export default class AppError {
     statusCode: 401,
   });
 
+  static nameAlreadyInUsed = new AppError({
+    errorCode: 'NAME_ALREADY_USED',
+    message: 'You already have a company with this name.',
+    statusCode: 409,
+  });
+
   private constructor(data: AppError) {
     this.errorCode = data.errorCode;
     this.message = data.message;

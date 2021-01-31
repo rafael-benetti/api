@@ -3,7 +3,7 @@ import { Request, Response } from 'express';
 import { container } from 'tsyringe';
 
 export default class UsersController {
-  public async create(req: Request, response: Response): Promise<Response> {
+  public async create(req: Request, res: Response): Promise<Response> {
     const {
       name,
       email,
@@ -30,6 +30,6 @@ export default class UsersController {
       picture,
     });
 
-    return response.json(user);
+    return res.json(user);
   }
 }
