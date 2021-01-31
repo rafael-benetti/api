@@ -15,6 +15,7 @@ export default class UsersController {
       roles,
       isOperator,
       picture,
+      ownerId,
     } = req.body;
 
     const createUserService = container.resolve(CreateUserService);
@@ -29,6 +30,7 @@ export default class UsersController {
       roles,
       isOperator,
       picture,
+      ownerId,
     });
 
     return res.json(user);

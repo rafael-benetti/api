@@ -8,4 +8,5 @@ export default interface ICreateUserDTO {
   roles: string;
   isOperator: number;
   picture: string;
+  ownerId: number;
 }

@@ -13,6 +13,7 @@ interface IRequest {
   roles: string;
   isOperator: number;
   picture: string;
+  ownerId: number;
 }
 
 @injectable()

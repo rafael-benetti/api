@@ -5,11 +5,11 @@ import {
   TableForeignKey,
 } from 'typeorm';
 
-export default class user1612014457903 implements MigrationInterface {
+export default class products1612119516574 implements MigrationInterface {
   public async up(queryRunner: QueryRunner): Promise<void> {
     await queryRunner.createTable(
       new Table({
-        name: 'users',
+        name: 'products',
         columns: [
           {
             name: 'id',
@@ -23,42 +23,19 @@ export default class user1612014457903 implements MigrationInterface {
             type: 'varchar(100)',
           },
           {
-            name: 'email',
-            type: 'varchar',
+            name: 'cost',
+            type: 'decimal(6,2)',
           },
           {
-            name: 'phone',
-            type: 'varchar(15)',
-          },
-          {
-            name: 'username',
-            type: 'varchar(100)',
-            isUnique: true,
-          },
-          {
-            name: 'password',
-            type: 'varchar',
-          },
-          {
-            name: 'active',
-            type: 'tinyint',
-            default: 1,
-          },
-          {
-            name: 'roles',
-            type: 'longtext',
-          },
-          {
-            name: 'is_operator',
-            type: 'tinyint',
-          },
-          {
-            name: 'picture',
-            type: 'longtext',
-            isNullable: true,
+            name: 'price',
+            type: 'decimal(6,2)',
           },
           {
             name: 'owner_id',
+            type: 'int',
+          },
+          {
+            name: 'company_id',
             type: 'int',
           },
         ],
@@ -66,12 +43,24 @@ export default class user1612014457903 implements MigrationInterface {
     );
 
     await queryRunner.createForeignKey(
-      'users',
+      'products',
       new TableForeignKey({
-        name: 'owner_user',
+        name: 'products_user',
         columnNames: ['owner_id'],
         referencedTableName: 'users',
         referencedColumnNames: ['id'],
+        onUpdate: 'CASCADE',
+        onDelete: 'CASCADE',
+      }),
+    );
+
+    await queryRunner.createForeignKey(
+      'products',
+      new TableForeignKey({
+        name: 'products_company',
+        referencedTableName: 'companies',
+        referencedColumnNames: ['id'],
+        columnNames: ['company_id'],
         onDelete: 'CASCADE',
         onUpdate: 'CASCADE',
       }),
@@ -79,6 +68,6 @@ export default class user1612014457903 implements MigrationInterface {
   }
 
   public async down(queryRunner: QueryRunner): Promise<void> {
-    await queryRunner.dropTable('users');
+    await queryRunner.dropTable('products');
   }
 }

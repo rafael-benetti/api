@@ -6,6 +6,14 @@ import UsersRepository from '@modules/users/infra/typeorm/repositories/UsersRepo
 import ICompaniesRepository from '@modules/companies/repositories/ICompaniesRepository';
 import CompaniesRepository from '@modules/companies/infra/typeorm/repositories/CompaniesRepository';
 
+import IProductsRepository from '@modules/products/repositories/IProductsRepository';
+import ProductsRepository from '@modules/products/infra/typeorm/repositories/ProductsRepository';
+
+container.registerSingleton<IProductsRepository>(
+  'ProductsRepository',
+  ProductsRepository,
+);
+
 container.registerSingleton<IUsersRepository>(
   'UsersRepository',
   UsersRepository,

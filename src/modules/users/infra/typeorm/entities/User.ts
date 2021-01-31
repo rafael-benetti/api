@@ -33,6 +33,9 @@ class User {
   @Column({ nullable: true })
   picture: string;
 
+  @Column({ name: 'owner_id' })
+  ownerId: number;
+
   @OneToMany(() => Company, company => company.owner)
   companies: Company[];
 }
