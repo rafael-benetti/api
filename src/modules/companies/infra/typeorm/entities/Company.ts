@@ -1,4 +1,11 @@
-import { Column, Entity, PrimaryGeneratedColumn } from 'typeorm';
+import User from '@modules/users/infra/typeorm/entities/User';
+import {
+  Column,
+  Entity,
+  JoinColumn,
+  ManyToOne,
+  PrimaryGeneratedColumn,
+} from 'typeorm';
 
 @Entity('companies')
 class Company {
@@ -10,6 +17,10 @@ class Company {
 
   @Column({ name: 'owner_id' })
   ownerId: number;
+
+  @ManyToOne(() => User, user => user.companies)
+  @JoinColumn({ name: 'owner_id' })
+  owner: User;
 }
 
 export default Company;

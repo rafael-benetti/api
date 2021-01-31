@@ -1,4 +1,5 @@
 import CreateUserService from '@modules/users/services/CreateUserService';
+import ShowUserService from '@modules/users/services/ShowUserService';
 import { Request, Response } from 'express';
 import { container } from 'tsyringe';
 
@@ -29,6 +30,16 @@ export default class UsersController {
       isOperator,
       picture,
     });
+
+    return res.json(user);
+  }
+
+  public async show(req: Request, res: Response): Promise<Response> {
+    const { userId } = req;
+
+    const showUserService = container.resolve(ShowUserService);
+
+    const user = await showUserService.execute(userId);
 
     return res.json(user);
   }
