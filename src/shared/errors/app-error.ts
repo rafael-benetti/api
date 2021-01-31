@@ -17,6 +17,18 @@ export default class AppError {
     statusCode: 409,
   });
 
+  static jwtTokenIsMissing = new AppError({
+    errorCode: 'JWT_TOKEN_IS_MISSING',
+    message: 'Your request does have a JWT Token.',
+    statusCode: 401,
+  });
+
+  static invalidJWTToken = new AppError({
+    errorCode: 'INVALID_JWT_TOKEN',
+    message: 'Your json web token is invalid.',
+    statusCode: 401,
+  });
+
   private constructor(data: AppError) {
     this.errorCode = data.errorCode;
     this.message = data.message;
