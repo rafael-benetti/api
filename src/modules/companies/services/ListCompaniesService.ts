@@ -9,7 +9,7 @@ class ListCompaniesService {
     private companiesRepository: ICompaniesRepository,
   ) {}
 
-  public async execute(ownerId: string): Promise<Company[]> {
+  public async execute(ownerId: number): Promise<Company[]> {
     const companies = this.companiesRepository.findAllCompanies(ownerId);
 
     return companies;

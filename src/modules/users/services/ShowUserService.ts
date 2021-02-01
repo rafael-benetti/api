@@ -9,7 +9,7 @@ class ShowUserService {
     private usersRespository: IUsersRepository,
   ) {}
 
-  public async execute(id: string): Promise<User | undefined> {
+  public async execute(id: number): Promise<User | undefined> {
     const user = await this.usersRespository.findById(id);
     return user;
   }

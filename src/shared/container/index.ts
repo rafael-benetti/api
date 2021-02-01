@@ -9,6 +9,14 @@ import CompaniesRepository from '@modules/companies/infra/typeorm/repositories/C
 import IProductsRepository from '@modules/products/repositories/IProductsRepository';
 import ProductsRepository from '@modules/products/infra/typeorm/repositories/ProductsRepository';
 
+import IProductToUserRepository from '@modules/products/repositories/IProductToUserRepository';
+import ProductToUserRepository from '@modules/products/infra/typeorm/repositories/ProductToUserRepository';
+
+container.registerSingleton<IProductToUserRepository>(
+  'ProductToUserRepository',
+  ProductToUserRepository,
+);
+
 container.registerSingleton<IProductsRepository>(
   'ProductsRepository',
   ProductsRepository,

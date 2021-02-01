@@ -5,11 +5,11 @@ import {
   TableForeignKey,
 } from 'typeorm';
 
-export default class products1612119516574 implements MigrationInterface {
+export default class productsUsers1612131558324 implements MigrationInterface {
   public async up(queryRunner: QueryRunner): Promise<void> {
     await queryRunner.createTable(
       new Table({
-        name: 'products',
+        name: 'users_products',
         columns: [
           {
             name: 'id',
@@ -19,56 +19,48 @@ export default class products1612119516574 implements MigrationInterface {
             generationStrategy: 'increment',
           },
           {
-            name: 'name',
-            type: 'varchar(100)',
+            name: 'quantity',
+            type: 'int',
           },
+
           {
-            name: 'cost',
-            type: 'decimal(6,2)',
-          },
-          {
-            name: 'price',
-            type: 'decimal(6,2)',
-          },
-          {
-            name: 'owner_id',
+            name: 'product_id',
             type: 'int',
           },
           {
-            name: 'company_id',
+            name: 'user_id',
             type: 'int',
-            isNullable: true,
           },
         ],
       }),
     );
 
     await queryRunner.createForeignKey(
-      'products',
+      'users_products',
       new TableForeignKey({
-        name: 'products_user',
-        columnNames: ['owner_id'],
-        referencedColumnNames: ['id'],
+        name: 'users_to_products',
+        columnNames: ['user_id'],
         referencedTableName: 'users',
+        referencedColumnNames: ['id'],
         onUpdate: 'CASCADE',
         onDelete: 'CASCADE',
       }),
     );
 
     await queryRunner.createForeignKey(
-      'products',
+      'users_products',
       new TableForeignKey({
-        name: 'products_company',
-        referencedTableName: 'companies',
+        name: 'products_to_users',
+        columnNames: ['product_id'],
+        referencedTableName: 'products',
         referencedColumnNames: ['id'],
-        columnNames: ['company_id'],
-        onDelete: 'CASCADE',
         onUpdate: 'CASCADE',
+        onDelete: 'CASCADE',
       }),
     );
   }
 
   public async down(queryRunner: QueryRunner): Promise<void> {
-    await queryRunner.dropTable('products');
+    await queryRunner.dropTable('users_products');
   }
 }

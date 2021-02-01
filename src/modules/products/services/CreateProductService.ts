@@ -23,7 +23,10 @@ class CreateProductService {
     cost,
     ownerId,
   }: IRequest): Promise<Product> {
-    const checkNameExists = this.productRepository.findByName(name, ownerId);
+    const checkNameExists = await this.productRepository.findByName(
+      name,
+      ownerId,
+    );
 
     if (checkNameExists) {
       throw AppError.nameAlreadyInUsed;

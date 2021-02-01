@@ -22,8 +22,17 @@ export default class ProductsRepository implements IProductsRepository {
       cost,
       price,
     });
+
     await this.ormRepository.save(product);
     return product;
+  }
+
+  public async findAllProducts(userId: number): Promise<Product[]> {
+    const products = await this.ormRepository.find({
+      where: { ownerId: userId },
+    });
+
+    return products;
   }
 
   public async findByName(

@@ -27,7 +27,7 @@ export default function ensureAuthentication(
 
     const { sub } = decodedToken as JWTTokenPayload;
 
-    req.userId = sub;
+    req.userId = Number(sub);
 
     return next();
   } catch (error) {
