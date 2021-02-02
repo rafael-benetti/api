@@ -1,4 +1,12 @@
-import { Column, Entity, PrimaryGeneratedColumn } from 'typeorm';
+import User from '@modules/users/infra/typeorm/entities/User';
+import {
+  Column,
+  Entity,
+  JoinColumn,
+  ManyToOne,
+  PrimaryGeneratedColumn,
+} from 'typeorm';
+import Product from './Product';
 
 @Entity('users_products')
 class ProductToUser {
@@ -13,6 +21,14 @@ class ProductToUser {
 
   @Column({ name: 'user_id' })
   userId: number;
+
+  @ManyToOne(() => User, user => user.products)
+  @JoinColumn({ name: 'user_id' })
+  user: User;
+
+  @ManyToOne(() => Product, product => product.productToUser, { eager: true })
+  @JoinColumn({ name: 'product_id' })
+  productInfo: Product;
 }
 
 export default ProductToUser;

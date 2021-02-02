@@ -1,12 +1,6 @@
 import Company from '@modules/companies/infra/typeorm/entities/Company';
-import Product from '@modules/products/infra/typeorm/entities/Product';
-import {
-  Column,
-  Entity,
-  ManyToMany,
-  OneToMany,
-  PrimaryGeneratedColumn,
-} from 'typeorm';
+import ProductToUser from '@modules/products/infra/typeorm/entities/ProductToUser';
+import { Column, Entity, OneToMany, PrimaryGeneratedColumn } from 'typeorm';
 
 @Entity('users')
 class User {
@@ -46,8 +40,8 @@ class User {
   @OneToMany(() => Company, company => company.owner)
   companies: Company[];
 
-  @ManyToMany(() => Product, product => product.users)
-  products: Product[];
+  @OneToMany(() => ProductToUser, productToUser => productToUser.user)
+  products: ProductToUser[];
 }
 
 export default User;

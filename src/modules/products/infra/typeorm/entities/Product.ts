@@ -1,5 +1,5 @@
-import User from '@modules/users/infra/typeorm/entities/User';
-import { Column, Entity, ManyToMany, PrimaryGeneratedColumn } from 'typeorm';
+import { Column, Entity, OneToMany, PrimaryGeneratedColumn } from 'typeorm';
+import ProductToUser from './ProductToUser';
 
 @Entity('products')
 class Product {
@@ -18,8 +18,8 @@ class Product {
   @Column({ name: 'owner_id' })
   ownerId: number;
 
-  @ManyToMany(() => User, user => user.products)
-  users: User[];
+  @OneToMany(() => ProductToUser, productToUser => productToUser.productInfo)
+  productToUser: ProductToUser[];
 }
 
 export default Product;

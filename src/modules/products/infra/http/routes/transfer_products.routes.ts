@@ -1,9 +1,9 @@
 import { Router } from 'express';
-import ProductToUserController from '../controllers/ProductToUSerController';
+import TransferProductsController from '../controllers/TransferProductsController';
 
 const transferProductsRouter = Router();
 
-const productToUser = new ProductToUserController();
+const productToUser = new TransferProductsController();
 
 transferProductsRouter.post('/transfer', productToUser.create);
 

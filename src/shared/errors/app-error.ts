@@ -41,6 +41,18 @@ export default class AppError {
     statusCode: 401,
   });
 
+  static insufficientProducts = new AppError({
+    errorCode: 'INSUFFICIENT_PRODUCTS',
+    message: "You don't have enough products to transfer.",
+    statusCode: 409,
+  });
+
+  static productNotFound = new AppError({
+    errorCode: 'PRODUCT_NOT_FOUND',
+    message: 'Could not find the product.',
+    statusCode: 409,
+  });
+
   private constructor(data: AppError) {
     this.errorCode = data.errorCode;
     this.message = data.message;

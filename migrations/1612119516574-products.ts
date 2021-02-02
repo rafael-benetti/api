@@ -62,7 +62,7 @@ export default class products1612119516574 implements MigrationInterface {
         referencedTableName: 'companies',
         referencedColumnNames: ['id'],
         columnNames: ['company_id'],
-        onDelete: 'CASCADE',
+        onDelete: 'SET NULL',
         onUpdate: 'CASCADE',
       }),
     );

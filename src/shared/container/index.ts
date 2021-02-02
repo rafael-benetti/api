@@ -9,12 +9,12 @@ import CompaniesRepository from '@modules/companies/infra/typeorm/repositories/C
 import IProductsRepository from '@modules/products/repositories/IProductsRepository';
 import ProductsRepository from '@modules/products/infra/typeorm/repositories/ProductsRepository';
 
-import IProductToUserRepository from '@modules/products/repositories/IProductToUserRepository';
-import ProductToUserRepository from '@modules/products/infra/typeorm/repositories/ProductToUserRepository';
+import ITransferProductsRepository from '@modules/products/repositories/ITransferProductsRepository';
+import TransferProductsRepository from '@modules/products/infra/typeorm/repositories/TransferProductsRepository';
 
-container.registerSingleton<IProductToUserRepository>(
-  'ProductToUserRepository',
-  ProductToUserRepository,
+container.registerSingleton<ITransferProductsRepository>(
+  'TransferProductsRepository',
+  TransferProductsRepository,
 );
 
 container.registerSingleton<IProductsRepository>(
