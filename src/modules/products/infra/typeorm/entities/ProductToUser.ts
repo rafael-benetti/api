@@ -24,7 +24,7 @@ class ProductToUser {
 
   @ManyToOne(() => User, user => user.products)
   @JoinColumn({ name: 'user_id' })
-  user: User;
+  owner: User;
 
   @ManyToOne(() => Product, product => product.productToUser, { eager: true })
   @JoinColumn({ name: 'product_id' })

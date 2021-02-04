@@ -1,4 +1,5 @@
 import Company from '@modules/companies/infra/typeorm/entities/Company';
+import MachineCategory from '@modules/machines/infra/typeorm/entities/MachineCategory';
 import ProductToUser from '@modules/products/infra/typeorm/entities/ProductToUser';
 import { Column, Entity, OneToMany, PrimaryGeneratedColumn } from 'typeorm';
 
@@ -40,8 +41,11 @@ class User {
   @OneToMany(() => Company, company => company.owner)
   companies: Company[];
 
-  @OneToMany(() => ProductToUser, productToUser => productToUser.user)
+  @OneToMany(() => ProductToUser, productToUser => productToUser.owner)
   products: ProductToUser[];
+
+  @OneToMany(() => MachineCategory, machineCategory => machineCategory.owner)
+  machineCategories: MachineCategory[];
 }
 
 export default User;

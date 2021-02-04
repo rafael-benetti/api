@@ -1,6 +1,7 @@
 import ICreateCompanyDTO from '@modules/companies/dtos/ICreateCompanyDTO';
+import IFindCompaniesDTO from '@modules/companies/dtos/IFindCompaniesDTO';
 import ICompaniesRepository from '@modules/companies/repositories/ICompaniesRepository';
-import { getRepository, Repository } from 'typeorm';
+import { getRepository, Like, Repository } from 'typeorm';
 import Company from '../entities/Company';
 
 class CompaniesRepository implements ICompaniesRepository {
@@ -10,10 +11,14 @@ class CompaniesRepository implements ICompaniesRepository {
     this.ormRepository = getRepository(Company);
   }
 
-  public async findAllCompanies(ownerId: number): Promise<Company[]> {
+  public async findCompanies({
+    ownerId,
+    name,
+  }: IFindCompaniesDTO): Promise<Company[]> {
     const companies = await this.ormRepository.find({
       where: {
         ownerId,
+        ...(name && { name: Like(`%${name}%`) }),
       },
     });
     return companies;

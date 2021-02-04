@@ -1,31 +1,32 @@
-import Machine from '@modules/machines/infra/typeorm/entities/Machine';
 import User from '@modules/users/infra/typeorm/entities/User';
 import {
   Column,
   Entity,
   JoinColumn,
   ManyToOne,
-  OneToMany,
   PrimaryGeneratedColumn,
 } from 'typeorm';
 
-@Entity('companies')
-class Company {
+@Entity('machines_category')
+class MachineCategory {
   @PrimaryGeneratedColumn('increment')
   id: number;
 
   @Column()
   name: string;
 
+  @Column({ name: 'gift_spaces' })
+  giftSpaces: number;
+
+  @Column()
+  active: number;
+
   @Column({ name: 'owner_id' })
   ownerId: number;
 
-  @ManyToOne(() => User, user => user.companies)
+  @ManyToOne(() => User, user => user.machineCategories)
   @JoinColumn({ name: 'owner_id' })
   owner: User;
-
-  @OneToMany(() => Machine, machine => machine.company)
-  machines: Machine[];
 }
 
-export default Company;
+export default MachineCategory;

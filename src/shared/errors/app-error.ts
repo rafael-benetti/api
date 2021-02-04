@@ -41,6 +41,12 @@ export default class AppError {
     statusCode: 401,
   });
 
+  static incorrectFilters = new AppError({
+    errorCode: 'INCORRECT_FILTERS',
+    message: 'Incorrect filters, check the filters',
+    statusCode: 400,
+  });
+
   static insufficientProducts = new AppError({
     errorCode: 'INSUFFICIENT_PRODUCTS',
     message: "You don't have enough products to transfer.",
@@ -49,8 +55,20 @@ export default class AppError {
 
   static productNotFound = new AppError({
     errorCode: 'PRODUCT_NOT_FOUND',
-    message: 'Could not find the product.',
-    statusCode: 409,
+    message: "Could not find the 'product'.",
+    statusCode: 404,
+  });
+
+  static machineCategoryNotFound = new AppError({
+    errorCode: 'MACHINE_CATEGORY_NOT_FOUND',
+    message: "Could not find the 'machine category'.",
+    statusCode: 404,
+  });
+
+  static userNotFound = new AppError({
+    errorCode: 'USER_NOT_FOUND',
+    message: "Could not find the 'user'.",
+    statusCode: 404,
   });
 
   private constructor(data: AppError) {

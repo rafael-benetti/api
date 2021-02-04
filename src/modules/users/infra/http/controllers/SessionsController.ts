@@ -3,7 +3,7 @@ import { Request, Response } from 'express';
 import { container } from 'tsyringe';
 
 export default class SessionsController {
-  public async execute(req: Request, res: Response): Promise<Response> {
+  public async create(req: Request, res: Response): Promise<Response> {
     const { email, password } = req.body;
 
     const authenticateUserService = container.resolve(AuthenticateUserService);

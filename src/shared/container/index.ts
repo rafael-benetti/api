@@ -12,6 +12,22 @@ import ProductsRepository from '@modules/products/infra/typeorm/repositories/Pro
 import ITransferProductsRepository from '@modules/products/repositories/ITransferProductsRepository';
 import TransferProductsRepository from '@modules/products/infra/typeorm/repositories/TransferProductsRepository';
 
+import IMachinesRepository from '@modules/machines/repositories/IMachinesRepository';
+import MachinesRepository from '@modules/machines/infra/typeorm/repositories/MachinesRepository';
+
+import IMachineCategoriesRepository from '@modules/machines/repositories/IMachineCategoriesRepository';
+import MachineCategoriesRepository from '@modules/machines/infra/typeorm/repositories/MachineCategoriesRepository';
+
+container.registerSingleton<IMachineCategoriesRepository>(
+  'MachineCategoriesRepository',
+  MachineCategoriesRepository,
+);
+
+container.registerSingleton<IMachinesRepository>(
+  'MachinesRepository',
+  MachinesRepository,
+);
+
 container.registerSingleton<ITransferProductsRepository>(
   'TransferProductsRepository',
   TransferProductsRepository,
