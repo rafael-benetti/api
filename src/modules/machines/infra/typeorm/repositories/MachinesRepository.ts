@@ -30,7 +30,6 @@ class MachinesRepository implements IMachinesRepository {
       where: filters,
       take: limit,
       skip: limit * page,
-      relations: ['counters'],
     });
 
     return machines;
