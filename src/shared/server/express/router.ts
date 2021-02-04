@@ -7,6 +7,7 @@ import transferProductsRoutes from '@modules/products/infra/http/routes/transfer
 import machinesRoutes from '@modules/machines/infra/http/routes/machines.routes';
 import machineCategoriesRoutes from '@modules/machines/infra/http/routes/machieCategories.routes';
 import profileRoutes from '@modules/users/infra/http/routes/profile.routes';
+import countersRoutes from '@modules/counters/infra/http/routes/counters.routes';
 
 const router = Router();
 
@@ -25,5 +26,7 @@ router.use('/products', transferProductsRoutes);
 router.use('/machines', machinesRoutes);
 
 router.use('/machine-categories', machineCategoriesRoutes);
+
+router.use('/counters', countersRoutes);
 
 export default router;

@@ -56,7 +56,7 @@ export default class machineCollects1612454021942
         referencedTableName: 'machines',
         referencedColumnNames: ['id'],
         columnNames: ['machine_id'],
-        onDelete: 'SET_NULL',
+        onDelete: 'CASCADE',
         onUpdate: 'CASCADE',
       }),
     );
@@ -65,7 +65,7 @@ export default class machineCollects1612454021942
       'machine_collects',
       new TableForeignKey({
         name: 'machine_collects_user',
-        referencedTableName: 'user',
+        referencedTableName: 'users',
         referencedColumnNames: ['id'],
         columnNames: ['user_id'],
         onDelete: 'CASCADE',
@@ -80,7 +80,7 @@ export default class machineCollects1612454021942
         referencedTableName: 'machine_collects',
         referencedColumnNames: ['id'],
         columnNames: ['previous_collection_id'],
-        onDelete: 'SET NULL',
+        onDelete: 'CASCADE',
         onUpdate: 'CASCADE',
       }),
     );

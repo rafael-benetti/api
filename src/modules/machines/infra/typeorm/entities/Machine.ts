@@ -1,10 +1,12 @@
 import Company from '@modules/companies/infra/typeorm/entities/Company';
+import Counter from '@modules/counters/infra/typeorm/entities/Counter';
 import {
   Column,
   Entity,
   Index,
   JoinColumn,
   ManyToOne,
+  OneToMany,
   PrimaryGeneratedColumn,
 } from 'typeorm';
 
@@ -44,6 +46,9 @@ class Machine {
   @ManyToOne(() => Company, company => company.machines)
   @JoinColumn({ name: 'company_id' })
   company: Company;
+
+  @OneToMany(() => Counter, counter => counter.machine)
+  counters: Counter[];
 }
 
 export default Machine;

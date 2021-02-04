@@ -18,6 +18,22 @@ import MachinesRepository from '@modules/machines/infra/typeorm/repositories/Mac
 import IMachineCategoriesRepository from '@modules/machines/repositories/IMachineCategoriesRepository';
 import MachineCategoriesRepository from '@modules/machines/infra/typeorm/repositories/MachineCategoriesRepository';
 
+import ICountersRepository from '@modules/counters/repositories/ICoutersRepository';
+import CountersRepository from '@modules/counters/infra/typeorm/repositories/CountersRepository';
+
+import ICounterGroupsRepository from '@modules/counters/repositories/ICounterGroupsRepository';
+import CounterGroupsRepository from '@modules/counters/infra/typeorm/repositories/CounterGroupsRepository';
+
+container.registerSingleton<ICounterGroupsRepository>(
+  'CounterGroupsRepository',
+  CounterGroupsRepository,
+);
+
+container.registerSingleton<ICountersRepository>(
+  'CountersRepository',
+  CountersRepository,
+);
+
 container.registerSingleton<IMachineCategoriesRepository>(
   'MachineCategoriesRepository',
   MachineCategoriesRepository,
