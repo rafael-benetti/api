@@ -11,7 +11,7 @@ class MachinesRepository implements IMachinesRepository {
     this.ormRepository = getRepository(Machine);
   }
 
-  public async listMachines({
+  public async findMachines({
     companyIds,
     active,
     name,
@@ -41,6 +41,7 @@ class MachinesRepository implements IMachinesRepository {
     registrationDate,
     serialNumber,
     companyId,
+    sellingPointId,
   }: ICreateMachineDTO): Promise<Machine> {
     const machine = this.ormRepository.create({
       description,
@@ -48,6 +49,7 @@ class MachinesRepository implements IMachinesRepository {
       registrationDate,
       serialNumber,
       companyId,
+      sellingPointId,
     });
 
     await this.ormRepository.save(machine);

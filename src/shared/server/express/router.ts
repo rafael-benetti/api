@@ -8,6 +8,7 @@ import machinesRoutes from '@modules/machines/infra/http/routes/machines.routes'
 import machineCategoriesRoutes from '@modules/machines/infra/http/routes/machieCategories.routes';
 import profileRoutes from '@modules/users/infra/http/routes/profile.routes';
 import countersRoutes from '@modules/counters/infra/http/routes/counters.routes';
+import sellingPointRoutes from '@modules/sellingPoints/infra/http/routes/sellingPoints.routes';
 
 const router = Router();
 
@@ -28,5 +29,7 @@ router.use('/machines', machinesRoutes);
 router.use('/machine-categories', machineCategoriesRoutes);
 
 router.use('/counters', countersRoutes);
+
+router.use('/selling-points', sellingPointRoutes);
 
 export default router;

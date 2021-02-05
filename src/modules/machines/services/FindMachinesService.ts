@@ -1,4 +1,4 @@
-import ICompaniesRepository from '@modules/companies/repositories/ICompaniesRepository';
+import IUsersRepository from '@modules/users/repositories/IUsersRepository';
 import AppError from '@shared/errors/app-error';
 import { inject, injectable } from 'tsyringe';
 import Machine from '../infra/typeorm/entities/Machine';
@@ -14,13 +14,13 @@ interface IRequest {
 }
 
 @injectable()
-class ListMachinesService {
+class FindMachinesService {
   constructor(
     @inject('MachinesRepository')
     private machinesRepository: IMachinesRepository,
 
-    @inject('CompaniesRepository')
-    private companiesRepository: ICompaniesRepository,
+    @inject('UsersRepository')
+    private usersRepository: IUsersRepository,
   ) {}
 
   public async execute({
@@ -44,16 +44,22 @@ class ListMachinesService {
       }
     }
 
-    if (!companyId) {
-      const companies = await this.companiesRepository.findCompanies({
-        ownerId: userId,
-      });
-      companyIds = companies.map(company => company.id);
-    } else {
-      companyIds.push(companyId);
+    const user = await this.usersRepository.findById(userId);
+
+    if (!user) {
+      throw AppError.authorizationError;
+    }
+    companyIds = user.companies.map(company => company.id);
+
+    if (companyId) {
+      if (companyIds.includes(companyId)) {
+        companyIds = [companyId];
+      } else {
+        throw AppError.authorizationError;
+      }
     }
 
-    const machines = await this.machinesRepository.listMachines({
+    const machines = await this.machinesRepository.findMachines({
       companyIds,
       active,
       name,
@@ -65,4 +71,4 @@ class ListMachinesService {
   }
 }
 
-export default ListMachinesService;
+export default FindMachinesService;

@@ -17,6 +17,7 @@ machinesRoutes.post(
       description: Joi.string().required(),
       gameValue: Joi.number().required(),
       companyId: Joi.number().required(),
+      sellingPointId: Joi.number().required(),
     },
   }),
   machinesController.create,

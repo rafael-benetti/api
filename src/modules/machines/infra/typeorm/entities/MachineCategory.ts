@@ -1,11 +1,4 @@
-import User from '@modules/users/infra/typeorm/entities/User';
-import {
-  Column,
-  Entity,
-  JoinColumn,
-  ManyToOne,
-  PrimaryGeneratedColumn,
-} from 'typeorm';
+import { Column, Entity, PrimaryGeneratedColumn } from 'typeorm';
 
 @Entity('machines_category')
 class MachineCategory {
@@ -24,9 +17,9 @@ class MachineCategory {
   @Column({ name: 'owner_id' })
   ownerId: number;
 
-  @ManyToOne(() => User, user => user.machineCategories)
-  @JoinColumn({ name: 'owner_id' })
-  owner: User;
+  // @ManyToOne(() => User, user => user.machineCategories)
+  // @JoinColumn({ name: 'owner_id' })
+  // owner: User;
 }
 
 export default MachineCategory;

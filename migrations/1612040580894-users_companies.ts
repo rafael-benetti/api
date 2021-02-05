@@ -13,10 +13,12 @@ export default class usersCompanies1612040580894 implements MigrationInterface {
         columns: [
           {
             name: 'user_id',
+            isPrimary: true,
             type: 'int',
           },
           {
             name: 'company_id',
+            isPrimary: true,
             type: 'int',
           },
         ],

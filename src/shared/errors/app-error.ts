@@ -71,6 +71,12 @@ export default class AppError {
     statusCode: 404,
   });
 
+  static authorizationError = new AppError({
+    errorCode: 'AUTHORIZATION_ERROR',
+    message: "You don't have permission for access this resource",
+    statusCode: 403,
+  });
+
   private constructor(data: AppError) {
     this.errorCode = data.errorCode;
     this.message = data.message;

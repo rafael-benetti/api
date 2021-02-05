@@ -4,4 +4,5 @@ export default interface ICreateMachineDTO {
   registrationDate: string;
   gameValue: number;
   companyId: number;
+  sellingPointId: number;
 }

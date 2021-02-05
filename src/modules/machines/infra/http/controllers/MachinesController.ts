@@ -1,11 +1,17 @@
 import CreateMachineService from '@modules/machines/services/CreateMachineService';
-import ListMachinesService from '@modules/machines/services/ListMachinesService';
+import FindMachinesService from '@modules/machines/services/FindMachinesService';
 import { Response, Request } from 'express';
 import { container } from 'tsyringe';
 
 class MachinesController {
   public async create(req: Request, res: Response): Promise<Response> {
-    const { description, serialNumber, gameValue, companyId } = req.body;
+    const {
+      description,
+      serialNumber,
+      gameValue,
+      companyId,
+      sellingPointId,
+    } = req.body;
 
     const createMachineService = container.resolve(CreateMachineService);
 
@@ -14,6 +20,7 @@ class MachinesController {
       serialNumber,
       gameValue,
       companyId,
+      sellingPointId,
     });
 
     return res.json(machine);
@@ -24,7 +31,7 @@ class MachinesController {
 
     const { companyId, name, isActive, limit, page } = req.query;
 
-    const listMachinesService = container.resolve(ListMachinesService);
+    const listMachinesService = container.resolve(FindMachinesService);
 
     const machines = await listMachinesService.execute({
       userId,

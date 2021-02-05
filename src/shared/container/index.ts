@@ -24,6 +24,30 @@ import CountersRepository from '@modules/counters/infra/typeorm/repositories/Cou
 import ICounterGroupsRepository from '@modules/counters/repositories/ICounterGroupsRepository';
 import CounterGroupsRepository from '@modules/counters/infra/typeorm/repositories/CounterGroupsRepository';
 
+import ISellingPointsRepository from '@modules/sellingPoints/repositories/ISellingPointsRepository';
+import SellingPointsRepository from '@modules/sellingPoints/infra/typeorm/repositories/SellingPointsRepository';
+
+import IAddressesRepository from '@modules/sellingPoints/repositories/IAddressesRepository';
+import AddressesRepository from '@modules/sellingPoints/infra/typeorm/repositories/AddressesRepository';
+
+import IUsersCompaniesRepository from '@modules/companies/repositories/IUsersCompaniesRepository';
+import UsersCompaniesRepository from '@modules/companies/infra/typeorm/repositories/UsersCompaniesRepository';
+
+container.registerSingleton<IUsersCompaniesRepository>(
+  'UsersCompaniesRepository',
+  UsersCompaniesRepository,
+);
+
+container.registerSingleton<IAddressesRepository>(
+  'AddressesRepository',
+  AddressesRepository,
+);
+
+container.registerSingleton<ISellingPointsRepository>(
+  'SellingPointsRepository',
+  SellingPointsRepository,
+);
+
 container.registerSingleton<ICounterGroupsRepository>(
   'CounterGroupsRepository',
   CounterGroupsRepository,

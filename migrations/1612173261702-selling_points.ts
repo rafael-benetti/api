@@ -5,7 +5,7 @@ import {
   TableForeignKey,
 } from 'typeorm';
 
-export default class sellingPoints1612473261702 implements MigrationInterface {
+export default class sellingPoints1612173261702 implements MigrationInterface {
   public async up(queryRunner: QueryRunner): Promise<void> {
     await queryRunner.createTable(
       new Table({
@@ -54,7 +54,7 @@ export default class sellingPoints1612473261702 implements MigrationInterface {
         referencedTableName: 'addresses',
         referencedColumnNames: ['id'],
         columnNames: ['address_id'],
-        onDelete: 'SET NULL',
+        onDelete: 'CASCADE',
         onUpdate: 'CASCADE',
       }),
     );

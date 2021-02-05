@@ -8,6 +8,7 @@ interface IRequest {
   description: string;
   gameValue: number;
   companyId: number;
+  sellingPointId: number;
 }
 
 @injectable()
@@ -22,6 +23,7 @@ class CreateMachineService {
     gameValue,
     description,
     companyId,
+    sellingPointId,
   }: IRequest): Promise<Machine> {
     const registrationDate = format(new Date(), 'yyyy-MM-dd hh:mm:ss');
 
@@ -31,6 +33,7 @@ class CreateMachineService {
       registrationDate,
       serialNumber,
       companyId,
+      sellingPointId,
     });
 
     return machine;

@@ -4,5 +4,5 @@ import Machine from '../infra/typeorm/entities/Machine';
 
 export default interface IMachinesRepository {
   create(data: ICreateMachineDTO): Promise<Machine>;
-  listMachines(data: IListMachinesDTO): Promise<Machine[]>;
+  findMachines(data: IListMachinesDTO): Promise<Machine[]>;
 }

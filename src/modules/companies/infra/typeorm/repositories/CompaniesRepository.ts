@@ -43,7 +43,9 @@ class CompaniesRepository implements ICompaniesRepository {
       name,
       ownerId,
     });
+
     await this.ormRepository.save(company);
+
     return company;
   }
 }

@@ -1,5 +1,4 @@
-import { Column, Entity, OneToMany, PrimaryGeneratedColumn } from 'typeorm';
-import ProductToUser from './ProductToUser';
+import { Column, Entity, PrimaryGeneratedColumn } from 'typeorm';
 
 @Entity('products')
 class Product {
@@ -18,8 +17,8 @@ class Product {
   @Column({ name: 'owner_id' })
   ownerId: number;
 
-  @OneToMany(() => ProductToUser, productToUser => productToUser.productInfo)
-  productToUser: ProductToUser[];
+  // @OneToMany(() => ProductToUser, productToUser => productToUser.productInfo)
+  // productToUser: ProductToUser[];
 }
 
 export default Product;

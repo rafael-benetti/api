@@ -1,11 +1,8 @@
-import Company from '@modules/companies/infra/typeorm/entities/Company';
 import Counter from '@modules/counters/infra/typeorm/entities/Counter';
 import {
   Column,
   Entity,
   Index,
-  JoinColumn,
-  ManyToOne,
   OneToMany,
   PrimaryGeneratedColumn,
 } from 'typeorm';
@@ -25,6 +22,9 @@ class Machine {
   @Column({ name: 'registration_date', type: 'datetime' })
   registrationDate: Date;
 
+  @Column({ name: 'selling_point_id' })
+  sellingPointId: number;
+
   @Column({
     name: 'game_value',
     nullable: false,
@@ -43,9 +43,9 @@ class Machine {
   @Column({ name: 'company_id' })
   companyId: number;
 
-  @ManyToOne(() => Company, company => company.machines)
-  @JoinColumn({ name: 'company_id' })
-  company: Company;
+  // @ManyToOne(() => Company, company => company.machines)
+  // @JoinColumn({ name: 'company_id' })
+  // company: Company;
 
   @OneToMany(() => Counter, counter => counter.machine)
   counters: Counter[];

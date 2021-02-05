@@ -1,13 +1,11 @@
-import Machine from '@modules/machines/infra/typeorm/entities/Machine';
-import User from '@modules/users/infra/typeorm/entities/User';
 import {
   Column,
   Entity,
   JoinColumn,
-  ManyToOne,
-  OneToMany,
+  OneToOne,
   PrimaryGeneratedColumn,
 } from 'typeorm';
+import UsersCompanies from './UsersCompanies';
 
 @Entity('companies')
 class Company {
@@ -20,12 +18,9 @@ class Company {
   @Column({ name: 'owner_id' })
   ownerId: number;
 
-  @ManyToOne(() => User, user => user.companies)
-  @JoinColumn({ name: 'owner_id' })
-  owner: User;
-
-  @OneToMany(() => Machine, machine => machine.company)
-  machines: Machine[];
+  @OneToOne(() => UsersCompanies, usersCompanies => usersCompanies.company)
+  @JoinColumn({ name: 'id' })
+  usersCompanies: UsersCompanies;
 }
 
 export default Company;

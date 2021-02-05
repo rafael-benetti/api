@@ -19,14 +19,12 @@ export default class CompaniesController {
   }
 
   public async index(req: Request, res: Response): Promise<Response> {
-    const ownerId = req.userId;
-    const { name } = req.query;
+    const { userId } = req;
 
     const listCompaniesService = container.resolve(ListCompaniesService);
 
     const companies = await listCompaniesService.execute({
-      ownerId,
-      name: name as string,
+      userId: Number(userId),
     });
 
     return res.json(companies);
