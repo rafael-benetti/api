@@ -1,4 +1,5 @@
 import CreateUserService from '@modules/users/services/CreateUserService';
+import UpdateUserService from '@modules/users/services/UpdateUserService';
 import { Request, Response } from 'express';
 import { container } from 'tsyringe';
 
@@ -30,6 +31,32 @@ export default class UsersController {
       isOperator,
       picture,
       ownerId,
+    });
+
+    return res.json(user);
+  }
+
+  public async update(req: Request, res: Response): Promise<Response> {
+    const {
+      userId,
+      name,
+      password,
+      phone,
+      email,
+      isActive,
+      companyIds,
+    } = req.body;
+
+    const updateUserService = container.resolve(UpdateUserService);
+
+    const user = await updateUserService.execute({
+      userId,
+      name,
+      password,
+      phone,
+      email,
+      isActive,
+      companyIds,
     });
 
     return res.json(user);

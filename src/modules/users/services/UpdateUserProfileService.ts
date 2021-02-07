@@ -1,3 +1,4 @@
+import logger from '@config/logger';
 import AppError from '@shared/errors/app-error';
 import { inject, injectable } from 'tsyringe';
 import User from '../infra/typeorm/entities/User';
@@ -29,13 +30,21 @@ class UpdateUserProfileService {
       throw AppError.userNotFound;
     }
 
-    user.name = name;
-    user.phone = phone;
-    user.password = password;
+    if (name) {
+      user.name = name;
+    }
+    if (password) {
+      user.password = password;
+    }
+    if (phone) {
+      user.phone = phone;
+    }
 
-    await this.usersRepository.save(user);
+    const updatedUser = await this.usersRepository.save(user);
 
-    return user;
+    logger.info(updatedUser);
+
+    return updatedUser;
   }
 }
 

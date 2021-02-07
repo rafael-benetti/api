@@ -1,9 +1,11 @@
 import Company from '@modules/companies/infra/typeorm/entities/Company';
+import UsersCompanies from '@modules/companies/infra/typeorm/entities/UsersCompanies';
 import {
   Column,
   Entity,
   JoinTable,
   ManyToMany,
+  OneToMany,
   PrimaryGeneratedColumn,
 } from 'typeorm';
 
@@ -42,16 +44,14 @@ class User {
   @Column({ name: 'owner_id' })
   ownerId: number;
 
-  @ManyToMany(() => Company)
+  @OneToMany(() => UsersCompanies, usersCompanies => usersCompanies.user)
+  userToCompanies: UsersCompanies[];
+
+  @ManyToMany(() => Company, company => company.id)
   @JoinTable({
-    name: 'user_company',
+    name: 'companies',
     joinColumn: {
-      name: 'user_id',
-      referencedColumnName: 'id',
-    },
-    inverseJoinColumn: {
-      name: 'company_id',
-      referencedColumnName: 'id',
+      name: 'id',
     },
   })
   companies: Company[];

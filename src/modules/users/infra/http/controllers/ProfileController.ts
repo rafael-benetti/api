@@ -12,7 +12,7 @@ class ProfileController {
       UpdateUserProfileService,
     );
 
-    const user = updateUserProfileService.execute({
+    const user = await updateUserProfileService.execute({
       name,
       password,
       phone,

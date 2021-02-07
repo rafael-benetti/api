@@ -30,4 +30,6 @@ usersRoutes.post(
 
 usersRoutes.use(ensureAuthentication);
 
+usersRoutes.patch('/', usersController.update);
+
 export default usersRoutes;

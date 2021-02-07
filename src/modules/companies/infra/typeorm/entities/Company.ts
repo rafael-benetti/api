@@ -1,10 +1,4 @@
-import {
-  Column,
-  Entity,
-  JoinColumn,
-  OneToOne,
-  PrimaryGeneratedColumn,
-} from 'typeorm';
+import { Column, Entity, OneToMany, PrimaryGeneratedColumn } from 'typeorm';
 import UsersCompanies from './UsersCompanies';
 
 @Entity('companies')
@@ -18,9 +12,8 @@ class Company {
   @Column({ name: 'owner_id' })
   ownerId: number;
 
-  @OneToOne(() => UsersCompanies, usersCompanies => usersCompanies.company)
-  @JoinColumn({ name: 'id' })
-  usersCompanies: UsersCompanies;
+  @OneToMany(() => UsersCompanies, usersCompanies => usersCompanies.company)
+  userToCompanies: UsersCompanies[];
 }
 
 export default Company;
