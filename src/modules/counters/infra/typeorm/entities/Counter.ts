@@ -36,7 +36,9 @@ class Counter {
   @Column({ name: 'type_id' })
   typeId: number;
 
-  @ManyToOne(() => Machine, machine => machine.counters)
+  @ManyToOne(() => Machine, machine => machine.counters, {
+    cascade: ['insert', 'update', 'remove'],
+  })
   @JoinColumn({ name: 'machine_id' })
   machine: Machine;
 }

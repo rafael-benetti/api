@@ -1,4 +1,4 @@
-import ICreateCountersDTO from '@modules/counters/dtos/ICreateCountersDTO';
+import ICreateCounterDTO from '@modules/counters/dtos/ICreateCounterDTO';
 import ICountersRepository from '@modules/counters/repositories/ICoutersRepository';
 import { getRepository, Repository } from 'typeorm';
 import Counter from '../entities/Counter';
@@ -16,10 +16,10 @@ class CountersRepository implements ICountersRepository {
     return counters;
   }
 
-  public async createCounters(data: ICreateCountersDTO[]): Promise<Counter[]> {
+  public async createCounters(data: ICreateCounterDTO[]): Promise<Counter[]> {
     const counters = data.map(counter => this.ormRepository.create(counter));
 
-    await this.ormRepository.save(counters);
+    // await this.ormRepository.save(counters);
 
     return counters;
   }

@@ -49,6 +49,7 @@ class FindMachinesService {
     if (!user) {
       throw AppError.authorizationError;
     }
+
     companyIds = user.companies.map(company => company.id);
 
     if (companyId) {

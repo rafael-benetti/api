@@ -1,4 +1,4 @@
-export default interface ICreateCountersDTO {
+export default interface ICreateCounterDTO {
   name: string;
   slot: number;
   hasDigital: number;

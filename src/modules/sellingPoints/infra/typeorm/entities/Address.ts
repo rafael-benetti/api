@@ -1,4 +1,5 @@
-import { Column, Entity, PrimaryGeneratedColumn } from 'typeorm';
+import { Column, Entity, OneToOne, PrimaryGeneratedColumn } from 'typeorm';
+import SellingPoint from './SellingPoint';
 
 @Entity('addresses')
 class Address {
@@ -25,6 +26,9 @@ class Address {
 
   @Column()
   note: string;
+
+  @OneToOne(() => SellingPoint)
+  sellingPoint: SellingPoint;
 }
 
 export default Address;

@@ -11,10 +11,12 @@ class UserRepository implements IUserRepository {
   }
 
   public async findById(id: number): Promise<User | undefined> {
-    const user = await this.ormRepository.findOne({
-      where: { id },
-      relations: ['userToCompanies'],
-    });
+    const user = await this.ormRepository
+      .createQueryBuilder('users')
+      .leftJoinAndSelect('users.companies', 'companies')
+      .where({ id })
+      // .andWhere('companies.id = :id ', { id: 9 })
+      .getOne();
 
     return user;
   }
@@ -22,6 +24,7 @@ class UserRepository implements IUserRepository {
   public async findByEmail(email: string): Promise<User | undefined> {
     const user = await this.ormRepository.findOne({
       where: { email },
+      relations: ['companies'],
     });
 
     return user;

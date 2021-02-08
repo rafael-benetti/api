@@ -31,6 +31,7 @@ class SellingPointsController {
   }
 
   public async index(req: Request, res: Response): Promise<Response> {
+    const { userId } = req;
     const { companyId, name } = req.query;
 
     const findSellingPointsService = container.resolve(
@@ -40,6 +41,7 @@ class SellingPointsController {
     const sellingPoints = await findSellingPointsService.execute({
       name: name as string,
       companyId: Number(companyId),
+      userId,
     });
 
     return res.json(sellingPoints);

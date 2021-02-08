@@ -1,12 +1,16 @@
+import IUsersRepository from '@modules/users/repositories/IUsersRepository';
 import AppError from '@shared/errors/app-error';
 import { inject, injectable } from 'tsyringe';
-import Company from '../infra/typeorm/entities/Company';
 import ICompaniesRepository from '../repositories/ICompaniesRepository';
-import IUsersCompaniesRepository from '../repositories/IUsersCompaniesRepository';
 
 interface IRequest {
   name: string;
   ownerId: number;
+}
+
+interface IResponse {
+  id: number;
+  name: string;
 }
 
 @injectable()
@@ -15,15 +19,21 @@ class CreateCompanyService {
     @inject('CompaniesRepository')
     private companiesRepository: ICompaniesRepository,
 
-    @inject('UsersCompaniesRepository')
-    private usersCompaniesRepository: IUsersCompaniesRepository,
+    @inject('UsersRepository')
+    private usersRepository: IUsersRepository,
   ) {}
 
-  public async execute({ name, ownerId }: IRequest): Promise<Company> {
-    const checkCompanyName = await this.companiesRepository.findByName(
+  public async execute({ name, ownerId }: IRequest): Promise<IResponse> {
+    const user = await this.usersRepository.findById(ownerId);
+
+    if (!user) {
+      throw AppError.authorizationError;
+    }
+
+    const checkCompanyName = await this.companiesRepository.findByName({
       name,
       ownerId,
-    );
+    });
 
     if (checkCompanyName) {
       throw AppError.nameAlreadyInUsed;
@@ -32,14 +42,13 @@ class CreateCompanyService {
     const company = await this.companiesRepository.create({
       name,
       ownerId,
+      user,
     });
 
-    await this.usersCompaniesRepository.create({
-      userId: ownerId,
-      companyId: company.id,
-    });
-
-    return company;
+    return {
+      id: company.id,
+      name: company.name,
+    };
   }
 }
 

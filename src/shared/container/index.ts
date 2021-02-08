@@ -30,14 +30,6 @@ import SellingPointsRepository from '@modules/sellingPoints/infra/typeorm/reposi
 import IAddressesRepository from '@modules/sellingPoints/repositories/IAddressesRepository';
 import AddressesRepository from '@modules/sellingPoints/infra/typeorm/repositories/AddressesRepository';
 
-import IUsersCompaniesRepository from '@modules/companies/repositories/IUsersCompaniesRepository';
-import UsersCompaniesRepository from '@modules/companies/infra/typeorm/repositories/UsersCompaniesRepository';
-
-container.registerSingleton<IUsersCompaniesRepository>(
-  'UsersCompaniesRepository',
-  UsersCompaniesRepository,
-);
-
 container.registerSingleton<IAddressesRepository>(
   'AddressesRepository',
   AddressesRepository,

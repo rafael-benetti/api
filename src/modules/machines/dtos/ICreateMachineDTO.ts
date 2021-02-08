@@ -1,3 +1,5 @@
+import Counter from '@modules/counters/infra/typeorm/entities/Counter';
+
 export default interface ICreateMachineDTO {
   serialNumber: string;
   description: string;
@@ -5,4 +7,6 @@ export default interface ICreateMachineDTO {
   gameValue: number;
   companyId: number;
   sellingPointId: number;
+  machineCategoryId: number;
+  counters: Counter[];
 }

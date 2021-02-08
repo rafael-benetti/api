@@ -6,7 +6,6 @@ import productsRoutes from '@modules/products/infra/http/routes/products.routes'
 import transferProductsRoutes from '@modules/products/infra/http/routes/transfer_products.routes';
 import machinesRoutes from '@modules/machines/infra/http/routes/machines.routes';
 import machineCategoriesRoutes from '@modules/machines/infra/http/routes/machieCategories.routes';
-import profileRoutes from '@modules/users/infra/http/routes/profile.routes';
 import countersRoutes from '@modules/counters/infra/http/routes/counters.routes';
 import sellingPointRoutes from '@modules/sellingPoints/infra/http/routes/sellingPoints.routes';
 
@@ -15,8 +14,6 @@ const router = Router();
 router.use('/users', usersRoutes);
 
 router.use('/companies', companiesRoutes);
-
-router.use('/profile', profileRoutes);
 
 router.use('/sessions', sessionsRoutes);
 

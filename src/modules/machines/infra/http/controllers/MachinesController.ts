@@ -11,6 +11,8 @@ class MachinesController {
       gameValue,
       companyId,
       sellingPointId,
+      machineCategoryId,
+      counters,
     } = req.body;
 
     const createMachineService = container.resolve(CreateMachineService);
@@ -21,6 +23,8 @@ class MachinesController {
       gameValue,
       companyId,
       sellingPointId,
+      machineCategoryId,
+      counters,
     });
 
     return res.json(machine);

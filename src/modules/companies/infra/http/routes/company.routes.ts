@@ -18,6 +18,9 @@ companiesRoutes.post(
   }),
   companiesController.create,
 );
+
 companiesRoutes.get('/', companiesController.index);
+
+companiesRoutes.put('/', companiesController.update);
 
 export default companiesRoutes;

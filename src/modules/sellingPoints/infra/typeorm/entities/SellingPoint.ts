@@ -1,4 +1,13 @@
-import { Column, Entity, PrimaryGeneratedColumn } from 'typeorm';
+import Machine from '@modules/machines/infra/typeorm/entities/Machine';
+import {
+  Column,
+  Entity,
+  JoinColumn,
+  OneToMany,
+  OneToOne,
+  PrimaryGeneratedColumn,
+} from 'typeorm';
+import Address from './Address';
 
 @Entity('selling_points')
 class SellingPoint {
@@ -22,6 +31,13 @@ class SellingPoint {
 
   @Column()
   phone2: string;
+
+  @OneToMany(() => Machine, machine => machine.sellingPoint)
+  machines: Machine[];
+
+  @OneToOne(() => Address)
+  @JoinColumn({ name: 'address_id' })
+  address: Address;
 }
 
 export default SellingPoint;

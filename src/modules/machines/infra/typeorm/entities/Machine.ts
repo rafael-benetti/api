@@ -1,8 +1,10 @@
 import Counter from '@modules/counters/infra/typeorm/entities/Counter';
+import SellingPoint from '@modules/sellingPoints/infra/typeorm/entities/SellingPoint';
 import {
   Column,
   Entity,
   Index,
+  JoinColumn,
   OneToMany,
   PrimaryGeneratedColumn,
 } from 'typeorm';
@@ -24,6 +26,10 @@ class Machine {
 
   @Column({ name: 'selling_point_id' })
   sellingPointId: number;
+
+  @OneToMany(() => SellingPoint, sellingPoint => sellingPoint.machines)
+  @JoinColumn({ name: 'selling_point_id' })
+  sellingPoint: SellingPoint;
 
   @Column({
     name: 'game_value',
@@ -47,7 +53,9 @@ class Machine {
   // @JoinColumn({ name: 'company_id' })
   // company: Company;
 
-  @OneToMany(() => Counter, counter => counter.machine)
+  @OneToMany(() => Counter, counter => counter.machine, {
+    cascade: ['insert'],
+  })
   counters: Counter[];
 }
 

@@ -30,6 +30,7 @@ class MachinesRepository implements IMachinesRepository {
       where: filters,
       take: limit,
       skip: limit * page,
+      relations: ['counters'],
     });
 
     return machines;
@@ -42,6 +43,7 @@ class MachinesRepository implements IMachinesRepository {
     serialNumber,
     companyId,
     sellingPointId,
+    counters,
   }: ICreateMachineDTO): Promise<Machine> {
     const machine = this.ormRepository.create({
       description,
@@ -50,6 +52,7 @@ class MachinesRepository implements IMachinesRepository {
       serialNumber,
       companyId,
       sellingPointId,
+      counters,
     });
 
     await this.ormRepository.save(machine);

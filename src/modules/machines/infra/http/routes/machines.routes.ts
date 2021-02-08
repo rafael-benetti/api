@@ -18,6 +18,8 @@ machinesRoutes.post(
       gameValue: Joi.number().required(),
       companyId: Joi.number().required(),
       sellingPointId: Joi.number().required(),
+      machineCategoryId: Joi.number().required(),
+      counters: Joi.array(),
     },
   }),
   machinesController.create,

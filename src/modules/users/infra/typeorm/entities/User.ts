@@ -1,13 +1,5 @@
 import Company from '@modules/companies/infra/typeorm/entities/Company';
-import UsersCompanies from '@modules/companies/infra/typeorm/entities/UsersCompanies';
-import {
-  Column,
-  Entity,
-  JoinTable,
-  ManyToMany,
-  OneToMany,
-  PrimaryGeneratedColumn,
-} from 'typeorm';
+import { Column, Entity, ManyToMany, PrimaryGeneratedColumn } from 'typeorm';
 
 @Entity('users')
 class User {
@@ -44,23 +36,10 @@ class User {
   @Column({ name: 'owner_id' })
   ownerId: number;
 
-  @OneToMany(() => UsersCompanies, usersCompanies => usersCompanies.user)
-  userToCompanies: UsersCompanies[];
-
-  @ManyToMany(() => Company, company => company.id)
-  @JoinTable({
-    name: 'companies',
-    joinColumn: {
-      name: 'id',
-    },
+  @ManyToMany(() => Company, company => company.users, {
+    cascade: ['insert', 'update'],
   })
   companies: Company[];
-
-  // @OneToMany(() => ProductToUser, productToUser => productToUser.owner)
-  // products: ProductToUser[];
-  //
-  // @OneToMany(() => MachineCategory, machineCategory => machineCategory.owner)
-  // machineCategories: MachineCategory[];
 }
 
 export default User;

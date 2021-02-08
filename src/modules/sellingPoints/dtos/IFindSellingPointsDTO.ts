@@ -1,4 +1,4 @@
 export default interface IFindSellingPointsDTO {
-  companyId?: number;
+  companyIds: number[];
   name?: string;
 }

@@ -59,6 +59,8 @@ export default class UsersController {
       companyIds,
     });
 
+    // TODO: adicionar ClassTransform
+
     return res.json(user);
   }
 }

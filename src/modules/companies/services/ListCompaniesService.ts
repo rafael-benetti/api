@@ -1,26 +1,16 @@
 import { inject, injectable } from 'tsyringe';
 import Company from '../infra/typeorm/entities/Company';
-import IUsersCompaniesRepository from '../repositories/IUsersCompaniesRepository';
-
-interface IRequest {
-  userId: number;
-}
+import ICompaniesRepository from '../repositories/ICompaniesRepository';
 
 @injectable()
 class ListCompaniesService {
   constructor(
-    @inject('UsersCompaniesRepository')
-    private usersCompaniesRepository: IUsersCompaniesRepository,
+    @inject('CompaniesRepository')
+    private companyRepository: ICompaniesRepository,
   ) {}
 
-  public async execute({ userId }: IRequest): Promise<Company[]> {
-    const usersCompanies = await this.usersCompaniesRepository.findCompanies(
-      userId,
-    );
-
-    const companies = usersCompanies.map(userCompany => {
-      return userCompany.company;
-    });
+  public async execute(): Promise<Company[]> {
+    const companies = await this.companyRepository.findCompanies([]);
 
     return companies;
   }

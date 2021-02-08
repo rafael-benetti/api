@@ -1,6 +1,4 @@
-import logger from '@config/logger';
-import UsersCompanies from '@modules/companies/infra/typeorm/entities/UsersCompanies';
-import IUsersCompaniesRepository from '@modules/companies/repositories/IUsersCompaniesRepository';
+import ICompaniesRepository from '@modules/companies/repositories/ICompaniesRepository';
 import AppError from '@shared/errors/app-error';
 import { inject, injectable } from 'tsyringe';
 import User from '../infra/typeorm/entities/User';
@@ -19,11 +17,11 @@ interface IRequest {
 @injectable()
 class UpdateUserService {
   constructor(
-    @inject('UsersCompaniesRepository')
-    private usersCompaniesRepository: IUsersCompaniesRepository,
-
     @inject('UsersRepository')
     private usersRepository: IUsersRepository,
+
+    @inject('CompaniesRepository')
+    private companiesRepository: ICompaniesRepository,
   ) {}
 
   public async execute({
@@ -47,23 +45,18 @@ class UpdateUserService {
     if (email) user.email = email;
     if (isActive !== undefined) user.isActive = isActive;
 
-    if (companyIds) {
-      const promises: Promise<UsersCompanies>[] = [];
-      companyIds.forEach(companyId => {
-        promises.push(
-          this.usersCompaniesRepository.create({ userId, companyId }),
-        );
-      });
+    if (companyIds && companyIds.length >= 1) {
+      const companies = await this.companiesRepository.findCompanies(
+        companyIds,
+      );
 
-      await Promise.all(promises).then(results => {
-        logger.info(results);
-      });
+      user.companies = companies;
+    } else {
+      user.companies = [];
     }
 
-    logger.info(user);
-    user.companies = [];
-
     const updatedUser = await this.usersRepository.save(user);
+
     return updatedUser;
   }
 }

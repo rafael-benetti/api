@@ -1,7 +1,5 @@
 import AppError from '@shared/errors/app-error';
 import { inject, injectable } from 'tsyringe';
-import Product from '../infra/typeorm/entities/Product';
-import ProductToUser from '../infra/typeorm/entities/ProductToUser';
 import IProductsRepository from '../repositories/IProductsRepository';
 import ITransferProductsRepository from '../repositories/ITransferProductsRepository';
 
@@ -14,8 +12,11 @@ interface IRequest {
 }
 
 interface IResponse {
-  product: Product;
-  productToUser: ProductToUser;
+  name: string;
+  cost: number;
+  price: number;
+  ownerId: number;
+  quantity: number;
 }
 
 @injectable()
@@ -58,7 +59,15 @@ class CreateProductService {
       productId: product.id,
     });
 
-    return { productToUser, product };
+    const response: IResponse = {
+      name: product.name,
+      cost: product.cost,
+      price: product.price,
+      ownerId: product.ownerId,
+      quantity: productToUser.quantity,
+    };
+
+    return response;
   }
 }
 

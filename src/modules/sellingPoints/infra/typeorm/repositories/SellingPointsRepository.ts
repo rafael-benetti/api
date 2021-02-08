@@ -1,4 +1,3 @@
-import logger from '@config/logger';
 import ICreateSellingPointDTO from '@modules/sellingPoints/dtos/ICreateSellingPointDTO';
 import IFindSellingPointsDTO from '@modules/sellingPoints/dtos/IFindSellingPointsDTO';
 import ISellingPointsRepository from '@modules/sellingPoints/repositories/ISellingPointsRepository';
@@ -14,12 +13,18 @@ class SellingPointRepository implements ISellingPointsRepository {
 
   public async find({
     name,
-    companyId,
+    companyIds,
   }: IFindSellingPointsDTO): Promise<SellingPoint[]> {
-    logger.info(name, companyId);
+    const filters = companyIds.map(companyId => {
+      return {
+        companyId,
+        ...(name && { name: Like(`%${name}%`) }),
+      };
+    });
 
     const sellingPoints = await this.ormRepository.find({
-      where: { companyId, ...(name && { name: Like(`%${name}%`) }) },
+      where: filters,
+      relations: ['address'],
     });
 
     return sellingPoints;
