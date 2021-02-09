@@ -55,6 +55,7 @@ export default class machines1612288018740 implements MigrationInterface {
           {
             name: 'selling_point_id',
             type: 'int',
+            isNullable: true,
           },
         ],
       }),

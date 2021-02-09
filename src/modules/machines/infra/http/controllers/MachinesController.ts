@@ -1,5 +1,6 @@
 import CreateMachineService from '@modules/machines/services/CreateMachineService';
 import FindMachinesService from '@modules/machines/services/FindMachinesService';
+import UpdateMachinesService from '@modules/machines/services/UpdateMachinesService';
 import { Response, Request } from 'express';
 import { container } from 'tsyringe';
 
@@ -47,6 +48,34 @@ class MachinesController {
     });
 
     return res.json(machines);
+  }
+
+  public async update(req: Request, res: Response): Promise<Response> {
+    const {
+      id,
+      description,
+      serialNumber,
+      gameValue,
+      companyId,
+      sellingPointId,
+      machineCategoryId,
+      counters,
+    } = req.body;
+
+    const updateMachinesService = container.resolve(UpdateMachinesService);
+
+    const machine = await updateMachinesService.execute({
+      id,
+      description,
+      serialNumber,
+      gameValue,
+      companyId,
+      sellingPointId,
+      machineCategoryId,
+      counters,
+    });
+
+    return res.json(machine);
   }
 }
 

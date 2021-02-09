@@ -11,6 +11,16 @@ class MachinesRepository implements IMachinesRepository {
     this.ormRepository = getRepository(Machine);
   }
 
+  public async save(machine: Machine): Promise<void> {
+    await this.ormRepository.save(machine);
+  }
+
+  public async findById(machineId: number): Promise<Machine | undefined> {
+    const machine = this.ormRepository.findOne({ where: { machineId } });
+
+    return machine;
+  }
+
   public async findMachines({
     companyIds,
     active,
@@ -30,7 +40,7 @@ class MachinesRepository implements IMachinesRepository {
       where: filters,
       take: limit,
       skip: limit * page,
-      relations: ['counters'],
+      relations: ['counters', 'company'],
     });
 
     return machines;

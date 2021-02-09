@@ -1,3 +1,4 @@
+import Company from '@modules/companies/infra/typeorm/entities/Company';
 import Counter from '@modules/counters/infra/typeorm/entities/Counter';
 import SellingPoint from '@modules/sellingPoints/infra/typeorm/entities/SellingPoint';
 import {
@@ -5,6 +6,7 @@ import {
   Entity,
   Index,
   JoinColumn,
+  ManyToOne,
   OneToMany,
   PrimaryGeneratedColumn,
 } from 'typeorm';
@@ -49,9 +51,9 @@ class Machine {
   @Column({ name: 'company_id' })
   companyId: number;
 
-  // @ManyToOne(() => Company, company => company.machines)
-  // @JoinColumn({ name: 'company_id' })
-  // company: Company;
+  @ManyToOne(() => Company, company => company.machines)
+  @JoinColumn({ name: 'company_id' })
+  company: Company;
 
   @OneToMany(() => Counter, counter => counter.machine, {
     cascade: ['insert'],

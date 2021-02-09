@@ -1,9 +1,11 @@
+import Machine from '@modules/machines/infra/typeorm/entities/Machine';
 import User from '@modules/users/infra/typeorm/entities/User';
 import {
   Column,
   Entity,
   JoinTable,
   ManyToMany,
+  OneToMany,
   PrimaryGeneratedColumn,
 } from 'typeorm';
 
@@ -33,6 +35,9 @@ class Company {
     },
   })
   users: User[];
+
+  @OneToMany(() => Machine, machine => machine.company)
+  machines: Machine[];
 }
 
 export default Company;

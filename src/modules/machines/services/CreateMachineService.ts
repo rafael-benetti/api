@@ -10,9 +10,9 @@ interface IRequest {
   description: string;
   gameValue: number;
   companyId: number;
-  sellingPointId: number;
-  machineCategoryId: number;
-  counters: Counter[];
+  sellingPointId?: number;
+  machineCategoryId?: number;
+  counters?: Counter[];
 }
 
 @injectable()
@@ -36,9 +36,11 @@ class CreateMachineService {
   }: IRequest): Promise<Machine> {
     const registrationDate = format(new Date(), 'yyyy-MM-dd hh:mm:ss');
 
-    const countersEntities = await this.countersRepository.createCounters(
-      counters,
-    );
+    let countersEntities: Counter[] = [];
+
+    if (counters) {
+      countersEntities = await this.countersRepository.createCounters(counters);
+    }
 
     const machine = await this.machinesRepository.create({
       description,

@@ -17,12 +17,29 @@ machinesRoutes.post(
       description: Joi.string().required(),
       gameValue: Joi.number().required(),
       companyId: Joi.number().required(),
-      sellingPointId: Joi.number().required(),
-      machineCategoryId: Joi.number().required(),
+      sellingPointId: Joi.number(),
+      machineCategoryId: Joi.number(),
       counters: Joi.array(),
     },
   }),
   machinesController.create,
+);
+
+machinesRoutes.patch(
+  '/',
+  celebrate({
+    body: {
+      id: Joi.number().required(),
+      serialNumber: Joi.string().required(),
+      description: Joi.string().required(),
+      gameValue: Joi.number().required(),
+      companyId: Joi.number().required(),
+      sellingPointId: Joi.number(),
+      machineCategoryId: Joi.number(),
+      counters: Joi.array(),
+    },
+  }),
+  machinesController.update,
 );
 
 machinesRoutes.get(
