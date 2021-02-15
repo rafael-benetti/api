@@ -51,8 +51,8 @@ class MachinesController {
   }
 
   public async update(req: Request, res: Response): Promise<Response> {
+    const { machineId } = req.query;
     const {
-      id,
       description,
       serialNumber,
       gameValue,
@@ -65,7 +65,7 @@ class MachinesController {
     const updateMachinesService = container.resolve(UpdateMachinesService);
 
     const machine = await updateMachinesService.execute({
-      id,
+      id: Number(machineId),
       description,
       serialNumber,
       gameValue,

@@ -68,12 +68,7 @@ class FindMachinesService {
       page,
     });
 
-    const convertedMachines = machines.map(machine => {
-      machine.gameValue = Number(machine.gameValue);
-      return machine;
-    });
-
-    return convertedMachines;
+    return machines;
   }
 }
 

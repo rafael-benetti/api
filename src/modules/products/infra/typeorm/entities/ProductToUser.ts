@@ -1,4 +1,11 @@
-import { Column, Entity, PrimaryGeneratedColumn } from 'typeorm';
+import {
+  Column,
+  Entity,
+  JoinColumn,
+  ManyToOne,
+  PrimaryGeneratedColumn,
+} from 'typeorm';
+import Product from './Product';
 
 @Entity('users_products')
 class ProductToUser {
@@ -18,9 +25,9 @@ class ProductToUser {
   // @JoinColumn({ name: 'user_id' })
   // owner: User;
 
-  // @ManyToOne(() => Product, product => product.productToUser, { eager: true })
-  // @JoinColumn({ name: 'product_id' })
-  // productInfo: Product;
+  @ManyToOne(() => Product, product => product.productToUser)
+  @JoinColumn({ name: 'product_id' })
+  productInfo: Product;
 }
 
 export default ProductToUser;

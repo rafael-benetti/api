@@ -1,5 +1,6 @@
 import CreateSellingPointService from '@modules/sellingPoints/services/CreateSellingPointService';
 import FindSellingPointsService from '@modules/sellingPoints/services/FindSellingPointsService';
+import UpdateSellingPointsService from '@modules/sellingPoints/services/UpdateSellingPointsService';
 import { Request, Response } from 'express';
 import { container } from 'tsyringe';
 
@@ -11,7 +12,7 @@ class SellingPointsController {
       responsible,
       phone1,
       phone2,
-      addressData: { zipCode, state, city, neighborhood, street, number, note },
+      address: { zipCode, state, city, neighborhood, street, number, note },
     } = req.body;
 
     const createSellingPointService = container.resolve(
@@ -24,7 +25,7 @@ class SellingPointsController {
       responsible,
       phone1,
       phone2,
-      addressData: { zipCode, state, city, neighborhood, street, number, note },
+      address: { zipCode, state, city, neighborhood, street, number, note },
     });
 
     return res.json(sellingPoint);
@@ -45,6 +46,27 @@ class SellingPointsController {
     });
 
     return res.json(sellingPoints);
+  }
+
+  public async update(req: Request, res: Response): Promise<Response> {
+    const { sellingPointId } = req.query;
+    const { address, name, companyId, phone1, phone2, responsible } = req.body;
+
+    const updateSellingPointsService = container.resolve(
+      UpdateSellingPointsService,
+    );
+
+    const sellingPoint = await updateSellingPointsService.execute({
+      id: Number(sellingPointId),
+      address,
+      companyId,
+      name,
+      phone1,
+      phone2,
+      responsible,
+    });
+
+    return res.json(sellingPoint);
   }
 }
 

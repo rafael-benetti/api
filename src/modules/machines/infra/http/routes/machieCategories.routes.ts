@@ -29,6 +29,19 @@ machineCategoriesRoutes.get(
   machineCategoriesController.show,
 );
 
+machineCategoriesRoutes.put(
+  '/',
+  celebrate({
+    body: {
+      name: Joi.string().required(),
+    },
+    query: {
+      machineCategoryId: Joi.number().required(),
+    },
+  }),
+  machineCategoriesController.update,
+);
+
 machineCategoriesRoutes.get('/', machineCategoriesController.index);
 
 export default machineCategoriesRoutes;

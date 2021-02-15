@@ -5,12 +5,12 @@ import {
   TableForeignKey,
 } from 'typeorm';
 
-export default class machinesCategory1612307312336
+export default class machinesCategory1612107312336
   implements MigrationInterface {
   public async up(queryRunner: QueryRunner): Promise<void> {
     await queryRunner.createTable(
       new Table({
-        name: 'machines_category',
+        name: 'machine_categories',
         columns: [
           {
             name: 'id',
@@ -44,7 +44,7 @@ export default class machinesCategory1612307312336
     );
 
     await queryRunner.createForeignKey(
-      'machines_category',
+      'machine_categories',
       new TableForeignKey({
         name: 'machine_categories_to_user',
         columnNames: ['owner_id'],
@@ -57,6 +57,6 @@ export default class machinesCategory1612307312336
   }
 
   public async down(queryRunner: QueryRunner): Promise<void> {
-    await queryRunner.dropTable('machines_category');
+    await queryRunner.dropTable('machine_categories');
   }
 }

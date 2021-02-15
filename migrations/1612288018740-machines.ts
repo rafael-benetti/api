@@ -57,6 +57,11 @@ export default class machines1612288018740 implements MigrationInterface {
             type: 'int',
             isNullable: true,
           },
+          {
+            name: 'machine_category_id',
+            type: 'int',
+            isNullable: true,
+          },
         ],
       }),
     );
@@ -80,6 +85,18 @@ export default class machines1612288018740 implements MigrationInterface {
         referencedTableName: 'selling_points',
         referencedColumnNames: ['id'],
         columnNames: ['selling_point_id'],
+        onDelete: 'SET NULL',
+        onUpdate: 'CASCADE',
+      }),
+    );
+
+    await queryRunner.createForeignKey(
+      'machines',
+      new TableForeignKey({
+        name: 'machines_machine_categoriy',
+        referencedTableName: 'machine_categories',
+        referencedColumnNames: ['id'],
+        columnNames: ['machine_category_id'],
         onDelete: 'CASCADE',
         onUpdate: 'CASCADE',
       }),

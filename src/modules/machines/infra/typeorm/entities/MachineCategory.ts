@@ -1,6 +1,7 @@
-import { Column, Entity, PrimaryGeneratedColumn } from 'typeorm';
+import { Column, Entity, OneToMany, PrimaryGeneratedColumn } from 'typeorm';
+import Machine from './Machine';
 
-@Entity('machines_category')
+@Entity('machine_categories')
 class MachineCategory {
   @PrimaryGeneratedColumn('increment')
   id: number;
@@ -16,6 +17,9 @@ class MachineCategory {
 
   @Column({ name: 'owner_id' })
   ownerId: number;
+
+  @OneToMany(() => Machine, machine => machine.machineCategory)
+  machines: Machine[];
 
   // @ManyToOne(() => User, user => user.machineCategories)
   // @JoinColumn({ name: 'owner_id' })

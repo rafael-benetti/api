@@ -30,6 +30,7 @@ export default class ProductsRepository implements IProductsRepository {
   public async findAllProducts(userId: number): Promise<Product[]> {
     const products = await this.ormRepository.find({
       where: { ownerId: userId },
+      relations: ['productToUser'],
     });
 
     return products;

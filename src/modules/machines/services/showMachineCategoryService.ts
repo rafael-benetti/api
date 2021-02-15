@@ -13,6 +13,8 @@ class ShowMachineCategoryService {
   public async execute(id: number): Promise<MachineCategory | undefined> {
     const machineCategory = await this.machineCategoriesRepository.findById(id);
 
+    // TODO VERIFICAR PERMISSÕES
+
     if (!machineCategory) {
       throw AppError.machineCategoryNotFound;
     }

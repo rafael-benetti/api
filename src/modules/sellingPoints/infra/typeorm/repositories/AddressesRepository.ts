@@ -10,11 +10,8 @@ class AddressesRepository implements IAddressesRepository {
     this.ormRepository = getRepository(Address);
   }
 
-  public async create(data: ICreateAddressDTO): Promise<Address> {
+  create(data: ICreateAddressDTO): Address {
     const address = this.ormRepository.create(data);
-
-    await this.ormRepository.save(address);
-
     return address;
   }
 }

@@ -5,12 +5,12 @@ import {
   TableForeignKey,
 } from 'typeorm';
 
-export default class machineCollects1612454021942
+export default class machineCollection1612454021942
   implements MigrationInterface {
   public async up(queryRunner: QueryRunner): Promise<void> {
     await queryRunner.createTable(
       new Table({
-        name: 'machine_collects',
+        name: 'machine_collection',
         columns: [
           {
             name: 'id',
@@ -50,9 +50,9 @@ export default class machineCollects1612454021942
     );
 
     await queryRunner.createForeignKey(
-      'machine_collects',
+      'machine_collection',
       new TableForeignKey({
-        name: 'machine_collects_machine',
+        name: 'machine_collection_machine',
         referencedTableName: 'machines',
         referencedColumnNames: ['id'],
         columnNames: ['machine_id'],
@@ -62,9 +62,9 @@ export default class machineCollects1612454021942
     );
 
     await queryRunner.createForeignKey(
-      'machine_collects',
+      'machine_collection',
       new TableForeignKey({
-        name: 'machine_collects_user',
+        name: 'machine_collection_user',
         referencedTableName: 'users',
         referencedColumnNames: ['id'],
         columnNames: ['user_id'],
@@ -74,10 +74,10 @@ export default class machineCollects1612454021942
     );
 
     await queryRunner.createForeignKey(
-      'machine_collects',
+      'machine_collection',
       new TableForeignKey({
-        name: 'machine_collects_machine_collects',
-        referencedTableName: 'machine_collects',
+        name: 'machine_collection_machine_collection',
+        referencedTableName: 'machine_collection',
         referencedColumnNames: ['id'],
         columnNames: ['previous_collection_id'],
         onDelete: 'CASCADE',
@@ -87,6 +87,6 @@ export default class machineCollects1612454021942
   }
 
   public async down(queryRunner: QueryRunner): Promise<void> {
-    await queryRunner.dropTable('machine_collects');
+    await queryRunner.dropTable('machine_collection');
   }
 }

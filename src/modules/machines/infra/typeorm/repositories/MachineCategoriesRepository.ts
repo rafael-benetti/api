@@ -10,6 +10,10 @@ class MachineCategoriesRepository implements IMachineCategoriesRepository {
     this.ormRepository = getRepository(MachineCategory);
   }
 
+  public async save(machineCategory: MachineCategory): Promise<void> {
+    await this.ormRepository.save(machineCategory);
+  }
+
   public async findById(id: number): Promise<MachineCategory | undefined> {
     const machineCategory = await this.ormRepository.findOne({ where: { id } });
 

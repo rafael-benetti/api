@@ -3,6 +3,7 @@ import logger from '@config/logger';
 import express from 'express';
 import cors from 'cors';
 import { createConnections } from 'typeorm';
+import morgan from 'morgan';
 import router from './router';
 import '../../container/index';
 import 'express-async-errors';
@@ -15,6 +16,7 @@ const start = async () => {
 
   app.use(express.json());
   app.use(cors());
+  app.use(morgan('dev'));
 
   app.use(router);
 

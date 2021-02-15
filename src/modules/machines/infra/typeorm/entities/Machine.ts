@@ -1,6 +1,7 @@
 import Company from '@modules/companies/infra/typeorm/entities/Company';
 import Counter from '@modules/counters/infra/typeorm/entities/Counter';
 import SellingPoint from '@modules/sellingPoints/infra/typeorm/entities/SellingPoint';
+import TypeormNumberTransformer from '@shared/utils/TypeormNumberTransformer';
 import {
   Column,
   Entity,
@@ -10,6 +11,7 @@ import {
   OneToMany,
   PrimaryGeneratedColumn,
 } from 'typeorm';
+import MachineCategory from './MachineCategory';
 
 @Entity('machines')
 class Machine {
@@ -36,6 +38,7 @@ class Machine {
   @Column({
     name: 'game_value',
     nullable: false,
+    transformer: new TypeormNumberTransformer(),
   })
   gameValue: number;
 
@@ -51,14 +54,21 @@ class Machine {
   @Column({ name: 'company_id' })
   companyId: number;
 
+  @Column({ name: 'machine_category_id' })
+  machineCategoryId: number;
+
   @ManyToOne(() => Company, company => company.machines)
   @JoinColumn({ name: 'company_id' })
   company: Company;
 
   @OneToMany(() => Counter, counter => counter.machine, {
-    cascade: ['insert'],
+    cascade: ['insert', 'update'],
   })
   counters: Counter[];
+
+  @ManyToOne(() => MachineCategory, machineCategory => machineCategory.machines)
+  @JoinColumn({ name: 'machine_category_id' })
+  machineCategory: MachineCategory;
 }
 
 export default Machine;

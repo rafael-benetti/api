@@ -5,4 +5,5 @@ export default interface IMachineCategoriesRepository {
   create(data: ICreateMachineCategoryDTO): Promise<MachineCategory>;
   listAllCategories(userId: number): Promise<MachineCategory[]>;
   findById(id: number): Promise<MachineCategory | undefined>;
+  save(machineCategory: MachineCategory): Promise<void>;
 }

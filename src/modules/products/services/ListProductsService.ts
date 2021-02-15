@@ -1,6 +1,12 @@
 import { inject, injectable } from 'tsyringe';
-import Product from '../infra/typeorm/entities/Product';
 import IProductsRepository from '../repositories/IProductsRepository';
+
+interface IResponse {
+  id: number;
+  name: string;
+  cost: number;
+  quantity: number;
+}
 
 @injectable()
 class ListProductsService {
@@ -9,10 +15,19 @@ class ListProductsService {
     private productsRepository: IProductsRepository,
   ) {}
 
-  public async execute(userId: number): Promise<Product[]> {
+  public async execute(userId: number): Promise<IResponse[]> {
     const products = await this.productsRepository.findAllProducts(userId);
 
-    return products;
+    const formatedProducts = products.map(product => {
+      return {
+        id: product.id,
+        name: product.name,
+        cost: product.cost,
+        quantity: product.productToUser[0].quantity,
+      };
+    });
+
+    return formatedProducts;
   }
 }
 

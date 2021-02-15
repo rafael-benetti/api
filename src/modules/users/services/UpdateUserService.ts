@@ -35,6 +35,8 @@ class UpdateUserService {
   }: IRequest): Promise<User> {
     const user = await this.usersRepository.findById(userId);
 
+    // TODO: VERIFICAR PERMISSÕES
+
     if (!user) {
       throw AppError.userNotFound;
     }

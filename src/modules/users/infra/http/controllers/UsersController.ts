@@ -37,20 +37,13 @@ export default class UsersController {
   }
 
   public async update(req: Request, res: Response): Promise<Response> {
-    const {
-      userId,
-      name,
-      password,
-      phone,
-      email,
-      isActive,
-      companyIds,
-    } = req.body;
+    const { userId } = req.query;
+    const { name, password, phone, email, isActive, companyIds } = req.body;
 
     const updateUserService = container.resolve(UpdateUserService);
 
     const user = await updateUserService.execute({
-      userId,
+      userId: Number(userId),
       name,
       password,
       phone,
@@ -60,7 +53,6 @@ export default class UsersController {
     });
 
     // TODO: adicionar ClassTransform
-
     return res.json(user);
   }
 }

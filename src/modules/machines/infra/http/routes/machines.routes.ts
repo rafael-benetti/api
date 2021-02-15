@@ -19,7 +19,17 @@ machinesRoutes.post(
       companyId: Joi.number().required(),
       sellingPointId: Joi.number(),
       machineCategoryId: Joi.number(),
-      counters: Joi.array(),
+      counters: Joi.array().items(
+        Joi.object().keys({
+          name: Joi.string().required(),
+          slot: Joi.number().required(),
+          hasDigital: Joi.number().required(),
+          hasMechanical: Joi.number().required(),
+          pin: Joi.number().required(),
+          pulseValue: Joi.number().required(),
+          typeId: Joi.number().required(),
+        }),
+      ),
     },
   }),
   machinesController.create,
@@ -29,14 +39,26 @@ machinesRoutes.patch(
   '/',
   celebrate({
     body: {
-      id: Joi.number().required(),
       serialNumber: Joi.string().required(),
       description: Joi.string().required(),
       gameValue: Joi.number().required(),
       companyId: Joi.number().required(),
       sellingPointId: Joi.number(),
       machineCategoryId: Joi.number(),
-      counters: Joi.array(),
+      counters: Joi.array().items(
+        Joi.object().keys({
+          name: Joi.string().required(),
+          slot: Joi.number().required(),
+          hasDigital: Joi.number().required(),
+          hasMechanical: Joi.number().required(),
+          pin: Joi.number().required(),
+          pulseValue: Joi.number().required(),
+          typeId: Joi.number().required(),
+        }),
+      ),
+    },
+    query: {
+      machineId: Joi.number().required(),
     },
   }),
   machinesController.update,

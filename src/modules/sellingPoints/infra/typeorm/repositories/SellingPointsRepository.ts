@@ -11,6 +11,21 @@ class SellingPointRepository implements ISellingPointsRepository {
     this.ormRepository = getRepository(SellingPoint);
   }
 
+  public async save(sellingPoint: SellingPoint): Promise<void> {
+    await this.ormRepository.save(sellingPoint);
+  }
+
+  public async findById(
+    sellingPointId: number,
+  ): Promise<SellingPoint | undefined> {
+    const sellingPoint = await this.ormRepository.findOne({
+      where: { id: sellingPointId },
+      relations: ['address'],
+    });
+
+    return sellingPoint;
+  }
+
   public async find({
     name,
     companyIds,

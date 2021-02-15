@@ -35,7 +35,9 @@ class SellingPoint {
   @OneToMany(() => Machine, machine => machine.sellingPoint)
   machines: Machine[];
 
-  @OneToOne(() => Address)
+  @OneToOne(() => Address, {
+    cascade: ['insert', 'update'],
+  })
   @JoinColumn({ name: 'address_id' })
   address: Address;
 }

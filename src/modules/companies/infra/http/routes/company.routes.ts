@@ -19,8 +19,17 @@ companiesRoutes.post(
   companiesController.create,
 );
 
-companiesRoutes.get('/', companiesController.index);
-
-companiesRoutes.put('/', companiesController.update);
+companiesRoutes.put(
+  '/',
+  celebrate({
+    body: {
+      name: Joi.string().required(),
+    },
+    query: {
+      companyId: Joi.number().required(),
+    },
+  }),
+  companiesController.update,
+);
 
 export default companiesRoutes;

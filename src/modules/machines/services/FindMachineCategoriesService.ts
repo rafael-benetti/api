@@ -3,7 +3,7 @@ import MachineCategory from '../infra/typeorm/entities/MachineCategory';
 import IMachineCategoriesRepository from '../repositories/IMachineCategoriesRepository';
 
 @injectable()
-class ListMachineCategoriesService {
+class FindMachineCategoriesService {
   constructor(
     @inject('MachineCategoriesRepository')
     private machineCategoriesRepository: IMachineCategoriesRepository,
@@ -18,4 +18,4 @@ class ListMachineCategoriesService {
   }
 }
 
-export default ListMachineCategoriesService;
+export default FindMachineCategoriesService;

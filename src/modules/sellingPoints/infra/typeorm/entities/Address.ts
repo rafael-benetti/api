@@ -27,7 +27,9 @@ class Address {
   @Column()
   note: string;
 
-  @OneToOne(() => SellingPoint)
+  @OneToOne(() => SellingPoint, {
+    cascade: ['insert', 'update', 'remove'],
+  })
   sellingPoint: SellingPoint;
 }
 

@@ -10,18 +10,22 @@ class CountersRepository implements ICountersRepository {
     this.ormRepository = getRepository(Counter);
   }
 
+  public createCounters(data: ICreateCounterDTO[]): Counter[] {
+    const counters = data.map(counter => this.ormRepository.create(counter));
+
+    return counters;
+  }
+
   public async findCountersByMachineId(machineId: number): Promise<Counter[]> {
     const counters = await this.ormRepository.find({ where: { machineId } });
 
     return counters;
   }
 
-  public async createCounters(data: ICreateCounterDTO[]): Promise<Counter[]> {
-    const counters = data.map(counter => this.ormRepository.create(counter));
+  public async save(counter: Counter): Promise<Counter> {
+    await this.ormRepository.save(counter);
 
-    // await this.ormRepository.save(counters);
-
-    return counters;
+    return counter;
   }
 }
 

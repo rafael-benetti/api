@@ -16,7 +16,10 @@ class MachinesRepository implements IMachinesRepository {
   }
 
   public async findById(machineId: number): Promise<Machine | undefined> {
-    const machine = this.ormRepository.findOne({ where: { machineId } });
+    const machine = this.ormRepository.findOne({
+      where: { id: machineId },
+      relations: ['counters', 'machineCategory'],
+    });
 
     return machine;
   }
@@ -40,7 +43,7 @@ class MachinesRepository implements IMachinesRepository {
       where: filters,
       take: limit,
       skip: limit * page,
-      relations: ['counters', 'company'],
+      relations: ['counters', 'company', 'machineCategory'],
     });
 
     return machines;
@@ -54,6 +57,7 @@ class MachinesRepository implements IMachinesRepository {
     companyId,
     sellingPointId,
     counters,
+    machineCategoryId,
   }: ICreateMachineDTO): Promise<Machine> {
     const machine = this.ormRepository.create({
       description,
@@ -63,6 +67,7 @@ class MachinesRepository implements IMachinesRepository {
       companyId,
       sellingPointId,
       counters,
+      machineCategoryId,
     });
 
     await this.ormRepository.save(machine);

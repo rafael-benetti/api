@@ -12,6 +12,7 @@ interface IRequest {
 }
 
 interface IResponse {
+  id: number;
   name: string;
   cost: number;
   price: number;
@@ -60,6 +61,7 @@ class CreateProductService {
     });
 
     const response: IResponse = {
+      id: product.id,
       name: product.name,
       cost: product.cost,
       price: product.price,

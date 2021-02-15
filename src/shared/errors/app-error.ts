@@ -59,9 +59,21 @@ export default class AppError {
     statusCode: 404,
   });
 
+  static sellingPointNotFound = new AppError({
+    errorCode: 'SELLING_POINT_NOT_FOUND',
+    message: "Could not find the 'Selling Point'.",
+    statusCode: 404,
+  });
+
   static machineCategoryNotFound = new AppError({
     errorCode: 'MACHINE_CATEGORY_NOT_FOUND',
     message: "Could not find the 'machine category'.",
+    statusCode: 404,
+  });
+
+  static machineNotFound = new AppError({
+    errorCode: 'MACHINE_NOT_FOUND',
+    message: "Could not find the 'machine'.",
     statusCode: 404,
   });
 

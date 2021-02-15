@@ -1,6 +1,8 @@
 import { Router } from 'express';
 import ensureAuthentication from '@shared/server/express/middlewares/ensureAuthenticated';
 import { celebrate, Joi } from 'celebrate';
+// import multer from 'multer';
+// import multerConfig from '@config/multer';
 import UsersController from '../controllers/UsersController';
 import 'express-async-errors';
 import ProfileController from '../controllers/ProfileController';
@@ -10,6 +12,8 @@ const usersRoutes = Router();
 const usersController = new UsersController();
 
 const profileController = new ProfileController();
+
+// const upload = multer(multerConfig);
 
 usersRoutes.post(
   '/',
@@ -49,4 +53,5 @@ usersRoutes.patch(
   profileController.update,
 );
 
+// usersRoutes.patch('/me/avatar', upload);
 export default usersRoutes;

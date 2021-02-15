@@ -30,6 +30,21 @@ import SellingPointsRepository from '@modules/sellingPoints/infra/typeorm/reposi
 import IAddressesRepository from '@modules/sellingPoints/repositories/IAddressesRepository';
 import AddressesRepository from '@modules/sellingPoints/infra/typeorm/repositories/AddressesRepository';
 
+import IMachineCollectionRepository from '@modules/machine_collection/repositories/IMachineCollectionRepository';
+import MachineCollectionRepository from '@modules/machine_collection/infra/typeorm/repositories/MachineCollectionRepository';
+import MachineCollectionCounterRepository from '@modules/machine_collection/infra/typeorm/repositories/MachineCollectionCounterRepository';
+import IMachineCollectionCounterRepository from '@modules/machine_collection/repositories/IMachineCollectionCounterRepository';
+
+container.registerSingleton<IMachineCollectionCounterRepository>(
+  'MachineCollectionCounterRepository',
+  MachineCollectionCounterRepository,
+);
+
+container.registerSingleton<IMachineCollectionRepository>(
+  'MachineCollectionRepository',
+  MachineCollectionRepository,
+);
+
 container.registerSingleton<IAddressesRepository>(
   'AddressesRepository',
   AddressesRepository,

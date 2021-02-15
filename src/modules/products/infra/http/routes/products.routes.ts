@@ -15,7 +15,7 @@ productsRoutes.post(
     body: {
       name: Joi.string().required(),
       cost: Joi.number().positive().required(),
-      price: Joi.number().positive(),
+      price: Joi.number().default(0),
       quantity: Joi.number().positive().required(),
     },
   }),

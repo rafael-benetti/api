@@ -10,7 +10,7 @@ interface IRequest {
   responsible: string;
   phone1: string;
   phone2: string;
-  addressData: {
+  address: {
     zipCode: string;
     state: string;
     city: string;
@@ -33,19 +33,17 @@ class CreateSellingPointService {
 
   public async execute({
     name,
-    addressData,
+    address,
     companyId,
     phone1,
     phone2,
     responsible,
   }: IRequest): Promise<SellingPoint> {
-    const address = await this.addressesRepository.create(addressData);
+    const newAddress = this.addressesRepository.create(address);
 
-    if (!address) {
+    if (!newAddress) {
       throw AppError.unknownError;
     }
-
-    const addressId = address.id;
 
     const sellingPoint = await this.sellingPointsRepository.create({
       name,
@@ -53,7 +51,7 @@ class CreateSellingPointService {
       phone2,
       phone1,
       companyId,
-      addressId,
+      address: newAddress,
     });
 
     return sellingPoint;

@@ -1,4 +1,6 @@
-import { Column, Entity, PrimaryGeneratedColumn } from 'typeorm';
+import TypeormNumberTransformer from '@shared/utils/TypeormNumberTransformer';
+import { Column, Entity, OneToMany, PrimaryGeneratedColumn } from 'typeorm';
+import ProductToUser from './ProductToUser';
 
 @Entity('products')
 class Product {
@@ -8,17 +10,24 @@ class Product {
   @Column()
   name: string;
 
-  @Column('decimal', { precision: 6, scale: 2 })
+  @Column('decimal', {
+    precision: 6,
+    scale: 2,
+    transformer: new TypeormNumberTransformer(),
+  })
   cost: number;
 
-  @Column('decimal', { precision: 6, scale: 2 })
+  @Column('decimal', {
+    precision: 6,
+    scale: 2,
+  })
   price: number;
 
   @Column({ name: 'owner_id' })
   ownerId: number;
 
-  // @OneToMany(() => ProductToUser, productToUser => productToUser.productInfo)
-  // productToUser: ProductToUser[];
+  @OneToMany(() => ProductToUser, productToUser => productToUser.productInfo)
+  productToUser: ProductToUser[];
 }
 
 export default Product;
