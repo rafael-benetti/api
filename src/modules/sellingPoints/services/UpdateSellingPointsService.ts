@@ -49,13 +49,14 @@ class UpdateSellingPointsService {
     if (companyId) sellingPoint.companyId = companyId;
     if (address) {
       if (address.city) sellingPoint.address.city = address.city;
+
       if (address.neighborhood)
         sellingPoint.address.neighborhood = address.neighborhood;
-      if (address.note) sellingPoint.address.note = address.note;
       if (address.number) sellingPoint.address.number = address.number;
       if (address.state) sellingPoint.address.state = address.state;
       if (address.street) sellingPoint.address.street = address.street;
       if (address.zipCode) sellingPoint.address.zipCode = address.zipCode;
+      if (address.note !== undefined) sellingPoint.address.note = address.note;
     }
 
     await this.sellingPointsRepository.save(sellingPoint);

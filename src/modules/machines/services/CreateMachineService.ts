@@ -2,7 +2,6 @@ import { inject, injectable } from 'tsyringe';
 import { format } from 'date-fns';
 import Counter from '@modules/counters/infra/typeorm/entities/Counter';
 import ICountersRepository from '@modules/counters/repositories/ICoutersRepository';
-import logger from '@config/logger';
 import Machine from '../infra/typeorm/entities/Machine';
 import IMachinesRepository from '../repositories/IMachinesRepository';
 
@@ -42,8 +41,6 @@ class CreateMachineService {
     if (counters) {
       countersEntities = this.countersRepository.createCounters(counters);
     }
-
-    logger.info(countersEntities);
 
     const machine = await this.machinesRepository.create({
       description,

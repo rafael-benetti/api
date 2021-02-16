@@ -5,12 +5,12 @@ import {
   TableForeignKey,
 } from 'typeorm';
 
-export default class machineCollectionCounter1612455680892
+export default class machineCollectCounterPhotos1613488894260
   implements MigrationInterface {
   public async up(queryRunner: QueryRunner): Promise<void> {
     await queryRunner.createTable(
       new Table({
-        name: 'machine_collection_counter',
+        name: 'machine_collect_counter_photos',
         columns: [
           {
             name: 'id',
@@ -20,23 +20,16 @@ export default class machineCollectionCounter1612455680892
             generationStrategy: 'increment',
           },
           {
-            name: 'quantity',
-            type: 'int',
-          },
-          {
-            name: 'is_digital',
-            type: 'tinyint(1)',
-          },
-          {
-            name: 'is_mechanical',
-            type: 'tinyint(1)',
-          },
-          {
-            name: 'is_counted',
-            type: 'tinyint(1)',
+            name: 'photo',
+            type: 'varchar',
+            isNullable: false,
           },
           {
             name: 'counter_id',
+            type: 'int',
+          },
+          {
+            name: 'machine_collect_counter_id',
             type: 'int',
           },
           {
@@ -48,21 +41,9 @@ export default class machineCollectionCounter1612455680892
     );
 
     await queryRunner.createForeignKey(
-      'machine_collection_counter',
+      'machine_collect_counter_photos',
       new TableForeignKey({
-        name: 'machine_collection_counter_counters',
-        referencedTableName: 'counters',
-        referencedColumnNames: ['id'],
-        columnNames: ['counter_id'],
-        onUpdate: 'CASCADE',
-        onDelete: 'CASCADE',
-      }),
-    );
-
-    await queryRunner.createForeignKey(
-      'machine_collection_counter',
-      new TableForeignKey({
-        name: 'machine_collect_counter_machine_collection',
+        name: 'machine_collect_counter_photos_machine_collect',
         referencedTableName: 'machine_collection',
         referencedColumnNames: ['id'],
         columnNames: ['machine_collect_id'],
@@ -70,9 +51,33 @@ export default class machineCollectionCounter1612455680892
         onDelete: 'CASCADE',
       }),
     );
+
+    await queryRunner.createForeignKey(
+      'machine_collect_counter_photos',
+      new TableForeignKey({
+        name: 'machine_collect_counter_photos_counters',
+        referencedTableName: 'counters',
+        referencedColumnNames: ['id'],
+        columnNames: ['counter_id'],
+        onDelete: 'CASCADE',
+        onUpdate: 'CASCADE',
+      }),
+    );
+
+    await queryRunner.createForeignKey(
+      'machine_collect_counter_photos',
+      new TableForeignKey({
+        name: 'machine_collect_counter_photos_machine_collect_counters',
+        referencedTableName: 'machine_collect_counters',
+        referencedColumnNames: ['id'],
+        columnNames: ['machine_collect_counter_id'],
+        onUpdate: 'CASCADE',
+        onDelete: 'CASCADE',
+      }),
+    );
   }
 
   public async down(queryRunner: QueryRunner): Promise<void> {
-    await queryRunner.dropTable('machine_collection_counter');
+    await queryRunner.dropTable('machine_collect_counter_photos');
   }
 }

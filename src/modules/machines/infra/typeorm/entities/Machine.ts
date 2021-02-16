@@ -1,5 +1,6 @@
 import Company from '@modules/companies/infra/typeorm/entities/Company';
 import Counter from '@modules/counters/infra/typeorm/entities/Counter';
+import MachineCollect from '@modules/machine_collection/infra/typeorm/entities/MachineCollect';
 import SellingPoint from '@modules/sellingPoints/infra/typeorm/entities/SellingPoint';
 import TypeormNumberTransformer from '@shared/utils/TypeormNumberTransformer';
 import {
@@ -31,7 +32,7 @@ class Machine {
   @Column({ name: 'selling_point_id' })
   sellingPointId: number;
 
-  @OneToMany(() => SellingPoint, sellingPoint => sellingPoint.machines)
+  @ManyToOne(() => SellingPoint, sellingPoint => sellingPoint.machines)
   @JoinColumn({ name: 'selling_point_id' })
   sellingPoint: SellingPoint;
 
@@ -69,6 +70,9 @@ class Machine {
   @ManyToOne(() => MachineCategory, machineCategory => machineCategory.machines)
   @JoinColumn({ name: 'machine_category_id' })
   machineCategory: MachineCategory;
+
+  @OneToMany(() => MachineCollect, machineCollect => machineCollect.machine)
+  machineCollection: MachineCollect[];
 }
 
 export default Machine;

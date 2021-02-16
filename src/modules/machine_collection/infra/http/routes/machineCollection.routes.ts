@@ -8,6 +8,11 @@ const machineCollectionController = new MachineCollectionController();
 
 machineCollectionRoutes.use(ensureAuthentication);
 
-machineCollectionRoutes.post('/collection', machineCollectionController.create);
+machineCollectionRoutes.post(
+  '/collection/:machineId',
+  machineCollectionController.create,
+);
+
+machineCollectionRoutes.get('/collection', machineCollectionController.index);
 
 export default machineCollectionRoutes;

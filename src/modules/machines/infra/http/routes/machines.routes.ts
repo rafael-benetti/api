@@ -47,6 +47,7 @@ machinesRoutes.patch(
       machineCategoryId: Joi.number(),
       counters: Joi.array().items(
         Joi.object().keys({
+          id: Joi.number().required(),
           name: Joi.string().required(),
           slot: Joi.number().required(),
           hasDigital: Joi.number().required(),
@@ -54,6 +55,7 @@ machinesRoutes.patch(
           pin: Joi.number().required(),
           pulseValue: Joi.number().required(),
           typeId: Joi.number().required(),
+          machineId: Joi.number().required(),
         }),
       ),
     },
@@ -68,11 +70,12 @@ machinesRoutes.get(
   '/',
   celebrate({
     query: {
-      name: Joi.string(),
+      keywords: Joi.string(),
       isActive: Joi.string().valid('false', 'true'),
       companyId: Joi.number().positive(),
-      limit: Joi.number(),
-      page: Joi.number(),
+      limit: Joi.number().optional(),
+      page: Joi.number().optional(),
+      machineCategoryId: Joi.number().positive().optional(),
     },
   }),
   machinesController.index,

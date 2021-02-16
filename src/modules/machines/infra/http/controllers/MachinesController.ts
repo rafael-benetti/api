@@ -34,20 +34,28 @@ class MachinesController {
   public async index(req: Request, res: Response): Promise<Response> {
     const { userId } = req;
 
-    const { companyId, name, isActive, limit, page } = req.query;
+    const {
+      companyId,
+      machineCategoryId,
+      keywords,
+      isActive,
+      limit,
+      page,
+    } = req.query;
 
-    const listMachinesService = container.resolve(FindMachinesService);
+    const findMachinesService = container.resolve(FindMachinesService);
 
-    const machines = await listMachinesService.execute({
+    const { machines, machinesCount } = await findMachinesService.execute({
       userId,
       companyId: Number(companyId),
-      name: name as string,
+      machineCategoryId: Number(machineCategoryId),
+      keywords: keywords as string,
       isActive: isActive as string,
       limit: Number(limit),
       page: Number(page),
     });
 
-    return res.json(machines);
+    return res.json({ machines, machinesCount });
   }
 
   public async update(req: Request, res: Response): Promise<Response> {

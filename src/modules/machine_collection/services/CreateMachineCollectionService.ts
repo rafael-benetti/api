@@ -1,3 +1,4 @@
+import logger from '@config/logger';
 import { inject, injectable } from 'tsyringe';
 import MachineCollect from '../infra/typeorm/entities/MachineCollect';
 import MachineCollectCounter from '../infra/typeorm/entities/MachineCollectCounter';
@@ -11,7 +12,7 @@ interface IRequest {
 }
 
 @injectable()
-class CreateMachineCollectServices {
+class CreateMachineCollectService {
   constructor(
     @inject('MachineCollectionRepository')
     private machineCollectionRepository: IMachineCollectionRepository,
@@ -25,19 +26,24 @@ class CreateMachineCollectServices {
     machineId,
     machineCollectionCounter,
   }: IRequest): Promise<MachineCollect> {
-    const machineCollectionCounterResponse = machineCollectionCounter.map(
+    const machineCollectionCounterEntities = machineCollectionCounter.map(
       machineCollectCounter =>
         this.machineCollectionCounterRepository.createEntity(
           machineCollectCounter,
         ),
     );
 
+    const lastCollection = await this.machineCollectionRepository.findLastCollect(
+      machineId,
+    );
+
+    logger.info(lastCollection);
+
     const machineCollect = await this.machineCollectionRepository.create({
       userId,
       machineId,
-      machineCollectionCounter: machineCollectionCounterResponse,
-      // TODO
-      previousCollectionId: 1,
+      machineCollectionCounter: machineCollectionCounterEntities,
+      previousCollectionId: lastCollection?.id || undefined,
       // TODO
       active: 1,
     });
@@ -46,4 +52,4 @@ class CreateMachineCollectServices {
   }
 }
 
-export default CreateMachineCollectServices;
+export default CreateMachineCollectService;

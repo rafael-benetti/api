@@ -29,6 +29,18 @@ export default class AppError {
     statusCode: 401,
   });
 
+  static oldPasswordIsMissing = new AppError({
+    errorCode: 'OLD_PASSWPRD_IS_MISSING',
+    message: 'You need to inform the old password to set a new password',
+    statusCode: 401,
+  });
+
+  static oldPasswordDoesMatch = new AppError({
+    errorCode: 'OLD_PASSWPRD_DOES_MATCH',
+    message: 'Old password does not match',
+    statusCode: 401,
+  });
+
   static nameAlreadyInUsed = new AppError({
     errorCode: 'NAME_ALREADY_USED',
     message: 'You already have a company with this name.',

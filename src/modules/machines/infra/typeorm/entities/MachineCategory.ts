@@ -20,10 +20,6 @@ class MachineCategory {
 
   @OneToMany(() => Machine, machine => machine.machineCategory)
   machines: Machine[];
-
-  // @ManyToOne(() => User, user => user.machineCategories)
-  // @JoinColumn({ name: 'owner_id' })
-  // owner: User;
 }
 
 export default MachineCategory;

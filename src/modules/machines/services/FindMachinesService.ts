@@ -7,10 +7,16 @@ import IMachinesRepository from '../repositories/IMachinesRepository';
 interface IRequest {
   userId: number;
   companyId?: number;
+  machineCategoryId?: number;
   isActive?: string;
-  name?: string;
+  keywords?: string;
   limit: number;
   page: number;
+}
+
+interface IResponse {
+  machines: Machine[];
+  machinesCount: number;
 }
 
 @injectable()
@@ -25,12 +31,13 @@ class FindMachinesService {
 
   public async execute({
     companyId,
+    machineCategoryId,
     isActive,
-    name,
+    keywords,
     userId,
     limit,
     page,
-  }: IRequest): Promise<Machine[]> {
+  }: IRequest): Promise<IResponse> {
     let companyIds: number[] = [];
     let active: number | undefined;
 
@@ -60,15 +67,19 @@ class FindMachinesService {
       }
     }
 
-    const machines = await this.machinesRepository.findMachines({
+    const {
+      machines,
+      machinesCount,
+    } = await this.machinesRepository.findMachines({
       companyIds,
+      machineCategoryId,
       active,
-      name,
+      keywords,
       limit,
       page,
     });
 
-    return machines;
+    return { machines, machinesCount };
   }
 }
 

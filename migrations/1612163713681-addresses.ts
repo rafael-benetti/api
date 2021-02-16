@@ -40,6 +40,7 @@ export default class addresses1612163713681 implements MigrationInterface {
           {
             name: 'note',
             type: 'varchar(100)',
+            isNullable: true,
           },
         ],
       }),

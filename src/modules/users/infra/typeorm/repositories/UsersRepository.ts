@@ -15,7 +15,6 @@ class UserRepository implements IUserRepository {
       .createQueryBuilder('users')
       .leftJoinAndSelect('users.companies', 'companies')
       .where({ id })
-      // .andWhere('companies.id = :id ', { id: 9 })
       .getOne();
 
     return user;

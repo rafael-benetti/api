@@ -7,7 +7,15 @@ class ProfileController {
   public async update(req: Request, res: Response): Promise<Response> {
     const { userId } = req;
 
-    const { name, password, phone } = req.body;
+    let picture;
+    try {
+      picture = req.file.path;
+    } catch (error) {
+      picture = undefined;
+    }
+
+    const { name, password, phone, oldPassword } = req.body;
+
     const updateUserProfileService = container.resolve(
       UpdateUserProfileService,
     );
@@ -15,7 +23,9 @@ class ProfileController {
     const user = await updateUserProfileService.execute({
       name,
       password,
+      oldPassword,
       phone,
+      picture,
       userId,
     });
 

@@ -1,4 +1,12 @@
-import { Column, Entity, OneToMany, PrimaryGeneratedColumn } from 'typeorm';
+import Machine from '@modules/machines/infra/typeorm/entities/Machine';
+import {
+  Column,
+  Entity,
+  JoinColumn,
+  ManyToOne,
+  OneToMany,
+  PrimaryGeneratedColumn,
+} from 'typeorm';
 import MachineCollectCounter from './MachineCollectCounter';
 
 @Entity('machine_collection')
@@ -18,9 +26,19 @@ class MachineCollect {
   @Column({ name: 'user_id' })
   userId: number;
 
+  @Column({ name: 'machine_id' })
+  machineId: number;
+
+  @ManyToOne(() => Machine)
+  @JoinColumn({ name: 'machine_id' })
+  machine: Machine;
+
   @OneToMany(
     () => MachineCollectCounter,
     machineCollectCounter => machineCollectCounter.machineCollect,
+    {
+      cascade: ['insert', 'update'],
+    },
   )
   machineCollectionCounter: MachineCollectCounter[];
 }

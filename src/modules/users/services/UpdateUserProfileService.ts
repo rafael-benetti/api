@@ -1,14 +1,17 @@
-import logger from '@config/logger';
 import AppError from '@shared/errors/app-error';
 import { inject, injectable } from 'tsyringe';
+import fs from 'fs';
+import logger from '@config/logger';
 import User from '../infra/typeorm/entities/User';
 import IUsersRepository from '../repositories/IUsersRepository';
 
 interface IRequest {
   userId: number;
-  name: string;
-  phone: string;
-  password: string;
+  name?: string;
+  picture?: string;
+  phone?: string;
+  password?: string;
+  oldPassword?: string;
 }
 
 @injectable()
@@ -21,7 +24,9 @@ class UpdateUserProfileService {
   public async execute({
     userId,
     name,
+    picture,
     password,
+    oldPassword,
     phone,
   }: IRequest): Promise<User> {
     const user = await this.usersRepository.findById(userId);
@@ -30,19 +35,40 @@ class UpdateUserProfileService {
       throw AppError.userNotFound;
     }
 
-    if (name) {
-      user.name = name;
+    if (name) user.name = name;
+    if (phone) user.phone = phone;
+    if (password && !oldPassword) {
+      throw AppError.oldPasswordIsMissing;
     }
-    if (password) {
+
+    if (password && oldPassword) {
+      // TODO: IMPLEMENTAR COMPARE
+
+      const checkOldPassword = user.password === oldPassword;
+
+      if (!checkOldPassword) {
+        throw AppError.oldPasswordDoesMatch;
+      }
+
       user.password = password;
     }
-    if (phone) {
-      user.phone = phone;
+
+    if (picture) {
+      if (process.env.STORAGE_TYPE === 'S3') {
+        // TODO: IMPLEMENTAR E TALS
+      } else {
+        if (user.picture) {
+          try {
+            await fs.promises.unlink(user.picture);
+          } catch (error) {
+            logger.error(error);
+          }
+        }
+        user.picture = picture;
+      }
     }
 
     const updatedUser = await this.usersRepository.save(user);
-
-    logger.info(updatedUser);
 
     return updatedUser;
   }

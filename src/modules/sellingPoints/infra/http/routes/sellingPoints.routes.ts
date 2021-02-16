@@ -25,7 +25,7 @@ sellingPointRoutes.post(
         neighborhood: Joi.string().required(),
         street: Joi.string().required(),
         number: Joi.number().required(),
-        note: Joi.string(),
+        note: Joi.string().allow(null),
       },
     },
   }),
@@ -48,7 +48,7 @@ sellingPointRoutes.patch(
         neighborhood: Joi.string().required(),
         street: Joi.string().required(),
         number: Joi.number().required(),
-        note: Joi.string(),
+        note: Joi.string().allow(null),
       },
     },
     query: {

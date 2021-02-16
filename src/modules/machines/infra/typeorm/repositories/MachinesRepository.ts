@@ -1,5 +1,7 @@
+import logger from '@config/logger';
 import ICreateMachineDTO from '@modules/machines/dtos/ICreateMachineDTO';
-import IListMachinesDTO from '@modules/machines/dtos/IListMachinesDTO';
+import IFindMachinesDTO from '@modules/machines/dtos/IFindMachinesDTO';
+import IFindMachinesResponseDTO from '@modules/machines/dtos/IFindMachinesResponseDTO';
 import IMachinesRepository from '@modules/machines/repositories/IMachinesRepository';
 import { getRepository, Like, Repository } from 'typeorm';
 import Machine from '../entities/Machine';
@@ -27,26 +29,47 @@ class MachinesRepository implements IMachinesRepository {
   public async findMachines({
     companyIds,
     active,
-    name,
+    keywords,
     limit,
     page,
-  }: IListMachinesDTO): Promise<Machine[]> {
-    const filters = companyIds.map(companyId => {
-      return {
-        companyId,
-        ...(active !== undefined && { active }),
-        ...(name && { serialNumber: Like(`%${name}%`) }),
-      };
+    machineCategoryId,
+  }: IFindMachinesDTO): Promise<IFindMachinesResponseDTO> {
+    const filters = companyIds.flatMap(companyId => {
+      if (keywords) {
+        return [
+          {
+            companyId,
+            ...(machineCategoryId && { machineCategoryId }),
+            ...(active !== undefined && { active }),
+            ...(keywords && { description: Like(`%${keywords}%`) }),
+          },
+          {
+            companyId,
+            ...(machineCategoryId && { machineCategoryId }),
+            ...(active !== undefined && { active }),
+            ...(keywords && { serialNumber: Like(`%${keywords}%`) }),
+          },
+        ];
+      }
+      return [
+        {
+          companyId,
+          ...(machineCategoryId && { machineCategoryId }),
+          ...(active !== undefined && { active }),
+        },
+      ];
     });
 
-    const machines = await this.ormRepository.find({
+    logger.info(filters);
+
+    const [machines, machinesCount] = await this.ormRepository.findAndCount({
       where: filters,
       take: limit,
-      skip: limit * page,
+      skip: page ? limit || 0 * page : undefined,
       relations: ['counters', 'company', 'machineCategory'],
     });
 
-    return machines;
+    return { machinesCount, machines };
   }
 
   public async create({

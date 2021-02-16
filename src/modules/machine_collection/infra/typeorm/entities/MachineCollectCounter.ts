@@ -1,4 +1,3 @@
-import Counter from '@modules/counters/infra/typeorm/entities/Counter';
 import {
   Column,
   Entity,
@@ -8,7 +7,7 @@ import {
 } from 'typeorm';
 import MachineCollect from './MachineCollect';
 
-@Entity('machine_collecion_counter')
+@Entity('machine_collect_counters')
 class MachineCollectCounter {
   @PrimaryGeneratedColumn('increment')
   id: number;
@@ -31,11 +30,14 @@ class MachineCollectCounter {
   @Column({ name: 'machine_collect_id' })
   machineCollectId: number;
 
-  @ManyToOne(() => Counter)
-  @JoinColumn({ name: 'counter_id' })
-  counter: Counter;
-
-  @ManyToOne(() => MachineCollect)
+  @ManyToOne(
+    () => MachineCollect,
+    machineCollect => machineCollect.machineCollectionCounter,
+    {
+      cascade: ['insert', 'update', 'remove'],
+      orphanedRowAction: 'delete',
+    },
+  )
   @JoinColumn({ name: 'machine_collect_id' })
   machineCollect: MachineCollect;
 }
