@@ -1,7 +1,7 @@
 import AppError from '@shared/errors/app-error';
 import { inject, injectable } from 'tsyringe';
 import IProductsRepository from '../repositories/IProductsRepository';
-import ITransferProductsRepository from '../repositories/ITransferProductsRepository';
+import IProductsStocksRepository from '../repositories/IProductsStocksRepository';
 
 interface IRequest {
   name: string;
@@ -15,8 +15,6 @@ interface IResponse {
   id: number;
   name: string;
   cost: number;
-  price: number;
-  ownerId: number;
   quantity: number;
 }
 
@@ -26,8 +24,8 @@ class CreateProductService {
     @inject('ProductsRepository')
     private productRepository: IProductsRepository,
 
-    @inject('TransferProductsRepository')
-    private tranferProductRepository: ITransferProductsRepository,
+    @inject('IProductsStocksRepository')
+    private productsStocksRepository: IProductsStocksRepository,
   ) {}
 
   public async execute({
@@ -54,7 +52,7 @@ class CreateProductService {
       price,
     });
 
-    const productToUser = await this.tranferProductRepository.create({
+    const productToUser = await this.productsStocksRepository.create({
       targetUserId: ownerId,
       quantity,
       productId: product.id,
@@ -64,8 +62,6 @@ class CreateProductService {
       id: product.id,
       name: product.name,
       cost: product.cost,
-      price: product.price,
-      ownerId: product.ownerId,
       quantity: productToUser.quantity,
     };
 

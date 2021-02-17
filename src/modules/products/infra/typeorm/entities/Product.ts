@@ -1,6 +1,6 @@
 import TypeormNumberTransformer from '@shared/utils/TypeormNumberTransformer';
 import { Column, Entity, OneToMany, PrimaryGeneratedColumn } from 'typeorm';
-import ProductToUser from './ProductToUser';
+import ProductStock from './ProductStock';
 
 @Entity('products')
 class Product {
@@ -26,8 +26,8 @@ class Product {
   @Column({ name: 'owner_id' })
   ownerId: number;
 
-  @OneToMany(() => ProductToUser, productToUser => productToUser.productInfo)
-  productToUser: ProductToUser[];
+  @OneToMany(() => ProductStock, productStock => productStock.productInfo)
+  productStock: ProductStock[];
 }
 
 export default Product;

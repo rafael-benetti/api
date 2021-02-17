@@ -21,6 +21,22 @@ productsRoutes.post(
   }),
   productsController.create,
 );
+
 productsRoutes.get('/', productsController.index);
+
+productsRoutes.patch(
+  '/',
+  celebrate({
+    query: {
+      productId: Joi.number().required(),
+    },
+    body: {
+      cost: Joi.number(),
+      quantity: Joi.number(),
+      name: Joi.string(),
+    },
+  }),
+  productsController.update,
+);
 
 export default productsRoutes;

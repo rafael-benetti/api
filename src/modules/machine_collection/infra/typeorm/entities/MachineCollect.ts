@@ -8,6 +8,7 @@ import {
   PrimaryGeneratedColumn,
 } from 'typeorm';
 import MachineCollectCounter from './MachineCollectCounter';
+import MachineCollectCounterPhoto from './MachineCollectCounterPhotos';
 
 @Entity('machine_collection')
 class MachineCollect {
@@ -40,7 +41,16 @@ class MachineCollect {
       cascade: ['insert', 'update'],
     },
   )
-  machineCollectionCounter: MachineCollectCounter[];
+  machineCollectCounters: MachineCollectCounter[];
+
+  @OneToMany(
+    () => MachineCollectCounterPhoto,
+    machineCollectCounterPhoto => machineCollectCounterPhoto.machineCollect,
+    {
+      cascade: ['insert', 'update'],
+    },
+  )
+  machineCollectCounterPhotos: MachineCollectCounterPhoto[];
 }
 
 export default MachineCollect;

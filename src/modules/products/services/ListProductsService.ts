@@ -23,7 +23,7 @@ class ListProductsService {
         id: product.id,
         name: product.name,
         cost: product.cost,
-        quantity: product.productToUser[0].quantity,
+        quantity: product.productStock[0].quantity,
       };
     });
 

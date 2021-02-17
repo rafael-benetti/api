@@ -1,15 +1,21 @@
 import ICreateTransferProductsDTO from '@modules/products/dtos/ICreateTransferProductsDTO';
 import IFindByRelationDTO from '@modules/products/dtos/IFindByRelationDTO';
 import IUpdateTransferProductDTO from '@modules/products/dtos/IUpdateTransferProductDTO';
-import ITransferProductsRepository from '@modules/products/repositories/ITransferProductsRepository';
+import IProductStocksRepository from '@modules/products/repositories/IProductsStocksRepository';
 import { getRepository, Repository } from 'typeorm';
-import ProductToUser from '../entities/ProductToUser';
+import ProductStock from '../entities/ProductStock';
 
-class ProductToUserRepository implements ITransferProductsRepository {
-  private ormRepository: Repository<ProductToUser>;
+class ProductStocksRepository implements IProductStocksRepository {
+  private ormRepository: Repository<ProductStock>;
 
   constructor() {
-    this.ormRepository = getRepository(ProductToUser);
+    this.ormRepository = getRepository(ProductStock);
+  }
+
+  public async save(productStock: ProductStock): Promise<ProductStock> {
+    await this.ormRepository.save(productStock);
+
+    return productStock;
   }
 
   public async update({
@@ -22,7 +28,7 @@ class ProductToUserRepository implements ITransferProductsRepository {
   public async findByRelation({
     userId,
     productId,
-  }: IFindByRelationDTO): Promise<ProductToUser | undefined> {
+  }: IFindByRelationDTO): Promise<ProductStock | undefined> {
     const productToUser = await this.ormRepository.findOne({
       where: {
         userId,
@@ -37,7 +43,7 @@ class ProductToUserRepository implements ITransferProductsRepository {
     targetUserId,
     productId,
     quantity,
-  }: ICreateTransferProductsDTO): Promise<ProductToUser> {
+  }: ICreateTransferProductsDTO): Promise<ProductStock> {
     const productToUser = this.ormRepository.create({
       quantity,
       productId,
@@ -50,4 +56,4 @@ class ProductToUserRepository implements ITransferProductsRepository {
   }
 }
 
-export default ProductToUserRepository;
+export default ProductStocksRepository;

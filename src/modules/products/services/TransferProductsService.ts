@@ -1,6 +1,6 @@
 import AppError from '@shared/errors/app-error';
 import { inject, injectable } from 'tsyringe';
-import ITransferProductsRepository from '../repositories/ITransferProductsRepository';
+import IProductsStocksRepository from '../repositories/IProductsStocksRepository';
 
 interface IRequest {
   userId: number;
@@ -12,8 +12,8 @@ interface IRequest {
 @injectable()
 class TransferProductsService {
   constructor(
-    @inject('TransferProductsRepository')
-    private transferProductsRepository: ITransferProductsRepository,
+    @inject('IProductsStocksRepository')
+    private productsStocksRepository: IProductsStocksRepository,
   ) {}
 
   public async execute({
@@ -22,7 +22,7 @@ class TransferProductsService {
     quantity,
     targetUserId,
   }: IRequest): Promise<void> {
-    const userStock = await this.transferProductsRepository.findByRelation({
+    const userStock = await this.productsStocksRepository.findByRelation({
       userId,
       productId,
     });
@@ -35,27 +35,25 @@ class TransferProductsService {
       throw AppError.insufficientProducts;
     }
 
-    const targetUserStock = await this.transferProductsRepository.findByRelation(
-      {
-        userId: targetUserId,
-        productId,
-      },
-    );
+    const targetUserStock = await this.productsStocksRepository.findByRelation({
+      userId: targetUserId,
+      productId,
+    });
 
     if (targetUserStock) {
-      await this.transferProductsRepository.update({
+      await this.productsStocksRepository.update({
         id: targetUserStock.id,
         quantity: targetUserStock.quantity + quantity,
       });
     } else {
-      await this.transferProductsRepository.create({
+      await this.productsStocksRepository.create({
         quantity,
         targetUserId,
         productId,
       });
     }
 
-    await this.transferProductsRepository.update({
+    await this.productsStocksRepository.update({
       id: userStock.id,
       quantity: userStock.quantity - quantity,
     });

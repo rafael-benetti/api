@@ -6,8 +6,16 @@ import { container } from 'tsyringe';
 class MachineCollectionController {
   public async create(req: Request, res: Response): Promise<Response> {
     const { machineId } = req.params;
-    const { machineCollectionCounter } = req.body;
+    const { machineCollectCounters } = req.body;
     const { userId } = req;
+    let photos: string[] | undefined;
+
+    try {
+      const files: { path: string }[] = JSON.parse(JSON.stringify(req.files));
+      photos = files.map(file => file.path);
+    } catch (error) {
+      photos = [];
+    }
 
     const createMachineCollectionService = container.resolve(
       CreateMachineCollectionService,
@@ -16,7 +24,8 @@ class MachineCollectionController {
     const machineCollect = await createMachineCollectionService.execute({
       machineId: Number(machineId),
       userId,
-      machineCollectionCounter,
+      machineCollectCounters: JSON.parse(machineCollectCounters),
+      machineCollectCounterPhotos: photos,
     });
 
     return res.json(machineCollect);

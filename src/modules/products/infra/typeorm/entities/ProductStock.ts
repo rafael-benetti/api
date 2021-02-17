@@ -8,7 +8,7 @@ import {
 import Product from './Product';
 
 @Entity('users_products')
-class ProductToUser {
+class ProductStock {
   @PrimaryGeneratedColumn('increment')
   id: number;
 
@@ -25,9 +25,9 @@ class ProductToUser {
   // @JoinColumn({ name: 'user_id' })
   // owner: User;
 
-  @ManyToOne(() => Product, product => product.productToUser)
+  @ManyToOne(() => Product, product => product.productStock)
   @JoinColumn({ name: 'product_id' })
   productInfo: Product;
 }
 
-export default ProductToUser;
+export default ProductStock;

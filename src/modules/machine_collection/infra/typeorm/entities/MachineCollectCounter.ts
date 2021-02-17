@@ -32,7 +32,7 @@ class MachineCollectCounter {
 
   @ManyToOne(
     () => MachineCollect,
-    machineCollect => machineCollect.machineCollectionCounter,
+    machineCollect => machineCollect.machineCollectCounters,
     {
       cascade: ['insert', 'update', 'remove'],
       orphanedRowAction: 'delete',

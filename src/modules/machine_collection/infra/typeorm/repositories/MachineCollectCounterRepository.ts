@@ -1,10 +1,10 @@
 import ICreateMachineCollectCounterDTO from '@modules/machine_collection/dtos/ICreateMachineCollectCounterDTO';
-import IMachineCollectionCounterRepository from '@modules/machine_collection/repositories/IMachineCollectionCounterRepository';
+import IMachineCollectionCounterRepository from '@modules/machine_collection/repositories/IMachineCollectCounterRepository';
 import { getRepository, Repository } from 'typeorm';
 
 import MachineCollectCounter from '../entities/MachineCollectCounter';
 
-class MachineCollectionCounterRepository
+class MachineCollectCountersRepository
   implements IMachineCollectionCounterRepository {
   private ormRepository: Repository<MachineCollectCounter>;
 
@@ -19,4 +19,4 @@ class MachineCollectionCounterRepository
   }
 }
 
-export default MachineCollectionCounterRepository;
+export default MachineCollectCountersRepository;

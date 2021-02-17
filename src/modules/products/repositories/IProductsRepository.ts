@@ -5,4 +5,6 @@ export default interface IProductsRepository {
   create(data: ICreateProductDTO): Promise<Product>;
   findByName(name: string, ownerId: number): Promise<Product | undefined>;
   findAllProducts(userId: number): Promise<Product[]>;
+  findById(productId: number): Promise<Product | undefined>;
+  save(product: Product): Promise<Product>;
 }

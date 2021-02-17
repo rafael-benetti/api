@@ -9,8 +9,8 @@ import CompaniesRepository from '@modules/companies/infra/typeorm/repositories/C
 import IProductsRepository from '@modules/products/repositories/IProductsRepository';
 import ProductsRepository from '@modules/products/infra/typeorm/repositories/ProductsRepository';
 
-import ITransferProductsRepository from '@modules/products/repositories/ITransferProductsRepository';
-import TransferProductsRepository from '@modules/products/infra/typeorm/repositories/TransferProductsRepository';
+import IProductStocksRepository from '@modules/products/repositories/IProductsStocksRepository';
+import ProductStocksRepository from '@modules/products/infra/typeorm/repositories/ProductStocksRepository';
 
 import IMachinesRepository from '@modules/machines/repositories/IMachinesRepository';
 import MachinesRepository from '@modules/machines/infra/typeorm/repositories/MachinesRepository';
@@ -32,12 +32,20 @@ import AddressesRepository from '@modules/sellingPoints/infra/typeorm/repositori
 
 import IMachineCollectionRepository from '@modules/machine_collection/repositories/IMachineCollectionRepository';
 import MachineCollectionRepository from '@modules/machine_collection/infra/typeorm/repositories/MachineCollectionRepository';
-import MachineCollectionCounterRepository from '@modules/machine_collection/infra/typeorm/repositories/MachineCollectionCounterRepository';
-import IMachineCollectionCounterRepository from '@modules/machine_collection/repositories/IMachineCollectionCounterRepository';
 
+import MachineCollectCountersRepository from '@modules/machine_collection/infra/typeorm/repositories/MachineCollectCounterRepository';
+import IMachineCollectionCounterRepository from '@modules/machine_collection/repositories/IMachineCollectCounterRepository';
+
+import MachineCollectCounterPhotosRepository from '@modules/machine_collection/infra/typeorm/repositories/MachineCollectCounterPhotosRepository';
+import IMachineCollectCounterPhotosRepository from '@modules/machine_collection/repositories/IMachineCollectCounterPhotosRepository';
+
+container.registerSingleton<IMachineCollectCounterPhotosRepository>(
+  'MachineCollectCounterPhotosRepository',
+  MachineCollectCounterPhotosRepository,
+);
 container.registerSingleton<IMachineCollectionCounterRepository>(
   'MachineCollectionCounterRepository',
-  MachineCollectionCounterRepository,
+  MachineCollectCountersRepository,
 );
 
 container.registerSingleton<IMachineCollectionRepository>(
@@ -75,9 +83,9 @@ container.registerSingleton<IMachinesRepository>(
   MachinesRepository,
 );
 
-container.registerSingleton<ITransferProductsRepository>(
-  'TransferProductsRepository',
-  TransferProductsRepository,
+container.registerSingleton<IProductStocksRepository>(
+  'ProductStocksRepository',
+  ProductStocksRepository,
 );
 
 container.registerSingleton<IProductsRepository>(

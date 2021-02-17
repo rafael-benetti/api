@@ -24,14 +24,14 @@ export default class machineCollectCounterPhotos1613488894260
             type: 'varchar',
             isNullable: false,
           },
-          {
-            name: 'counter_id',
-            type: 'int',
-          },
-          {
-            name: 'machine_collect_counter_id',
-            type: 'int',
-          },
+          // {
+          //  name: 'counter_id',
+          //  type: 'int',
+          // },
+          // {
+          //  name: 'machine_collect_counter_id',
+          //  type: 'int',
+          // },
           {
             name: 'machine_collect_id',
             type: 'int',
@@ -52,29 +52,29 @@ export default class machineCollectCounterPhotos1613488894260
       }),
     );
 
-    await queryRunner.createForeignKey(
-      'machine_collect_counter_photos',
-      new TableForeignKey({
-        name: 'machine_collect_counter_photos_counters',
-        referencedTableName: 'counters',
-        referencedColumnNames: ['id'],
-        columnNames: ['counter_id'],
-        onDelete: 'CASCADE',
-        onUpdate: 'CASCADE',
-      }),
-    );
+    // await queryRunner.createForeignKey(
+    //  'machine_collect_counter_photos',
+    //  new TableForeignKey({
+    //    name: 'machine_collect_counter_photos_counters',
+    //    referencedTableName: 'counters',
+    //    referencedColumnNames: ['id'],
+    //    columnNames: ['counter_id'],
+    //    onDelete: 'CASCADE',
+    //    onUpdate: 'CASCADE',
+    //  }),
+    // );
 
-    await queryRunner.createForeignKey(
-      'machine_collect_counter_photos',
-      new TableForeignKey({
-        name: 'machine_collect_counter_photos_machine_collect_counters',
-        referencedTableName: 'machine_collect_counters',
-        referencedColumnNames: ['id'],
-        columnNames: ['machine_collect_counter_id'],
-        onUpdate: 'CASCADE',
-        onDelete: 'CASCADE',
-      }),
-    );
+    // await queryRunner.createForeignKey(
+    //   'machine_collect_counter_photos',
+    //   new TableForeignKey({
+    //     name: 'machine_collect_counter_photos_machine_collect_counters',
+    //     referencedTableName: 'machine_collect_counters',
+    //     referencedColumnNames: ['id'],
+    //     columnNames: ['machine_collect_counter_id'],
+    //     onUpdate: 'CASCADE',
+    //     onDelete: 'CASCADE',
+    //   }),
+    // );
   }
 
   public async down(queryRunner: QueryRunner): Promise<void> {

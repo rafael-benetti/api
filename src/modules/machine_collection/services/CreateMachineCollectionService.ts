@@ -1,35 +1,58 @@
-import logger from '@config/logger';
+import IMachinesRepository from '@modules/machines/repositories/IMachinesRepository';
+import AppError from '@shared/errors/app-error';
 import { inject, injectable } from 'tsyringe';
 import MachineCollect from '../infra/typeorm/entities/MachineCollect';
 import MachineCollectCounter from '../infra/typeorm/entities/MachineCollectCounter';
-import IMachineCollectionCounterRepository from '../repositories/IMachineCollectionCounterRepository';
+import IMachineCollectCounterPhotosRepository from '../repositories/IMachineCollectCounterPhotosRepository';
+import IMachineCollectCounterRepository from '../repositories/IMachineCollectCounterRepository';
 import IMachineCollectionRepository from '../repositories/IMachineCollectionRepository';
 
 interface IRequest {
   userId: number;
   machineId: number;
-  machineCollectionCounter: MachineCollectCounter[];
+  machineCollectCounters: MachineCollectCounter[];
+  machineCollectCounterPhotos: string[];
 }
 
 @injectable()
 class CreateMachineCollectService {
   constructor(
+    @inject('MachinesRepository')
+    private machinesRepository: IMachinesRepository,
+
     @inject('MachineCollectionRepository')
     private machineCollectionRepository: IMachineCollectionRepository,
 
     @inject('MachineCollectionCounterRepository')
-    private machineCollectionCounterRepository: IMachineCollectionCounterRepository,
+    private machineCollectionCounterRepository: IMachineCollectCounterRepository,
+
+    @inject('MachineCollectCounterPhotosRepository')
+    private machineCollectCounterPhotosRepository: IMachineCollectCounterPhotosRepository,
   ) {}
 
   public async execute({
     userId,
     machineId,
-    machineCollectionCounter,
+    machineCollectCounters,
+    machineCollectCounterPhotos,
   }: IRequest): Promise<MachineCollect> {
-    const machineCollectionCounterEntities = machineCollectionCounter.map(
+    const machine = await this.machinesRepository.findById(machineId);
+
+    if (!machine) {
+      throw AppError.machineNotFound;
+    }
+
+    const machineCollectionCounterEntities = machineCollectCounters.map(
       machineCollectCounter =>
         this.machineCollectionCounterRepository.createEntity(
           machineCollectCounter,
+        ),
+    );
+
+    const machineCollectionCounterPhotoEntities = machineCollectCounterPhotos.map(
+      machineCollectCounterPhoto =>
+        this.machineCollectCounterPhotosRepository.createEntity(
+          machineCollectCounterPhoto,
         ),
     );
 
@@ -37,16 +60,19 @@ class CreateMachineCollectService {
       machineId,
     );
 
-    logger.info(lastCollection);
-
     const machineCollect = await this.machineCollectionRepository.create({
       userId,
       machineId,
-      machineCollectionCounter: machineCollectionCounterEntities,
+      machineCollectCounters: machineCollectionCounterEntities,
       previousCollectionId: lastCollection?.id || undefined,
       // TODO
       active: 1,
+      machineCollectCounterPhotos: machineCollectionCounterPhotoEntities,
     });
+
+    machine.lastCollection = machineCollect.collectionDate;
+
+    await this.machinesRepository.save(machine);
 
     return machineCollect;
   }

@@ -10,6 +10,11 @@ export default class ProductsRepository implements IProductsRepository {
     this.ormRepository = getRepository(Product);
   }
 
+  public async save(product: Product): Promise<Product> {
+    await this.ormRepository.save(product);
+    return product;
+  }
+
   public async create({
     name,
     ownerId,
@@ -30,7 +35,7 @@ export default class ProductsRepository implements IProductsRepository {
   public async findAllProducts(userId: number): Promise<Product[]> {
     const products = await this.ormRepository.find({
       where: { ownerId: userId },
-      relations: ['productToUser'],
+      relations: ['productStock'],
     });
 
     return products;
@@ -42,6 +47,14 @@ export default class ProductsRepository implements IProductsRepository {
   ): Promise<Product | undefined> {
     const product = await this.ormRepository.findOne({
       where: { name, ownerId },
+    });
+
+    return product;
+  }
+
+  public async findById(productId: number): Promise<Product | undefined> {
+    const product = await this.ormRepository.findOne({
+      where: { id: productId },
     });
 
     return product;

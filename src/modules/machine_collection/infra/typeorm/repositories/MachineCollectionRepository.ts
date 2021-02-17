@@ -1,4 +1,3 @@
-import logger from '@config/logger';
 import ICreateMachineCollectDTO from '@modules/machine_collection/dtos/ICreateMachineCollectDTO';
 import IFindMachineCollectionDTO from '@modules/machine_collection/dtos/IFindMachineCollectionDTO';
 import IMachineCollectsRepository from '@modules/machine_collection/repositories/IMachineCollectionRepository';
@@ -25,6 +24,10 @@ class MachineCollectionRepository implements IMachineCollectsRepository {
     const machineCollection = await this.ormRepository
       .createQueryBuilder('machine_collection')
       .leftJoinAndSelect('machine_collection.machine', 'machines')
+      .leftJoinAndSelect(
+        'machine_collection.machineCollectCounterPhotos',
+        'machineCollectCounterPhotos',
+      )
       .whereInIds(machineIdsFilter)
       .orWhere('machines.serial_number like :id ', {
         id: `%${keywords}%`,
@@ -50,21 +53,22 @@ class MachineCollectionRepository implements IMachineCollectsRepository {
 
   public async create({
     active,
-    machineCollectionCounter,
+    machineCollectCounters,
     userId,
     previousCollectionId,
     machineId,
+    machineCollectCounterPhotos,
   }: ICreateMachineCollectDTO): Promise<MachineCollect> {
     // TODO
 
-    logger.info(previousCollectionId);
     const machineCollect = this.ormRepository.create({
       active,
       collectionDate: Date(),
       userId,
       previousCollectionId,
-      machineCollectionCounter,
+      machineCollectCounters,
       machineId,
+      machineCollectCounterPhotos,
     });
 
     await this.ormRepository.save(machineCollect);
