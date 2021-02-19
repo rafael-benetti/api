@@ -1,4 +1,6 @@
+import logger from '@config/logger';
 import ICreateSellingPointDTO from '@modules/sellingPoints/dtos/ICreateSellingPointDTO';
+import IFindByNameDTO from '@modules/sellingPoints/dtos/IFindByNameDTO';
 import IFindSellingPointsDTO from '@modules/sellingPoints/dtos/IFindSellingPointsDTO';
 import ISellingPointsRepository from '@modules/sellingPoints/repositories/ISellingPointsRepository';
 import { getRepository, Like, Repository } from 'typeorm';
@@ -9,6 +11,26 @@ class SellingPointRepository implements ISellingPointsRepository {
 
   constructor() {
     this.ormRepository = getRepository(SellingPoint);
+  }
+
+  public async findByName({
+    companyIds,
+    name,
+  }: IFindByNameDTO): Promise<SellingPoint | undefined> {
+    const filters = companyIds.map(companyId => {
+      return {
+        companyId,
+        name,
+      };
+    });
+
+    logger.info(filters);
+
+    const sellingPoint = await this.ormRepository.findOne({
+      where: filters,
+    });
+
+    return sellingPoint;
   }
 
   public async save(sellingPoint: SellingPoint): Promise<void> {

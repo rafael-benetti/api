@@ -15,6 +15,8 @@ const profileController = new ProfileController();
 
 const upload = multer(multerConfig);
 
+usersRoutes.use(ensureAuthentication);
+
 usersRoutes.post(
   '/',
   celebrate({
@@ -35,9 +37,9 @@ usersRoutes.post(
   usersController.create,
 );
 
-usersRoutes.use(ensureAuthentication);
-
 usersRoutes.patch('/', usersController.update);
+
+usersRoutes.get('/', usersController.index);
 
 usersRoutes.get('/me', profileController.show);
 

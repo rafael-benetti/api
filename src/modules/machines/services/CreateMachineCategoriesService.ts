@@ -4,7 +4,7 @@ import IMachineCategoriesRepository from '../repositories/IMachineCategoriesRepo
 
 interface IRequest {
   name: string;
-  ownerId: number;
+  userId: number;
 }
 
 @injectable()
@@ -14,10 +14,10 @@ class CreateMachineCategoriesService {
     private machineCategoriesRepository: IMachineCategoriesRepository,
   ) {}
 
-  public async execute({ name, ownerId }: IRequest): Promise<MachineCategory> {
+  public async execute({ name, userId }: IRequest): Promise<MachineCategory> {
     const machineCategory = await this.machineCategoriesRepository.create({
       name,
-      ownerId,
+      ownerId: userId,
     });
 
     return machineCategory;

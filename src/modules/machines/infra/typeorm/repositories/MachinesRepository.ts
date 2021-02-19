@@ -3,7 +3,7 @@ import ICreateMachineDTO from '@modules/machines/dtos/ICreateMachineDTO';
 import IFindMachinesDTO from '@modules/machines/dtos/IFindMachinesDTO';
 import IFindMachinesResponseDTO from '@modules/machines/dtos/IFindMachinesResponseDTO';
 import IMachinesRepository from '@modules/machines/repositories/IMachinesRepository';
-import { getRepository, Like, Repository } from 'typeorm';
+import { Brackets, getRepository, Repository } from 'typeorm';
 import Machine from '../entities/Machine';
 
 class MachinesRepository implements IMachinesRepository {
@@ -34,40 +34,50 @@ class MachinesRepository implements IMachinesRepository {
     page,
     machineCategoryId,
   }: IFindMachinesDTO): Promise<IFindMachinesResponseDTO> {
-    const filters = companyIds.flatMap(companyId => {
-      if (keywords) {
-        return [
-          {
-            companyId,
-            ...(machineCategoryId && { machineCategoryId }),
-            ...(active !== undefined && { active }),
-            ...(keywords && { description: Like(`%${keywords}%`) }),
-          },
-          {
-            companyId,
-            ...(machineCategoryId && { machineCategoryId }),
-            ...(active !== undefined && { active }),
-            ...(keywords && { serialNumber: Like(`%${keywords}%`) }),
-          },
-        ];
-      }
-      return [
-        {
-          companyId,
-          ...(machineCategoryId && { machineCategoryId }),
-          ...(active !== undefined && { active }),
-        },
-      ];
+    const companyIdsFilter = companyIds.map(companyId => {
+      return { companyId };
     });
 
-    logger.info(filters);
+    logger.info(companyIdsFilter);
 
-    const [machines, machinesCount] = await this.ormRepository.findAndCount({
-      where: filters,
-      take: limit,
-      skip: page ? limit || 0 * page : undefined,
-      relations: ['counters', 'company', 'machineCategory'],
-    });
+    const queryMachines = this.ormRepository
+      .createQueryBuilder('machines')
+      .leftJoinAndSelect('machines.counters', 'counters')
+      .leftJoinAndSelect('machines.company', 'companies')
+      .leftJoinAndSelect('machines.machineCategory', 'machine_categories')
+      .leftJoinAndSelect('machines.sellingPoint', 'selling_points')
+      .where(companyIdsFilter);
+    if (active !== undefined) {
+      queryMachines.andWhere('machines.active = :active', {
+        active,
+      });
+    }
+
+    if (machineCategoryId)
+      queryMachines.andWhere('machines.machine_category_id = :id', {
+        id: machineCategoryId,
+      });
+
+    if (keywords)
+      queryMachines.andWhere(
+        new Brackets(qb => {
+          qb.andWhere('machines.serial_number like :serialNumber', {
+            serialNumber: `%${keywords}%`,
+          })
+            .orWhere('machines.description like :description', {
+              description: `%${keywords}%`,
+            })
+            .orWhere('selling_points.name like :id', {
+              id: `%${keywords}%`,
+            });
+        }),
+      );
+
+    if (limit) queryMachines.take(limit);
+
+    if (page) queryMachines.skip(limit || 0 * page);
+
+    const [machines, machinesCount] = await queryMachines.getManyAndCount();
 
     return { machinesCount, machines };
   }

@@ -1,4 +1,5 @@
 import ICreateProductDTO from '@modules/products/dtos/ICreateProductDTO';
+import IFindByNameDTO from '@modules/products/dtos/IFindByNameDTO';
 import IProductsRepository from '@modules/products/repositories/IProductsRepository';
 import { getRepository, Repository } from 'typeorm';
 import Product from '../entities/Product';
@@ -17,15 +18,15 @@ export default class ProductsRepository implements IProductsRepository {
 
   public async create({
     name,
-    ownerId,
     cost,
     price,
+    ownerId,
   }: ICreateProductDTO): Promise<Product> {
     const product = this.ormRepository.create({
       name,
-      ownerId,
       cost,
       price,
+      ownerId,
     });
 
     await this.ormRepository.save(product);
@@ -41,10 +42,10 @@ export default class ProductsRepository implements IProductsRepository {
     return products;
   }
 
-  public async findByName(
-    name: string,
-    ownerId: number,
-  ): Promise<Product | undefined> {
+  public async findByName({
+    name,
+    ownerId,
+  }: IFindByNameDTO): Promise<Product | undefined> {
     const product = await this.ormRepository.findOne({
       where: { name, ownerId },
     });

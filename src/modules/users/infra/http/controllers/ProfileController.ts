@@ -1,3 +1,4 @@
+import logger from '@config/logger';
 import ShowUserService from '@modules/users/services/ShowUserProfileService';
 import UpdateUserProfileService from '@modules/users/services/UpdateUserProfileService';
 import { Request, Response } from 'express';
@@ -6,6 +7,7 @@ import { container } from 'tsyringe';
 class ProfileController {
   public async update(req: Request, res: Response): Promise<Response> {
     const { userId } = req;
+    logger.info(req.file.path);
 
     let picture;
     try {

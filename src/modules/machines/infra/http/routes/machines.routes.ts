@@ -14,15 +14,16 @@ machinesRoutes.post(
   celebrate({
     body: {
       serialNumber: Joi.string().required(),
-      description: Joi.string().required(),
+      description: Joi.string(),
       gameValue: Joi.number().required(),
       companyId: Joi.number().required(),
-      sellingPointId: Joi.number(),
-      machineCategoryId: Joi.number(),
+      sellingPointId: Joi.number().required(),
+      machineCategoryId: Joi.number().required(),
       counters: Joi.array().items(
         Joi.object().keys({
           name: Joi.string().required(),
           slot: Joi.number().required(),
+          groups: Joi.string(),
           hasDigital: Joi.number().required(),
           hasMechanical: Joi.number().required(),
           pin: Joi.number().required(),
@@ -40,15 +41,16 @@ machinesRoutes.patch(
   celebrate({
     body: {
       serialNumber: Joi.string().required(),
-      description: Joi.string().required(),
+      description: Joi.string(),
       gameValue: Joi.number().required(),
       companyId: Joi.number().required(),
-      sellingPointId: Joi.number(),
+      sellingPointId: Joi.number().required(),
       machineCategoryId: Joi.number(),
       counters: Joi.array().items(
         Joi.object().keys({
           id: Joi.number().required(),
           name: Joi.string().required(),
+          groups: Joi.string(),
           slot: Joi.number().required(),
           hasDigital: Joi.number().required(),
           hasMechanical: Joi.number().required(),

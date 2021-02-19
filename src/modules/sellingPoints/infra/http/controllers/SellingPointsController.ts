@@ -1,3 +1,4 @@
+import logger from '@config/logger';
 import CreateSellingPointService from '@modules/sellingPoints/services/CreateSellingPointService';
 import FindSellingPointsService from '@modules/sellingPoints/services/FindSellingPointsService';
 import UpdateSellingPointsService from '@modules/sellingPoints/services/UpdateSellingPointsService';
@@ -6,6 +7,7 @@ import { container } from 'tsyringe';
 
 class SellingPointsController {
   public async create(req: Request, res: Response): Promise<Response> {
+    const { userId } = req;
     const {
       name,
       companyId,
@@ -20,6 +22,7 @@ class SellingPointsController {
     );
 
     const sellingPoint = await createSellingPointService.execute({
+      userId,
       name,
       companyId,
       responsible,
@@ -50,6 +53,7 @@ class SellingPointsController {
 
   public async update(req: Request, res: Response): Promise<Response> {
     const { sellingPointId } = req.query;
+    const { userId } = req;
     const { address, name, companyId, phone1, phone2, responsible } = req.body;
 
     const updateSellingPointsService = container.resolve(
@@ -57,6 +61,7 @@ class SellingPointsController {
     );
 
     const sellingPoint = await updateSellingPointsService.execute({
+      userId,
       id: Number(sellingPointId),
       address,
       companyId,

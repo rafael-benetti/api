@@ -16,8 +16,8 @@ sellingPointRoutes.post(
       name: Joi.string().required(),
       companyId: Joi.number().required(),
       responsible: Joi.string().required(),
-      phone1: Joi.string().required(),
-      phone2: Joi.string().required(),
+      phone1: Joi.string().min(14).max(15).required(),
+      phone2: Joi.string().min(14).max(15).allow(null),
       address: {
         zipCode: Joi.string().max(8).min(8).required(),
         state: Joi.string().required(),
@@ -39,8 +39,8 @@ sellingPointRoutes.patch(
       name: Joi.string().required(),
       companyId: Joi.number().required(),
       responsible: Joi.string().required(),
-      phone1: Joi.string().required(),
-      phone2: Joi.string().required(),
+      phone1: Joi.string().min(14).max(15).required(),
+      phone2: Joi.string().min(14).max(15).allow(null),
       address: {
         zipCode: Joi.string().max(8).min(8).required(),
         state: Joi.string().required(),

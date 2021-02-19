@@ -1,9 +1,11 @@
+import IUsersRepository from '@modules/users/repositories/IUsersRepository';
 import AppError from '@shared/errors/app-error';
 import { inject, injectable } from 'tsyringe';
 import SellingPoint from '../infra/typeorm/entities/SellingPoint';
 import ISellingPointsRepository from '../repositories/ISellingPointsRepository';
 
 interface IRequest {
+  userId: number;
   id: number;
   name: string;
   responsible: string;
@@ -26,6 +28,9 @@ class UpdateSellingPointsService {
   constructor(
     @inject('SellingPointsRepository')
     private sellingPointsRepository: ISellingPointsRepository,
+
+    @inject('UsersRepository')
+    private usersRepository: IUsersRepository,
   ) {}
 
   public async execute({
@@ -36,13 +41,30 @@ class UpdateSellingPointsService {
     phone1,
     phone2,
     responsible,
+    userId,
   }: IRequest): Promise<SellingPoint> {
-    // TODO: VALIDAR SE O SELLING POINT ESTA RELACIONADO A ALGUMA COMPANY DO USER
+    const user = await this.usersRepository.findById(userId);
+
+    if (!user) throw AppError.userNotFound;
+
+    const userCompanyIds = user.companies.map(company => company.id);
+
+    if (!userCompanyIds.includes(companyId)) throw AppError.authorizationError;
+
     const sellingPoint = await this.sellingPointsRepository.findById(id);
 
     if (!sellingPoint) throw AppError.sellingPointNotFound;
 
-    if (name) sellingPoint.name = name;
+    if (name && sellingPoint.name !== name) {
+      const checkNameExists = await this.sellingPointsRepository.findByName({
+        name,
+        companyIds: userCompanyIds,
+      });
+
+      if (checkNameExists) throw AppError.nameAlreadyInUsed;
+
+      sellingPoint.name = name;
+    }
     if (phone1) sellingPoint.phone1 = phone1;
     if (phone2) sellingPoint.phone2 = phone2;
     if (responsible) sellingPoint.responsible = responsible;

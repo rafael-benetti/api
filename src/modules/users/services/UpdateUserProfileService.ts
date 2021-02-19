@@ -53,9 +53,12 @@ class UpdateUserProfileService {
       user.password = password;
     }
 
+    logger.info(picture);
+
     if (picture) {
+      logger.info(process.env.STORAGE_TYPE);
       if (process.env.STORAGE_TYPE === 'S3') {
-        // TODO: IMPLEMENTAR E TALS
+        logger.info('sssss');
       } else {
         if (user.picture) {
           try {

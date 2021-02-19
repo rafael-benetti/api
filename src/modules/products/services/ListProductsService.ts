@@ -1,5 +1,5 @@
 import { inject, injectable } from 'tsyringe';
-import IProductsRepository from '../repositories/IProductsRepository';
+import IProductStocksRepository from '../repositories/IProductStocksRepository';
 
 interface IResponse {
   id: number;
@@ -11,19 +11,19 @@ interface IResponse {
 @injectable()
 class ListProductsService {
   constructor(
-    @inject('ProductsRepository')
-    private productsRepository: IProductsRepository,
+    @inject('ProductStocksRepository')
+    private productStocksRepository: IProductStocksRepository,
   ) {}
 
   public async execute(userId: number): Promise<IResponse[]> {
-    const products = await this.productsRepository.findAllProducts(userId);
+    const productStocks = await this.productStocksRepository.find(userId);
 
-    const formatedProducts = products.map(product => {
+    const formatedProducts = productStocks.map(productStock => {
       return {
-        id: product.id,
-        name: product.name,
-        cost: product.cost,
-        quantity: product.productStock[0].quantity,
+        id: productStock.productInfo.id,
+        quantity: productStock.quantity,
+        name: productStock.productInfo.name,
+        cost: productStock.productInfo.cost,
       };
     });
 

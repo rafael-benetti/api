@@ -6,10 +6,8 @@ import UsersRepository from '@modules/users/infra/typeorm/repositories/UsersRepo
 import ICompaniesRepository from '@modules/companies/repositories/ICompaniesRepository';
 import CompaniesRepository from '@modules/companies/infra/typeorm/repositories/CompaniesRepository';
 
-import IProductsRepository from '@modules/products/repositories/IProductsRepository';
 import ProductsRepository from '@modules/products/infra/typeorm/repositories/ProductsRepository';
 
-import IProductStocksRepository from '@modules/products/repositories/IProductsStocksRepository';
 import ProductStocksRepository from '@modules/products/infra/typeorm/repositories/ProductStocksRepository';
 
 import IMachinesRepository from '@modules/machines/repositories/IMachinesRepository';
@@ -38,6 +36,8 @@ import IMachineCollectionCounterRepository from '@modules/machine_collection/rep
 
 import MachineCollectCounterPhotosRepository from '@modules/machine_collection/infra/typeorm/repositories/MachineCollectCounterPhotosRepository';
 import IMachineCollectCounterPhotosRepository from '@modules/machine_collection/repositories/IMachineCollectCounterPhotosRepository';
+import IProductStocksRepository from '@modules/products/repositories/IProductStocksRepository';
+import IProductsRepository from '@modules/products/repositories/IProductsRepository';
 
 container.registerSingleton<IMachineCollectCounterPhotosRepository>(
   'MachineCollectCounterPhotosRepository',

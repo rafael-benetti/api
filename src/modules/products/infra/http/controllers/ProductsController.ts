@@ -6,7 +6,7 @@ import { container } from 'tsyringe';
 
 export default class ProductsController {
   public async create(req: Request, res: Response): Promise<Response> {
-    const ownerId = req.userId;
+    const { userId } = req;
     const { name, price, cost, quantity } = req.body;
 
     const createProductService = container.resolve(CreateProductService);
@@ -14,7 +14,7 @@ export default class ProductsController {
     const product = await createProductService.execute({
       cost,
       name,
-      ownerId,
+      userId,
       price,
       quantity,
     });

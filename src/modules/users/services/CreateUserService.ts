@@ -13,7 +13,7 @@ interface IRequest {
   roles: string;
   isOperator: number;
   picture: string;
-  ownerId: number;
+  userId: number;
 }
 
 @injectable()
@@ -23,17 +23,42 @@ class CreateUserService {
     private usersRepository: IUsersRepository,
   ) {}
 
-  async execute(data: IRequest): Promise<User> {
-    const { email } = data;
+  async execute({
+    userId,
+    name,
+    email,
+    isActive,
+    isOperator,
+    password,
+    phone,
+    picture,
+    roles,
+    username,
+  }: IRequest): Promise<User> {
+    const user = await this.usersRepository.findById(userId);
+
+    if (!user) throw AppError.userNotFound;
+
     const checkUserExists = await this.usersRepository.findByEmail(email);
 
     if (checkUserExists) {
       throw AppError.emailAlreadyUsed;
     }
 
-    const user = await this.usersRepository.create(data);
+    const newUser = await this.usersRepository.create({
+      ownerId: user.ownerId,
+      name,
+      email,
+      username,
+      roles,
+      picture,
+      phone,
+      password,
+      isOperator,
+      isActive,
+    });
 
-    return user;
+    return newUser;
   }
 }
 

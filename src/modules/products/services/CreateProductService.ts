@@ -1,13 +1,14 @@
+import IUsersRepository from '@modules/users/repositories/IUsersRepository';
 import AppError from '@shared/errors/app-error';
 import { inject, injectable } from 'tsyringe';
 import IProductsRepository from '../repositories/IProductsRepository';
-import IProductsStocksRepository from '../repositories/IProductsStocksRepository';
+import IProductStocksRepository from '../repositories/IProductStocksRepository';
 
 interface IRequest {
   name: string;
   cost: number;
   price: number;
-  ownerId: number;
+  userId: number;
   quantity: number;
 }
 
@@ -22,38 +23,44 @@ interface IResponse {
 class CreateProductService {
   constructor(
     @inject('ProductsRepository')
-    private productRepository: IProductsRepository,
+    private productsRepository: IProductsRepository,
 
-    @inject('IProductsStocksRepository')
-    private productsStocksRepository: IProductsStocksRepository,
+    @inject('ProductStocksRepository')
+    private productStocksRepository: IProductStocksRepository,
+
+    @inject('UsersRepository')
+    private usersRepository: IUsersRepository,
   ) {}
 
   public async execute({
     name,
     price,
     cost,
-    ownerId,
+    userId,
     quantity,
   }: IRequest): Promise<IResponse> {
-    const checkNameExists = await this.productRepository.findByName(
-      name,
-      ownerId,
-    );
-    // TODO: Rever logica de criação de estoque
-    // TODO: Implementar transaction
-    if (checkNameExists) {
-      throw AppError.nameAlreadyInUsed;
-    }
+    const user = await this.usersRepository.findById(userId);
 
-    const product = await this.productRepository.create({
-      cost,
+    if (!user) throw AppError.userNotFound;
+
+    const checkNameExists = await this.productsRepository.findByName({
       name,
-      ownerId,
-      price,
+      ownerId: user.ownerId,
     });
 
-    const productToUser = await this.productsStocksRepository.create({
-      targetUserId: ownerId,
+    // TODO: Rever logica de criação de estoque
+    // TODO: Implementar transaction
+    if (checkNameExists) throw AppError.nameAlreadyInUsed;
+
+    const product = await this.productsRepository.create({
+      name,
+      cost,
+      price,
+      ownerId: user.ownerId,
+    });
+
+    const productStock = await this.productStocksRepository.create({
+      targetUserId: userId,
       quantity,
       productId: product.id,
     });
@@ -62,7 +69,7 @@ class CreateProductService {
       id: product.id,
       name: product.name,
       cost: product.cost,
-      quantity: productToUser.quantity,
+      quantity: productStock.quantity,
     };
 
     return response;

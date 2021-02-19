@@ -5,6 +5,6 @@ export default interface ICreateSellingPointDTO {
   companyId: number;
   responsible: string;
   phone1: string;
-  phone2: string;
+  phone2?: string;
   address: Address;
 }

@@ -16,7 +16,7 @@ class MachineCategoriesController {
 
     const machineCategory = await createMachineCategoriesService.execute({
       name,
-      ownerId: userId,
+      userId,
     });
 
     return res.json(machineCategory);

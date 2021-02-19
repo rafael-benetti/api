@@ -42,6 +42,7 @@ export default class sellingPoints1612173261702 implements MigrationInterface {
           {
             name: 'phone2',
             type: 'varchar(15)',
+            isNullable: true,
           },
         ],
       }),

@@ -1,3 +1,4 @@
+import logger from '@config/logger';
 import CreateMachineService from '@modules/machines/services/CreateMachineService';
 import FindMachinesService from '@modules/machines/services/FindMachinesService';
 import UpdateMachinesService from '@modules/machines/services/UpdateMachinesService';
@@ -6,6 +7,7 @@ import { container } from 'tsyringe';
 
 class MachinesController {
   public async create(req: Request, res: Response): Promise<Response> {
+    logger.info(req.body);
     const {
       description,
       serialNumber,

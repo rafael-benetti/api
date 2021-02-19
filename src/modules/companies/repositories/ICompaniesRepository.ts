@@ -8,6 +8,7 @@ export default interface ICompaniesRepository {
   findByName(data: IFindCompanyByNameDTO): Promise<Company | undefined>;
   findCompaniesByUserId(ownerId: IFindCompaniesDTO): Promise<Company[]>;
   findCompanies(companyIds: number[]): Promise<Company[]>;
+  findCompaniesWithUsers(companyIds: number[]): Promise<Company[]>;
   findById(companyId: number): Promise<Company | undefined>;
   save(company: Company): Promise<void>;
 }

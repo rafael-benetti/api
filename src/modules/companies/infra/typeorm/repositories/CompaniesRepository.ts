@@ -35,6 +35,19 @@ class CompaniesRepository implements ICompaniesRepository {
     return companies;
   }
 
+  public async findCompaniesWithUsers(
+    companyIds: number[],
+  ): Promise<Company[]> {
+    const companies = await this.ormRepository.find({
+      where: companyIds.map(companyId => {
+        return { id: companyId };
+      }),
+      relations: ['users'],
+    });
+
+    return companies;
+  }
+
   public async findCompaniesByUserId({
     ownerId,
     name,

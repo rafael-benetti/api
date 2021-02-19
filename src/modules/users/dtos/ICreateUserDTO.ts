@@ -1,4 +1,5 @@
 export default interface ICreateUserDTO {
+  ownerId: number;
   name: string;
   email: string;
   phone: string;
@@ -8,5 +9,4 @@ export default interface ICreateUserDTO {
   roles: string;
   isOperator: number;
   picture: string;
-  ownerId: number;
 }

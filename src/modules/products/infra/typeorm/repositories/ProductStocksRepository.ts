@@ -1,7 +1,7 @@
 import ICreateTransferProductsDTO from '@modules/products/dtos/ICreateTransferProductsDTO';
 import IFindByRelationDTO from '@modules/products/dtos/IFindByRelationDTO';
 import IUpdateTransferProductDTO from '@modules/products/dtos/IUpdateTransferProductDTO';
-import IProductStocksRepository from '@modules/products/repositories/IProductsStocksRepository';
+import IProductStocksRepository from '@modules/products/repositories/IProductStocksRepository';
 import { getRepository, Repository } from 'typeorm';
 import ProductStock from '../entities/ProductStock';
 
@@ -10,6 +10,15 @@ class ProductStocksRepository implements IProductStocksRepository {
 
   constructor() {
     this.ormRepository = getRepository(ProductStock);
+  }
+
+  public async find(userId: number): Promise<ProductStock[]> {
+    const productStocks = await this.ormRepository.find({
+      where: { userId },
+      relations: ['productInfo'],
+    });
+
+    return productStocks;
   }
 
   public async save(productStock: ProductStock): Promise<ProductStock> {

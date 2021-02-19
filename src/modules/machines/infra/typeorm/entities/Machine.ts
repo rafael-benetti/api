@@ -52,9 +52,6 @@ class Machine {
   @Column({ type: 'tinyint', nullable: true, default: 1 })
   active: number;
 
-  @Column({ name: 'company_id' })
-  companyId: number;
-
   @Column({ name: 'machine_category_id' })
   machineCategoryId: number;
 

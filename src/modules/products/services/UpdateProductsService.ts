@@ -1,7 +1,7 @@
 import AppError from '@shared/errors/app-error';
 import { inject, injectable } from 'tsyringe';
 import IProductsRepository from '../repositories/IProductsRepository';
-import IProductStocksRepository from '../repositories/IProductsStocksRepository';
+import IProductStocksRepository from '../repositories/IProductStocksRepository';
 
 interface IRequest {
   id: number;
@@ -44,11 +44,20 @@ class UpdateProductsService {
       productId: product.id,
     });
 
-    if (!productStock) {
-      throw AppError.productNotFound;
+    if (!productStock) throw AppError.productNotFound;
+
+    if (name && name !== product.name) {
+      const checkNameExists = await this.productsRepository.findByName({
+        name,
+        ownerId: userId,
+      });
+
+      if (checkNameExists && checkNameExists.id !== product.id)
+        throw AppError.nameAlreadyInUsed;
+
+      product.name = name;
     }
 
-    if (name) product.name = name;
     if (cost) product.cost = cost;
     if (quantity) {
       productStock.quantity = quantity;
