@@ -5,14 +5,14 @@ import { container } from 'tsyringe';
 
 export default class CompaniesController {
   public async create(req: Request, res: Response): Promise<Response> {
-    const ownerId = Number(req.userId);
+    const { userId } = req;
     const { name } = req.body;
 
     const createCompanyService = container.resolve(CreateCompanyService);
 
     const company = await createCompanyService.execute({
       name,
-      ownerId,
+      userId,
     });
 
     return res.json(company);

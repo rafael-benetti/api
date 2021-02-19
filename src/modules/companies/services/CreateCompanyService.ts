@@ -5,7 +5,7 @@ import ICompaniesRepository from '../repositories/ICompaniesRepository';
 
 interface IRequest {
   name: string;
-  ownerId: number;
+  userId: number;
 }
 
 interface IResponse {
@@ -23,8 +23,8 @@ class CreateCompanyService {
     private usersRepository: IUsersRepository,
   ) {}
 
-  public async execute({ name, ownerId }: IRequest): Promise<IResponse> {
-    const user = await this.usersRepository.findById(ownerId);
+  public async execute({ name, userId }: IRequest): Promise<IResponse> {
+    const user = await this.usersRepository.findById(userId);
 
     if (!user) {
       throw AppError.authorizationError;
@@ -32,7 +32,7 @@ class CreateCompanyService {
 
     const checkCompanyName = await this.companiesRepository.findByName({
       name,
-      ownerId,
+      ownerId: user.ownerId,
     });
 
     if (checkCompanyName) {
@@ -41,7 +41,7 @@ class CreateCompanyService {
 
     const company = await this.companiesRepository.create({
       name,
-      ownerId,
+      ownerId: user.ownerId,
       user,
     });
 
