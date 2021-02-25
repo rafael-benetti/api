@@ -1,12 +1,12 @@
 {
-  "type":"mysql",
+  "type":"postgres",
   "host":"localhost",
-  "port":"3306",
-  "username":"root",
+  "port":"5432",
+  "username":"postgres",
   "password":"docker",
   "database":"sttigma",
   "entities": [
-    "./src/modules/**/infra/typeorm/entities/*.ts"
+    "./src/modules/**/implementations/typeorm/models/*.ts"
   ],
   "migrations": [
     "./migrations/*.ts"

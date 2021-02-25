@@ -39,7 +39,21 @@ import IMachineCollectCounterPhotosRepository from '@modules/machine_collection/
 
 import IProductStocksRepository from '@modules/products/repositories/IProductStocksRepository';
 import IProductsRepository from '@modules/products/repositories/IProductsRepository';
+
+import IOwnersRepository from '@modules/owners/contracts/repositories/IOwnersRepository';
+import OwnersRepository from '@modules/owners/implementations/typeorm/repositories/OwnersRepository';
+
+import TypeormProvider from 'providers/orm-provider/implementations/TypeormProvider';
+import OrmProvider from 'providers/orm-provider/contracts/models/IOrmProvider';
+
 import S3Service from './providers/aws.S3';
+
+container.registerSingleton<OrmProvider>('OrmProvider', TypeormProvider);
+
+container.registerSingleton<IOwnersRepository>(
+  'OwnersRepository',
+  OwnersRepository,
+);
 
 container.registerSingleton<S3Service>('S3Service', S3Service);
 

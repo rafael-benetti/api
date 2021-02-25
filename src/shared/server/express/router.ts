@@ -9,8 +9,11 @@ import machineCategoriesRoutes from '@modules/machines/infra/http/routes/machieC
 import countersRoutes from '@modules/counters/infra/http/routes/counters.routes';
 import sellingPointRoutes from '@modules/sellingPoints/infra/http/routes/sellingPoints.routes';
 import machineCollectionRoutes from '@modules/machine_collection/infra/http/routes/machineCollection.routes';
+import ownersRoutes from '@modules/owners/routes/owner.routes';
 
 const router = Router();
+
+router.use('/owners', ownersRoutes);
 
 router.use('/users', usersRoutes);
 

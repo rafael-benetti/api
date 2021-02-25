@@ -10,7 +10,7 @@
     }
   },
   "scripts": {
-    "dev": "DEBUG=api* ts-node-dev -r dotenv/config -r tsconfig-paths/register  --inspect --no-notify src/shared/server/express/server.ts",
+    "dev": "DEBUG=api* ts-node-dev -r dotenv/config -r tsconfig-paths/register --transpile-only --inspect --no-notify src/shared/server/express/server.ts",
     "test": "jest --clearCache && jest --passWithNoTests",
     "typeorm": "ts-node-dev -r tsconfig-paths/register ./node_modules/typeorm/cli.js"
   },
@@ -29,6 +29,7 @@
     "morgan": "^1.10.0",
     "multer": "^1.4.2",
     "multer-s3": "^2.9.0",
+    "pg": "^8.5.1",
     "tsyringe": "^4.4.0",
     "typeorm": "^0.2.30"
   },

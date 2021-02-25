@@ -1,17 +1,17 @@
 import { MigrationInterface, QueryRunner, Table } from 'typeorm';
 
-export default class teste1614116141337 implements MigrationInterface {
+export default class owners1614254270162 implements MigrationInterface {
   public async up(queryRunner: QueryRunner): Promise<void> {
     await queryRunner.createTable(
       new Table({
-        name: 'users',
+        name: 'owners',
         columns: [
           {
             name: 'id',
-            type: 'int',
+            type: 'uuid',
             isPrimary: true,
             isGenerated: true,
-            generationStrategy: 'increment',
+            generationStrategy: 'uuid',
           },
           {
             name: 'name',
@@ -20,12 +20,21 @@ export default class teste1614116141337 implements MigrationInterface {
           {
             name: 'email',
             type: 'varchar',
-            isNullable: true,
+          },
+          {
+            name: 'password',
+            type: 'varchar',
+          },
+          {
+            name: 'is_active',
+            type: 'boolean',
           },
         ],
       }),
     );
   }
 
-  public async down(queryRunner: QueryRunner): Promise<void> {}
+  public async down(queryRunner: QueryRunner): Promise<void> {
+    await queryRunner.dropTable('owners');
+  }
 }
