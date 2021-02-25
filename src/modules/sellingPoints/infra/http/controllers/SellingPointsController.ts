@@ -1,4 +1,3 @@
-import logger from '@config/logger';
 import CreateSellingPointService from '@modules/sellingPoints/services/CreateSellingPointService';
 import FindSellingPointsService from '@modules/sellingPoints/services/FindSellingPointsService';
 import UpdateSellingPointsService from '@modules/sellingPoints/services/UpdateSellingPointsService';

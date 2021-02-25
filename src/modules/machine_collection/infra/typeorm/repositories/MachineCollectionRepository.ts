@@ -1,7 +1,8 @@
+import logger from '@config/logger';
 import ICreateMachineCollectDTO from '@modules/machine_collection/dtos/ICreateMachineCollectDTO';
 import IFindMachineCollectionDTO from '@modules/machine_collection/dtos/IFindMachineCollectionDTO';
 import IMachineCollectsRepository from '@modules/machine_collection/repositories/IMachineCollectionRepository';
-import { getRepository, Repository } from 'typeorm';
+import { Brackets, getRepository, Repository } from 'typeorm';
 import MachineCollect from '../entities/MachineCollect';
 
 class MachineCollectionRepository implements IMachineCollectsRepository {
@@ -21,21 +22,33 @@ class MachineCollectionRepository implements IMachineCollectsRepository {
       };
     });
 
-    const machineCollection = await this.ormRepository
+    const machineCollectionQuery = this.ormRepository
       .createQueryBuilder('machine_collection')
       .leftJoinAndSelect('machine_collection.machine', 'machines')
+      .leftJoinAndSelect(
+        'machine_collection.machineCollectCounters',
+        'machineCollectCounters',
+      )
       .leftJoinAndSelect(
         'machine_collection.machineCollectCounterPhotos',
         'machineCollectCounterPhotos',
       )
-      .whereInIds(machineIdsFilter)
-      .orWhere('machines.serial_number like :id ', {
-        id: `%${keywords}%`,
-      })
-      .orWhere('machines.description like :id', {
-        id: `%${keywords}%`,
-      })
-      .getMany();
+      .where(machineIdsFilter);
+
+    if (keywords) {
+      logger.info(keywords);
+      machineCollectionQuery.andWhere(
+        new Brackets(qb => {
+          qb.orWhere('machines.serial_number like :id ', {
+            id: `%${keywords}%`,
+          }).orWhere('machines.description like :id', {
+            id: `%${keywords}%`,
+          });
+        }),
+      );
+    }
+
+    const machineCollection = machineCollectionQuery.getMany();
 
     return machineCollection;
   }

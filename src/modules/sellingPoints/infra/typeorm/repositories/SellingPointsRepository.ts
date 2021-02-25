@@ -24,8 +24,6 @@ class SellingPointRepository implements ISellingPointsRepository {
       };
     });
 
-    logger.info(filters);
-
     const sellingPoint = await this.ormRepository.findOne({
       where: filters,
     });

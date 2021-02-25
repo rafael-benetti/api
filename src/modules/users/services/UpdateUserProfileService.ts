@@ -2,13 +2,15 @@ import AppError from '@shared/errors/app-error';
 import { inject, injectable } from 'tsyringe';
 import fs from 'fs';
 import logger from '@config/logger';
+import S3Service from '@shared/container/providers/aws.S3';
 import User from '../infra/typeorm/entities/User';
 import IUsersRepository from '../repositories/IUsersRepository';
 
 interface IRequest {
   userId: number;
   name?: string;
-  picture?: string;
+  photo?: string;
+  description?: string;
   phone?: string;
   password?: string;
   oldPassword?: string;
@@ -19,12 +21,15 @@ class UpdateUserProfileService {
   constructor(
     @inject('UsersRepository')
     private usersRepository: IUsersRepository,
+
+    @inject('S3Service')
+    private s3Service: S3Service,
   ) {}
 
   public async execute({
     userId,
     name,
-    picture,
+    photo,
     password,
     oldPassword,
     phone,
@@ -53,22 +58,23 @@ class UpdateUserProfileService {
       user.password = password;
     }
 
-    logger.info(picture);
-
-    if (picture) {
-      logger.info(process.env.STORAGE_TYPE);
+    if (photo) {
       if (process.env.STORAGE_TYPE === 'S3') {
-        logger.info('sssss');
-      } else {
-        if (user.picture) {
-          try {
-            await fs.promises.unlink(user.picture);
-          } catch (error) {
-            logger.error(error);
-          }
-        }
-        user.picture = picture;
+        // this.s3Service.deleteObject({
+        //  bucketName: process.env.BUCKET_NAME || '',
+        //  key: user.pic
+        // });
+
+        user.picture = photo;
       }
+      if (user.picture) {
+        try {
+          await fs.promises.unlink(user.picture);
+        } catch (error) {
+          logger.error(error);
+        }
+      }
+      user.picture = photo;
     }
 
     const updatedUser = await this.usersRepository.save(user);

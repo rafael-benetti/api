@@ -24,7 +24,6 @@ usersRoutes.post(
       name: Joi.string().required(),
       email: Joi.string().email().required(),
       phone: Joi.string().min(10).max(11).required(),
-      username: Joi.string().required(),
       password: Joi.string()
         .regex(/^(?=.*[A-z])(?=.*[0-9])(?=.{1,})/)
         .required(),
@@ -32,12 +31,33 @@ usersRoutes.post(
       isOperator: Joi.number().valid(0, 1),
       roles: Joi.string(),
       ownerId: Joi.number(),
+      companyIds: Joi.array()
+        .items(Joi.number().positive().integer())
+        .default([]),
     },
   }),
   usersController.create,
 );
 
-usersRoutes.patch('/', usersController.update);
+usersRoutes.patch(
+  '/',
+  celebrate({
+    body: {
+      name: Joi.string(),
+      email: Joi.string().email(),
+      phone: Joi.string().min(10).max(11),
+      password: Joi.string().regex(/^(?=.*[A-z])(?=.*[0-9])(?=.{1,})/),
+      isActive: Joi.number().valid(0, 1),
+      isOperator: Joi.number().valid(0, 1),
+      roles: Joi.string(),
+      ownerId: Joi.number(),
+      companyIds: Joi.array()
+        .items(Joi.number().positive().integer())
+        .default([]),
+    },
+  }),
+  usersController.update,
+);
 
 usersRoutes.get('/', usersController.index);
 

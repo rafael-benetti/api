@@ -10,13 +10,13 @@ export default class UsersController {
     const {
       name,
       email,
-      username,
       password,
       phone,
       isActive,
       roles,
       isOperator,
       picture,
+      companyIds,
     } = req.body;
 
     const createUserService = container.resolve(CreateUserService);
@@ -25,13 +25,13 @@ export default class UsersController {
       name,
       email,
       phone,
-      username,
       password,
       isActive,
       roles,
       isOperator,
       picture,
       userId,
+      companyIds,
     });
 
     return res.json(user);

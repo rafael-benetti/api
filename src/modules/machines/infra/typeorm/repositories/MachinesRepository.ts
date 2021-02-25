@@ -1,4 +1,3 @@
-import logger from '@config/logger';
 import ICreateMachineDTO from '@modules/machines/dtos/ICreateMachineDTO';
 import IFindMachinesDTO from '@modules/machines/dtos/IFindMachinesDTO';
 import IFindMachinesResponseDTO from '@modules/machines/dtos/IFindMachinesResponseDTO';
@@ -37,8 +36,6 @@ class MachinesRepository implements IMachinesRepository {
     const companyIdsFilter = companyIds.map(companyId => {
       return { companyId };
     });
-
-    logger.info(companyIdsFilter);
 
     const queryMachines = this.ormRepository
       .createQueryBuilder('machines')

@@ -36,13 +36,18 @@ import IMachineCollectionCounterRepository from '@modules/machine_collection/rep
 
 import MachineCollectCounterPhotosRepository from '@modules/machine_collection/infra/typeorm/repositories/MachineCollectCounterPhotosRepository';
 import IMachineCollectCounterPhotosRepository from '@modules/machine_collection/repositories/IMachineCollectCounterPhotosRepository';
+
 import IProductStocksRepository from '@modules/products/repositories/IProductStocksRepository';
 import IProductsRepository from '@modules/products/repositories/IProductsRepository';
+import S3Service from './providers/aws.S3';
+
+container.registerSingleton<S3Service>('S3Service', S3Service);
 
 container.registerSingleton<IMachineCollectCounterPhotosRepository>(
   'MachineCollectCounterPhotosRepository',
   MachineCollectCounterPhotosRepository,
 );
+
 container.registerSingleton<IMachineCollectionCounterRepository>(
   'MachineCollectionCounterRepository',
   MachineCollectCountersRepository,

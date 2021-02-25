@@ -51,7 +51,6 @@ class UpdateUserService {
       const companies = await this.companiesRepository.findCompanies(
         companyIds,
       );
-
       user.companies = companies;
     } else {
       user.companies = [];

@@ -1,4 +1,3 @@
-import logger from '@config/logger';
 import AppError from '@shared/errors/app-error';
 import { inject, injectable } from 'tsyringe';
 import IProductStocksRepository from '../repositories/IProductStocksRepository';
@@ -28,20 +27,14 @@ class TransferProductsService {
       productId,
     });
 
-    if (!userStock) {
-      throw AppError.productNotFound;
-    }
+    if (!userStock) throw AppError.productNotFound;
 
-    if (quantity > userStock.quantity) {
-      throw AppError.insufficientProducts;
-    }
+    if (quantity > userStock.quantity) throw AppError.insufficientProducts;
 
     const targetUserStock = await this.productStocksRepository.findByRelation({
       userId: targetUserId,
       productId,
     });
-
-    logger.info(targetUserStock);
 
     if (targetUserStock) {
       await this.productStocksRepository.update({

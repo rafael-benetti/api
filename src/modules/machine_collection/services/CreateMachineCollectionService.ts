@@ -64,10 +64,9 @@ class CreateMachineCollectService {
       userId,
       machineId,
       machineCollectCounters: machineCollectionCounterEntities,
-      previousCollectionId: lastCollection?.id || undefined,
-      // TODO
       active: 1,
       machineCollectCounterPhotos: machineCollectionCounterPhotoEntities,
+      previousCollectionId: lastCollection?.id,
     });
 
     machine.lastCollection = machineCollect.collectionDate;

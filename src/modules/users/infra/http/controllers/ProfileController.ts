@@ -1,20 +1,17 @@
-import logger from '@config/logger';
 import ShowUserService from '@modules/users/services/ShowUserProfileService';
 import UpdateUserProfileService from '@modules/users/services/UpdateUserProfileService';
 import { Request, Response } from 'express';
 import { container } from 'tsyringe';
 
+interface AWSFileInfo {
+  location: string;
+}
+
 class ProfileController {
   public async update(req: Request, res: Response): Promise<Response> {
     const { userId } = req;
-    logger.info(req.file.path);
 
-    let picture;
-    try {
-      picture = req.file.path;
-    } catch (error) {
-      picture = undefined;
-    }
+    const photo = (req?.file as unknown) as AWSFileInfo;
 
     const { name, password, phone, oldPassword } = req.body;
 
@@ -27,7 +24,7 @@ class ProfileController {
       password,
       oldPassword,
       phone,
-      picture,
+      photo: photo.location,
       userId,
     });
 

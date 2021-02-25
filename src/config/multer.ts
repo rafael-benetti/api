@@ -3,6 +3,7 @@ import path from 'path';
 import crypto from 'crypto';
 import aws from 'aws-sdk';
 import multerS3 from 'multer-s3';
+import logger from './logger';
 
 const MAX_SIZE_TWO_MEGABYTES = 15 * 1024 * 1024;
 
@@ -25,11 +26,18 @@ const storageTypes = {
     contentType: multerS3.AUTO_CONTENT_TYPE,
     acl: 'public-read',
     key: (req, file, cb) => {
-      const hash = crypto.randomBytes(16).toString('hex');
+      crypto.randomBytes(16, (err, hash) => {
+        if (err) cb(err);
 
-      const fileName = `${hash}-${file.originalname}`;
+        const filename = `${hash.toString('hex')}-${file.originalname}`;
 
-      cb(null, fileName);
+        logger.info(filename);
+
+        cb(null, filename);
+      });
+    },
+    metadata: (req, file, cb) => {
+      cb(null, { fieldname: file.fieldname });
     },
   }),
 };

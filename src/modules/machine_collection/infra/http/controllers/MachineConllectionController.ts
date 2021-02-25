@@ -1,3 +1,4 @@
+import logger from '@config/logger';
 import CreateMachineCollectionService from '@modules/machine_collection/services/CreateMachineCollectionService';
 import FindMachineCollectionService from '@modules/machine_collection/services/FindMachineCollectionService';
 import { Response, Request } from 'express';
@@ -9,9 +10,13 @@ class MachineCollectionController {
     const { machineCollectCounters } = req.body;
     const { userId } = req;
     let photos: string[] | undefined;
+    logger.info(req.body);
+
+    logger.info(JSON.parse(machineCollectCounters));
 
     try {
       const files: { path: string }[] = JSON.parse(JSON.stringify(req.files));
+
       photos = files.map(file => file.path);
     } catch (error) {
       photos = [];

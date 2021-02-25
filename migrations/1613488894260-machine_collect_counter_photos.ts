@@ -24,6 +24,11 @@ export default class machineCollectCounterPhotos1613488894260
             type: 'varchar',
             isNullable: false,
           },
+          {
+            name: 'key',
+            type: 'varchar',
+            isNullable: false,
+          },
           // {
           //  name: 'counter_id',
           //  type: 'int',

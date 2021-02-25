@@ -1,3 +1,4 @@
+/* eslint-disable array-callback-return */
 import AppError from '@shared/errors/app-error';
 import { inject, injectable } from 'tsyringe';
 import User from '../infra/typeorm/entities/User';
@@ -17,7 +18,9 @@ class FindUsersService {
 
     const users = await this.usersRepository.findByOwnerId(user.ownerId);
 
-    return users;
+    const filteredUsers = users.filter(userItem => userItem.id !== user.id);
+
+    return filteredUsers;
   }
 }
 

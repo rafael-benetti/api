@@ -48,7 +48,7 @@ machinesRoutes.patch(
       machineCategoryId: Joi.number(),
       counters: Joi.array().items(
         Joi.object().keys({
-          id: Joi.number().required(),
+          id: Joi.number().optional(),
           name: Joi.string().required(),
           groups: Joi.string(),
           slot: Joi.number().required(),
@@ -57,7 +57,7 @@ machinesRoutes.patch(
           pin: Joi.number().required(),
           pulseValue: Joi.number().required(),
           typeId: Joi.number().required(),
-          machineId: Joi.number().required(),
+          machineId: Joi.number().optional(),
         }),
       ),
     },

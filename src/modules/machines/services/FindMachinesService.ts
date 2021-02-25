@@ -53,9 +53,7 @@ class FindMachinesService {
 
     const user = await this.usersRepository.findById(userId);
 
-    if (!user) {
-      throw AppError.authorizationError;
-    }
+    if (!user) throw AppError.authorizationError;
 
     companyIds = user.companies.map(company => company.id);
 

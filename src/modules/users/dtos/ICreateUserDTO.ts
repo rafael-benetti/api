@@ -1,3 +1,5 @@
+import Company from '@modules/companies/infra/typeorm/entities/Company';
+
 export default interface ICreateUserDTO {
   ownerId: number;
   name: string;
@@ -9,4 +11,5 @@ export default interface ICreateUserDTO {
   roles: string;
   isOperator: number;
   picture: string;
+  companies: Company[];
 }
