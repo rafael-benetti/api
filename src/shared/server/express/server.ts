@@ -1,17 +1,19 @@
+import 'reflect-metadata';
 import appConfig from '@config/app';
 import logger from '@config/logger';
 import express from 'express';
 import cors from 'cors';
-import { createConnections } from 'typeorm';
 import morgan from 'morgan';
-import path from 'path';
+import IOrmProvider from '@providers/OrmProvider/contracts/models/OrmProvider';
+import { container } from 'tsyringe';
 import router from './router';
 import '../../container/index';
 import 'express-async-errors';
 import errorHandler from './middlewares/error-handler';
 
 const start = async () => {
-  createConnections();
+  const ormProvider = container.resolve<IOrmProvider>('OrmProvider');
+  await ormProvider.connect();
 
   const app = express();
 
@@ -19,10 +21,7 @@ const start = async () => {
   app.use(cors());
   app.use(morgan('dev'));
 
-  app.use(
-    '/files',
-    express.static(path.resolve(__dirname, '..', 'tmp', 'uploads')),
-  );
+  app.use(ormProvider.forkMiddleware);
 
   app.use(router);
 
