@@ -1,9 +1,9 @@
 import { RequestHandler } from 'express';
 
-interface IOrmProvider {
+interface OrmProvider {
   connect(): Promise<void>;
   commit(): Promise<void>;
   forkMiddleware: RequestHandler;
 }
 
-export default IOrmProvider;
+export default OrmProvider;

@@ -1,2 +1,2 @@
-import './HashProvider';
-import './OrmProvider';
+import './hash-provider';
+import './orm-provider';

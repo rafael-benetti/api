@@ -2,18 +2,17 @@ import logger from '@config/logger';
 import mongoConfig from '@config/mongo';
 import { MikroORM, RequestContext } from '@mikro-orm/core';
 import { MongoDriver, MongoEntityManager } from '@mikro-orm/mongodb';
-import MikroUser from '@modules/users/implementations/mikro/models/MikroUser';
+import OrmProvider from '@providers/orm-provider/contracts/models/orm-provider';
 import { RequestHandler } from 'express';
-import IOrmProvider from 'providers/OrmProvider/contracts/models/OrmProvider';
 
-class MikroOrmProvider implements IOrmProvider {
+class MikroOrmProvider implements OrmProvider {
   entityManager: MongoEntityManager;
 
   async connect(): Promise<void> {
     const orm = await MikroORM.init<MongoDriver>({
       type: 'mongo',
       clientUrl: mongoConfig.url,
-      entities: [MikroUser],
+      entities: [],
       implicitTransactions: true,
       debug: true,
     });

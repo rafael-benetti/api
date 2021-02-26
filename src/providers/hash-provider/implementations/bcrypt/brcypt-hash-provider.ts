@@ -1,7 +1,7 @@
-import IHashProvider from 'providers/HashProvider/contracts/models/IHashProvider';
+import HashProvider from '@providers/hash-provider/contracts/models/hash-provider';
 import { hashSync, compareSync } from 'bcrypt';
 
-class BcryptHashProvider implements IHashProvider {
+class BcryptHashProvider implements HashProvider {
   hash(payload: string): string {
     return hashSync(payload, 8);
   }
