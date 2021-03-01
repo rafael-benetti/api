@@ -36,12 +36,17 @@ class EditProfileService {
     if (name) user.name = name;
     if (phone) user.phone = phone;
     if (password && oldPassword) {
-      const checkOldPassword = this.hashProvider.compare(password, oldPassword);
+      const checkOldPassword = this.hashProvider.compare(
+        oldPassword,
+        user.password,
+      );
 
       if (!checkOldPassword) throw AppError.oldPasswordDoesMatch;
 
       user.password = this.hashProvider.hash(password);
     }
+
+    await this.usersRepository.save(user);
 
     return user;
   }

@@ -2,8 +2,8 @@ import { container } from 'tsyringe';
 import { Request, Response } from 'express';
 import CreateUserService from './create-user-service';
 
-class CreateUserController {
-  async handle(req: Request, res: Response): Promise<Response> {
+abstract class CreateUserController {
+  static async handle(req: Request, res: Response): Promise<Response> {
     const { userId } = req;
     const {
       email,

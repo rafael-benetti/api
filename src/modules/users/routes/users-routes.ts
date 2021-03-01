@@ -2,14 +2,12 @@ import authHandler from '@shared/server/express/middlewares/auth-handler';
 import { celebrate, Joi } from 'celebrate';
 import { Router } from 'express';
 import CreateUserController from '../services/create-user/create-user-controller';
+import EditProfileController from '../services/edit-profile/edit-profile.controller';
 import EditUserController from '../services/edit-user/edit-user-controller';
+import GetProfileController from '../services/get-profile/get-profile-controller';
 import ListUsersController from '../services/list-users/list-users-controller';
 
 const userRoutes = Router();
-
-const createUserController = new CreateUserController();
-const listUsersController = new ListUsersController();
-const updateUserController = new EditUserController();
 
 userRoutes.use(authHandler);
 
@@ -57,9 +55,11 @@ userRoutes.post(
       },
     },
   }),
-  createUserController.handle,
+  CreateUserController.handle,
 );
-userRoutes.get('/', listUsersController.handle);
-userRoutes.patch('/', updateUserController.handle);
+userRoutes.get('/', ListUsersController.handle);
+userRoutes.patch('/', EditUserController.handle);
+userRoutes.get('/me', GetProfileController.handle);
+userRoutes.patch('/me', EditProfileController.handle);
 
 export default userRoutes;
