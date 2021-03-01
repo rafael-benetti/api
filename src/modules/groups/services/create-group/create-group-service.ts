@@ -2,6 +2,7 @@ import Group from '@modules/groups/contracts/models/group';
 import GroupsRepository from '@modules/groups/contracts/repositories/groups-repository';
 import Role from '@modules/users/contracts/enums/role';
 import UsersRepository from '@modules/users/contracts/repositories/users-repository';
+import OrmProvider from '@providers/orm-provider/contracts/models/orm-provider';
 import AppError from '@shared/errors/app-error';
 import { inject, injectable } from 'tsyringe';
 
@@ -18,6 +19,9 @@ class CreateGroupService {
 
     @inject('UsersRepository')
     private usersRepository: UsersRepository,
+
+    @inject('OrmProvider')
+    private ormProvider: OrmProvider,
   ) {}
 
   public async execute({ name, userId }: Request): Promise<Group> {
@@ -31,7 +35,7 @@ class CreateGroupService {
         throw AppError.authorizationError;
 
     if (user.role === Role.OWNER) {
-      const group = await this.groupsRepository.create({
+      const group = this.groupsRepository.create({
         name,
         ownerId: user._id,
       });
@@ -41,10 +45,12 @@ class CreateGroupService {
 
     if (!user.ownerId) throw AppError.unknownError;
 
-    const group = await this.groupsRepository.create({
+    const group = this.groupsRepository.create({
       name,
       ownerId: user.ownerId,
     });
+
+    await this.ormProvider.commit();
 
     return group;
   }

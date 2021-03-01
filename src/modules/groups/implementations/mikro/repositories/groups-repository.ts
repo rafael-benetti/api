@@ -33,13 +33,9 @@ class MikroGroupsRepository implements GroupsRepository {
     return groups;
   }
 
-  async create(data: CreateGroupDto): Promise<Group> {
+  create(data: CreateGroupDto): Group {
     const mikroGroup = new MikroGroup(data);
-
     this.ormProvider.entityManager.persist(mikroGroup);
-
-    await this.ormProvider.commit();
-
     return MikroMapper.map(mikroGroup);
   }
 }

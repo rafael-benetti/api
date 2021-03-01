@@ -103,7 +103,7 @@ export default class AppError {
 
   static authorizationError = new AppError({
     errorCode: 'AUTHORIZATION_ERROR',
-    message: "You don't have permission for access this resource",
+    message: 'You do not have permission to access this resource.',
     statusCode: 403,
   });
 

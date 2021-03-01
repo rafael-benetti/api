@@ -25,9 +25,17 @@ class ListGroupsService {
     if (!user) throw AppError.userNotFound;
 
     if (user.role === Role.MANAGER) {
+      if (user.groupIds) {
+        const groups = await this.groupsRepository.find(user.groupIds);
+        return groups;
+      }
+
+      return [];
     }
 
     if (user.role === Role.OWNER) {
+      const groups = await this.groupsRepository.findByOwnerId(user._id);
+      return groups;
     }
 
     throw AppError.authorizationError;

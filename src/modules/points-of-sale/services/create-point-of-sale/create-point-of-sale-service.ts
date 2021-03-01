@@ -3,6 +3,7 @@ import PointOfSale from '@modules/points-of-sale/contracts/models/point-of-sale'
 import PointsOfSaleRepository from '@modules/points-of-sale/contracts/repositories/points-of-sale-repository';
 import Role from '@modules/users/contracts/enums/role';
 import UsersRepository from '@modules/users/contracts/repositories/users-repository';
+import OrmProvider from '@providers/orm-provider/contracts/models/orm-provider';
 import AppError from '@shared/errors/app-error';
 import { inject, injectable } from 'tsyringe';
 
@@ -24,6 +25,9 @@ class CreatePointOfSaleService {
 
     @inject('UsersRepository')
     private usersRepository: UsersRepository,
+
+    @inject('OrmProvider')
+    private ormProvider: OrmProvider,
   ) {}
 
   async execute({
@@ -61,7 +65,7 @@ class CreatePointOfSaleService {
       groupId,
     });
 
-    await this.pointsOfSaleRepository.save();
+    await this.ormProvider.commit();
 
     return pointOfSale;
   }
