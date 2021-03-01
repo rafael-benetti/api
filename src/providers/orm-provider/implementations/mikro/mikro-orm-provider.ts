@@ -24,11 +24,13 @@ class MikroOrmProvider implements OrmProvider {
     });
 
     this.entityManager = orm.em;
+    this.entityManager.getDriver().createCollections();
 
     logger.info('🔌 - App connected to the database');
   }
 
   async commit(): Promise<void> {
+    console.log(this.entityManager.getUnitOfWork().getIdentityMap().values());
     await this.entityManager.flush();
   }
 

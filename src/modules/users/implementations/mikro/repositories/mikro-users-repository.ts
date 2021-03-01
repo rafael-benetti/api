@@ -49,24 +49,15 @@ class MikroUsersRepository implements UsersRepository {
     return undefined;
   }
 
-  async create(data: createUserDto): Promise<User> {
+  create(data: createUserDto): User {
     const user = new MikroUser(data);
-
     this.ormProvider.entityManager.persist(user);
-
-    await this.ormProvider.commit();
-
     return MikroMapper.map(user);
   }
 
-  async save(user: User): Promise<User> {
+  save(user: User): void {
     const mikroUser = MikroMapper.map(user);
-
     this.ormProvider.entityManager.persist(mikroUser);
-
-    await this.ormProvider.commit();
-
-    return MikroMapper.map(mikroUser);
   }
 }
 
