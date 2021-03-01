@@ -1,6 +1,5 @@
 import { container } from 'tsyringe';
 import { Request, Response } from 'express';
-import logger from '@config/logger';
 import CreateUserService from './create-user-service';
 
 class CreateUserController {
@@ -17,8 +16,6 @@ class CreateUserController {
       permissions,
       groupIds,
     } = req.body;
-
-    logger.info(req.body);
 
     const createUserService = container.resolve(CreateUserService);
 

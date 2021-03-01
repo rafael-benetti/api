@@ -1,3 +1,4 @@
+import GroupsRepository from '@modules/groups/contracts/repositories/groups-repository';
 import Role from '@modules/users/contracts/enums/role';
 import User from '@modules/users/contracts/models/user';
 import UsersRepository from '@modules/users/contracts/repositories/users-repository';
@@ -6,6 +7,7 @@ import AppError from '@shared/errors/app-error';
 
 import { inject, injectable } from 'tsyringe';
 import Permissions, {
+  managerPermissionKeys,
   operatorPermissionKeys,
 } from '../../contracts/models/permissions';
 
@@ -27,6 +29,9 @@ class CreateUserService {
   constructor(
     @inject('UsersRepository')
     private usersRepository: UsersRepository,
+
+    @inject('GroupsRepository')
+    private groupsRepository: GroupsRepository,
 
     @inject('HashProvider')
     private hashProvider: HashProvider,
@@ -63,10 +68,38 @@ class CreateUserService {
           return !operatorPermissionKeys.includes(key);
         });
 
-        // TODO: adicionar condição para criação de MANAGER
-        // TODO: adicionar condição para criação de OWNER
+        if (checkPermissions) throw AppError.incorrectPermissionsForOperator;
+      }
 
-        if (checkPermissions) throw AppError.incorrectPermissonsForOperator;
+      if (role === Role.MANAGER) {
+        const checkPermissions = Object.keys(permissions).some(
+          key => !managerPermissionKeys.includes(key),
+        );
+
+        if (checkPermissions) throw AppError.incorrectPermissionsForOperator;
+      }
+    }
+
+    if (groupIds) {
+      if (owner.role === Role.MANAGER) {
+        const checkGroupsAvailability = Object.keys(groupIds).some(
+          groupId => !owner.groupIds?.includes(groupId),
+        );
+        if (checkGroupsAvailability) throw AppError.authorizationError;
+      }
+
+      if (owner.role === Role.OWNER) {
+        const ownerGroups = await this.groupsRepository.findByOwnerId(
+          owner._id,
+        );
+
+        const ownerGroupIds = ownerGroups.map(group => group._id);
+
+        const checkGroupsAvailability = groupIds.some(
+          groupId => !ownerGroupIds.includes(groupId),
+        );
+
+        if (checkGroupsAvailability) throw AppError.authorizationError;
       }
     }
 

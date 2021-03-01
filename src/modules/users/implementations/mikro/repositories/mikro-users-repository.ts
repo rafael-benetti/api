@@ -13,22 +13,28 @@ class MikroUsersRepository implements UsersRepository {
     this.ormProvider = container.resolve<MikroOrmProvider>('OrmProvider');
   }
 
-  async find(userId: string): Promise<User[]> {
+  async findByGroupIds(groupIds: string[]): Promise<User[]> {
     const mikroUsers = await this.ormProvider.entityManager.find(MikroUser, {
-      ownerId: userId,
+      groupIds,
     });
 
-    const users = mikroUsers.map(mikroUser => MikroMapper.map(mikroUser));
+    return mikroUsers.map(mikroUser => MikroMapper.map(mikroUser));
+  }
 
-    return users;
+  async findByOwnerId(ownerId: string): Promise<User[]> {
+    const mikroUsers = await this.ormProvider.entityManager.find(MikroUser, {
+      ownerId,
+    });
+
+    return mikroUsers.map(mikroUser => MikroMapper.map(mikroUser));
   }
 
   async findByEmail(email: string): Promise<User | undefined> {
-    const user = await this.ormProvider.entityManager.findOne(MikroUser, {
+    const mikroUser = await this.ormProvider.entityManager.findOne(MikroUser, {
       email,
     });
 
-    if (user) return MikroMapper.map(user);
+    if (mikroUser) return MikroMapper.map(mikroUser);
 
     return undefined;
   }

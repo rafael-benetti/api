@@ -1,5 +1,4 @@
 import authConfig from '@config/auth';
-import logger from '@config/logger';
 
 import User from '@modules/users/contracts/models/user';
 import UsersRepository from '@modules/users/contracts/repositories/users-repository';
@@ -30,8 +29,6 @@ class AuthenticateUserService {
 
   public async execute({ email, password }: IRequest): Promise<IResponse> {
     const user = await this.usersRepository.findByEmail(email);
-
-    logger.info(user);
 
     if (!user) throw AppError.incorrectEmailOrPassword;
 

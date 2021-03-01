@@ -31,8 +31,6 @@ const storageTypes = {
 
         const filename = `${hash.toString('hex')}-${file.originalname}`;
 
-        logger.info(filename);
-
         cb(null, filename);
       });
     },

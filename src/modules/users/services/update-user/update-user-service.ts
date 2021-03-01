@@ -1,3 +1,4 @@
+import GroupsRepository from '@modules/groups/contracts/repositories/groups-repository';
 import Role from '@modules/users/contracts/enums/role';
 import User from '@modules/users/contracts/models/user';
 import UsersRepository from '@modules/users/contracts/repositories/users-repository';
@@ -5,6 +6,7 @@ import HashProvider from '@providers/hash-provider/contracts/models/hash-provide
 import AppError from '@shared/errors/app-error';
 import { inject, injectable } from 'tsyringe';
 import Permissions, {
+  managerPermissionKeys,
   operatorPermissionKeys,
 } from '../../contracts/models/permissions';
 
@@ -12,7 +14,7 @@ interface Request {
   userId: string;
   targetUserId: string;
   permissions?: Permissions;
-  groups?: string[];
+  groupIds?: string[];
   name?: string;
   password?: string;
   phone?: string;
@@ -27,12 +29,15 @@ class UpdateUserService {
 
     @inject('HashProvider')
     private hashProvider: HashProvider,
+
+    @inject('GroupsRepository')
+    private groupsRepository: GroupsRepository,
   ) {}
 
   public async execute({
     userId,
     targetUserId,
-    groups,
+    groupIds,
     name,
     password,
     phone,
@@ -63,14 +68,45 @@ class UpdateUserService {
           return !operatorPermissionKeys.includes(key);
         });
 
-        // TODO: Adicionar condição para edição de MANAGER
+        if (checkPermissions) throw AppError.incorrectPermissionsForOperator;
 
-        if (checkPermissions) throw AppError.incorrectPermissonsForOperator;
+        targetUser.permissions = permissions;
+      }
+
+      if (targetUser.role === Role.MANAGER) {
+        const checkPermissions = Object.keys(permissions).some(
+          key => !managerPermissionKeys.includes(key),
+        );
+
+        if (checkPermissions) throw AppError.incorrectPermissionsForOperator;
+
+        targetUser.permissions = permissions;
       }
     }
 
-    if (groups) {
-      // TODO: Adicionar condições para edição de groups
+    if (groupIds) {
+      if (user.role === Role.MANAGER) {
+        const checkGroupsAvailability = Object.keys(groupIds).some(
+          groupId => !user.groupIds?.includes(groupId),
+        );
+        if (checkGroupsAvailability) throw AppError.authorizationError;
+
+        targetUser.groupIds = groupIds;
+      }
+
+      if (user.role === Role.OWNER) {
+        const ownerGroups = await this.groupsRepository.findByOwnerId(user._id);
+
+        const ownerGroupIds = ownerGroups.map(group => group._id);
+
+        const checkGroupsAvailability = groupIds.some(
+          groupId => !ownerGroupIds.includes(groupId),
+        );
+
+        if (checkGroupsAvailability) throw AppError.authorizationError;
+
+        targetUser.groupIds = groupIds;
+      }
     }
 
     await this.usersRepository.save(targetUser);

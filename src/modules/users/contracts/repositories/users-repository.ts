@@ -5,7 +5,8 @@ interface UsersRepository {
   create(data: CreateUserDto): Promise<User>;
   findById(userId: string): Promise<User | undefined>;
   findByEmail(email: string): Promise<User | undefined>;
-  find(userId: string): Promise<User[]>;
+  findByOwnerId(ownerId: string): Promise<User[]>;
+  findByGroupIds(groupIds: string[]): Promise<User[]>;
   save(user: User): Promise<User>;
 }
 

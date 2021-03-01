@@ -2,9 +2,9 @@ import { Entity, PrimaryKey, Property } from '@mikro-orm/core';
 import CreatePointOfSaleDto from '@modules/points-of-sale/contracts/dtos/create-point-of-sale-dto';
 import Address from '@modules/points-of-sale/contracts/models/address';
 import PointOfSale from '@modules/points-of-sale/contracts/models/point-of-sale';
-import uuid from 'uuid';
+import { v4 } from 'uuid';
 
-@Entity()
+@Entity({ tableName: 'points_of_sale' })
 class MikroPointOfSale implements PointOfSale {
   @PrimaryKey()
   id: string;
@@ -22,6 +22,9 @@ class MikroPointOfSale implements PointOfSale {
   secondaryPhoneNumber: string;
 
   @Property()
+  groupId: string;
+
+  @Property()
   address: Address;
 
   @Property()
@@ -29,7 +32,7 @@ class MikroPointOfSale implements PointOfSale {
 
   constructor(data?: CreatePointOfSaleDto) {
     if (data) {
-      this.id = uuid.v4();
+      this.id = v4();
       this.label = data.label;
       this.primaryPhoneNumber = data.primaryPhoneNumber;
       this.secondaryPhoneNumber = data.secondaryPhoneNumber;

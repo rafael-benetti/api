@@ -1,5 +1,7 @@
 import Group from '@modules/groups/contracts/models/group';
 import MikroGroup from '@modules/groups/implementations/mikro/models/mikro-group';
+import PointOfSale from '@modules/points-of-sale/contracts/models/point-of-sale';
+import MikroPointOfSale from '@modules/points-of-sale/implementations/mikro/models/mikro-point-of-sale';
 import User from '@modules/users/contracts/models/user';
 import MikroUser from '@modules/users/implementations/mikro/models/mikro-user';
 
@@ -43,6 +45,22 @@ abstract class MikroMapper {
       Object.assign(mikroGroup, entity);
 
       return mikroGroup;
+    }
+
+    if (entity instanceof MikroPointOfSale) {
+      const pointOfSale = new PointOfSale();
+
+      Object.assign(pointOfSale, entity);
+
+      return pointOfSale;
+    }
+
+    if (entity instanceof PointOfSale) {
+      const mikroPointOfSale = new MikroPointOfSale();
+
+      Object.assign(mikroPointOfSale, entity);
+
+      return mikroPointOfSale;
     }
   }
 }

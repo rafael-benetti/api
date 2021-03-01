@@ -17,11 +17,14 @@ class ListUsersService {
     if (!user) throw AppError.userNotFound;
 
     if (user.role === Role.OWNER) {
-      const users = await this.usersRepository.find(user._id);
+      const users = await this.usersRepository.findByOwnerId(user._id);
       return users;
     }
     if (user.role === Role.MANAGER) {
-      // TODO: Criar busca por companies
+      if (user.groupIds) {
+        const users = await this.usersRepository.findByGroupIds(user.groupIds);
+        return users;
+      }
     }
 
     return [];

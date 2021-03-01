@@ -7,14 +7,14 @@ class UpdateUserController {
     const { userId } = req;
     const targetUserId = req.query.userId;
 
-    const { groups, name, password, phone, isActive, permissions } = req.body;
+    const { groupIds, name, password, phone, isActive, permissions } = req.body;
 
     const updateUserService = container.resolve(UpdateUserService);
 
     const user = await updateUserService.execute({
       userId,
       targetUserId: targetUserId as string,
-      groups,
+      groupIds,
       name,
       password,
       phone,

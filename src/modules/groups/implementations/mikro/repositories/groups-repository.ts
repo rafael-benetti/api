@@ -13,6 +13,26 @@ class MikroGroupsRepository implements GroupsRepository {
     this.ormProvider = container.resolve<MikroOrmProvider>('OrmProvider');
   }
 
+  async find(groupIds: string[]): Promise<Group[]> {
+    const mikroGroups = await this.ormProvider.entityManager.find(MikroGroup, {
+      _id: groupIds,
+    });
+
+    const groups = mikroGroups.map(group => MikroMapper.map(group));
+
+    return groups;
+  }
+
+  async findByOwnerId(ownerId: string): Promise<Group[]> {
+    const mikroGroups = await this.ormProvider.entityManager.find(MikroGroup, {
+      ownerId,
+    });
+
+    const groups = mikroGroups.map(group => MikroMapper.map(group));
+
+    return groups;
+  }
+
   async create(data: CreateGroupDto): Promise<Group> {
     const mikroGroup = new MikroGroup(data);
 

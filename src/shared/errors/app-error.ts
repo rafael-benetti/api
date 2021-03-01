@@ -19,7 +19,7 @@ export default class AppError {
 
   static jwtTokenIsMissing = new AppError({
     errorCode: 'JWT_TOKEN_IS_MISSING',
-    message: 'Your request does have a JWT Token.',
+    message: 'Your request does not have a JWT Token.',
     statusCode: 401,
   });
 
@@ -59,10 +59,10 @@ export default class AppError {
     statusCode: 400,
   });
 
-  static incorrectPermissonsForOperator = new AppError({
+  static incorrectPermissionsForOperator = new AppError({
     errorCode: 'INCORRECT_PERMISSIONS_FOR_OPERATOR',
     message: 'Incorrect permissions for operator.',
-    statusCode: 401,
+    statusCode: 400,
   });
 
   static insufficientProducts = new AppError({

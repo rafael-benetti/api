@@ -67,18 +67,34 @@ export const operatorPermissionKeys = [
   'toggleMaintenanceMode',
 ];
 
-// TODO: Adicionar permissões de um manager
 export const managerPermissionKeys = [
+  'createMachines',
   'editMachines',
   'deleteMachines',
   'createProducts',
   'editProducts',
+  'deleteProducts',
   'transferProducts',
   'createCategories',
   'editCategories',
-  'generateReports',
-  'addRemoteCredit',
+  'deleteCategories',
+  'createGroups',
+  'editGroups',
+  'deleteGroups',
+  'listGroups',
+  'createPointsOfSale',
+  'editPointsOfSale',
+  'deletePointsOfSale',
+  'createRoutes',
+  'editRoutes',
+  'deleteRoutes',
+  'listUsers',
+  'createUsers',
+  'editUsers',
+  'deleteUsers',
   'toggleMaintenanceMode',
+  'addRemoteCredit',
+  'generateReports',
 ];
 
 export default Permissions;

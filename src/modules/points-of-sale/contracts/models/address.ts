@@ -5,9 +5,9 @@ class Address {
 
   city: string;
 
-  neighborhood: string;
-
   street: string;
+
+  neighborhood: string;
 
   number: string;
 
