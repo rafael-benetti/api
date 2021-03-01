@@ -3,5 +3,6 @@ declare namespace NodeJS {
     APP_PORT: string;
     APP_ENVIRONMENT: string;
     MONGO_URL: string;
+    REDIS_TTL: string;
   }
 }

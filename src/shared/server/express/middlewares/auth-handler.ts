@@ -1,36 +1,28 @@
+import SessionProvider from '@providers/session-provider/contracts/models/session.provider';
 import AppError from '@shared/errors/app-error';
 import { Request, Response, NextFunction } from 'express';
-import { verify } from 'jsonwebtoken';
-import authConfig from '@config/auth';
+import { container } from 'tsyringe';
 
-interface JWTTokenPayload {
-  iat: number;
-  exp: number;
-  sub: string;
-}
-
-export default function authHandler(
+export default async function authHandler(
   req: Request,
   res: Response,
   next: NextFunction,
-): void {
+): Promise<void> {
   const authHeader = req.headers.authorization;
 
   if (!authHeader) {
-    throw AppError.jwtTokenIsMissing;
+    throw AppError.tokenIsMissing;
   }
+
+  const sessionProvider = container.resolve<SessionProvider>('SessionProvider');
 
   const [, token] = authHeader.split(' ');
 
-  try {
-    const decodedToken = verify(token, authConfig.jwt.secret);
+  const userId = await sessionProvider.getTokenOwner(token);
 
-    const { sub } = decodedToken as JWTTokenPayload;
+  if (!userId) throw AppError.invalidToken;
 
-    req.userId = sub;
+  req.userId = userId;
 
-    return next();
-  } catch (error) {
-    throw AppError.jwtTokenIsMissing;
-  }
+  return next();
 }

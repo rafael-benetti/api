@@ -17,20 +17,20 @@ export default class AppError {
     statusCode: 409,
   });
 
-  static jwtTokenIsMissing = new AppError({
-    errorCode: 'JWT_TOKEN_IS_MISSING',
-    message: 'Your request does not have a JWT Token.',
+  static tokenIsMissing = new AppError({
+    errorCode: 'TOKEN_IS_MISSING',
+    message: 'Your request does not have an auth token.',
     statusCode: 401,
   });
 
-  static invalidJWTToken = new AppError({
-    errorCode: 'INVALID_JWT_TOKEN',
-    message: 'Your json web token is invalid.',
+  static invalidToken = new AppError({
+    errorCode: 'INVALID_TOKEN',
+    message: 'Your auth token is invalid.',
     statusCode: 401,
   });
 
   static oldPasswordIsMissing = new AppError({
-    errorCode: 'OLD_PASSWPRD_IS_MISSING',
+    errorCode: 'OLD_PASSWoRD_IS_MISSING',
     message: 'You need to inform the old password to set a new password',
     statusCode: 401,
   });
