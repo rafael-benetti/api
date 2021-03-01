@@ -1,9 +1,9 @@
 import { Request, Response } from 'express';
 import { container } from 'tsyringe';
-import AuthenticateUserService from './authentication-user-service';
+import AuthenticateUserService from './authenticate-user.service';
 
-export default class SessionsController {
-  public async create(req: Request, res: Response): Promise<Response> {
+export default abstract class AuthenticateUserController {
+  public static async create(req: Request, res: Response): Promise<Response> {
     const { email, password } = req.body;
 
     const authenticateUserService = container.resolve(AuthenticateUserService);

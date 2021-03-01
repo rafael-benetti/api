@@ -19,7 +19,7 @@ export default interface CreateUserDto {
 
   isActive: boolean;
 
-  permissions: Permissions;
+  permissions?: Permissions;
 
   groupIds?: string[];
 }

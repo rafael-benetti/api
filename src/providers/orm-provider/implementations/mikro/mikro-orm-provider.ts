@@ -2,9 +2,11 @@ import logger from '@config/logger';
 import mongoConfig from '@config/mongo';
 import { MikroORM, RequestContext } from '@mikro-orm/core';
 import { MongoDriver, MongoEntityManager } from '@mikro-orm/mongodb';
+import MikroAdmin from '@modules/admins/implementations/mikro/models/mikro-admin';
 import MikroGroup from '@modules/groups/implementations/mikro/models/mikro-group';
 import MikroPointOfSale from '@modules/points-of-sale/implementations/mikro/models/mikro-point-of-sale';
 import MikroUser from '@modules/users/implementations/mikro/models/mikro-user';
+
 import OrmProvider from '@providers/orm-provider/contracts/models/orm-provider';
 import { RequestHandler } from 'express';
 
@@ -15,9 +17,10 @@ class MikroOrmProvider implements OrmProvider {
     const orm = await MikroORM.init<MongoDriver>({
       type: 'mongo',
       clientUrl: mongoConfig.url,
-      entities: [MikroUser, MikroGroup, MikroPointOfSale],
+      entities: [MikroUser, MikroGroup, MikroPointOfSale, MikroAdmin],
       implicitTransactions: true,
       debug: true,
+      ensureIndexes: true,
     });
 
     this.entityManager = orm.em;

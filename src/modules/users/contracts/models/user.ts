@@ -20,7 +20,7 @@ class User {
 
   isActive: boolean;
 
-  permissions: Permissions;
+  permissions?: Permissions;
 
   groupIds?: string[];
 }

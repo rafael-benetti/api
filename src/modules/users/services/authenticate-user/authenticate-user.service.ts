@@ -5,12 +5,12 @@ import SessionProvider from '@providers/session-provider/contracts/models/sessio
 import AppError from '@shared/errors/app-error';
 import { inject, injectable } from 'tsyringe';
 
-interface IRequest {
+interface Request {
   email: string;
   password: string;
 }
 
-interface IResponse {
+interface Response {
   user: User;
   token: string;
 }
@@ -28,7 +28,7 @@ class AuthenticateUserService {
     private sessionProvider: SessionProvider,
   ) {}
 
-  public async execute({ email, password }: IRequest): Promise<IResponse> {
+  public async execute({ email, password }: Request): Promise<Response> {
     const user = await this.usersRepository.findByEmail(email);
 
     if (!user) throw AppError.incorrectEmailOrPassword;
