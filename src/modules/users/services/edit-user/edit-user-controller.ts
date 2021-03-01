@@ -1,15 +1,15 @@
 import { Request, Response } from 'express';
 import { container } from 'tsyringe';
-import UpdateUserService from './update-user-service';
+import EditUserService from './edit-user-service';
 
-class UpdateUserController {
+class EditUserController {
   async handle(req: Request, res: Response): Promise<Response> {
     const { userId } = req;
     const targetUserId = req.query.userId;
 
     const { groupIds, name, password, phone, isActive, permissions } = req.body;
 
-    const updateUserService = container.resolve(UpdateUserService);
+    const updateUserService = container.resolve(EditUserService);
 
     const user = await updateUserService.execute({
       userId,
@@ -26,4 +26,4 @@ class UpdateUserController {
   }
 }
 
-export default UpdateUserController;
+export default EditUserController;

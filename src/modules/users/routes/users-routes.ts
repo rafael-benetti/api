@@ -2,14 +2,14 @@ import authHandler from '@shared/server/express/middlewares/auth-handler';
 import { celebrate, Joi } from 'celebrate';
 import { Router } from 'express';
 import CreateUserController from '../services/create-user/create-user-controller';
+import EditUserController from '../services/edit-user/edit-user-controller';
 import ListUsersController from '../services/list-users/list-users-controller';
-import UpdateUserController from '../services/update-user/update-user-controller';
 
 const userRoutes = Router();
 
 const createUserController = new CreateUserController();
 const listUsersController = new ListUsersController();
-const updateUserController = new UpdateUserController();
+const updateUserController = new EditUserController();
 
 userRoutes.use(authHandler);
 

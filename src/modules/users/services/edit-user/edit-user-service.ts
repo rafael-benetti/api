@@ -22,7 +22,7 @@ interface Request {
 }
 
 @injectable()
-class UpdateUserService {
+class EditUserService {
   constructor(
     @inject('UsersRepository')
     private usersRepository: UsersRepository,
@@ -114,4 +114,4 @@ class UpdateUserService {
     return targetUser;
   }
 }
-export default UpdateUserService;
+export default EditUserService;
