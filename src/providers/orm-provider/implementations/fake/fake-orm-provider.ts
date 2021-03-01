@@ -1,6 +1,6 @@
 import logger from '@config/logger';
+import OrmProvider from '@providers/orm-provider/contracts/models/orm-provider';
 import { RequestHandler } from 'express';
-import OrmProvider from '../../contracts/models/OrmProvider';
 
 class FakeOrmProvider implements OrmProvider {
   async connect(): Promise<void> {

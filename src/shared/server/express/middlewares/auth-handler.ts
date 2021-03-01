@@ -27,7 +27,7 @@ export default function authHandler(
 
     const { sub } = decodedToken as JWTTokenPayload;
 
-    req.userId = Number(sub);
+    req.userId = sub;
 
     return next();
   } catch (error) {

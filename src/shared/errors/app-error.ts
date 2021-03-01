@@ -59,6 +59,12 @@ export default class AppError {
     statusCode: 400,
   });
 
+  static incorrectPermissonsForOperator = new AppError({
+    errorCode: 'INCORRECT_PERMISSIONS_FOR_OPERATOR',
+    message: 'Incorrect permissions for operator.',
+    statusCode: 401,
+  });
+
   static insufficientProducts = new AppError({
     errorCode: 'INSUFFICIENT_PRODUCTS',
     message: "You don't have enough products to transfer.",
