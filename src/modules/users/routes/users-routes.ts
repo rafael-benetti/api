@@ -41,7 +41,6 @@ userRoutes.post(
         createGroups: Joi.boolean().optional(),
         editGroups: Joi.boolean().optional(),
         deleteGroups: Joi.boolean().optional(),
-        listGroups: Joi.boolean().optional(),
         createPointsOfSale: Joi.boolean().optional(),
         editPointsOfSale: Joi.boolean().optional(),
         deletePointsOfSale: Joi.boolean().optional(),
@@ -58,8 +57,66 @@ userRoutes.post(
   CreateUserController.handle,
 );
 userRoutes.get('/', ListUsersController.handle);
-userRoutes.patch('/', EditUserController.handle);
+userRoutes.patch(
+  '/',
+  celebrate({
+    body: {
+      name: Joi.string().optional(),
+      phone: Joi.string().min(10).max(11).optional(),
+      password: Joi.string()
+        .regex(/^(?=.*[A-z])(?=.*[0-9])(?=.{1,})/)
+        .optional(),
+      isActive: Joi.boolean().optional(),
+      groupIds: Joi.array().items(Joi.string()).optional(),
+      permissions: {
+        createMachines: Joi.boolean().optional(),
+        editMachines: Joi.boolean().optional(),
+        deleteMachines: Joi.boolean().optional(),
+        createProducts: Joi.boolean().optional(),
+        editProducts: Joi.boolean().optional(),
+        deleteProducts: Joi.boolean().optional(),
+        transferProducts: Joi.boolean().optional(),
+        createCategories: Joi.boolean().optional(),
+        editCategories: Joi.boolean().optional(),
+        deleteCategories: Joi.boolean().optional(),
+        generateReports: Joi.boolean().optional(),
+        addRemoteCredit: Joi.boolean().optional(),
+        toggleMaintenanceMode: Joi.boolean().optional(),
+        createGroups: Joi.boolean().optional(),
+        editGroups: Joi.boolean().optional(),
+        deleteGroups: Joi.boolean().optional(),
+        createPointsOfSale: Joi.boolean().optional(),
+        editPointsOfSale: Joi.boolean().optional(),
+        deletePointsOfSale: Joi.boolean().optional(),
+        createRoutes: Joi.boolean().optional(),
+        editRoutes: Joi.boolean().optional(),
+        deleteRoutes: Joi.boolean().optional(),
+        createUsers: Joi.boolean().optional(),
+        editUsers: Joi.boolean().optional(),
+        deleteUsers: Joi.boolean().optional(),
+        listUsers: Joi.boolean().optional(),
+      },
+    },
+  }),
+  EditUserController.handle,
+);
 userRoutes.get('/me', GetProfileController.handle);
-userRoutes.patch('/me', EditProfileController.handle);
+userRoutes.patch(
+  '/me',
+  celebrate({
+    body: {
+      name: Joi.string().optional(),
+      phone: Joi.string().optional(),
+      password: Joi.string()
+        .regex(/^(?=.*[A-z])(?=.*[0-9])(?=.{1,})/)
+        .optional(),
+      oldPassword: Joi.string()
+        .regex(/^(?=.*[A-z])(?=.*[0-9])(?=.{1,})/)
+        .required()
+        .valid(Joi.ref('password')),
+    },
+  }),
+  EditProfileController.handle,
+);
 
 export default userRoutes;

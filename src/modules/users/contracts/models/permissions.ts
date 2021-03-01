@@ -31,8 +31,6 @@ interface Permissions {
 
   deleteGroups: boolean;
 
-  listGroups: boolean;
-
   createPointsOfSale: boolean;
 
   editPointsOfSale: boolean;
@@ -81,7 +79,6 @@ export const managerPermissionKeys = [
   'createGroups',
   'editGroups',
   'deleteGroups',
-  'listGroups',
   'createPointsOfSale',
   'editPointsOfSale',
   'deletePointsOfSale',

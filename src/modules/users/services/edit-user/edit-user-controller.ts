@@ -1,6 +1,6 @@
 import { Request, Response } from 'express';
 import { container } from 'tsyringe';
-import EditUserService from './edit-user-service';
+import EditUserService from './edit-user.service';
 
 abstract class EditUserController {
   static async handle(req: Request, res: Response): Promise<Response> {
