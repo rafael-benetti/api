@@ -1,3 +1,5 @@
+import AdminsRepository from '@modules/admins/contracts/repositories/admins.repository';
+import MikroAdminsRepository from '@modules/admins/implementations/mikro/repositories/mikro-admins.repository';
 import GroupsRepository from '@modules/groups/contracts/repositories/groups-repository';
 import MikroGroupsRepository from '@modules/groups/implementations/mikro/repositories/groups-repository';
 import PointsOfSaleRepository from '@modules/points-of-sale/contracts/repositories/points-of-sale-repository';
@@ -20,4 +22,9 @@ container.registerSingleton<UsersRepository>(
 container.registerSingleton<PointsOfSaleRepository>(
   'PointsOfSaleRepository',
   MikroPointsOfSaleRepository,
+);
+
+container.registerSingleton<AdminsRepository>(
+  'AdminsRepository',
+  MikroAdminsRepository,
 );

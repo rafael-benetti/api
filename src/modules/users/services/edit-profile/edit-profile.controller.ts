@@ -4,7 +4,7 @@ import EditProfileService from './edit-profile.service';
 
 abstract class EditProfileController {
   static async handle(req: Request, res: Response): Promise<Response> {
-    const { userId } = req;
+    const { userId, file } = req;
     const { name, phone, password, oldPassword } = req.body;
 
     const editProfileService = container.resolve(EditProfileService);
@@ -15,6 +15,7 @@ abstract class EditProfileController {
       phone,
       password,
       oldPassword,
+      file,
     });
 
     return res.json(user);

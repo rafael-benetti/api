@@ -4,6 +4,7 @@ import User from '@modules/users/contracts/models/user';
 import Permissions from '@modules/users/contracts/models/permissions';
 import Role from '@modules/users/contracts/enums/role';
 import { v4 } from 'uuid';
+import Photo from '@modules/users/contracts/models/photo';
 
 @Entity({ tableName: 'users' })
 class MikroUser implements User {
@@ -26,7 +27,7 @@ class MikroUser implements User {
   role: Role;
 
   @Property()
-  photo?: string | undefined;
+  photo?: Photo;
 
   @Property()
   ownerId?: string | undefined;
@@ -35,7 +36,7 @@ class MikroUser implements User {
   isActive: boolean;
 
   @Property()
-  permissions: Permissions;
+  permissions?: Permissions;
 
   @Property()
   groupIds?: string[];
@@ -46,7 +47,6 @@ class MikroUser implements User {
       this.name = data.name;
       this.email = data.email;
       this.phone = data.phone;
-      this.photo = data.photo;
       this.password = data.password;
       this.ownerId = data.ownerId;
       this.role = data.role;
