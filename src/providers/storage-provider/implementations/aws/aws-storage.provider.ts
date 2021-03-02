@@ -7,7 +7,6 @@ import StorageProvider from '@providers/storage-provider/contracts/models/storag
 
 class AwsStorageProvider implements StorageProvider {
   private s3 = new AWS.S3({
-    endpoint: awsConfig.endpoint,
     accessKeyId: awsConfig.accessKey,
     secretAccessKey: awsConfig.secretKey,
   });
