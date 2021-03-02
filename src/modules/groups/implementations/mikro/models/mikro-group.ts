@@ -17,7 +17,7 @@ class MikroGroup implements Group {
   constructor(data?: CreateGroupDto) {
     if (data) {
       this._id = v4();
-      this.label = data.name;
+      this.label = data.label;
       this.ownerId = data.ownerId;
     }
   }
