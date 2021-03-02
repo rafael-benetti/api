@@ -1,3 +1,4 @@
+import logger from '@config/logger';
 import CreateGroupDto from '@modules/groups/contracts/dtos/create-group-dto';
 import FindByNameDto from '@modules/groups/contracts/dtos/find-by-name-dto';
 import Group from '@modules/groups/contracts/models/group';
@@ -16,7 +17,7 @@ class MikroGroupsRepository implements GroupsRepository {
 
   save(group: Group): void {
     const mikroGroup = MikroMapper.map(group);
-
+    logger.info(mikroGroup);
     this.ormProvider.entityManager.persist(mikroGroup);
   }
 
@@ -42,7 +43,7 @@ class MikroGroupsRepository implements GroupsRepository {
       _id: groupId,
     });
 
-    if (group) return group;
+    if (group) return MikroMapper.map(group);
 
     return undefined;
   }
