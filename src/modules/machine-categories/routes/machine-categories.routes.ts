@@ -3,7 +3,6 @@ import { celebrate, Joi } from 'celebrate';
 import { Router } from 'express';
 import CreateMachineCategoryController from '../services/create-machine-category/create-machine-category.controller';
 import ListMachineCategoriesController from '../services/list-machine-categories/list-machine-categories.controller';
-import ListMachineCategoriesService from '../services/list-machine-categories/list-machine-categories.service';
 
 const machineCategoriesRoutes = Router();
 
@@ -20,3 +19,5 @@ machineCategoriesRoutes.post(
 );
 
 machineCategoriesRoutes.get('/', ListMachineCategoriesController.handle);
+
+export default machineCategoriesRoutes;

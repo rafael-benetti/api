@@ -4,7 +4,7 @@ import CreateMachineCategoryService from './create-machine-category.service';
 
 abstract class CreateMachineCategoryController {
   static async handle(req: Request, res: Response): Promise<Response> {
-    const { userId } = req.params;
+    const { userId } = req;
     const { label } = req.body;
 
     const createMachineCategoryService = container.resolve(

@@ -4,13 +4,13 @@ import { Router } from 'express';
 import CreatePointOfSaleController from '../services/create-point-of-sale/create-point-of-sale-controller';
 import ListPointsOfSaleController from '../services/list-points-of-sale/list-points-of-sale.controller';
 
-const pointsOfSalesRoutes = Router();
+const pointsOfSaleRoutes = Router();
 
 const createPointOfSaleController = new CreatePointOfSaleController();
 
-pointsOfSalesRoutes.use(authHandler);
+pointsOfSaleRoutes.use(authHandler);
 
-pointsOfSalesRoutes.post(
+pointsOfSaleRoutes.post(
   '/',
   celebrate({
     body: {
@@ -33,6 +33,6 @@ pointsOfSalesRoutes.post(
   createPointOfSaleController.handle,
 );
 
-pointsOfSalesRoutes.get('/', ListPointsOfSaleController.handle);
+pointsOfSaleRoutes.get('/', ListPointsOfSaleController.handle);
 
-export default pointsOfSalesRoutes;
+export default pointsOfSaleRoutes;

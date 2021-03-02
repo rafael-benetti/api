@@ -31,7 +31,7 @@ class CreateGroupService {
 
     if (user.role !== Role.OWNER)
       if (user.role !== Role.MANAGER) throw AppError.authorizationError;
-      else if (!user.permissions.createGroups)
+      else if (!user.permissions?.createGroups)
         throw AppError.authorizationError;
 
     if (user.role === Role.OWNER) {
