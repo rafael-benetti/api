@@ -1,11 +1,11 @@
-import { Entity, Property } from '@mikro-orm/core';
+import { Entity, PrimaryKey, Property } from '@mikro-orm/core';
 import CreateMachineDto from '@modules/machines/contracts/dtos/create-machine.dto';
 import Machine from '@modules/machines/contracts/models/machine';
 import { v4 } from 'uuid';
 
 @Entity({ tableName: 'machines' })
 class MikroMachine implements Machine {
-  @Property()
+  @PrimaryKey()
   _id: string;
 
   @Property()

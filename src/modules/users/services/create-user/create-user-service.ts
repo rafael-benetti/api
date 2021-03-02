@@ -3,6 +3,7 @@ import Role from '@modules/users/contracts/enums/role';
 import User from '@modules/users/contracts/models/user';
 import UsersRepository from '@modules/users/contracts/repositories/users-repository';
 import HashProvider from '@providers/hash-provider/contracts/models/hash-provider';
+import OrmProvider from '@providers/orm-provider/contracts/models/orm-provider';
 import AppError from '@shared/errors/app-error';
 
 import { inject, injectable } from 'tsyringe';
@@ -30,6 +31,9 @@ class CreateUserService {
     @inject('UsersRepository')
     private usersRepository: UsersRepository,
 
+    @inject('OrmProvider')
+    private ormProvider: OrmProvider,
+
     @inject('GroupsRepository')
     private groupsRepository: GroupsRepository,
 
@@ -53,7 +57,7 @@ class CreateUserService {
 
     if (owner.role !== Role.OWNER)
       if (owner.role === Role.MANAGER) {
-        if (!owner.permissions.createUsers) throw AppError.authorizationError;
+        if (!owner.permissions?.createUsers) throw AppError.authorizationError;
       } else throw AppError.authorizationError;
 
     const checkUserExists = await this.usersRepository.findByEmail(email);
@@ -103,7 +107,7 @@ class CreateUserService {
       }
     }
 
-    const user = await this.usersRepository.create({
+    const user = this.usersRepository.create({
       email,
       isActive,
       name,
@@ -114,6 +118,8 @@ class CreateUserService {
       permissions,
       groupIds: role === Role.OPERATOR ? undefined : groupIds,
     });
+
+    await this.ormProvider.commit();
 
     return user;
   }
