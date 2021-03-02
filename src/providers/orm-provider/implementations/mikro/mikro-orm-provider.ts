@@ -30,7 +30,6 @@ class MikroOrmProvider implements OrmProvider {
   }
 
   async commit(): Promise<void> {
-    console.log(this.entityManager.getUnitOfWork().getIdentityMap().values());
     await this.entityManager.flush();
   }
 

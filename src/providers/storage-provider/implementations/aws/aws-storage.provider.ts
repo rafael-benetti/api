@@ -13,11 +13,12 @@ class AwsStorageProvider implements StorageProvider {
   });
 
   async uploadFile(file: Express.Multer.File): Promise<UploadFileResponseDto> {
-    const payload = {
+    const payload: AWS.S3.PutObjectRequest = {
       Body: file.buffer,
       Bucket: awsConfig.bucket,
       ACL: 'public-read',
       Key: v4(),
+      ContentType: file.mimetype,
     };
 
     const response = await this.s3.upload(payload).promise();
