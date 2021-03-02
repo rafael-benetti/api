@@ -1,4 +1,5 @@
 import CreateGroupDto from '@modules/groups/contracts/dtos/create-group-dto';
+import FindByNameDto from '@modules/groups/contracts/dtos/find-by-name-dto';
 import Group from '@modules/groups/contracts/models/group';
 import GroupsRepository from '@modules/groups/contracts/repositories/groups-repository';
 import MikroMapper from '@providers/orm-provider/implementations/mikro/mikro-mapper';
@@ -11,6 +12,33 @@ class MikroGroupsRepository implements GroupsRepository {
 
   constructor() {
     this.ormProvider = container.resolve<MikroOrmProvider>('OrmProvider');
+  }
+
+  async findByName({
+    name,
+    ownerId,
+  }: FindByNameDto): Promise<Group | undefined> {
+    const mikroGroup = await this.ormProvider.entityManager.findOne(
+      MikroGroup,
+      {
+        ownerId,
+        name,
+      },
+    );
+
+    if (mikroGroup) return MikroMapper.map(mikroGroup);
+
+    return undefined;
+  }
+
+  async findById(groupId: string): Promise<Group | undefined> {
+    const group = await this.ormProvider.entityManager.findOne(MikroGroup, {
+      _id: groupId,
+    });
+
+    if (group) return group;
+
+    return undefined;
   }
 
   async find(groupIds: string[]): Promise<Group[]> {

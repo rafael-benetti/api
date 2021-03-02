@@ -43,7 +43,7 @@ export default class AppError {
 
   static nameAlreadyInUsed = new AppError({
     errorCode: 'NAME_ALREADY_USED',
-    message: 'You already have a company with this name.',
+    message: 'You already used.',
     statusCode: 409,
   });
 
@@ -80,6 +80,12 @@ export default class AppError {
   static productNotFound = new AppError({
     errorCode: 'PRODUCT_NOT_FOUND',
     message: "Could not find the 'product'.",
+    statusCode: 404,
+  });
+
+  static groupNotFound = new AppError({
+    errorCode: 'GROUP_NOT_FOUND',
+    message: "Could not find the 'group'.",
     statusCode: 404,
   });
 

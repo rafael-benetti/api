@@ -2,6 +2,7 @@ import authHandler from '@shared/server/express/middlewares/auth-handler';
 import { celebrate, Joi } from 'celebrate';
 import { Router } from 'express';
 import CreateGroupController from '../services/create-group/create-group-controller';
+import EditGroupController from '../services/edit-group/edit-group.controller';
 import ListGroupsController from '../services/list-groups/list-groups.controller';
 
 const groupRoutes = Router();
@@ -19,5 +20,18 @@ groupRoutes.post(
 );
 
 groupRoutes.get('/', ListGroupsController.handle);
+
+groupRoutes.patch(
+  '/',
+  celebrate({
+    body: {
+      name: Joi.string().required(),
+    },
+    query: {
+      groupId: Joi.string().required(),
+    },
+  }),
+  EditGroupController.handle,
+);
 
 export default groupRoutes;
