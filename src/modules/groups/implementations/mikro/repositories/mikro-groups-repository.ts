@@ -29,7 +29,7 @@ class MikroGroupsRepository implements GroupsRepository {
       MikroGroup,
       {
         ownerId,
-        name,
+        label: name,
       },
     );
 

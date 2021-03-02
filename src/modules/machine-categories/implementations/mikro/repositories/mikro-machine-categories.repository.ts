@@ -1,5 +1,6 @@
 import CreateMachineCategoryDto from '@modules/machine-categories/contracts/dtos/create-machine-category-dto';
 import FindByLabelAndOwnerIdDto from '@modules/machine-categories/contracts/dtos/find-by-label-and-owner-id-dto';
+import FindMachineCategoryDto from '@modules/machine-categories/contracts/dtos/find-machine-category.dto';
 import MachineCategory from '@modules/machine-categories/contracts/models/machine-category';
 import MachineCategoriesRepository from '@modules/machine-categories/contracts/repositories/machine-categories-repository';
 import MikroMapper from '@providers/orm-provider/implementations/mikro/mikro-mapper';
@@ -8,17 +9,12 @@ import { container } from 'tsyringe';
 import MikroMachineCategory from '../models/mikro-machine-category';
 
 class MikroMachineCategoriesRepository implements MachineCategoriesRepository {
-  private ormProvider: MikroOrmProvider;
-
-  constructor() {
-    this.ormProvider = container.resolve<MikroOrmProvider>('OrmProvider');
-  }
+  private entityManager = container
+    .resolve<MikroOrmProvider>('OrmProvider')
+    .entityManager.getRepository(MikroMachineCategory);
 
   async findByOwnerId(ownerId: string): Promise<MachineCategory[]> {
-    const mikroMachineCategories = await this.ormProvider.entityManager.find(
-      MikroMachineCategory,
-      { ownerId },
-    );
+    const mikroMachineCategories = await this.entityManager.find({ ownerId });
 
     const machineCategories = mikroMachineCategories.map(mikroMachineCategory =>
       MikroMapper.map(mikroMachineCategory),
@@ -31,21 +27,36 @@ class MikroMachineCategoriesRepository implements MachineCategoriesRepository {
     label,
     ownerId,
   }: FindByLabelAndOwnerIdDto): Promise<MachineCategory | undefined> {
-    const mikroMachineCategory = await this.ormProvider.entityManager.findOne(
-      MikroMachineCategory,
-      { label, ownerId },
-    );
+    const mikroMachineCategory = await this.entityManager.findOne({
+      label,
+      ownerId,
+    });
 
     if (mikroMachineCategory) return MikroMapper.map(mikroMachineCategory);
 
     return undefined;
   }
 
+  async findOne(
+    data: FindMachineCategoryDto,
+  ): Promise<MachineCategory | undefined> {
+    const machineCategory = await this.entityManager.findOne({
+      ...data,
+    });
+
+    return machineCategory ? MikroMapper.map(machineCategory) : undefined;
+  }
+
   create(data: CreateMachineCategoryDto): MachineCategory {
     const mikroMachineCategory = new MikroMachineCategory(data);
-    this.ormProvider.entityManager.persist(mikroMachineCategory);
+    this.entityManager.persist(mikroMachineCategory);
 
     return MikroMapper.map(mikroMachineCategory);
+  }
+
+  save(data: MachineCategory): void {
+    const machineCategory = MikroMapper.map(data);
+    this.entityManager.persist(machineCategory);
   }
 }
 

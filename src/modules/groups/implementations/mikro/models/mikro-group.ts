@@ -9,7 +9,7 @@ class MikroGroup implements Group {
   _id: string;
 
   @Property()
-  name: string;
+  label: string;
 
   @Property()
   ownerId: string;
@@ -17,7 +17,7 @@ class MikroGroup implements Group {
   constructor(data?: CreateGroupDto) {
     if (data) {
       this._id = v4();
-      this.name = data.name;
+      this.label = data.name;
       this.ownerId = data.ownerId;
     }
   }

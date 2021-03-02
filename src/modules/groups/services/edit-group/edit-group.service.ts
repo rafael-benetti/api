@@ -43,7 +43,7 @@ class EditGroupService {
     if (!group) throw AppError.groupNotFound;
 
     if (name) {
-      if (name === group.name) throw new Error('vai se fuder');
+      if (name === group.label) throw new Error('vai se fuder');
 
       const checkGroupNameExists = await this.groupsRepository.findByName({
         name,
@@ -52,7 +52,7 @@ class EditGroupService {
 
       if (checkGroupNameExists) throw AppError.nameAlreadyInUsed;
 
-      group.name = name;
+      group.label = name;
     }
 
     this.groupsRepository.save(group);
