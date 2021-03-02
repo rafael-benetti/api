@@ -21,7 +21,7 @@ groupRoutes.post(
 
 groupRoutes.get('/', ListGroupsController.handle);
 
-groupRoutes.patch(
+groupRoutes.put(
   '/',
   celebrate({
     body: {
