@@ -37,12 +37,32 @@ class MikroMachineCategoriesRepository implements MachineCategoriesRepository {
     return undefined;
   }
 
+  async find(data: FindMachineCategoryDto): Promise<MachineCategory[]> {
+    const machineCategories = await this.entityManager.find(
+      {
+        ...data.filters,
+      },
+      {
+        populate: data.populate,
+        limit: data.limit,
+        offset: data.offset,
+      },
+    );
+
+    return machineCategories.map(machineCategory =>
+      MikroMapper.map(machineCategory),
+    );
+  }
+
   async findOne(
     data: FindMachineCategoryDto,
   ): Promise<MachineCategory | undefined> {
-    const machineCategory = await this.entityManager.findOne({
-      ...data,
-    });
+    const machineCategory = await this.entityManager.findOne(
+      {
+        ...data.filters,
+      },
+      data.populate,
+    );
 
     return machineCategory ? MikroMapper.map(machineCategory) : undefined;
   }

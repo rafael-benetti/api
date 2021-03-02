@@ -24,9 +24,9 @@ class ListMachineCategoriesService {
 
     if (!ownerId) throw AppError.unknownError;
 
-    const machineCategories = await this.machineCategoriesRepository.findByOwnerId(
-      ownerId,
-    );
+    const machineCategories = await this.machineCategoriesRepository.find({
+      filters: { ownerId },
+    });
 
     return machineCategories;
   }

@@ -33,10 +33,12 @@ class CreateMachineCategoryService {
 
     if (!ownerId) throw AppError.unknownError;
 
-    const checkLabelAlreadyExists = await this.machineCategoriesRepository.findByLabelAndOwnerId(
+    const checkLabelAlreadyExists = await this.machineCategoriesRepository.findOne(
       {
-        label,
-        ownerId,
+        filters: {
+          label,
+          ownerId,
+        },
       },
     );
 

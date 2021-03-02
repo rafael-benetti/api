@@ -5,9 +5,9 @@ import { Router } from 'express';
 import CreateAdminController from '../services/create-admin/create-admin.controller';
 import CreateOwnerController from '../services/create-owner/create-owner.controller';
 
-const adminsRouter = Router();
+const adminsRoutes = Router();
 
-adminsRouter.post(
+adminsRoutes.post(
   '/',
   (req, _, next) => {
     if (req.headers.authorization !== 'charanko')
@@ -30,9 +30,9 @@ adminsRouter.post(
   CreateAdminController.handle,
 );
 
-adminsRouter.use(authHandler);
+adminsRoutes.use(authHandler);
 
-adminsRouter.post(
+adminsRoutes.post(
   '/owners',
   celebrate(
     {
@@ -46,4 +46,4 @@ adminsRouter.post(
   CreateOwnerController.handle,
 );
 
-export default adminsRouter;
+export default adminsRoutes;
