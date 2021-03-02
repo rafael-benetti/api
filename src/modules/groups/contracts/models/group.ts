@@ -1,7 +1,7 @@
 class Group {
   _id: string;
 
-  name: string;
+  label: string;
 
   ownerId: string;
 }

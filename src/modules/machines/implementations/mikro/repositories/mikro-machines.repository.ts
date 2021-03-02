@@ -52,7 +52,8 @@ class MikroMachinesRepository implements MachinesRepository {
 
   delete(data: Machine): void {
     const machine = MikroMapper.map(data);
-    this.entityManager.remove(machine);
+    machine.deleted = true;
+    this.entityManager.persist(machine);
   }
 }
 

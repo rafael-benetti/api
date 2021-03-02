@@ -1,4 +1,4 @@
 export default interface CreateGroupDto {
-  name: string;
+  label: string;
   ownerId: string;
 }

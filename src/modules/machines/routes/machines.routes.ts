@@ -1,7 +1,8 @@
 import authHandler from '@shared/server/express/middlewares/auth-handler';
 import { celebrate, Joi } from 'celebrate';
 import { Router } from 'express';
-import CreateMachineController from '../services/create-machine.controller';
+import CreateMachineController from '../services/create-machine/create-machine.controller';
+import DeleteMachineController from '../services/delete-machine/delete-machine.controller';
 
 const machinesRoutes = Router();
 
@@ -19,5 +20,7 @@ machinesRoutes.post(
   }),
   CreateMachineController.handle,
 );
+
+machinesRoutes.delete('/:machineId', DeleteMachineController.handle);
 
 export default machinesRoutes;
