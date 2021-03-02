@@ -13,7 +13,7 @@ groupRoutes.post(
   '/',
   celebrate({
     body: {
-      name: Joi.string().required(),
+      label: Joi.string().required(),
     },
   }),
   CreateGroupController.handle,
