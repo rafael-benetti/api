@@ -7,7 +7,7 @@ import { v4 } from 'uuid';
 @Entity({ tableName: 'points_of_sale' })
 class MikroPointOfSale implements PointOfSale {
   @PrimaryKey()
-  id: string;
+  _id: string;
 
   @Property()
   label: string;
@@ -32,7 +32,7 @@ class MikroPointOfSale implements PointOfSale {
 
   constructor(data?: CreatePointOfSaleDto) {
     if (data) {
-      this.id = v4();
+      this._id = v4();
       this.label = data.label;
       this.primaryPhoneNumber = data.primaryPhoneNumber;
       this.secondaryPhoneNumber = data.secondaryPhoneNumber;

@@ -42,9 +42,7 @@ class EditGroupService {
 
     if (!group) throw AppError.groupNotFound;
 
-    if (name) {
-      if (name === group.name) throw new Error('vai se fuder');
-
+    if (name && name !== group.name) {
       const checkGroupNameExists = await this.groupsRepository.findByName({
         name,
         ownerId,
