@@ -2,6 +2,7 @@ import authHandler from '@shared/server/express/middlewares/auth-handler';
 import { celebrate, Joi } from 'celebrate';
 import { Router } from 'express';
 import CreatePointOfSaleController from '../services/create-point-of-sale/create-point-of-sale-controller';
+import ListPointsOfSaleController from '../services/list-points-of-sale/list-points-of-sale.controller';
 
 const pointsOfSalesRoutes = Router();
 
@@ -31,5 +32,7 @@ pointsOfSalesRoutes.post(
   }),
   createPointOfSaleController.handle,
 );
+
+pointsOfSalesRoutes.get('/', ListPointsOfSaleController.handle);
 
 export default pointsOfSalesRoutes;

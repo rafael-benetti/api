@@ -39,6 +39,7 @@ class MikroPointOfSale implements PointOfSale {
       this.contactName = data.contactName;
       this.address = data.address;
       this.ownerId = data.ownerId;
+      this.groupId = data.groupId;
     }
   }
 }

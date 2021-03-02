@@ -58,7 +58,7 @@ userRoutes.post(
   CreateUserController.handle,
 );
 userRoutes.get('/', ListUsersController.handle);
-userRoutes.patch(
+userRoutes.put(
   '/',
   celebrate({
     body: {

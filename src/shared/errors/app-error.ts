@@ -47,6 +47,12 @@ export default class AppError {
     statusCode: 409,
   });
 
+  static labelAlreadyInUsed = new AppError({
+    errorCode: 'LABEL_ALREADY_USED',
+    message: 'You already have a point of sale with this label.',
+    statusCode: 409,
+  });
+
   static incorrectEmailOrPassword = new AppError({
     errorCode: 'INCORRECT_EMAIL_PASSWORD_COMBINATION',
     message: 'Incorrect email/password combination.',

@@ -47,13 +47,19 @@ class CreatePointOfSaleService {
       if (user.role === Role.MANAGER) {
         if (user.ownerId === undefined) throw AppError.authorizationError;
 
-        if (!user.permissions.createPointsOfSale)
+        if (!user.permissions?.createPointsOfSale)
           throw AppError.authorizationError;
 
         if (!user.groupIds?.includes(groupId))
           throw AppError.authorizationError;
       }
     }
+
+    const checkLabelAlreadyExists = await this.pointsOfSaleRepository.findByLabelAndGroupId(
+      { label, groupId },
+    );
+
+    if (checkLabelAlreadyExists) throw AppError.labelAlreadyInUsed;
 
     const pointOfSale = this.pointsOfSaleRepository.create({
       address,
