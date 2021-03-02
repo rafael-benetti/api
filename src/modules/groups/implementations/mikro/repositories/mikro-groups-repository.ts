@@ -14,6 +14,12 @@ class MikroGroupsRepository implements GroupsRepository {
     this.ormProvider = container.resolve<MikroOrmProvider>('OrmProvider');
   }
 
+  save(group: Group): void {
+    const mikroGroup = MikroMapper.map(group);
+
+    this.ormProvider.entityManager.persist(mikroGroup);
+  }
+
   async findByName({
     name,
     ownerId,

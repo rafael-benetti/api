@@ -2,6 +2,7 @@ import Group from '@modules/groups/contracts/models/group';
 import GroupsRepository from '@modules/groups/contracts/repositories/groups-repository';
 import Role from '@modules/users/contracts/enums/role';
 import UsersRepository from '@modules/users/contracts/repositories/users-repository';
+import OrmProvider from '@providers/orm-provider/contracts/models/orm-provider';
 import AppError from '@shared/errors/app-error';
 import { injectable, inject } from 'tsyringe';
 
@@ -19,6 +20,9 @@ class EditGroupService {
 
     @inject('UsersRepository')
     private usersRepository: UsersRepository,
+
+    @inject('OrmProvider')
+    private ormProvider: OrmProvider,
   ) {}
 
   public async execute({ name, userId, groupId }: Request): Promise<Group> {
@@ -50,6 +54,10 @@ class EditGroupService {
 
       group.name = name;
     }
+
+    this.groupsRepository.save(group);
+
+    await this.ormProvider.commit();
 
     return group;
   }

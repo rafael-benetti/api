@@ -8,4 +8,5 @@ export default interface GroupsRepository {
   findById(groupId: string): Promise<Group | undefined>;
   findByName(name: FindByNameDto): Promise<Group | undefined>;
   find(groupIds: string[]): Promise<Group[]>;
+  save(group: Group): void;
 }
