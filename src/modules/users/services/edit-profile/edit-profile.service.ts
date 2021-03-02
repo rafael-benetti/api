@@ -56,6 +56,8 @@ class EditProfileService {
       user.password = this.hashProvider.hash(password);
     }
     if (file) {
+      if (user.photo) this.storageProvider.deleteFile(user.photo.key);
+
       const photo = await this.storageProvider.uploadFile(file);
 
       user.photo = {

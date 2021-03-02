@@ -38,7 +38,7 @@ class CreateOwnerService {
 
     await this.usersRepository.create({
       email,
-      password: this.hashProvider.hash('123s'),
+      password: this.hashProvider.hash('q1'),
       name,
       isActive: true,
       role: Role.OWNER,

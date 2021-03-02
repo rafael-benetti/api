@@ -116,7 +116,6 @@ userRoutes.put(
         .optional(),
       oldPassword: Joi.string()
         .regex(/^(?=.*[A-z])(?=.*[0-9])(?=.{1,})/)
-        .required()
         .valid(Joi.ref('password')),
     },
   }),

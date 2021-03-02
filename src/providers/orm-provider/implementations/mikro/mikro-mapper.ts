@@ -2,6 +2,8 @@ import Admin from '@modules/admins/contracts/models/admin';
 import MikroAdmin from '@modules/admins/implementations/mikro/models/mikro-admin';
 import Group from '@modules/groups/contracts/models/group';
 import MikroGroup from '@modules/groups/implementations/mikro/models/mikro-group';
+import Machine from '@modules/machines/contracts/models/machine';
+import MikroMachine from '@modules/machines/implementations/mikro/models/mikro-machine';
 import PointOfSale from '@modules/points-of-sale/contracts/models/point-of-sale';
 import MikroPointOfSale from '@modules/points-of-sale/implementations/mikro/models/mikro-point-of-sale';
 import User from '@modules/users/contracts/models/user';
@@ -23,6 +25,10 @@ abstract class MikroMapper {
   static map(entity: MikroAdmin): Admin;
 
   static map(entity: Admin): MikroAdmin;
+
+  static map(entity: MikroMachine): Machine;
+
+  static map(entity: Machine): MikroMachine;
 
   static map(entity: unknown): unknown {
     if (entity instanceof User) {
@@ -71,6 +77,18 @@ abstract class MikroMapper {
       const admin = new MikroAdmin();
       Object.assign(admin, entity);
       return admin;
+    }
+
+    if (entity instanceof MikroMachine) {
+      const machine = new Machine();
+      Object.assign(machine, entity);
+      return machine;
+    }
+
+    if (entity instanceof Machine) {
+      const machine = new MikroMachine();
+      Object.assign(machine, entity);
+      return machine;
     }
   }
 }
