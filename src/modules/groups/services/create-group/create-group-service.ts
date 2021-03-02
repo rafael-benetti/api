@@ -34,20 +34,13 @@ class CreateGroupService {
       else if (!user.permissions?.createGroups)
         throw AppError.authorizationError;
 
-    if (user.role === Role.OWNER) {
-      const group = this.groupsRepository.create({
-        name,
-        ownerId: user._id,
-      });
+    const ownerId = user.role === Role.OWNER ? user._id : user.ownerId;
 
-      return group;
-    }
-
-    if (!user.ownerId) throw AppError.unknownError;
+    if (!ownerId) throw AppError.unknownError;
 
     const group = this.groupsRepository.create({
       name,
-      ownerId: user.ownerId,
+      ownerId,
     });
 
     await this.ormProvider.commit();
