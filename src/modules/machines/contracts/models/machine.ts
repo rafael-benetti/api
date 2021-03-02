@@ -14,6 +14,8 @@ class Machine {
 
   serialNumber: string;
 
+  deleted: boolean;
+
   constructor(data?: CreateMachineDto) {
     if (data) {
       this._id = v4();
@@ -22,6 +24,7 @@ class Machine {
       this.pointOfSaleId = data.pointOfSaleId;
       this.ownerId = data.ownerId;
       this.serialNumber = data.serialNumber;
+      this.deleted = false;
     }
   }
 }

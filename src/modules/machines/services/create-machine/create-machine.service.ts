@@ -1,10 +1,10 @@
+import Machine from '@modules/machines/contracts/models/machine';
+import MachinesRepository from '@modules/machines/contracts/repositories/machines.repository';
 import Role from '@modules/users/contracts/enums/role';
 import UsersRepository from '@modules/users/contracts/repositories/users-repository';
 import OrmProvider from '@providers/orm-provider/contracts/models/orm-provider';
 import AppError from '@shared/errors/app-error';
 import { inject, injectable } from 'tsyringe';
-import Machine from '../contracts/models/machine';
-import MachinesRepository from '../contracts/repositories/machines.repository';
 
 interface Request {
   userId: string;

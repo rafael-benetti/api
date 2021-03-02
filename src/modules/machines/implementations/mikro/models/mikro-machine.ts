@@ -23,6 +23,9 @@ class MikroMachine implements Machine {
   @Property()
   serialNumber: string;
 
+  @Property()
+  deleted: boolean;
+
   constructor(data?: CreateMachineDto) {
     if (data) {
       this._id = v4();
@@ -31,6 +34,7 @@ class MikroMachine implements Machine {
       this.pointOfSaleId = data.pointOfSaleId;
       this.ownerId = data.ownerId;
       this.serialNumber = data.serialNumber;
+      this.deleted = false;
     }
   }
 }
