@@ -1,7 +1,7 @@
 import Address from './address';
 
 class PointOfSale {
-  id: string;
+  _id: string;
 
   label: string;
 

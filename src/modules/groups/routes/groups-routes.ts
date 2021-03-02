@@ -25,7 +25,7 @@ groupRoutes.put(
   '/',
   celebrate({
     body: {
-      name: Joi.string().required(),
+      label: Joi.string().required(),
     },
     query: {
       groupId: Joi.string().required(),

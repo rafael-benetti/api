@@ -8,7 +8,7 @@ import { inject, injectable } from 'tsyringe';
 
 interface Request {
   userId: string;
-  name: string;
+  label: string;
 }
 
 @injectable()
@@ -24,7 +24,7 @@ class CreateGroupService {
     private ormProvider: OrmProvider,
   ) {}
 
-  public async execute({ name, userId }: Request): Promise<Group> {
+  public async execute({ label, userId }: Request): Promise<Group> {
     const user = await this.usersRepository.findById(userId);
 
     if (!user) throw AppError.userNotFound;
@@ -38,15 +38,15 @@ class CreateGroupService {
 
     if (!ownerId) throw AppError.unknownError;
 
-    const checkNameAlreadyExists = await this.groupsRepository.findByName({
+    const checkNameAlreadyExists = await this.groupsRepository.findByLabel({
       ownerId,
-      name,
+      label,
     });
 
     if (checkNameAlreadyExists) throw AppError.nameAlreadyInUsed;
 
     const group = this.groupsRepository.create({
-      name,
+      label,
       ownerId,
     });
 

@@ -9,7 +9,7 @@ import { injectable, inject } from 'tsyringe';
 interface Request {
   userId: string;
   groupId: string;
-  name: string;
+  label: string;
 }
 
 @injectable()
@@ -25,7 +25,7 @@ class EditGroupService {
     private ormProvider: OrmProvider,
   ) {}
 
-  public async execute({ name, userId, groupId }: Request): Promise<Group> {
+  public async execute({ label, userId, groupId }: Request): Promise<Group> {
     const user = await this.usersRepository.findById(userId);
 
     if (!user) throw AppError.userNotFound;
@@ -42,17 +42,15 @@ class EditGroupService {
 
     if (!group) throw AppError.groupNotFound;
 
-    if (name) {
-      if (name === group.label) throw new Error('vai se fuder');
-
-      const checkGroupNameExists = await this.groupsRepository.findByName({
-        name,
+    if (label && label !== group.label) {
+      const checkGroupNameExists = await this.groupsRepository.findByLabel({
         ownerId,
+        label,
       });
 
-      if (checkGroupNameExists) throw AppError.nameAlreadyInUsed;
+      if (checkGroupNameExists) throw AppError.labelAlreadyInUsed;
 
-      group.label = name;
+      group.label = label;
     }
 
     this.groupsRepository.save(group);

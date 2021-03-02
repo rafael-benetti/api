@@ -1,6 +1,6 @@
 import logger from '@config/logger';
 import CreateGroupDto from '@modules/groups/contracts/dtos/create-group-dto';
-import FindByNameDto from '@modules/groups/contracts/dtos/find-by-name-dto';
+import FindByLabelDto from '@modules/groups/contracts/dtos/find-by-label-dto';
 import Group from '@modules/groups/contracts/models/group';
 import GroupsRepository from '@modules/groups/contracts/repositories/groups-repository';
 import MikroMapper from '@providers/orm-provider/implementations/mikro/mikro-mapper';
@@ -21,15 +21,15 @@ class MikroGroupsRepository implements GroupsRepository {
     this.ormProvider.entityManager.persist(mikroGroup);
   }
 
-  async findByName({
-    name,
+  async findByLabel({
+    label,
     ownerId,
-  }: FindByNameDto): Promise<Group | undefined> {
+  }: FindByLabelDto): Promise<Group | undefined> {
     const mikroGroup = await this.ormProvider.entityManager.findOne(
       MikroGroup,
       {
         ownerId,
-        label: name,
+        label,
       },
     );
 
