@@ -9,6 +9,7 @@ export default interface MachineCategoriesRepository {
   findByLabelAndOwnerId(
     data: FindByLabelAndOwnerIdDto,
   ): Promise<MachineCategory | undefined>;
+  find(data: FindMachineCategoryDto): Promise<MachineCategory[]>;
   findOne(data: FindMachineCategoryDto): Promise<MachineCategory | undefined>;
   save(data: MachineCategory): void;
 }

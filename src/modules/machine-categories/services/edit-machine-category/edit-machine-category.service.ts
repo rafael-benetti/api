@@ -44,7 +44,9 @@ class EditMachineCategoryService {
     }
 
     const machineCategory = await this.machineCategoriesRepository.findOne({
-      _id: machineCategoryId,
+      filters: {
+        _id: machineCategoryId,
+      },
     });
 
     if (!machineCategory) throw AppError.machineCategoryNotFound;
