@@ -11,10 +11,14 @@ class MikroMachineCategory implements MachineCategory {
   @Property()
   label: string;
 
+  @Property()
+  ownerId: string;
+
   constructor(data?: CreateMachineCategoryDto) {
     if (data) {
       this._id = v4();
       this.label = data.label;
+      this.ownerId = data.label;
     }
   }
 }

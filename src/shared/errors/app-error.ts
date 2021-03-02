@@ -7,7 +7,7 @@ export default class AppError {
 
   static unknownError = new AppError({
     errorCode: 'UNKNOWN_CODE',
-    message: 'An unknown error has occurred',
+    message: 'An unknown error has occurred.',
     statusCode: 400,
   });
 
@@ -31,7 +31,7 @@ export default class AppError {
 
   static oldPasswordIsMissing = new AppError({
     errorCode: 'OLD_PASSWoRD_IS_MISSING',
-    message: 'You need to inform the old password to set a new password',
+    message: 'You need to inform the old password to set a new password.',
     statusCode: 401,
   });
 
@@ -49,7 +49,7 @@ export default class AppError {
 
   static labelAlreadyInUsed = new AppError({
     errorCode: 'LABEL_ALREADY_USED',
-    message: 'You already have a point of sale with this label.',
+    message: "You already used this 'label'.",
     statusCode: 409,
   });
 
@@ -61,7 +61,7 @@ export default class AppError {
 
   static incorrectFilters = new AppError({
     errorCode: 'INCORRECT_FILTERS',
-    message: 'Incorrect filters, check the filters',
+    message: 'Incorrect filters, check the filters.',
     statusCode: 400,
   });
 

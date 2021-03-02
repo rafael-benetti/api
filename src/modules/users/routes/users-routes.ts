@@ -111,12 +111,8 @@ userRoutes.put(
     body: {
       name: Joi.string().optional(),
       phone: Joi.string().optional(),
-      password: Joi.string()
-        .regex(/^(?=.*[A-z])(?=.*[0-9])(?=.{1,})/)
-        .optional(),
-      oldPassword: Joi.string()
-        .regex(/^(?=.*[A-z])(?=.*[0-9])(?=.{1,})/)
-        .valid(Joi.ref('password')),
+      oldPassword: Joi.string(),
+      password: Joi.string().regex(/^(?=.*[A-z])(?=.*[0-9])(?=.{1,})/),
     },
   }),
   EditProfileController.handle,
