@@ -1,5 +1,4 @@
 import CreateMachineCategoryDto from '@modules/machine-categories/contracts/dtos/create-machine-category-dto';
-import FindByLabelAndOwnerIdDto from '@modules/machine-categories/contracts/dtos/find-by-label-and-owner-id-dto';
 import FindMachineCategoryDto from '@modules/machine-categories/contracts/dtos/find-machine-category.dto';
 import MachineCategory from '@modules/machine-categories/contracts/models/machine-category';
 import MachineCategoriesRepository from '@modules/machine-categories/contracts/repositories/machine-categories-repository';
@@ -13,28 +12,24 @@ class MikroMachineCategoriesRepository implements MachineCategoriesRepository {
     .resolve<MikroOrmProvider>('OrmProvider')
     .entityManager.getRepository(MikroMachineCategory);
 
-  async findByOwnerId(ownerId: string): Promise<MachineCategory[]> {
-    const mikroMachineCategories = await this.entityManager.find({ ownerId });
+  create(data: CreateMachineCategoryDto): MachineCategory {
+    const mikroMachineCategory = new MikroMachineCategory(data);
+    this.entityManager.persist(mikroMachineCategory);
 
-    const machineCategories = mikroMachineCategories.map(mikroMachineCategory =>
-      MikroMapper.map(mikroMachineCategory),
-    );
-
-    return machineCategories;
+    return MikroMapper.map(mikroMachineCategory);
   }
 
-  async findByLabelAndOwnerId({
-    label,
-    ownerId,
-  }: FindByLabelAndOwnerIdDto): Promise<MachineCategory | undefined> {
-    const mikroMachineCategory = await this.entityManager.findOne({
-      label,
-      ownerId,
-    });
+  async findOne(
+    data: FindMachineCategoryDto,
+  ): Promise<MachineCategory | undefined> {
+    const machineCategory = await this.entityManager.findOne(
+      {
+        ...data.filters,
+      },
+      data.populate,
+    );
 
-    if (mikroMachineCategory) return MikroMapper.map(mikroMachineCategory);
-
-    return undefined;
+    return machineCategory ? MikroMapper.map(machineCategory) : undefined;
   }
 
   async find(data: FindMachineCategoryDto): Promise<MachineCategory[]> {
@@ -52,26 +47,6 @@ class MikroMachineCategoriesRepository implements MachineCategoriesRepository {
     return machineCategories.map(machineCategory =>
       MikroMapper.map(machineCategory),
     );
-  }
-
-  async findOne(
-    data: FindMachineCategoryDto,
-  ): Promise<MachineCategory | undefined> {
-    const machineCategory = await this.entityManager.findOne(
-      {
-        ...data.filters,
-      },
-      data.populate,
-    );
-
-    return machineCategory ? MikroMapper.map(machineCategory) : undefined;
-  }
-
-  create(data: CreateMachineCategoryDto): MachineCategory {
-    const mikroMachineCategory = new MikroMachineCategory(data);
-    this.entityManager.persist(mikroMachineCategory);
-
-    return MikroMapper.map(mikroMachineCategory);
   }
 
   save(data: MachineCategory): void {

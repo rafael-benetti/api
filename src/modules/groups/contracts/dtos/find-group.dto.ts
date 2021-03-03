@@ -1,7 +1,10 @@
 import Group from '../models/group';
 
-type FindGroupDto = {
-  [key in keyof Group]?: string;
-};
+interface FindGroupDto {
+  limit?: number;
+  offset?: number;
+  filters: Partial<Group>;
+  populate?: string[];
+}
 
 export default FindGroupDto;

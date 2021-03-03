@@ -1,12 +1,11 @@
 import CreateMachineDto from '../dtos/create-machine.dto';
 import FindMachineDto from '../dtos/find-machine.dto';
-import FindMachinesDto from '../dtos/find-machines.dto';
 import Machine from '../models/machine';
 
 export default interface MachinesRepository {
   create(data: CreateMachineDto): Machine;
   findOne(data: FindMachineDto): Promise<Machine | undefined>;
-  find(data: FindMachinesDto): Promise<Machine[]>;
+  find(data: FindMachineDto): Promise<Machine[]>;
   save(data: Machine): void;
   delete(data: Machine): void;
 }

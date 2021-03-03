@@ -17,6 +17,12 @@ export default class AppError {
     statusCode: 409,
   });
 
+  static serialNumberAlreadyUsed = new AppError({
+    errorCode: 'SERIAL_NUMBER_ALREADY_USED',
+    message: 'This serial number is unavailable.',
+    statusCode: 409,
+  });
+
   static tokenIsMissing = new AppError({
     errorCode: 'TOKEN_IS_MISSING',
     message: 'Your request does not have an auth token.',

@@ -38,14 +38,18 @@ class EditGroupService {
 
     if (!ownerId) throw AppError.unknownError;
 
-    const group = await this.groupsRepository.findById(groupId);
+    const group = await this.groupsRepository.findOne({
+      filters: { _id: groupId },
+    });
 
     if (!group) throw AppError.groupNotFound;
 
     if (label && label !== group.label) {
-      const checkGroupNameExists = await this.groupsRepository.findByLabel({
-        ownerId,
-        label,
+      const checkGroupNameExists = await this.groupsRepository.findOne({
+        filters: {
+          ownerId,
+          label,
+        },
       });
 
       if (checkGroupNameExists) throw AppError.labelAlreadyInUsed;

@@ -38,9 +38,11 @@ class CreateGroupService {
 
     if (!ownerId) throw AppError.unknownError;
 
-    const checkNameAlreadyExists = await this.groupsRepository.findByLabel({
-      ownerId,
-      label,
+    const checkNameAlreadyExists = await this.groupsRepository.findOne({
+      filters: {
+        ownerId,
+        label,
+      },
     });
 
     if (checkNameAlreadyExists) throw AppError.nameAlreadyInUsed;

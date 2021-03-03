@@ -1,6 +1,10 @@
+import Machine from '../models/machine';
+
 interface FindMachineDto {
-  by: '_id' | 'serialNumber';
-  value: string;
+  limit?: number;
+  offset?: number;
+  filters: Partial<Machine>;
+  populate?: string[];
 }
 
 export default FindMachineDto;

@@ -38,8 +38,7 @@ class DeleteMachineService {
     }
 
     const machine = await this.machinesRepository.findOne({
-      by: '_id',
-      value: machineId,
+      filters: { _id: machineId },
     });
 
     if (!machine) throw AppError.machineNotFound;
