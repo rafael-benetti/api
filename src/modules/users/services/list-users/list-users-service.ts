@@ -12,12 +12,20 @@ class ListUsersService {
   ) {}
 
   public async execute(userId: string): Promise<User[]> {
-    const user = await this.usersRepository.findById(userId);
+    const user = await this.usersRepository.findOne({
+      filters: {
+        _id: userId,
+      },
+    });
 
     if (!user) throw AppError.userNotFound;
 
     if (user.role === Role.OWNER) {
-      const users = await this.usersRepository.findByOwnerId(user._id);
+      const users = await this.usersRepository.find({
+        filters: {
+          ownerId: userId,
+        },
+      });
       return users;
     }
     if (user.role === Role.MANAGER) {
