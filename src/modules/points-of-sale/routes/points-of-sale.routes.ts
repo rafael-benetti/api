@@ -19,6 +19,7 @@ pointsOfSaleRoutes.post(
       primaryPhoneNumber: Joi.string().required(),
       secondaryPhoneNumber: Joi.string().optional(),
       groupId: Joi.string().required(),
+      routeId: Joi.string(),
       address: Joi.object({
         zipCode: Joi.string().required(),
         city: Joi.string().required(),

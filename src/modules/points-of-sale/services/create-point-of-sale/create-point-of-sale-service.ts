@@ -1,3 +1,4 @@
+import logger from '@config/logger';
 import Address from '@modules/points-of-sale/contracts/models/address';
 import PointOfSale from '@modules/points-of-sale/contracts/models/point-of-sale';
 import PointsOfSaleRepository from '@modules/points-of-sale/contracts/repositories/points-of-sale-repository';
@@ -15,6 +16,7 @@ interface Request {
   secondaryPhoneNumber: string;
   address: Address;
   groupId: string;
+  routeId?: string; // TODO: Verificar se é obrigatorio.
 }
 
 @injectable()
@@ -38,6 +40,7 @@ class CreatePointOfSaleService {
     secondaryPhoneNumber,
     address,
     groupId,
+    routeId,
   }: Request): Promise<PointOfSale> {
     const user = await this.usersRepository.findOne({
       filters: {
@@ -59,9 +62,11 @@ class CreatePointOfSaleService {
       }
     }
 
-    const checkLabelAlreadyExists = await this.pointsOfSaleRepository.find({
+    const checkLabelAlreadyExists = await this.pointsOfSaleRepository.findOne({
       filters: { label, groupId },
     });
+
+    logger.info(checkLabelAlreadyExists);
 
     if (checkLabelAlreadyExists) throw AppError.labelAlreadyInUsed;
 
@@ -73,6 +78,7 @@ class CreatePointOfSaleService {
       primaryPhoneNumber,
       secondaryPhoneNumber,
       groupId,
+      routeId,
     });
 
     await this.ormProvider.commit();

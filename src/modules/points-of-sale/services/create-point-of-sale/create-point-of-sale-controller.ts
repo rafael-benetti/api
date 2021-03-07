@@ -12,6 +12,7 @@ class CreatePointOfSaleController {
       secondaryPhoneNumber,
       address,
       groupId,
+      routeId,
     } = req.body;
 
     const createPointOfSaleService = container.resolve(
@@ -26,6 +27,7 @@ class CreatePointOfSaleController {
       secondaryPhoneNumber,
       address,
       groupId,
+      routeId,
     });
 
     return res.json(pointOfSale);
