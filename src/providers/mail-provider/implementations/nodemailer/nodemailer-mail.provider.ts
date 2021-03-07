@@ -14,7 +14,18 @@ class NodemailerMailProvider implements MailProvider {
   });
 
   send(data: SendMailDto): void {
-    throw new Error('Method not implemented.');
+    this.transporter.sendMail({
+      from: {
+        name: 'Equipe Sttigma',
+        address: mailConfig.user,
+      },
+      to: {
+        name: 'Nome',
+        address: data.to,
+      },
+      subject: data.subject,
+      html: data.body,
+    });
   }
 }
 
