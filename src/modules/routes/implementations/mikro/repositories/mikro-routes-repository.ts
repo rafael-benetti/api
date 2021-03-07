@@ -1,9 +1,9 @@
 import createRouteDto from '@modules/routes/contracts/dtos/create-route-dto';
-import FindRouteDto from '@modules/routes/contracts/dtos/find-route-dto';
 import Route from '@modules/routes/contracts/models/route';
 import RoutesRepository from '@modules/routes/contracts/repositories/routes-repository';
 import MikroMapper from '@providers/orm-provider/implementations/mikro/mikro-mapper';
 import MikroOrmProvider from '@providers/orm-provider/implementations/mikro/mikro-orm-provider';
+import FindEntityDto from '@shared/contracts/dtos/find-entity.dto';
 import { container } from 'tsyringe';
 import MikroRoute from '../../models/mikro-route';
 
@@ -24,7 +24,7 @@ class MikroRoutesRepository implements RoutesRepository {
     limit,
     offset,
     populate,
-  }: FindRouteDto): Promise<Route[]> {
+  }: FindEntityDto<Route>): Promise<Route[]> {
     const mikroRoutes = await this.entityManeger.find(
       {
         ...filters,
@@ -39,7 +39,7 @@ class MikroRoutesRepository implements RoutesRepository {
     return mikroRoutes.map(mikroRoute => MikroMapper.map(mikroRoute));
   }
 
-  async findOne({ filters }: FindRouteDto): Promise<Route | undefined> {
+  async findOne({ filters }: FindEntityDto<Route>): Promise<Route | undefined> {
     const route = await this.entityManeger.findOne({ ...filters });
 
     return route ? MikroMapper.map(route) : undefined;
