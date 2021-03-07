@@ -38,7 +38,11 @@ class CreateMachineService {
     pointOfSaleId,
     userId,
   }: Request): Promise<Machine> {
-    const user = await this.usersRepository.findById(userId);
+    const user = await this.usersRepository.findOne({
+      filters: {
+        _id: userId,
+      },
+    });
 
     if (!user) throw AppError.userNotFound;
 

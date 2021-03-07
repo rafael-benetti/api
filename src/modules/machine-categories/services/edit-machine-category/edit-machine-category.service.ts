@@ -30,7 +30,11 @@ class EditMachineCategoryService {
     machineCategoryId,
     label,
   }: Request): Promise<MachineCategory> {
-    const user = await this.usersRepository.findById(userId);
+    const user = await this.usersRepository.findOne({
+      filters: {
+        _id: userId,
+      },
+    });
 
     if (!user) throw AppError.userNotFound;
 
