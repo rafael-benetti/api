@@ -24,7 +24,11 @@ class DeleteMachineService {
   ) {}
 
   async execute({ userId, machineId }: Request): Promise<void> {
-    const user = await this.usersRepository.findById(userId);
+    const user = await this.usersRepository.findOne({
+      filters: {
+        _id: userId,
+      },
+    });
 
     if (!user) throw AppError.userNotFound;
 
