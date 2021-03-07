@@ -39,6 +39,7 @@ userRoutes.post(
         generateReports: Joi.boolean().optional(),
         addRemoteCredit: Joi.boolean().optional(),
         toggleMaintenanceMode: Joi.boolean().optional(),
+        listGroups: Joi.boolean().optional(),
         createGroups: Joi.boolean().optional(),
         editGroups: Joi.boolean().optional(),
         deleteGroups: Joi.boolean().optional(),

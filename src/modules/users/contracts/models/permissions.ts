@@ -71,6 +71,7 @@ export const managerPermissionKeys = [
   'createCategories',
   'editCategories',
   'deleteCategories',
+  'listGroups',
   'createGroups',
   'editGroups',
   'deleteGroups',

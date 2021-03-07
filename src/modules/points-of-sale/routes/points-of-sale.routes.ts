@@ -6,8 +6,6 @@ import ListPointsOfSaleController from '../services/list-points-of-sale/list-poi
 
 const pointsOfSaleRoutes = Router();
 
-const createPointOfSaleController = new CreatePointOfSaleController();
-
 pointsOfSaleRoutes.use(authHandler);
 
 pointsOfSaleRoutes.post(
@@ -31,7 +29,7 @@ pointsOfSaleRoutes.post(
       }),
     },
   }),
-  createPointOfSaleController.handle,
+  CreatePointOfSaleController.handle,
 );
 
 pointsOfSaleRoutes.get('/', ListPointsOfSaleController.handle);

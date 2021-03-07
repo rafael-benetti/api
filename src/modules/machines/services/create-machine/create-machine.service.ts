@@ -1,3 +1,4 @@
+import GroupsRepository from '@modules/groups/contracts/repositories/groups-repository';
 import MachineCategoriesRepository from '@modules/machine-categories/contracts/repositories/machine-categories-repository';
 import Machine from '@modules/machines/contracts/models/machine';
 import MachinesRepository from '@modules/machines/contracts/repositories/machines.repository';
@@ -27,6 +28,9 @@ class CreateMachineService {
     @inject('MachineCategoriesRepository')
     private machineCategoriesRepository: MachineCategoriesRepository,
 
+    @inject('GroupsRepository')
+    private groupsRepository: GroupsRepository,
+
     @inject('OrmProvider')
     private ormProvider: OrmProvider,
   ) {}
@@ -38,6 +42,7 @@ class CreateMachineService {
     pointOfSaleId,
     userId,
   }: Request): Promise<Machine> {
+    let ownerId;
     const user = await this.usersRepository.findOne({
       filters: {
         _id: userId,
@@ -46,19 +51,30 @@ class CreateMachineService {
 
     if (!user) throw AppError.userNotFound;
 
-    if (user.role !== Role.OWNER) {
-      if (user.role === Role.MANAGER) {
-        if (user.ownerId === undefined) throw AppError.authorizationError;
+    if (user.role !== Role.OWNER && user.role !== Role.MANAGER)
+      throw AppError.authorizationError;
 
-        if (!user.permissions?.createMachines)
-          throw AppError.authorizationError;
+    if (user.role === Role.OWNER) {
+      const groups = await this.groupsRepository.find({
+        filters: {
+          ownerId: user._id,
+        },
+      });
 
-        if (!user.groupIds?.includes(groupId))
-          throw AppError.authorizationError;
-      }
+      const groupIds = groups.map(group => group._id);
+
+      if (!groupIds.includes(groupId)) throw AppError.authorizationError;
+
+      ownerId = user._id;
     }
 
-    const ownerId = user.role === Role.OWNER ? user._id : user.ownerId;
+    if (user.role === Role.MANAGER) {
+      if (!user.permissions?.createMachines) throw AppError.authorizationError;
+
+      if (!user.groupIds?.includes(groupId)) throw AppError.authorizationError;
+
+      ownerId = user.ownerId;
+    }
 
     if (!ownerId) throw AppError.authorizationError;
 

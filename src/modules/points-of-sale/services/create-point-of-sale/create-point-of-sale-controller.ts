@@ -2,8 +2,8 @@ import { Request, Response } from 'express';
 import { container } from 'tsyringe';
 import CreatePointOfSaleService from './create-point-of-sale-service';
 
-class CreatePointOfSaleController {
-  async handle(req: Request, res: Response): Promise<Response> {
+abstract class CreatePointOfSaleController {
+  static async handle(req: Request, res: Response): Promise<Response> {
     const { userId } = req;
     const {
       label,

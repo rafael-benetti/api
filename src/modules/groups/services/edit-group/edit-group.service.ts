@@ -26,6 +26,7 @@ class EditGroupService {
   ) {}
 
   public async execute({ label, userId, groupId }: Request): Promise<Group> {
+    let ownerId;
     const user = await this.usersRepository.findOne({
       filters: {
         _id: userId,
@@ -34,11 +35,32 @@ class EditGroupService {
 
     if (!user) throw AppError.userNotFound;
 
-    if (user.role !== Role.OWNER)
-      if (user.role !== Role.MANAGER) throw AppError.authorizationError;
-      else if (!user.permissions?.editGroups) throw AppError.authorizationError;
+    if (user.role !== Role.OWNER && user.role !== Role.MANAGER)
+      throw AppError.authorizationError;
 
-    const ownerId = user.role === Role.OWNER ? user._id : user.ownerId;
+    if (user.role === Role.OWNER) {
+      const groups = await this.groupsRepository.find({
+        filters: {
+          ownerId: user._id,
+        },
+      });
+
+      const groupIds = groups.map(group => group._id);
+
+      if (!groupIds.includes(groupId)) throw AppError.authorizationError;
+
+      ownerId = user._id;
+    }
+
+    if (user.role === Role.MANAGER) {
+      if (user.ownerId === undefined) throw AppError.authorizationError;
+
+      if (!user.permissions?.editGroups) throw AppError.authorizationError;
+
+      if (!user.groupIds?.includes(groupId)) throw AppError.authorizationError;
+
+      ownerId = user.ownerId;
+    }
 
     if (!ownerId) throw AppError.unknownError;
 

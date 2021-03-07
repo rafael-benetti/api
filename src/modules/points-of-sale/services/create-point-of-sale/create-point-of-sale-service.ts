@@ -1,4 +1,4 @@
-import logger from '@config/logger';
+import GroupsRepository from '@modules/groups/contracts/repositories/groups-repository';
 import Address from '@modules/points-of-sale/contracts/models/address';
 import PointOfSale from '@modules/points-of-sale/contracts/models/point-of-sale';
 import PointsOfSaleRepository from '@modules/points-of-sale/contracts/repositories/points-of-sale-repository';
@@ -28,6 +28,9 @@ class CreatePointOfSaleService {
     @inject('UsersRepository')
     private usersRepository: UsersRepository,
 
+    @inject('GroupsRepository')
+    private groupsRepository: GroupsRepository,
+
     @inject('OrmProvider')
     private ormProvider: OrmProvider,
   ) {}
@@ -42,6 +45,7 @@ class CreatePointOfSaleService {
     groupId,
     routeId,
   }: Request): Promise<PointOfSale> {
+    let ownerId;
     const user = await this.usersRepository.findOne({
       filters: {
         _id: userId,
@@ -50,31 +54,45 @@ class CreatePointOfSaleService {
 
     if (!user) throw AppError.userNotFound;
 
-    if (user.role !== Role.OWNER) {
-      if (user.role === Role.MANAGER) {
-        if (user.ownerId === undefined) throw AppError.authorizationError;
+    if (user.role !== Role.OWNER && user.role !== Role.MANAGER)
+      throw AppError.authorizationError;
 
-        if (!user.permissions?.createPointsOfSale)
-          throw AppError.authorizationError;
+    if (user.role === Role.OWNER) {
+      const groups = await this.groupsRepository.find({
+        filters: {
+          ownerId: user._id,
+        },
+      });
 
-        if (!user.groupIds?.includes(groupId))
-          throw AppError.authorizationError;
-      }
+      const groupIds = groups.map(group => group._id);
+
+      if (!groupIds.includes(groupId)) throw AppError.authorizationError;
+
+      ownerId = user._id;
+    }
+
+    if (user.role === Role.MANAGER) {
+      if (!user.permissions?.createPointsOfSale)
+        throw AppError.authorizationError;
+
+      if (!user.groupIds?.includes(groupId)) throw AppError.authorizationError;
+
+      ownerId = user.ownerId;
     }
 
     const checkLabelAlreadyExists = await this.pointsOfSaleRepository.findOne({
       filters: { label, groupId },
     });
 
-    logger.info(checkLabelAlreadyExists);
-
     if (checkLabelAlreadyExists) throw AppError.labelAlreadyInUsed;
+
+    if (!ownerId) throw AppError.authorizationError;
 
     const pointOfSale = this.pointsOfSaleRepository.create({
       address,
       contactName,
       label,
-      ownerId: user.ownerId ? user.ownerId : user._id,
+      ownerId,
       primaryPhoneNumber,
       secondaryPhoneNumber,
       groupId,

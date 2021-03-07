@@ -6,6 +6,7 @@ import adminsRoutes from '@modules/admins/routes/admins.routes';
 import { Router } from 'express';
 import machinesRoutes from '@modules/machines/routes/machines.routes';
 import machineCategoriesRoutes from '@modules/machine-categories/routes/machine-categories.routes';
+import routesRoutes from '@modules/routes/routes/routes.routes';
 
 const router = Router();
 
@@ -16,5 +17,6 @@ router.use('/pointsOfSale', pointsOfSaleRoutes);
 router.use('/admins', adminsRoutes);
 router.use('/machines', machinesRoutes);
 router.use('/machineCategories', machineCategoriesRoutes);
+router.use('/routes', routesRoutes);
 
 export default router;
