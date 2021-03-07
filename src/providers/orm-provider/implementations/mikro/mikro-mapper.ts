@@ -8,6 +8,8 @@ import Machine from '@modules/machines/contracts/models/machine';
 import MikroMachine from '@modules/machines/implementations/mikro/models/mikro-machine';
 import PointOfSale from '@modules/points-of-sale/contracts/models/point-of-sale';
 import MikroPointOfSale from '@modules/points-of-sale/implementations/mikro/models/mikro-point-of-sale';
+import Route from '@modules/routes/contracts/models/route';
+import MikroRoute from '@modules/routes/implementations/models/mikro-route';
 import User from '@modules/users/contracts/models/user';
 import MikroUser from '@modules/users/implementations/mikro/models/mikro-user';
 
@@ -24,6 +26,10 @@ abstract class MikroMapper {
 
   static map(entity: Admin): MikroAdmin;
 
+  static map(entity: Route): MikroRoute;
+
+  static map(entity: MikroRoute): Route;
+
   static map(entity: MikroMachine): Machine;
 
   static map(entity: Machine): MikroMachine;
@@ -37,6 +43,18 @@ abstract class MikroMapper {
   static map(entity: Group): MikroGroup;
 
   static map(entity: unknown): unknown {
+    if (entity instanceof Route) {
+      const mikroRoute = new MikroRoute();
+      Object.assign(mikroRoute, entity);
+      return mikroRoute;
+    }
+
+    if (entity instanceof MikroRoute) {
+      const route = new Route();
+      Object.assign(route, entity);
+      return route;
+    }
+
     if (entity instanceof User) {
       const mikroUser = new MikroUser();
       Object.assign(mikroUser, entity);
