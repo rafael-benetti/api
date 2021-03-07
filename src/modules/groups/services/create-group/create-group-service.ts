@@ -25,7 +25,11 @@ class CreateGroupService {
   ) {}
 
   public async execute({ label, userId }: Request): Promise<Group> {
-    const user = await this.usersRepository.findById(userId);
+    const user = await this.usersRepository.findOne({
+      filters: {
+        _id: userId,
+      },
+    });
 
     if (!user) throw AppError.userNotFound;
 
