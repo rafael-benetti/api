@@ -20,7 +20,11 @@ class ListPointsOfSaleService {
   ) {}
 
   public async execute({ userId }: Request): Promise<PointOfSale[]> {
-    const user = await this.usersRepository.findById(userId);
+    const user = await this.usersRepository.findOne({
+      filters: {
+        _id: userId,
+      },
+    });
 
     if (!user) throw AppError.userNotFound;
 
@@ -34,9 +38,11 @@ class ListPointsOfSaleService {
     }
 
     if (user.role === Role.OWNER) {
-      const pointsOfSale = await this.pointsOfSaleRepository.findByOwnerId(
-        user._id,
-      );
+      const pointsOfSale = await this.pointsOfSaleRepository.find({
+        filters: {
+          ownerId: user._id,
+        },
+      });
 
       return pointsOfSale;
     }

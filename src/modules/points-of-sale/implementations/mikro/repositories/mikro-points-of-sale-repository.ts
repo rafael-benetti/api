@@ -1,10 +1,10 @@
 import createPointOfSaleDto from '@modules/points-of-sale/contracts/dtos/create-point-of-sale-dto';
-import FindPointsOfSaleDto from '@modules/points-of-sale/contracts/dtos/find-points-of-sale-dto';
 import PointOfSale from '@modules/points-of-sale/contracts/models/point-of-sale';
 import PointsOfSaleRepository from '@modules/points-of-sale/contracts/repositories/points-of-sale-repository';
 import MikroMapper from '@providers/orm-provider/implementations/mikro/mikro-mapper';
 
 import MikroOrmProvider from '@providers/orm-provider/implementations/mikro/mikro-orm-provider';
+import FindEntityDto from '@shared/contracts/dtos/find-entity.dto';
 import { container } from 'tsyringe';
 import MikroPointOfSale from '../models/mikro-point-of-sale';
 
@@ -24,7 +24,7 @@ class MikroPointsOfSaleRepository implements PointsOfSaleRepository {
   async findOne({
     filters,
     populate,
-  }: FindPointsOfSaleDto): Promise<PointOfSale | undefined> {
+  }: FindEntityDto<PointOfSale>): Promise<PointOfSale | undefined> {
     const pointOfSale = await this.ormProvider.findOne(
       { ...filters },
       { populate },
@@ -38,7 +38,7 @@ class MikroPointsOfSaleRepository implements PointsOfSaleRepository {
     offset,
     limit,
     populate,
-  }: FindPointsOfSaleDto): Promise<PointOfSale[]> {
+  }: FindEntityDto<PointOfSale>): Promise<PointOfSale[]> {
     const pointsOfsale = await this.ormProvider.find(
       { ...filters },
       { populate, limit, offset },
