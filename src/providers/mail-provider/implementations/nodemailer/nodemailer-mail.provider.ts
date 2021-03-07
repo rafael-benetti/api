@@ -1,4 +1,5 @@
 import mailConfig from '@config/mail';
+import { createTransport } from 'nodemailer';
 import SendMailDto from '@providers/mail-provider/contracts/dtos/send-mail.dto';
 import MailProvider from '@providers/mail-provider/contracts/models/mail.provider';
 
