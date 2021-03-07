@@ -29,7 +29,11 @@ class AuthenticateUserService {
   ) {}
 
   public async execute({ email, password }: Request): Promise<Response> {
-    const user = await this.usersRepository.findByEmail(email);
+    const user = await this.usersRepository.findOne({
+      filters: {
+        email,
+      },
+    });
 
     if (!user) throw AppError.incorrectEmailOrPassword;
 

@@ -48,7 +48,11 @@ class EditUserService {
     isActive,
     permissions,
   }: Request): Promise<User> {
-    const user = await this.usersRepository.findById(userId);
+    const user = await this.usersRepository.findOne({
+      filters: {
+        _id: userId,
+      },
+    });
     if (!user) throw AppError.userNotFound;
 
     if (user.role !== Role.OWNER) {
@@ -57,7 +61,11 @@ class EditUserService {
       }
     }
 
-    const targetUser = await this.usersRepository.findById(targetUserId);
+    const targetUser = await this.usersRepository.findOne({
+      filters: {
+        _id: targetUserId,
+      },
+    });
 
     if (!targetUser) throw AppError.userNotFound;
 
@@ -99,7 +107,11 @@ class EditUserService {
       }
 
       if (user.role === Role.OWNER) {
-        const ownerGroups = await this.groupsRepository.findByOwnerId(user._id);
+        const ownerGroups = await this.groupsRepository.find({
+          filters: {
+            ownerId: userId,
+          },
+        });
 
         const ownerGroupIds = ownerGroups.map(group => group._id);
 

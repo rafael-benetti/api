@@ -1,9 +1,9 @@
 import createUserDto from '@modules/users/contracts/dtos/create-user-dto';
-import FindUserDto from '@modules/users/contracts/dtos/find-user-dto';
 import User from '@modules/users/contracts/models/user';
 import UsersRepository from '@modules/users/contracts/repositories/users-repository';
 import MikroMapper from '@providers/orm-provider/implementations/mikro/mikro-mapper';
 import MikroOrmProvider from '@providers/orm-provider/implementations/mikro/mikro-orm-provider';
+import FindEntityDto from '@shared/contracts/dtos/find-entity.dto';
 import { container } from 'tsyringe';
 import MikroUser from '../models/mikro-user';
 
@@ -17,7 +17,7 @@ class MikroUsersRepository implements UsersRepository {
     limit,
     offset,
     populate,
-  }: FindUserDto): Promise<User[]> {
+  }: FindEntityDto<User>): Promise<User[]> {
     const users = await this.entityManeger.find(
       { ...filters },
       {
@@ -30,7 +30,7 @@ class MikroUsersRepository implements UsersRepository {
     return users;
   }
 
-  async findOne({ filters }: FindUserDto): Promise<User | undefined> {
+  async findOne({ filters }: FindEntityDto<User>): Promise<User | undefined> {
     const user = await this.entityManeger.findOne({
       ...filters,
     });

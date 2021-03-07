@@ -1,9 +1,9 @@
 import CreateGroupDto from '@modules/groups/contracts/dtos/create-group-dto';
-import FindGroupDto from '@modules/groups/contracts/dtos/find-group.dto';
 import Group from '@modules/groups/contracts/models/group';
 import GroupsRepository from '@modules/groups/contracts/repositories/groups-repository';
 import MikroMapper from '@providers/orm-provider/implementations/mikro/mikro-mapper';
 import MikroOrmProvider from '@providers/orm-provider/implementations/mikro/mikro-orm-provider';
+import FindEntityDto from '@shared/contracts/dtos/find-entity.dto';
 import { container } from 'tsyringe';
 import MikroGroup from '../models/mikro-group';
 
@@ -21,7 +21,7 @@ class MikroGroupsRepository implements GroupsRepository {
   async findOne({
     filters,
     populate,
-  }: FindGroupDto): Promise<Group | undefined> {
+  }: FindEntityDto<Group>): Promise<Group | undefined> {
     const group = await this.entityManager.findOne(
       {
         ...filters,
@@ -37,7 +37,7 @@ class MikroGroupsRepository implements GroupsRepository {
     limit,
     offset,
     populate,
-  }: FindGroupDto): Promise<Group[]> {
+  }: FindEntityDto<Group>): Promise<Group[]> {
     const groups = await this.entityManager.find(
       {
         ...filters,

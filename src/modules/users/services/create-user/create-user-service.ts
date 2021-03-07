@@ -52,7 +52,12 @@ class CreateUserService {
     permissions,
     groupIds,
   }: Request): Promise<User> {
-    const owner = await this.usersRepository.findById(userId);
+    const owner = await this.usersRepository.findOne({
+      filters: {
+        _id: userId,
+      },
+    });
+
     if (!owner) throw AppError.userNotFound;
 
     if (owner.role !== Role.OWNER)
@@ -60,8 +65,13 @@ class CreateUserService {
         if (!owner.permissions?.createUsers) throw AppError.authorizationError;
       } else throw AppError.authorizationError;
 
-    const checkUserExists = await this.usersRepository.findByEmail(email);
-    if (checkUserExists) throw AppError.emailAlreadyUsed;
+    const emailExists = await this.usersRepository.findOne({
+      filters: {
+        email,
+      },
+    });
+
+    if (emailExists) throw AppError.emailAlreadyUsed;
 
     if (role !== Role.OPERATOR && role !== Role.MANAGER)
       throw AppError.authorizationError;
@@ -93,9 +103,11 @@ class CreateUserService {
       }
 
       if (owner.role === Role.OWNER) {
-        const ownerGroups = await this.groupsRepository.findByOwnerId(
-          owner._id,
-        );
+        const ownerGroups = await this.groupsRepository.find({
+          filters: {
+            ownerId: owner._id,
+          },
+        });
 
         const ownerGroupIds = ownerGroups.map(group => group._id);
 

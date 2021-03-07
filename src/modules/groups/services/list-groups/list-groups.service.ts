@@ -20,7 +20,11 @@ class ListGroupsService {
   ) {}
 
   public async execute({ userId }: Request): Promise<Group[]> {
-    const user = await this.usersRepository.findById(userId);
+    const user = await this.usersRepository.findOne({
+      filters: {
+        _id: userId,
+      },
+    });
 
     if (!user) throw AppError.userNotFound;
 
@@ -36,7 +40,11 @@ class ListGroupsService {
     }
 
     if (user.role === Role.OWNER) {
-      const groups = await this.groupsRepository.findByOwnerId(user._id);
+      const groups = await this.groupsRepository.find({
+        filters: {
+          ownerId: userId,
+        },
+      });
       return groups;
     }
 
