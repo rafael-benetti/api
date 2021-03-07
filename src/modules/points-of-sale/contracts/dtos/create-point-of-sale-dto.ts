@@ -14,4 +14,6 @@ export default interface CreatePointOfSaleDto {
   ownerId: string;
 
   groupId: string;
+
+  routeId: string;
 }

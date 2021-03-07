@@ -15,6 +15,8 @@ class PointOfSale {
 
   groupId: string;
 
+  routeId: string;
+
   ownerId: string;
 }
 

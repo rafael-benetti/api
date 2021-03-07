@@ -30,6 +30,9 @@ class MikroPointOfSale implements PointOfSale {
   @Property()
   ownerId: string;
 
+  @Property()
+  routeId: string;
+
   constructor(data?: CreatePointOfSaleDto) {
     if (data) {
       this._id = v4();
@@ -40,6 +43,7 @@ class MikroPointOfSale implements PointOfSale {
       this.address = data.address;
       this.ownerId = data.ownerId;
       this.groupId = data.groupId;
+      this.routeId = data.routeId;
     }
   }
 }

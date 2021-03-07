@@ -55,9 +55,9 @@ class CreatePointOfSaleService {
       }
     }
 
-    const checkLabelAlreadyExists = await this.pointsOfSaleRepository.findByLabelAndGroupId(
-      { label, groupId },
-    );
+    const checkLabelAlreadyExists = await this.pointsOfSaleRepository.find({
+      filters: { label, groupId },
+    });
 
     if (checkLabelAlreadyExists) throw AppError.labelAlreadyInUsed;
 

@@ -16,10 +16,6 @@ abstract class MikroMapper {
 
   static map(entity: MikroUser): User;
 
-  static map(entity: MikroGroup): Group;
-
-  static map(entity: Group): MikroGroup;
-
   static map(entity: MikroPointOfSale): PointOfSale;
 
   static map(entity: PointOfSale): MikroPointOfSale;
@@ -35,6 +31,10 @@ abstract class MikroMapper {
   static map(entity: MikroMachineCategory): MachineCategory;
 
   static map(entity: MachineCategory): MikroMachineCategory;
+
+  static map(entity: MikroGroup): Group;
+
+  static map(entity: Group): MikroGroup;
 
   static map(entity: unknown): unknown {
     if (entity instanceof User) {

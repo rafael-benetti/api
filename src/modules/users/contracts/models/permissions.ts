@@ -55,12 +55,7 @@ interface Permissions {
 export const operatorPermissionKeys = [
   'editMachines',
   'deleteMachines',
-  'createProducts',
-  'editProducts',
   'transferProducts',
-  'createCategories',
-  'editCategories',
-  'generateReports',
   'addRemoteCredit',
   'toggleMaintenanceMode',
 ];
