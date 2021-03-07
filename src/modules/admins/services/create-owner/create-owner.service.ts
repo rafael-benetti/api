@@ -30,8 +30,9 @@ class CreateOwnerService {
 
   async execute({ adminId, email, name }: Request): Promise<void> {
     const admin = await this.adminsRepository.findOne({
-      by: '_id',
-      value: adminId,
+      filters: {
+        _id: adminId,
+      },
     });
 
     if (!admin) throw AppError.authorizationError;
