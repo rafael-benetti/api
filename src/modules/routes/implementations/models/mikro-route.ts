@@ -1,8 +1,9 @@
-import { PrimaryKey, Property } from '@mikro-orm/core';
+import { Entity, PrimaryKey, Property } from '@mikro-orm/core';
 import CreateRouteDto from '@modules/routes/contracts/dtos/create-route-dto';
 import Route from '@modules/routes/contracts/models/route';
 import { v4 } from 'uuid';
 
+@Entity({ tableName: 'routes' })
 class MikroRoute implements Route {
   @PrimaryKey()
   _id: string;
@@ -15,6 +16,9 @@ class MikroRoute implements Route {
 
   @Property()
   ownerId: string;
+
+  @Property()
+  operatorId: string;
 
   constructor(data?: CreateRouteDto) {
     if (data) {

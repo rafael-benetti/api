@@ -45,6 +45,14 @@ class MikroRoutesRepository implements RoutesRepository {
     return route ? MikroMapper.map(route) : undefined;
   }
 
+  async findByGroupIds(data: string[]): Promise<Route[]> {
+    const routes = await this.entityManeger.find({
+      groupIds: data,
+    });
+
+    return routes;
+  }
+
   save(data: Route): void {
     this.entityManeger.persist(MikroMapper.map(data));
   }

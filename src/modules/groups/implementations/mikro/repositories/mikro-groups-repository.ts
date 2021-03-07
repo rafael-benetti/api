@@ -52,6 +52,14 @@ class MikroGroupsRepository implements GroupsRepository {
     return groups.map(group => MikroMapper.map(group));
   }
 
+  async findByGroupIds(data: string[]): Promise<Group[]> {
+    const groups = await this.entityManager.find({
+      _id: data,
+    });
+
+    return groups.map(group => MikroMapper.map(group));
+  }
+
   save(group: Group): void {
     const mikroGroup = MikroMapper.map(group);
     this.entityManager.persist(mikroGroup);

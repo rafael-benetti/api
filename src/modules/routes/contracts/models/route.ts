@@ -6,6 +6,8 @@ class Route {
   groupIds: string[];
 
   ownerId: string;
+
+  operatorId: string;
 }
 
 export default Route;

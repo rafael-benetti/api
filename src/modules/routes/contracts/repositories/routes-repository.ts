@@ -6,5 +6,6 @@ export default interface RoutesRepository {
   create(data: CreateRouteDto): Route;
   find(data: FindEntityDto<Route>): Promise<Route[]>;
   findOne(data: FindEntityDto<Route>): Promise<Route | undefined>;
+  findByGroupIds(data: string[]): Promise<Route[]>;
   save(data: Route): void;
 }

@@ -30,12 +30,11 @@ class ListGroupsService {
 
     if (user.role === Role.MANAGER) {
       if (user.groupIds) {
-        const groups = await this.groupsRepository.find({
-          filters: {},
-        });
+        const groups = await this.groupsRepository.findByGroupIds(
+          user.groupIds,
+        );
         return groups;
       }
-
       return [];
     }
 
