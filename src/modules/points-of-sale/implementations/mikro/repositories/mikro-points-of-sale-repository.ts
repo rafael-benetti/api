@@ -9,14 +9,14 @@ import { container } from 'tsyringe';
 import MikroPointOfSale from '../models/mikro-point-of-sale';
 
 class MikroPointsOfSaleRepository implements PointsOfSaleRepository {
-  private ormProvider = container
+  private entityManager = container
     .resolve<MikroOrmProvider>('OrmProvider')
     .entityManager.getRepository(MikroPointOfSale);
 
   create(data: createPointOfSaleDto): PointOfSale {
     const pointOfSale = new MikroPointOfSale(data);
 
-    this.ormProvider.persist(pointOfSale);
+    this.entityManager.persist(pointOfSale);
 
     return pointOfSale;
   }
@@ -25,7 +25,7 @@ class MikroPointsOfSaleRepository implements PointsOfSaleRepository {
     filters,
     populate,
   }: FindEntityDto<PointOfSale>): Promise<PointOfSale | undefined> {
-    const pointOfSale = await this.ormProvider.findOne(
+    const pointOfSale = await this.entityManager.findOne(
       { ...filters },
       { populate },
     );
@@ -39,7 +39,7 @@ class MikroPointsOfSaleRepository implements PointsOfSaleRepository {
     limit,
     populate,
   }: FindEntityDto<PointOfSale>): Promise<PointOfSale[]> {
-    const pointsOfsale = await this.ormProvider.find(
+    const pointsOfsale = await this.entityManager.find(
       { ...filters },
       { populate, limit, offset },
     );
@@ -47,8 +47,17 @@ class MikroPointsOfSaleRepository implements PointsOfSaleRepository {
     return pointsOfsale;
   }
 
+  async findByGroupIds(data: string[]): Promise<PointOfSale[]> {
+    const pointsOfSale = await this.entityManager.find({
+      groupId: data,
+    });
+
+    return pointsOfSale;
+  }
+
   async save(data: PointOfSale): Promise<void> {
-    this.ormProvider.persist(data);
+    const mikroPointOfSale = MikroMapper.map(data);
+    this.entityManager.persist(mikroPointOfSale);
   }
 }
 

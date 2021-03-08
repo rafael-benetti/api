@@ -89,6 +89,12 @@ export default class AppError {
     statusCode: 404,
   });
 
+  static pointOfSaleNotFound = new AppError({
+    errorCode: 'POINT_OF_SALE_NOT_FOUND',
+    message: "Could not find the 'point of sale'.",
+    statusCode: 404,
+  });
+
   static groupNotFound = new AppError({
     errorCode: 'GROUP_NOT_FOUND',
     message: "Could not find the 'group'.",
