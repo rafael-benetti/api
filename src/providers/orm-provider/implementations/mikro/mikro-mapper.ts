@@ -34,13 +34,13 @@ abstract class MikroMapper {
 
   static map(entity: Machine): MikroMachine;
 
-  static map(entity: MikroMachineCategory): MachineCategory;
-
-  static map(entity: MachineCategory): MikroMachineCategory;
-
   static map(entity: MikroGroup): Group;
 
   static map(entity: Group): MikroGroup;
+
+  static map(entity: MikroMachineCategory): MachineCategory;
+
+  static map(entity: MachineCategory): MikroMachineCategory;
 
   static map(entity: unknown): unknown {
     if (entity instanceof Route) {

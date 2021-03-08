@@ -9,7 +9,10 @@ class MikroGroup implements Group {
   _id: string;
 
   @Property()
-  label: string;
+  label?: string;
+
+  @Property()
+  isPersonal: boolean;
 
   @Property()
   ownerId: string;
@@ -18,6 +21,7 @@ class MikroGroup implements Group {
     if (data) {
       this._id = v4();
       this.label = data.label;
+      this.isPersonal = data.isPersonal !== undefined ? data.isPersonal : false;
       this.ownerId = data.ownerId;
     }
   }
