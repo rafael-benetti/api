@@ -6,5 +6,6 @@ export default interface GroupsRepository {
   create(data: CreateGroupDto): Group;
   findOne(data: FindEntityDto<Group>): Promise<Group | undefined>;
   find(data: FindEntityDto<Group>): Promise<Group[]>;
+  findByGroupIds(data: string[]): Promise<Group[]>;
   save(group: Group): void;
 }

@@ -1,4 +1,3 @@
-import logger from '@config/logger';
 import Route from '@modules/routes/contracts/models/route';
 import RoutesRepository from '@modules/routes/contracts/repositories/routes-repository';
 import Role from '@modules/users/contracts/enums/role';
@@ -37,15 +36,13 @@ class ListRoutesService {
         },
       });
 
-      logger.info(routes);
-
       return routes;
     }
 
     if (user.role === Role.MANAGER) {
       if (!user.groupIds) return [];
 
-      logger.info(user.groupIds);
+      // TODO: REVISAR GET DE ROUTES
       const routes = await this.routesRepository.findByGroupIds(user.groupIds);
 
       return routes;
