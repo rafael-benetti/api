@@ -1,7 +1,7 @@
 import { Entity, PrimaryKey, Property } from '@mikro-orm/core';
 import CreateGroupDto from '@modules/groups/contracts/dtos/create-group-dto';
 import Group from '@modules/groups/contracts/models/group';
-import Product from '@modules/groups/contracts/models/product';
+import Product from '@modules/products/contracts/models/product';
 import { v4 } from 'uuid';
 
 @Entity({ tableName: 'groups' })

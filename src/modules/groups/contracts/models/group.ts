@@ -1,6 +1,6 @@
+import Product from '@modules/products/contracts/models/product';
 import { v4 } from 'uuid';
 import CreateGroupDto from '../dtos/create-group-dto';
-import Product from './product';
 
 class Group {
   _id: string;

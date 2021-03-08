@@ -1,7 +1,7 @@
 enum ProductType {
   MACHINE = 'MACHINE',
   PRIZE = 'PRIZE',
-  SUPPLIES = 'SUPPLIES',
+  SUPPLIES = 'SUPPLY',
 }
 
 export default ProductType;
