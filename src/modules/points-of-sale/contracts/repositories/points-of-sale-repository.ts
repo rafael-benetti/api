@@ -6,5 +6,6 @@ export default interface PointsOfSaleRepository {
   create(data: CreatePointOfSaleDto): PointOfSale;
   find(data: FindEntityDto<PointOfSale>): Promise<PointOfSale[]>;
   findOne(data: FindEntityDto<PointOfSale>): Promise<PointOfSale | undefined>;
+  findByGroupIds(data: string[]): Promise<PointOfSale[]>;
   save(data: PointOfSale): void;
 }
