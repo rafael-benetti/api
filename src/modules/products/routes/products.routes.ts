@@ -3,6 +3,7 @@ import { celebrate, Joi } from 'celebrate';
 import { Router } from 'express';
 import CreateProductController from '../services/create-product/create-product.controller';
 import EditProductController from '../services/edit-product/edit-product.controller';
+import TransferProductController from '../services/transfer-product/transfer-product.controller';
 
 const productsRoutes = Router();
 
@@ -30,6 +31,18 @@ productsRoutes.put(
     },
   }),
   EditProductController.handle,
+);
+
+productsRoutes.patch(
+  '/:productId/transfer',
+  celebrate({
+    body: {
+      groupId: Joi.string().uuid().required(),
+      targetGroupId: Joi.string().uuid().required(),
+      quantityDifference: Joi.number(),
+    },
+  }),
+  TransferProductController.handle,
 );
 
 export default productsRoutes;
