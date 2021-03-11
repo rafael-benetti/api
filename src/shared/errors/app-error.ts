@@ -77,6 +77,12 @@ export default class AppError {
     statusCode: 400,
   });
 
+  static incorrectPermissionsForManager = new AppError({
+    errorCode: 'INCORRECT_PERMISSIONS_FOR_MANAGER',
+    message: 'Incorrect permissions for manager.',
+    statusCode: 400,
+  });
+
   static insufficientProducts = new AppError({
     errorCode: 'INSUFFICIENT_PRODUCTS',
     message: "You don't have enough products to transfer.",
@@ -121,7 +127,7 @@ export default class AppError {
 
   static userNotFound = new AppError({
     errorCode: 'USER_NOT_FOUND',
-    message: "Could not find the 'user'.",
+    message: 'Could not find this user',
     statusCode: 404,
   });
 

@@ -1,41 +1,39 @@
 import CreateAdminDto from '@modules/admins/contracts/dtos/create-admin.dto';
+import FindAdminDto from '@modules/admins/contracts/dtos/find-admin.dto';
 import Admin from '@modules/admins/contracts/models/admin';
 import AdminsRepository from '@modules/admins/contracts/repositories/admins.repository';
-import MikroMapper from '@providers/orm-provider/implementations/mikro/mikro-mapper';
 import MikroOrmProvider from '@providers/orm-provider/implementations/mikro/mikro-orm-provider';
-import FindEntityDto from '@shared/contracts/dtos/find-entity.dto';
 import { container } from 'tsyringe';
+import AdminMapper from '../models/admin-mapper';
 import MikroAdmin from '../models/mikro-admin';
 
 class MikroAdminsRepository implements AdminsRepository {
-  private entityManager = container
+  private repository = container
     .resolve<MikroOrmProvider>('OrmProvider')
     .entityManager.getRepository(MikroAdmin);
 
   create(data: CreateAdminDto): Admin {
     const admin = new MikroAdmin(data);
-
-    this.entityManager.persist(admin);
-
-    return MikroMapper.map(admin);
+    this.repository.persist(admin);
+    return AdminMapper.toApi(admin);
   }
 
-  async findOne({ filters }: FindEntityDto<Admin>): Promise<Admin | undefined> {
-    const admin = await this.entityManager.findOne({
-      ...filters,
+  async findOne(data: FindAdminDto): Promise<Admin | undefined> {
+    const owner = await this.repository.findOne({
+      [data.by]: data.value,
     });
 
-    return admin ? MikroMapper.map(admin) : undefined;
+    return owner ? AdminMapper.toApi(owner) : undefined;
   }
 
   save(data: Admin): void {
-    const admin = MikroMapper.map(data);
-    this.entityManager.persist(admin);
+    const admin = AdminMapper.toOrm(data);
+    this.repository.persist(admin);
   }
 
   delete(data: Admin): void {
-    const admin = MikroMapper.map(data);
-    this.entityManager.remove(admin);
+    const admin = AdminMapper.toOrm(data);
+    this.repository.remove(admin);
   }
 }
 

@@ -2,8 +2,8 @@ import { Request, Response } from 'express';
 import { container } from 'tsyringe';
 import AuthenticateAdminService from './authenticate-admin.service';
 
-export default abstract class AuthenticateAdminController {
-  public static async create(req: Request, res: Response): Promise<Response> {
+abstract class AuthenticateAdminController {
+  static async handle(req: Request, res: Response): Promise<Response> {
     const { email, password } = req.body;
 
     const authenticateAdminService = container.resolve(
@@ -21,3 +21,5 @@ export default abstract class AuthenticateAdminController {
     });
   }
 }
+
+export default AuthenticateAdminController;

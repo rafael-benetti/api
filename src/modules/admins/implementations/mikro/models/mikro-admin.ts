@@ -5,10 +5,10 @@ import { v4 } from 'uuid';
 
 @Entity({ tableName: 'admins' })
 class MikroAdmin implements Admin {
-  @PrimaryKey()
-  _id: string;
+  @PrimaryKey({ name: '_id' })
+  id: string;
 
-  @Property()
+  @Property({ unique: true })
   email: string;
 
   @Property()
@@ -19,7 +19,7 @@ class MikroAdmin implements Admin {
 
   constructor(data?: CreateAdminDto) {
     if (data) {
-      this._id = v4();
+      this.id = v4();
       this.email = data.email;
       this.password = data.password;
       this.name = data.name;

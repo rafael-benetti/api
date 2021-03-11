@@ -1,17 +1,18 @@
 import { Entity, Enum, PrimaryKey, Property } from '@mikro-orm/core';
-import CreateUserDto from '@modules/users/contracts/dtos/create-user-dto';
 import User from '@modules/users/contracts/models/user';
-import Permissions from '@modules/users/contracts/models/permissions';
 import Role from '@modules/users/contracts/enums/role';
-import { v4 } from 'uuid';
+import OperatorStock from '@modules/users/contracts/models/operator-stock';
+import Permissions from '@modules/users/contracts/models/permissions';
 import Photo from '@modules/users/contracts/models/photo';
+import CreateUserDto from '@modules/users/contracts/dtos/create-user.dto';
+import { v4 } from 'uuid';
 
-@Entity({ tableName: 'users' })
+@Entity({ collection: 'users' })
 class MikroUser implements User {
-  @PrimaryKey()
-  _id: string;
+  @PrimaryKey({ name: '_id' })
+  id: string;
 
-  @Property()
+  @Property({ unique: true })
   email: string;
 
   @Property()
@@ -20,39 +21,44 @@ class MikroUser implements User {
   @Property()
   name: string;
 
-  @Property()
-  phone?: string | undefined;
-
   @Enum(() => Role)
   role: Role;
 
   @Property()
-  photo?: Photo;
-
-  @Property()
-  ownerId?: string | undefined;
-
-  @Property()
-  isActive: boolean;
+  groupIds?: string[];
 
   @Property()
   permissions?: Permissions;
 
   @Property()
-  groupIds?: string[];
+  stock?: OperatorStock;
+
+  @Property()
+  photo?: Photo;
+
+  @Property()
+  phoneNumber?: string;
+
+  @Property()
+  isActive?: boolean;
+
+  @Property()
+  ownerId?: string;
 
   constructor(data?: CreateUserDto) {
     if (data) {
-      this._id = v4();
-      this.name = data.name;
+      this.id = v4();
       this.email = data.email;
-      this.phone = data.phone;
       this.password = data.password;
-      this.ownerId = data.ownerId;
+      this.name = data.name;
       this.role = data.role;
-      this.isActive = data.isActive;
-      this.permissions = data.permissions;
       this.groupIds = data.groupIds;
+      this.permissions = data.permissions;
+      this.stock = data.stock;
+      this.photo = data.photo;
+      this.phoneNumber = data.phoneNumber;
+      this.isActive = data.isActive;
+      this.ownerId = data.ownerId;
     }
   }
 }

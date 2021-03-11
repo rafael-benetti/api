@@ -1,6 +1,5 @@
 interface Photo {
   key: string;
-
   downloadUrl: string;
 }
 

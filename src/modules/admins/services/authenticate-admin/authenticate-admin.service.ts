@@ -30,9 +30,8 @@ class AuthenticateAdminService {
 
   public async execute({ email, password }: Request): Promise<Response> {
     const admin = await this.adminsRepository.findOne({
-      filters: {
-        email,
-      },
+      by: 'email',
+      value: email,
     });
 
     if (!admin) throw AppError.incorrectEmailOrPassword;
@@ -40,7 +39,7 @@ class AuthenticateAdminService {
     if (!this.hashProvider.compare(password, admin.password))
       throw AppError.incorrectEmailOrPassword;
 
-    const token = await this.sessionProvider.createToken(admin._id);
+    const token = await this.sessionProvider.createToken(admin.id);
 
     return { admin, token };
   }

@@ -1,5 +1,5 @@
 interface FindAdminDto {
-  by: '_id' | 'email';
+  by: 'id' | 'email';
   value: string;
 }
 

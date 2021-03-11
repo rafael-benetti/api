@@ -1,7 +1,6 @@
 import AdminsRepository from '@modules/admins/contracts/repositories/admins.repository';
-import GroupsRepository from '@modules/groups/contracts/repositories/groups-repository';
 import Role from '@modules/users/contracts/enums/role';
-import UsersRepository from '@modules/users/contracts/repositories/users-repository';
+import UsersRepository from '@modules/users/contracts/repositories/users.repository';
 import HashProvider from '@providers/hash-provider/contracts/models/hash-provider';
 import OrmProvider from '@providers/orm-provider/contracts/models/orm-provider';
 import AppError from '@shared/errors/app-error';
@@ -22,9 +21,6 @@ class CreateOwnerService {
     @inject('UsersRepository')
     private usersRepository: UsersRepository,
 
-    @inject('GroupsRepository')
-    private groupsRepository: GroupsRepository,
-
     @inject('HashProvider')
     private hashProvider: HashProvider,
 
@@ -34,24 +30,24 @@ class CreateOwnerService {
 
   async execute({ adminId, email, name }: Request): Promise<void> {
     const admin = await this.adminsRepository.findOne({
-      filters: {
-        _id: adminId,
-      },
+      by: 'id',
+      value: adminId,
     });
 
     if (!admin) throw AppError.authorizationError;
 
-    const owner = this.usersRepository.create({
+    const emailExists = await this.usersRepository.findOne({
+      by: 'email',
+      value: email,
+    });
+
+    if (emailExists) throw AppError.emailAlreadyUsed;
+
+    this.usersRepository.create({
       email,
       password: this.hashProvider.hash('q1'),
       name,
-      isActive: true,
       role: Role.OWNER,
-    });
-
-    this.groupsRepository.create({
-      isPersonal: true,
-      ownerId: owner._id,
     });
 
     await this.ormProvider.commit();

@@ -12,7 +12,7 @@ class RedisSessionProvider implements SessionProvider {
     const token = randomBytes(128).toString('base64');
 
     await this.client.set(token, userId);
-    await this.client.expire(token, this.timeToLive);
+    await this.client.expire(token, 86400);
 
     return token;
   }

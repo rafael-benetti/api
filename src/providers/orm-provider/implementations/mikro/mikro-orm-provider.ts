@@ -3,11 +3,6 @@ import mongoConfig from '@config/mongo';
 import { MikroORM, RequestContext } from '@mikro-orm/core';
 import { MongoDriver, MongoEntityManager } from '@mikro-orm/mongodb';
 import MikroAdmin from '@modules/admins/implementations/mikro/models/mikro-admin';
-import MikroGroup from '@modules/groups/implementations/mikro/models/mikro-group';
-import MikroMachineCategory from '@modules/machine-categories/implementations/mikro/models/mikro-machine-category';
-import MikroMachine from '@modules/machines/implementations/mikro/models/mikro-machine';
-import MikroPointOfSale from '@modules/points-of-sale/implementations/mikro/models/mikro-point-of-sale';
-import MikroRoute from '@modules/routes/implementations/models/mikro-route';
 import MikroUser from '@modules/users/implementations/mikro/models/mikro-user';
 
 import OrmProvider from '@providers/orm-provider/contracts/models/orm-provider';
@@ -19,16 +14,9 @@ class MikroOrmProvider implements OrmProvider {
   async connect(): Promise<void> {
     const orm = await MikroORM.init<MongoDriver>({
       type: 'mongo',
+      forceUndefined: true,
       clientUrl: mongoConfig.url,
-      entities: [
-        MikroUser,
-        MikroGroup,
-        MikroPointOfSale,
-        MikroAdmin,
-        MikroMachine,
-        MikroMachineCategory,
-        MikroRoute,
-      ],
+      entities: [MikroAdmin, MikroUser],
       implicitTransactions: true,
       debug: true,
       ensureIndexes: true,
