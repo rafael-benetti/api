@@ -9,6 +9,7 @@ import EditOperatorController from '../services/edit-operator/edit-operator.cont
 import GetUserProfileController from '../services/get-user-profile/get-user-profile.controller';
 import ListManagersController from '../services/list-managers/list-managers.controller';
 import ListOperatorsController from '../services/list-operators/list-operators.controller';
+import UpdateUserProfileController from '../services/update-user-profile/update-user-profile.controller';
 
 const usersRoutes = Router();
 
@@ -29,6 +30,21 @@ usersRoutes.post(
 usersRoutes.use(authHandler);
 
 usersRoutes.get('/me', GetUserProfileController.handle);
+
+usersRoutes.patch(
+  '/me',
+  celebrate({
+    body: {
+      name: Joi.string(),
+      password: Joi.object({
+        old: Joi.string().required(),
+        new: Joi.string().required(),
+      }),
+      phoneNumber: Joi.string(),
+    },
+  }),
+  UpdateUserProfileController.handle,
+);
 
 usersRoutes.post(
   '/managers',
