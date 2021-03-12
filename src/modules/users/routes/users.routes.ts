@@ -36,9 +36,9 @@ usersRoutes.patch(
   celebrate({
     body: {
       name: Joi.string(),
-      password: Joi.object({
-        old: Joi.string().required(),
-        new: Joi.string().required(),
+      newPassword: Joi.string(),
+      password: Joi.string().when(Joi.ref('newPassword'), {
+        then: Joi.string().required(),
       }),
       phoneNumber: Joi.string(),
     },

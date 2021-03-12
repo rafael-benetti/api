@@ -5,14 +5,19 @@ import UpdateUserProfileService from './update-user-profile.service';
 abstract class UpdateUserProfileController {
   static handle: RequestHandler = async (req, res) => {
     const { userId } = req;
-    const { name, password, file, phoneNumber } = req.body;
+    const { name, newPassword, password, file, phoneNumber } = req.body;
 
     const updateUserProfile = container.resolve(UpdateUserProfileService);
 
     const user = await updateUserProfile.execute({
       userId,
       name,
-      password,
+      password: newPassword
+        ? {
+            new: newPassword,
+            old: password,
+          }
+        : undefined,
       file,
       phoneNumber,
     });
