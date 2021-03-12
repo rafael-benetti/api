@@ -1,4 +1,5 @@
 import AdminsRepository from '@modules/admins/contracts/repositories/admins.repository';
+import GroupsRepository from '@modules/groups/contracts/repositories/groups.repository';
 import Role from '@modules/users/contracts/enums/role';
 import UsersRepository from '@modules/users/contracts/repositories/users.repository';
 import HashProvider from '@providers/hash-provider/contracts/models/hash-provider';
@@ -20,6 +21,9 @@ class CreateOwnerService {
 
     @inject('UsersRepository')
     private usersRepository: UsersRepository,
+
+    @inject('GroupsRepository')
+    private groupsRepository: GroupsRepository,
 
     @inject('HashProvider')
     private hashProvider: HashProvider,
@@ -43,11 +47,16 @@ class CreateOwnerService {
 
     if (emailExists) throw AppError.emailAlreadyUsed;
 
-    this.usersRepository.create({
+    const user = this.usersRepository.create({
       email,
       password: this.hashProvider.hash('q1'),
       name,
       role: Role.OWNER,
+    });
+
+    this.groupsRepository.create({
+      isPersonal: true,
+      ownerId: user.id,
     });
 
     await this.ormProvider.commit();

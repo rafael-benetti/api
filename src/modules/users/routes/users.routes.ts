@@ -6,6 +6,7 @@ import CreateManagerController from '../services/create-manager/create-manager.c
 import CreateOperatorController from '../services/create-operator/create-operator.controller';
 import EditManagerController from '../services/edit-manager/edit-manager.controller';
 import EditOperatorController from '../services/edit-operator/edit-operator.controller';
+import GetUserProfileController from '../services/get-user-profile/get-user-profile.controller';
 import ListManagersController from '../services/list-managers/list-managers.controller';
 import ListOperatorsController from '../services/list-operators/list-operators.controller';
 
@@ -26,6 +27,8 @@ usersRoutes.post(
 );
 
 usersRoutes.use(authHandler);
+
+usersRoutes.get('/me', GetUserProfileController.handle);
 
 usersRoutes.post(
   '/managers',
