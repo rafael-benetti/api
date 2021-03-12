@@ -75,7 +75,7 @@ usersRoutes.post(
   CreateManagerController.handle,
 );
 
-usersRoutes.put(
+usersRoutes.patch(
   '/managers/:managerId',
   celebrate(
     {
@@ -159,7 +159,7 @@ usersRoutes.post(
   CreateOperatorController.handle,
 );
 
-usersRoutes.put(
+usersRoutes.patch(
   '/operators/:operatorId',
   celebrate(
     {

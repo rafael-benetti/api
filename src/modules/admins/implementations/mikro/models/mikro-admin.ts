@@ -3,7 +3,7 @@ import CreateAdminDto from '@modules/admins/contracts/dtos/create-admin.dto';
 import Admin from '@modules/admins/contracts/models/admin';
 import { v4 } from 'uuid';
 
-@Entity({ tableName: 'admins' })
+@Entity({ collection: 'admins' })
 class MikroAdmin implements Admin {
   @PrimaryKey({ name: '_id' })
   id: string;

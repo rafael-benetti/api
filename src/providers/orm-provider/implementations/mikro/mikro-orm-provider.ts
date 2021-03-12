@@ -3,6 +3,7 @@ import mongoConfig from '@config/mongo';
 import { MikroORM, RequestContext } from '@mikro-orm/core';
 import { MongoDriver, MongoEntityManager } from '@mikro-orm/mongodb';
 import MikroAdmin from '@modules/admins/implementations/mikro/models/mikro-admin';
+import MikroGroup from '@modules/groups/implementations/mikro/models/mikro-group';
 import MikroUser from '@modules/users/implementations/mikro/models/mikro-user';
 
 import OrmProvider from '@providers/orm-provider/contracts/models/orm-provider';
@@ -16,7 +17,7 @@ class MikroOrmProvider implements OrmProvider {
       type: 'mongo',
       forceUndefined: true,
       clientUrl: mongoConfig.url,
-      entities: [MikroAdmin, MikroUser],
+      entities: [MikroAdmin, MikroUser, MikroGroup],
       implicitTransactions: true,
       debug: true,
       ensureIndexes: true,

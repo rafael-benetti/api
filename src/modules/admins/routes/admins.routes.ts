@@ -5,7 +5,7 @@ import { Router } from 'express';
 import AuthenticateAdminController from '../services/authenticate-admin/authenticate-admin.controller';
 import CreateAdminController from '../services/create-admin/create-admin.controller';
 import CreateOwnerController from '../services/create-owner/create-owner.controller';
-import GetOwnersController from '../services/get-owners/get-owners.controller';
+import ListOwnersController from '../services/list-owners/list-owners.controller';
 
 const adminsRoutes = Router();
 
@@ -59,6 +59,6 @@ adminsRoutes.post(
   CreateOwnerController.handle,
 );
 
-adminsRoutes.get('/owners', GetOwnersController.handle);
+adminsRoutes.get('/owners', ListOwnersController.handle);
 
 export default adminsRoutes;

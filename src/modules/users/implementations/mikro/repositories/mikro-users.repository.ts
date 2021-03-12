@@ -46,12 +46,12 @@ class MikroUsersRepository implements UsersRepository {
   }
 
   save(data: User): void {
-    const user = UserMapper.toApi(data);
+    const user = UserMapper.toOrm(data);
     this.repository.persist(user);
   }
 
   delete(data: User): void {
-    const user = UserMapper.toApi(data);
+    const user = UserMapper.toOrm(data);
     this.repository.remove(user);
   }
 }

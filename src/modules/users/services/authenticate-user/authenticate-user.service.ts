@@ -36,7 +36,7 @@ class AuthenticateUserService {
 
     if (!user) throw AppError.incorrectEmailOrPassword;
 
-    if (!user.isActive) throw AppError.incorrectEmailOrPassword;
+    if (user.isActive === false) throw AppError.incorrectEmailOrPassword;
 
     if (!this.hashProvider.compare(password, user.password))
       throw AppError.incorrectEmailOrPassword;

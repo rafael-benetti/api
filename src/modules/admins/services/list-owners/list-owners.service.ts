@@ -10,7 +10,7 @@ interface Request {
 }
 
 @injectable()
-class GetOwnersService {
+class ListOwnersService {
   constructor(
     @inject('AdminsRepository')
     private adminsRepository: AdminsRepository,
@@ -37,4 +37,4 @@ class GetOwnersService {
   }
 }
 
-export default GetOwnersService;
+export default ListOwnersService;
