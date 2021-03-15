@@ -45,7 +45,7 @@ pointsOfSaleRoutes.patch(
       contactName: Joi.string(),
       primaryPhoneNumber: Joi.string(),
       secondaryPhoneNumber: Joi.string(),
-      rent: Joi.number().positive(),
+      rent: Joi.number().greater(-1),
       isPercentage: Joi.bool(),
       address: Joi.object({
         extraInfo: Joi.string(),
