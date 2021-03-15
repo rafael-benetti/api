@@ -1,5 +1,5 @@
 interface FindPointOfSaleDto {
-  by: 'id';
+  by: 'id' | 'ownerId' | 'groupId';
   value: string;
   populate?: string[];
 }

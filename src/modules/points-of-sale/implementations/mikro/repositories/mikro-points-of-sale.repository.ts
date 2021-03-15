@@ -29,6 +29,29 @@ class MikroPointsOfSaleRepository implements PointsOfSaleRepository {
     return pointOfSale ? PointOfSaleMapper.toApi(pointOfSale) : undefined;
   }
 
+  async find(data: FindPointOfSaleDto): Promise<PointOfSale[]> {
+    const pointsOfSale = await this.repository.find(
+      {
+        [data.by]: data.value,
+      },
+      data.populate,
+    );
+
+    return pointsOfSale.map(pointOfSale =>
+      PointOfSaleMapper.toApi(pointOfSale),
+    );
+  }
+
+  async findByGroupIds(data: string[]): Promise<PointOfSale[]> {
+    const pointsOfSale = await this.repository.find({
+      groupId: data,
+    });
+
+    return pointsOfSale.map(pointOfSale =>
+      PointOfSaleMapper.toApi(pointOfSale),
+    );
+  }
+
   save(data: PointOfSale): void {
     const pointOfSale = PointOfSaleMapper.toOrm(data);
     this.repository.persist(pointOfSale);
