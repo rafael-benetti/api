@@ -2,10 +2,16 @@ declare namespace NodeJS {
   export interface ProcessEnv {
     APP_PORT: string;
     APP_ENVIRONMENT: string;
-    MY_SQL_HOST: string;
-    MY_SQL_PORT: string;
-    MY_SQL_USER: string;
-    MY_SQL_PASS: string;
-    MY_SQL_DB: string;
+
+    MONGO_URL: string;
+
+    REDIS_TTL: string;
+
+    S3_BUCKET: string;
+    S3_ACCESS_KEY: string;
+    S3_SECRET_KEY: string;
+
+    MAIL_USER: string;
+    MAIL_PASSWORD: string;
   }
 }

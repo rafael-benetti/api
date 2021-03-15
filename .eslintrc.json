@@ -25,7 +25,9 @@
     "no-useless-constructor": "off",
     "class-methods-use-this": "off",
     "no-shadow": "off",
+    "consistent-return": "off",
     "@typescript-eslint/no-inferrable-types": "off",
+    "no-underscore-dangle": "off",
     "import/no-extraneous-dependencies": [
       "error",
       {
@@ -35,7 +37,7 @@
       }
     ],
     "@typescript-eslint/no-shadow": [
-      "error"
+      "off"
     ],
     "@typescript-eslint/no-unused-vars": [
       "error",
