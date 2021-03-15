@@ -27,7 +27,7 @@ pointsOfSaleRoutes.post(
           city: Joi.string().required(),
           street: Joi.string().required(),
           neighborhood: Joi.string().required(),
-          number: Joi.string().required(),
+          number: Joi.number().required(),
           extraInfo: Joi.string(),
         }).required(),
       },
