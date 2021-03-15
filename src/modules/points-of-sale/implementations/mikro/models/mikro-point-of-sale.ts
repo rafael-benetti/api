@@ -6,7 +6,7 @@ import { v4 } from 'uuid';
 
 @Entity({ collection: 'pointsOfSale' })
 class MikroPointOfSale implements PointOfSale {
-  @PrimaryKey()
+  @PrimaryKey({ fieldName: '_id' })
   id: string;
 
   @Property()
