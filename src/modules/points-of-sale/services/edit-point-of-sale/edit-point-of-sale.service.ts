@@ -72,7 +72,7 @@ class EditPointOfSaleService {
       pointOfSale.secondaryPhoneNumber = secondaryPhoneNumber;
     if (rent !== undefined) pointOfSale.rent = rent;
     if (isPercentage !== undefined) pointOfSale.isPercentage = isPercentage;
-    if (address) pointOfSale.address = address;
+    if (address) pointOfSale.address.extraInfo = address.extraInfo;
 
     this.pointsOfSaleRepository.save(pointOfSale);
 
