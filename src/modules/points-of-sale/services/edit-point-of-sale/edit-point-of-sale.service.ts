@@ -50,7 +50,8 @@ class EditPointOfSaleService {
 
     if (!user) throw AppError.userNotFound;
 
-    if (user.role !== Role.OWNER) throw AppError.authorizationError;
+    if (user.role !== Role.OWNER && !user.permissions?.editPointsOfSale)
+      throw AppError.authorizationError;
 
     const pointOfSale = await this.pointsOfSaleRepository.findOne({
       by: 'id',
@@ -59,7 +60,9 @@ class EditPointOfSaleService {
 
     if (!pointOfSale) throw AppError.pointOfSaleNotFound;
 
-    if (!user.groupIds?.includes(pointOfSale.groupId))
+    if (user.role === Role.OWNER) {
+      if (user.id !== pointOfSale.ownerId) throw AppError.authorizationError;
+    } else if (!user.groupIds?.includes(pointOfSale.groupId))
       throw AppError.authorizationError;
 
     if (label) pointOfSale.label = label;
