@@ -48,12 +48,6 @@ pointsOfSaleRoutes.patch(
       rent: Joi.number().positive(),
       isPercentage: Joi.bool(),
       address: Joi.object({
-        zipCode: Joi.string().required(),
-        state: Joi.string().required(),
-        city: Joi.string().required(),
-        street: Joi.string().required(),
-        neighborhood: Joi.string().required(),
-        number: Joi.string().required(),
         extraInfo: Joi.string(),
       }),
     },
