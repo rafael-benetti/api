@@ -29,8 +29,6 @@ class ListGroupsService {
 
     if (!user) throw AppError.userNotFound;
 
-    console.log(user);
-
     if (user.role !== Role.OWNER) {
       const groups = await this.groupsRepository.find({
         filters: {

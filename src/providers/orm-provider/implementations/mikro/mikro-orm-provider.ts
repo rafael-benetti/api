@@ -5,7 +5,6 @@ import { MongoDriver, MongoEntityManager } from '@mikro-orm/mongodb';
 import MikroAdmin from '@modules/admins/implementations/mikro/models/mikro-admin';
 import MikroGroup from '@modules/groups/implementations/mikro/models/mikro-group';
 import MikroPointOfSale from '@modules/points-of-sale/implementations/mikro/models/mikro-point-of-sale';
-import MikroPointsOfSaleRepository from '@modules/points-of-sale/implementations/mikro/repositories/mikro-points-of-sale.repository';
 import MikroUser from '@modules/users/implementations/mikro/models/mikro-user';
 
 import OrmProvider from '@providers/orm-provider/contracts/models/orm-provider';
@@ -21,6 +20,7 @@ class MikroOrmProvider implements OrmProvider {
       clientUrl: mongoConfig.url,
       entities: [MikroAdmin, MikroUser, MikroGroup, MikroPointOfSale],
       implicitTransactions: true,
+      useBatchUpdates: false,
       debug: true,
       ensureIndexes: true,
     });
