@@ -1,6 +1,7 @@
 import authHandler from '@shared/server/express/middlewares/auth-handler';
 import { celebrate, Joi } from 'celebrate';
 import { Router } from 'express';
+import multer from 'multer';
 import AuthenticateUserController from '../services/authenticate-user/authenticate-user.controller';
 import CreateManagerController from '../services/create-manager/create-manager.controller';
 import CreateOperatorController from '../services/create-operator/create-operator.controller';
@@ -33,6 +34,9 @@ usersRoutes.get('/me', GetUserProfileController.handle);
 
 usersRoutes.patch(
   '/me',
+  multer({
+    storage: multer.memoryStorage(),
+  }).single('file'),
   celebrate({
     body: {
       name: Joi.string(),

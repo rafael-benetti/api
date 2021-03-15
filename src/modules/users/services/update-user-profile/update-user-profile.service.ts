@@ -3,6 +3,8 @@ import User from '@modules/users/contracts/models/user';
 import UsersRepository from '@modules/users/contracts/repositories/users.repository';
 import HashProvider from '@providers/hash-provider/contracts/models/hash-provider';
 import OrmProvider from '@providers/orm-provider/contracts/models/orm-provider';
+import StorageProvider from '@providers/storage-provider/contracts/models/storage.provider';
+
 import AppError from '@shared/errors/app-error';
 import { inject, injectable } from 'tsyringe';
 import { v4 } from 'uuid';
@@ -29,6 +31,9 @@ class UpdateUserProfileService {
 
     @inject('OrmProvider')
     private ormProvider: OrmProvider,
+
+    @inject('StorageProvider')
+    private storageProvider: StorageProvider,
   ) {}
 
   async execute({
@@ -46,6 +51,7 @@ class UpdateUserProfileService {
     if (!user) throw AppError.userNotFound;
 
     if (name) user.name = name;
+
     if (password) {
       if (!this.hashProvider.compare(password.old, user.password))
         throw AppError.incorrectEmailOrPassword;
@@ -61,6 +67,12 @@ class UpdateUserProfileService {
         };
 
       if (phoneNumber) user.phoneNumber = phoneNumber;
+    }
+
+    if (file) {
+      if (user.photo) this.storageProvider.deleteFile(user.photo.key);
+
+      user.photo = await this.storageProvider.uploadFile(file);
     }
 
     this.usersRepository.save(user);
