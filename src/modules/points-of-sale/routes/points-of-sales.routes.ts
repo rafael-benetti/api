@@ -19,7 +19,7 @@ pointsOfSaleRoutes.post(
         contactName: Joi.string().required(),
         primaryPhoneNumber: Joi.string().required(),
         secondaryPhoneNumber: Joi.string(),
-        rent: Joi.number().positive().default(0),
+        rent: Joi.number().greater(-1),
         isPercentage: Joi.bool(),
         address: Joi.object({
           zipCode: Joi.string().required(),
