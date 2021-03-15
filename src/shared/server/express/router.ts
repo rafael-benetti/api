@@ -9,6 +9,6 @@ const router = Router();
 router.use('/admins', adminsRoutes);
 router.use('/users', usersRoutes);
 router.use('/groups', groupsRoutes);
-router.use('/pointsOfCase', pointsOfSaleRoutes);
+router.use('/pointsOfSale', pointsOfSaleRoutes);
 
 export default router;
