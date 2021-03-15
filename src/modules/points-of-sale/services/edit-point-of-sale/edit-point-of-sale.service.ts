@@ -50,8 +50,7 @@ class EditPointOfSaleService {
 
     if (!user) throw AppError.userNotFound;
 
-    if (user.role !== Role.OWNER && !user.permissions?.editPointsOfSale)
-      throw AppError.authorizationError;
+    if (user.role !== Role.OWNER) throw AppError.authorizationError;
 
     const pointOfSale = await this.pointsOfSaleRepository.findOne({
       by: 'id',
