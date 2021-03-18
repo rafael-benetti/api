@@ -1,6 +1,7 @@
 import authHandler from '@shared/server/express/middlewares/auth-handler';
 import { celebrate, Joi } from 'celebrate';
 import { Router } from 'express';
+import AddToStockController from '../services/add-to-stock/add-to-stock.controller.ts';
 import CreateProductController from '../services/create-product/create-product.controller';
 
 const productsRoutes = Router();
@@ -20,6 +21,22 @@ productsRoutes.post(
     { abortEarly: false },
   ),
   CreateProductController.handle,
+);
+
+productsRoutes.post(
+  '/products/:productId/add-quantity',
+  celebrate(
+    {
+      body: {
+        groupId: Joi.string().uuid().required(),
+        quantity: Joi.number().integer().required(),
+        type: Joi.string().valid('PRIZE', 'SUPPLY').required(),
+        cost: Joi.number().positive().required(),
+      },
+    },
+    { abortEarly: false },
+  ),
+  AddToStockController.handle,
 );
 
 export default productsRoutes;
