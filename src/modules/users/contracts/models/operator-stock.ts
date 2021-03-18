@@ -1,9 +1,9 @@
 import Prize from './prize';
 import Supply from './supply';
 
-interface OperatorStock {
+interface UserStock {
   prizes: Prize[];
   supplies: Supply[];
 }
 
-export default OperatorStock;
+export default UserStock;

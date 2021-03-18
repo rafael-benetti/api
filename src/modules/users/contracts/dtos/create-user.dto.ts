@@ -1,5 +1,5 @@
 import Role from '../enums/role';
-import OperatorStock from '../models/operator-stock';
+import UserStock from '../models/operator-stock';
 import Permissions from '../models/permissions';
 import Photo from '../models/photo';
 
@@ -10,7 +10,7 @@ interface CreateUserDto {
   role: Role;
   groupIds?: string[];
   permissions?: Permissions;
-  stock?: OperatorStock;
+  stock?: UserStock;
   photo?: Photo;
   phoneNumber?: string;
   ownerId?: string;

@@ -1,7 +1,7 @@
 import { Entity, Enum, PrimaryKey, Property } from '@mikro-orm/core';
 import User from '@modules/users/contracts/models/user';
 import Role from '@modules/users/contracts/enums/role';
-import OperatorStock from '@modules/users/contracts/models/operator-stock';
+import UserStock from '@modules/users/contracts/models/operator-stock';
 import Permissions from '@modules/users/contracts/models/permissions';
 import Photo from '@modules/users/contracts/models/photo';
 import CreateUserDto from '@modules/users/contracts/dtos/create-user.dto';
@@ -31,7 +31,7 @@ class MikroUser implements User {
   permissions?: Permissions;
 
   @Property()
-  stock?: OperatorStock;
+  stock?: UserStock;
 
   @Property()
   photo?: Photo;

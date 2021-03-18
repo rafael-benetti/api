@@ -74,6 +74,10 @@ class CreateManagerService {
       role: Role.MANAGER,
       groupIds,
       permissions,
+      stock: {
+        prizes: [],
+        supplies: [],
+      },
       phoneNumber,
       isActive: true,
       ownerId: user.ownerId || user.id,
