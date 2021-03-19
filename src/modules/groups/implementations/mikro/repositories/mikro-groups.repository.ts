@@ -57,7 +57,6 @@ class MikroGroupsRepository implements GroupsRepository {
 
   save(data: Group): void {
     const group = GroupMapper.toOrm(data);
-    logger.info(group);
     this.repository.persist(group);
   }
 
