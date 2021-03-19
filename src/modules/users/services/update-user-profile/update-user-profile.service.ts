@@ -1,3 +1,4 @@
+import logger from '@config/logger';
 import Role from '@modules/users/contracts/enums/role';
 import User from '@modules/users/contracts/models/user';
 import UsersRepository from '@modules/users/contracts/repositories/users.repository';
@@ -7,7 +8,6 @@ import StorageProvider from '@providers/storage-provider/contracts/models/storag
 
 import AppError from '@shared/errors/app-error';
 import { inject, injectable } from 'tsyringe';
-import { v4 } from 'uuid';
 
 interface Request {
   userId: string;
@@ -60,19 +60,13 @@ class UpdateUserProfileService {
     }
 
     if (user.role !== Role.OWNER) {
-      if (file)
-        user.photo = {
-          downloadUrl: `url`,
-          key: v4(),
-        };
+      if (file) {
+        if (user.photo) this.storageProvider.deleteFile(user.photo.key);
+
+        user.photo = await this.storageProvider.uploadFile(file);
+      }
 
       if (phoneNumber) user.phoneNumber = phoneNumber;
-    }
-
-    if (file) {
-      if (user.photo) this.storageProvider.deleteFile(user.photo.key);
-
-      user.photo = await this.storageProvider.uploadFile(file);
     }
 
     this.usersRepository.save(user);

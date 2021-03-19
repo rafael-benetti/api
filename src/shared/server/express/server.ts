@@ -17,12 +17,11 @@ const start = async () => {
 
   const app = express();
 
-  app.use(ormProvider.forkMiddleware);
-
   app.use(express.json());
   app.use(cors());
   app.use(morgan('dev'));
 
+  app.use(ormProvider.forkMiddleware);
   app.use(router);
 
   app.use(errorHandler);

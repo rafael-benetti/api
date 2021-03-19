@@ -45,8 +45,6 @@ class EditGroupService {
       value: groupId,
     });
 
-    logger.info(group);
-
     if (!group) throw AppError.groupNotFound;
 
     if (label) group.label = label;

@@ -6,6 +6,7 @@ import Permissions from '@modules/users/contracts/models/permissions';
 import Photo from '@modules/users/contracts/models/photo';
 import CreateUserDto from '@modules/users/contracts/dtos/create-user.dto';
 import { v4 } from 'uuid';
+import logger from '@config/logger';
 
 @Entity({ collection: 'users' })
 class MikroUser implements User {
