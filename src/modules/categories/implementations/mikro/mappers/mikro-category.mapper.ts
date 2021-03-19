@@ -1,4 +1,4 @@
-import Category from '@modules/categories/contracts/models/categoriry';
+import Category from '@modules/categories/contracts/models/category';
 import MikroCategory from '../model/mikro-category';
 
 abstract class CategoryMapper {

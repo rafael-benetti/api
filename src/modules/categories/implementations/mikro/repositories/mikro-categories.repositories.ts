@@ -1,6 +1,6 @@
 import CreateCategoryDto from '@modules/categories/contracts/dtos/create-category.dto';
 import FindCategoryDto from '@modules/categories/contracts/dtos/find-category.dto';
-import Category from '@modules/categories/contracts/models/categoriry';
+import Category from '@modules/categories/contracts/models/category';
 import CategoriesRepository from '@modules/categories/contracts/repositories/categories.repository';
 import MikroOrmProvider from '@providers/orm-provider/implementations/mikro/mikro-orm-provider';
 import { container } from 'tsyringe';

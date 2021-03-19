@@ -1,4 +1,4 @@
-import Category from '@modules/categories/contracts/models/categoriry';
+import Category from '@modules/categories/contracts/models/category';
 import CategoriesRepository from '@modules/categories/contracts/repositories/categories.repository';
 import UsersRepository from '@modules/users/contracts/repositories/users.repository';
 import AppError from '@shared/errors/app-error';

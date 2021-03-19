@@ -1,5 +1,5 @@
 import Box from '@modules/categories/contracts/models/box';
-import Category from '@modules/categories/contracts/models/categoriry';
+import Category from '@modules/categories/contracts/models/category';
 import Counter from '@modules/categories/contracts/models/counter';
 import CategoriesRepository from '@modules/categories/contracts/repositories/categories.repository';
 import Role from '@modules/users/contracts/enums/role';
@@ -60,9 +60,10 @@ class EditCategoryService {
         value: label,
       });
 
-      if (checkCategoryExists?.id !== category.id)
-        throw AppError.labelAlreadyInUsed;
-
+      if (checkCategoryExists) {
+        if (checkCategoryExists?.id !== category.id)
+          throw AppError.labelAlreadyInUsed;
+      }
       category.label = label;
     }
 
