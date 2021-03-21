@@ -15,7 +15,7 @@ machinesRouter.post(
     body: {
       serialNumber: Joi.string().required(),
       categoryId: Joi.string().required(),
-      groupId: Joi.string(),
+      groupId: Joi.string().required(),
       gameValue: Joi.number().positive().required(),
       locationId: Joi.string(),
       operatorId: Joi.string(),
@@ -44,10 +44,10 @@ machinesRouter.put(
     body: {
       serialNumber: Joi.string(),
       categoryId: Joi.string(),
-      groupId: Joi.string(),
       gameValue: Joi.number().positive(),
       locationId: Joi.string(),
       operatorId: Joi.string(),
+      groupId: Joi.string(),
       boxes: Joi.array().items({
         id: Joi.string(),
         counters: Joi.array()
