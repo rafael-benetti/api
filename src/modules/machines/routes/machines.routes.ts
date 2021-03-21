@@ -20,7 +20,6 @@ machinesRouter.post(
       locationId: Joi.string(),
       operatorId: Joi.string(),
       boxes: Joi.array().items({
-        id: Joi.string(),
         counters: Joi.array()
           .items({
             label: Joi.string().required(),
