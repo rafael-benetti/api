@@ -5,6 +5,8 @@ import Supply from '@modules/users/contracts/models/supply';
 import UsersRepository from '@modules/users/contracts/repositories/users.repository';
 import OrmProvider from '@providers/orm-provider/contracts/models/orm-provider';
 import AppError from '@shared/errors/app-error';
+import getGroupUniverse from '@shared/utils/get-group-universe';
+import isInGroupUniverse from '@shared/utils/is-in-group-universe';
 import { inject, injectable } from 'tsyringe';
 import { v4 } from 'uuid';
 
@@ -41,9 +43,11 @@ class CreateProductService {
 
     if (!user) throw AppError.userNotFound;
 
+    const groupUniverse = await getGroupUniverse(user);
+
     if (
-      user.role !== Role.OWNER &&
-      (!user.permissions?.createProducts || !user.groupIds?.includes(groupId))
+      (user.role !== Role.OWNER && !user.permissions?.createProducts) ||
+      !isInGroupUniverse([groupId], groupUniverse)
     )
       throw AppError.authorizationError;
 

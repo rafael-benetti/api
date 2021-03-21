@@ -4,6 +4,8 @@ import Role from '@modules/users/contracts/enums/role';
 import UsersRepository from '@modules/users/contracts/repositories/users.repository';
 import OrmProvider from '@providers/orm-provider/contracts/models/orm-provider';
 import AppError from '@shared/errors/app-error';
+import getGroupUniverse from '@shared/utils/get-group-universe';
+import isInGroupUniverse from '@shared/utils/is-in-group-universe';
 import { inject, injectable } from 'tsyringe';
 
 interface Request {
@@ -43,9 +45,11 @@ class AddToStockService {
 
     if (!user) throw AppError.userNotFound;
 
+    const groupUniverse = await getGroupUniverse(user);
+
     if (
-      user.role !== Role.OWNER &&
-      (!user.permissions?.editProducts || !user.groupIds?.includes(groupId))
+      (user.role !== Role.OWNER && !user.permissions?.editProducts) ||
+      !isInGroupUniverse([groupId], groupUniverse)
     )
       throw AppError.authorizationError;
 
