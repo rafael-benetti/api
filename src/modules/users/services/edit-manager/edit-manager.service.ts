@@ -53,7 +53,11 @@ class EditManagerService {
 
     if (manager.role !== Role.MANAGER) throw AppError.userNotFound;
 
-    if (manager.groupIds?.every(groupId => !user.groupIds?.includes(groupId)))
+    if (user.role === Role.OWNER) {
+      if (manager.ownerId !== user.id) throw AppError.authorizationError;
+    } else if (
+      manager.groupIds?.every(groupId => !user.groupIds?.includes(groupId))
+    )
       throw AppError.authorizationError;
 
     if (groupIds) {

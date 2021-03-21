@@ -1,3 +1,4 @@
+import GroupsRepository from '@modules/groups/contracts/repositories/groups.repository';
 import Role from '@modules/users/contracts/enums/role';
 import Permissions from '@modules/users/contracts/models/permissions';
 import User from '@modules/users/contracts/models/user';
@@ -23,6 +24,9 @@ class CreateManagerService {
     @inject('UsersRepository')
     private usersRepository: UsersRepository,
 
+    @inject('GroupsRepository')
+    private groupsRepository: GroupsRepository,
+
     @inject('HashProvider')
     private hashProvider: HashProvider,
 
@@ -45,10 +49,25 @@ class CreateManagerService {
 
     if (!user) throw AppError.userNotFound;
 
+    let groupUniverse: string[];
+
+    if (user.role === Role.OWNER) {
+      groupUniverse = await this.groupsRepository
+        .find({
+          filters: {
+            ownerId: user.id,
+          },
+        })
+        .then(groups => groups.map(group => group.id));
+    } else {
+      groupUniverse = user.groupIds || [];
+    }
+
+    console.log(groupUniverse);
+
     if (
-      user.role !== Role.OWNER &&
-      (!user.permissions?.createManagers ||
-        groupIds.some(groupId => !user.groupIds?.includes(groupId)))
+      (user.role !== Role.OWNER && !user.permissions?.createManagers) ||
+      groupIds.some(group => !groupUniverse.includes(group))
     )
       throw AppError.authorizationError;
 
