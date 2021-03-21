@@ -14,6 +14,7 @@ class Box {
     if (data) {
       this.id = data.id ? data.id : v4();
       this.counters = data.counters;
+      // this.prizes = data.prizes; //TODO
     }
   }
 }

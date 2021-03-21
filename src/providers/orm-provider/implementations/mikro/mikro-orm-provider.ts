@@ -5,6 +5,7 @@ import { MongoDriver, MongoEntityManager } from '@mikro-orm/mongodb';
 import MikroAdmin from '@modules/admins/implementations/mikro/models/mikro-admin';
 import MikroCategory from '@modules/categories/implementations/mikro/model/mikro-category';
 import MikroGroup from '@modules/groups/implementations/mikro/models/mikro-group';
+import MikroMachine from '@modules/machines/implementations/mikro/models/mikro-machine';
 import MikroPointOfSale from '@modules/points-of-sale/implementations/mikro/models/mikro-point-of-sale';
 import MikroUser from '@modules/users/implementations/mikro/models/mikro-user';
 
@@ -23,6 +24,7 @@ class MikroOrmProvider implements OrmProvider {
         MikroAdmin,
         MikroUser,
         MikroGroup,
+        MikroMachine,
         MikroPointOfSale,
         MikroCategory,
       ],

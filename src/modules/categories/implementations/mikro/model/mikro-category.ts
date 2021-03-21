@@ -1,7 +1,7 @@
 import { Entity, PrimaryKey, Property } from '@mikro-orm/core';
 import CreateCategoryDto from '@modules/categories/contracts/dtos/create-category.dto';
-import Box from '@modules/categories/contracts/models/box';
 import Category from '@modules/categories/contracts/models/category';
+import Box from '@modules/machines/contracts/models/box';
 import { v4 } from 'uuid';
 
 @Entity({ collection: 'categories' })
