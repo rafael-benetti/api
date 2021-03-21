@@ -1,3 +1,4 @@
+import GroupsRepository from '@modules/groups/contracts/repositories/groups.repository';
 import Role from '@modules/users/contracts/enums/role';
 import Permissions from '@modules/users/contracts/models/permissions';
 import User from '@modules/users/contracts/models/user';
@@ -6,6 +7,8 @@ import validatePermissions from '@modules/users/utils/validate-permissions';
 import HashProvider from '@providers/hash-provider/contracts/models/hash-provider';
 import OrmProvider from '@providers/orm-provider/contracts/models/orm-provider';
 import AppError from '@shared/errors/app-error';
+import getGroupUniverse from '@shared/utils/get-group-universe';
+import isInGroupUniverse from '@shared/utils/is-in-group-universe';
 import { inject, injectable } from 'tsyringe';
 
 interface Request {
@@ -22,6 +25,9 @@ class CreateManagerService {
   constructor(
     @inject('UsersRepository')
     private usersRepository: UsersRepository,
+
+    @inject('GroupsRepository')
+    private groupsRepository: GroupsRepository,
 
     @inject('HashProvider')
     private hashProvider: HashProvider,
@@ -45,10 +51,11 @@ class CreateManagerService {
 
     if (!user) throw AppError.userNotFound;
 
+    const groupUniverse = await getGroupUniverse(user);
+
     if (
-      user.role !== Role.OWNER &&
-      (!user.permissions?.createManagers ||
-        groupIds.some(groupId => !user.groupIds?.includes(groupId)))
+      (user.role !== Role.OWNER && !user.permissions?.createManagers) ||
+      !isInGroupUniverse(groupIds, groupUniverse)
     )
       throw AppError.authorizationError;
 

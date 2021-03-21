@@ -1,4 +1,3 @@
-import logger from '@config/logger';
 import CreateGroupDto from '@modules/groups/contracts/dtos/create-group.dto';
 import FindGroupDto from '@modules/groups/contracts/dtos/find-group.dto';
 import FindGroupsDto from '@modules/groups/contracts/dtos/find-groups.dto';

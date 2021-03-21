@@ -24,7 +24,7 @@ productsRoutes.post(
 );
 
 productsRoutes.post(
-  '/products/:productId/add-quantity',
+  '/:productId/add-to-stock',
   celebrate(
     {
       body: {
