@@ -1,4 +1,4 @@
-import Box from './box';
+import Box from '@modules/machines/contracts/models/box';
 
 class Category {
   id: string;

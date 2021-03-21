@@ -1,19 +1,24 @@
 import authHandler from '@shared/server/express/middlewares/auth-handler';
 import { celebrate, Joi } from 'celebrate';
 import { Router } from 'express';
-import CreateCategoryController from '../services/create-category/create-category.controller';
-import EditCategoryController from '../services/edit-category/edit-category.controller';
-import ListCategoriesController from '../services/list-categories/list-categories.controller';
+import CreateMachineController from '../services/create-machine/create-machine.controller';
+import EditMachineController from '../services/edit-machine/edit-machine.controller';
+import ListMachinesController from '../services/list-machines/list-machines.controller';
 
-const categoriesRouter = Router();
+const machinesRouter = Router();
 
-categoriesRouter.use(authHandler);
+machinesRouter.use(authHandler);
 
-categoriesRouter.post(
+machinesRouter.post(
   '/',
   celebrate({
     body: {
-      label: Joi.string().required(),
+      serialNumber: Joi.string().required(),
+      categoryId: Joi.string().required(),
+      groupId: Joi.string(),
+      gameValue: Joi.number().positive().required(),
+      locationId: Joi.string(),
+      operatorId: Joi.string(),
       boxes: Joi.array().items({
         id: Joi.string(),
         counters: Joi.array()
@@ -29,14 +34,21 @@ categoriesRouter.post(
       }),
     },
   }),
-  CreateCategoryController.handle,
+  CreateMachineController.handle,
 );
-categoriesRouter.get('/', ListCategoriesController.handle);
-categoriesRouter.put(
-  '/:categoryId',
+
+machinesRouter.get('/', ListMachinesController.handle);
+
+machinesRouter.put(
+  '/:machineId',
   celebrate({
     body: {
-      label: Joi.string(),
+      serialNumber: Joi.string(),
+      categoryId: Joi.string(),
+      groupId: Joi.string(),
+      gameValue: Joi.number().positive(),
+      locationId: Joi.string(),
+      operatorId: Joi.string(),
       boxes: Joi.array().items({
         id: Joi.string(),
         counters: Joi.array()
@@ -51,10 +63,10 @@ categoriesRouter.put(
       }),
     },
     params: {
-      categoryId: Joi.string().required(),
+      machineId: Joi.string().required(),
     },
   }),
-  EditCategoryController.handle,
+  EditMachineController.handle,
 );
 
-export default categoriesRouter;
+export default machinesRouter;

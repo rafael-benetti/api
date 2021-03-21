@@ -1,6 +1,7 @@
 import adminsRoutes from '@modules/admins/routes/admins.routes';
 import categoriesRoutes from '@modules/categories/routes/categories.routes';
 import groupsRoutes from '@modules/groups/routes/groups.routes';
+import machinesRoutes from '@modules/machines/routes/machines.routes';
 import pointsOfSaleRoutes from '@modules/points-of-sale/routes/points-of-sales.routes';
 import productsRoutes from '@modules/products/routes/products.routes';
 import usersRoutes from '@modules/users/routes/users.routes';
@@ -14,5 +15,6 @@ router.use('/groups', groupsRoutes);
 router.use('/pointsOfSale', pointsOfSaleRoutes);
 router.use('/products', productsRoutes);
 router.use('/categories', categoriesRoutes);
+router.use('/machines', machinesRoutes);
 
 export default router;
