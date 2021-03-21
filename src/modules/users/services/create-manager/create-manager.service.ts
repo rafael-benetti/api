@@ -7,6 +7,8 @@ import validatePermissions from '@modules/users/utils/validate-permissions';
 import HashProvider from '@providers/hash-provider/contracts/models/hash-provider';
 import OrmProvider from '@providers/orm-provider/contracts/models/orm-provider';
 import AppError from '@shared/errors/app-error';
+import getGroupUniverse from '@shared/utils/get-group-universe';
+import isInGroupUniverse from '@shared/utils/is-in-group-universe';
 import { inject, injectable } from 'tsyringe';
 
 interface Request {
@@ -49,23 +51,11 @@ class CreateManagerService {
 
     if (!user) throw AppError.userNotFound;
 
-    let groupUniverse: string[];
-
-    if (user.role === Role.OWNER) {
-      groupUniverse = await this.groupsRepository
-        .find({
-          filters: {
-            ownerId: user.id,
-          },
-        })
-        .then(groups => groups.map(group => group.id));
-    } else {
-      groupUniverse = user.groupIds || [];
-    }
+    const groupUniverse = await getGroupUniverse(user);
 
     if (
       (user.role !== Role.OWNER && !user.permissions?.createManagers) ||
-      groupIds.some(group => !groupUniverse.includes(group))
+      !isInGroupUniverse(groupIds, groupUniverse)
     )
       throw AppError.authorizationError;
 
