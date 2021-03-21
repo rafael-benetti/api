@@ -11,6 +11,8 @@ export default interface CreateMachineDto {
 
   serialNumber: string;
 
+  categoryLabel: string;
+
   gameValue: number;
 
   operatorId: string;

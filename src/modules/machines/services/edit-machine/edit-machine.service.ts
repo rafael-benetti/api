@@ -1,3 +1,4 @@
+import CategoriesRepository from '@modules/categories/contracts/repositories/categories.repository';
 import Box from '@modules/machines/contracts/models/box';
 import Counter from '@modules/machines/contracts/models/counter';
 import Machine from '@modules/machines/contracts/models/machine';
@@ -31,6 +32,9 @@ class EditMachineService {
 
     @inject('OrmProvider')
     private ormProvider: OrmProvider,
+
+    @inject('CategoriesRepository')
+    private categoriesRepository: CategoriesRepository,
   ) {}
 
   public async execute({
@@ -82,7 +86,17 @@ class EditMachineService {
 
     if (groupId) machine.groupId = groupId;
 
-    if (categoryId) machine.categoryId = categoryId;
+    if (categoryId) {
+      const category = await this.categoriesRepository.findOne({
+        by: 'id',
+        value: categoryId,
+      });
+
+      if (!category) throw AppError.machineCategoryNotFound;
+
+      machine.categoryId = category.id;
+      machine.categoryLabel = category.label;
+    }
 
     if (boxes) {
       machine.boxes = boxes.map(box => {

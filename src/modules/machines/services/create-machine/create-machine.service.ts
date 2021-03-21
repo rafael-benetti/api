@@ -1,3 +1,4 @@
+import CategoriesRepository from '@modules/categories/contracts/repositories/categories.repository';
 import Box from '@modules/machines/contracts/models/box';
 import Counter from '@modules/machines/contracts/models/counter';
 import Machine from '@modules/machines/contracts/models/machine';
@@ -31,6 +32,9 @@ class CreateMachineService {
 
     @inject('OrmProvider')
     private ormProvider: OrmProvider,
+
+    @inject('CategoriesRepository')
+    private categoriesRepository: CategoriesRepository,
   ) {}
 
   public async execute({
@@ -74,15 +78,23 @@ class CreateMachineService {
       return new Box({ id: box.id, counters });
     });
 
+    const category = await this.categoriesRepository.findOne({
+      by: 'id',
+      value: categoryId,
+    });
+
+    if (!category) throw AppError.machineCategoryNotFound;
+
     const machine = this.machinesRepository.create({
       boxes: entityBoxes,
-      categoryId,
+      categoryId: category.id,
       gameValue,
       groupId,
       locationId,
       operatorId,
       ownerId,
       serialNumber,
+      categoryLabel: category.label,
     });
 
     await this.ormProvider.commit();

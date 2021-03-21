@@ -5,6 +5,8 @@ class Machine {
 
   categoryId: string;
 
+  categoryLabel: string;
+
   boxes: Box[];
 
   // telemetryId: string; //TODO

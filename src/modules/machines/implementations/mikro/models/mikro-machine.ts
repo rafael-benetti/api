@@ -33,6 +33,9 @@ class MikroMachine implements Machine {
   @Property()
   ownerId: string;
 
+  @Property()
+  categoryLabel: string;
+
   constructor(data?: CreateMachineDto) {
     if (data) {
       this.id = v4();
@@ -44,6 +47,7 @@ class MikroMachine implements Machine {
       this.operatorId = data.operatorId;
       this.locationId = data.locationId;
       this.ownerId = data.ownerId;
+      this.categoryLabel = data.categoryLabel;
     }
   }
 }
