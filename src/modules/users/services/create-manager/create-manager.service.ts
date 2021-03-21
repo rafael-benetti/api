@@ -63,8 +63,6 @@ class CreateManagerService {
       groupUniverse = user.groupIds || [];
     }
 
-    console.log(groupUniverse);
-
     if (
       (user.role !== Role.OWNER && !user.permissions?.createManagers) ||
       groupIds.some(group => !groupUniverse.includes(group))
