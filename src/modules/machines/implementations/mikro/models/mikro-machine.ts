@@ -6,7 +6,7 @@ import { v4 } from 'uuid';
 
 @Entity({ collection: 'machines' })
 class MikroMachine implements Machine {
-  @PrimaryKey()
+  @PrimaryKey({ fieldName: '_id' })
   id: string;
 
   @Property()
