@@ -20,16 +20,13 @@ machinesRouter.post(
       locationId: Joi.string(),
       operatorId: Joi.string(),
       boxes: Joi.array().items({
-        counters: Joi.array()
-          .items({
-            label: Joi.string().required(),
-            type: Joi.string().valid('IN', 'OUT').required(),
-            hasMechanical: Joi.boolean().required(),
-            hasDigital: Joi.boolean().required(),
-            pin: Joi.string().required(),
-          })
-          .min(1)
-          .required(),
+        counters: Joi.array().items({
+          label: Joi.string().required(),
+          type: Joi.string().valid('IN', 'OUT').required(),
+          hasMechanical: Joi.boolean().required(),
+          hasDigital: Joi.boolean().required(),
+          pin: Joi.string().required(),
+        }),
       }),
     },
   }),
@@ -50,15 +47,13 @@ machinesRouter.put(
       groupId: Joi.string(),
       boxes: Joi.array().items({
         id: Joi.string(),
-        counters: Joi.array()
-          .items({
-            label: Joi.string().required(),
-            type: Joi.string().valid('IN', 'OUT').required(),
-            hasMechanical: Joi.boolean().required(),
-            hasDigital: Joi.boolean().required(),
-            pin: Joi.string().required(),
-          })
-          .min(1),
+        counters: Joi.array().items({
+          label: Joi.string().required(),
+          type: Joi.string().valid('IN', 'OUT').required(),
+          hasMechanical: Joi.boolean().required(),
+          hasDigital: Joi.boolean().required(),
+          pin: Joi.string().required(),
+        }),
       }),
     },
     params: {
