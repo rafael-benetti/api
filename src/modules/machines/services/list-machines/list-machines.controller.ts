@@ -5,10 +5,24 @@ import ListMachinesService from './list-machines.service';
 abstract class ListMachinesController {
   static async handle(req: Request, res: Response): Promise<Response> {
     const { userId } = req;
+    const {
+      categoryId,
+      groupId,
+      routeId,
+      pointOfSaleId,
+      serialNumber,
+    } = req.query;
 
     const listMachinesService = container.resolve(ListMachinesService);
 
-    const machines = await listMachinesService.execute(userId);
+    const machines = await listMachinesService.execute({
+      userId,
+      categoryId: categoryId as string,
+      groupId: groupId as string,
+      pointOfSaleId: pointOfSaleId as string,
+      routeId: routeId as string,
+      serialNumber: serialNumber as string,
+    });
 
     return res.json(machines);
   }

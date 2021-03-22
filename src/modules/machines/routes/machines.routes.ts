@@ -1,6 +1,6 @@
 import authHandler from '@shared/server/express/middlewares/auth-handler';
 import { celebrate, Joi } from 'celebrate';
-import { Router } from 'express';
+import { query, Router } from 'express';
 import CreateMachineController from '../services/create-machine/create-machine.controller';
 import EditMachineController from '../services/edit-machine/edit-machine.controller';
 import ListMachinesController from '../services/list-machines/list-machines.controller';
@@ -33,7 +33,19 @@ machinesRouter.post(
   CreateMachineController.handle,
 );
 
-machinesRouter.get('/', ListMachinesController.handle);
+machinesRouter.get(
+  '/',
+  celebrate({
+    query: {
+      categoryId: Joi.string(),
+      groupId: Joi.string(),
+      routeId: Joi.string(),
+      pointOfSaleId: Joi.string(),
+      serialNumber: Joi.string(),
+    },
+  }),
+  ListMachinesController.handle,
+);
 
 machinesRouter.put(
   '/:machineId',

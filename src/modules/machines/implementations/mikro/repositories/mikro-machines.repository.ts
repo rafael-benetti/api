@@ -28,16 +28,24 @@ class MikroMachinesRepository implements MachinesRepository {
   }
 
   async find({
+    id,
     ownerId,
     groupIds,
-    id,
     operatorId,
+    filters,
   }: FindMachinesDto): Promise<Machine[]> {
     const machines = await this.repository.find({
       ...(id && { id }),
       ...(operatorId && { operatorId }),
       ...(ownerId && { ownerId }),
       ...(groupIds && { groupId: groupIds }),
+      ...(filters?.categoryId && { categoryId: filters.categoryId }),
+      ...(filters?.groupId && { groupId: filters.groupId }),
+      ...(filters?.pointOfSaleId && { pointOfSaleId: filters.pointOfSaleId }),
+      ...(filters?.routeId && { routeId: filters.routeId }),
+      ...(filters?.serialNumber && {
+        serialNumber: new RegExp(filters.serialNumber),
+      }),
     });
 
     return machines.map(machine => MachineMapper.toEntity(machine));
