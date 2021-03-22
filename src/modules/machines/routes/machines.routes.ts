@@ -1,6 +1,6 @@
 import authHandler from '@shared/server/express/middlewares/auth-handler';
 import { celebrate, Joi } from 'celebrate';
-import { query, Router } from 'express';
+import { Router } from 'express';
 import CreateMachineController from '../services/create-machine/create-machine.controller';
 import EditMachineController from '../services/edit-machine/edit-machine.controller';
 import ListMachinesController from '../services/list-machines/list-machines.controller';
