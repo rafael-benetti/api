@@ -40,7 +40,7 @@ machinesRouter.get(
       categoryId: Joi.string(),
       groupId: Joi.string(),
       routeId: Joi.string(),
-      pointOfSaleId: Joi.string(),
+      pointOfSaleId: Joi.string().allow(null),
       serialNumber: Joi.string(),
       isActive: Joi.boolean().default(true),
     },
