@@ -42,7 +42,7 @@ class MikroMachinesRepository implements MachinesRepository {
     offset,
   }: FindMachinesDto): Promise<{ machines: Machine[]; count: number }> {
     logger.info(pointOfSaleId);
-    const result = await this.repository.find(
+    const [result, count] = await this.repository.findAndCount(
       {
         ...(id && { id }),
         ...(operatorId && { operatorId }),
@@ -65,7 +65,8 @@ class MikroMachinesRepository implements MachinesRepository {
     );
 
     const machines = result.map(machine => MachineMapper.toEntity(machine));
-    return { machines, count: machines.length };
+
+    return { machines, count };
   }
 
   save(data: Machine): void {

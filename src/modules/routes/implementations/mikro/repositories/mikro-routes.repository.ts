@@ -18,8 +18,10 @@ class MikroRoutesRepository implements RoutesRepository {
     return RouteMapper.toEntity(mikroRoute);
   }
 
-  async findOne(data: FindRoutesDto): Promise<Route | undefined> {
-    const route = await this.repository.findOne({});
+  async findOne({ id }: FindRoutesDto): Promise<Route | undefined> {
+    const route = await this.repository.findOne({
+      id,
+    });
 
     return route ? RouteMapper.toEntity(route) : undefined;
   }
@@ -27,7 +29,7 @@ class MikroRoutesRepository implements RoutesRepository {
   async find(data: FindRoutesDto): Promise<Route[]> {
     const routes = await this.repository.find({});
 
-    return routes.map(machine => RouteMapper.toEntity(machine));
+    return routes.map(route => RouteMapper.toEntity(route));
   }
 
   save(data: Route): void {
