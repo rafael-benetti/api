@@ -12,6 +12,8 @@ abstract class ListMachinesController {
       pointOfSaleId,
       serialNumber,
       isActive,
+      limit,
+      offset,
     } = req.query;
 
     const listMachinesService = container.resolve(ListMachinesService);
@@ -24,6 +26,8 @@ abstract class ListMachinesController {
       routeId: routeId as string,
       serialNumber: serialNumber as string,
       isActive: isActive?.toString() === 'true',
+      limit: Number(limit),
+      offset: Number(offset),
     });
 
     return res.json(machines);

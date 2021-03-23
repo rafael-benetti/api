@@ -38,23 +38,32 @@ class MikroMachinesRepository implements MachinesRepository {
     routeId,
     serialNumber,
     isActive,
-  }: FindMachinesDto): Promise<Machine[]> {
+    limit,
+    offset,
+  }: FindMachinesDto): Promise<{ machines: Machine[]; count: number }> {
     logger.info(pointOfSaleId);
-    const machines = await this.repository.find({
-      ...(id && { id }),
-      ...(operatorId && { operatorId }),
-      ...(ownerId && { ownerId }),
-      ...(groupIds && { groupId: groupIds }),
-      ...(categoryId && { categoryId }),
-      ...(pointOfSaleId !== undefined && { locationId: null }),
-      ...(routeId && { routeId }),
-      ...(serialNumber && {
-        serialNumber: new RegExp(serialNumber),
-      }),
-      ...(isActive !== undefined && { isActive }),
-    });
+    const [result, count] = await this.repository.findAndCount(
+      {
+        ...(id && { id }),
+        ...(operatorId && { operatorId }),
+        ...(ownerId && { ownerId }),
+        ...(groupIds && { groupId: groupIds }),
+        ...(categoryId && { categoryId }),
+        ...(pointOfSaleId !== undefined && { locationId: pointOfSaleId }),
+        ...(routeId && { routeId }),
+        ...(serialNumber && {
+          serialNumber: new RegExp(serialNumber),
+        }),
+        ...(isActive !== undefined && { isActive }),
+      },
+      {
+        limit,
+        offset,
+      },
+    );
 
-    return machines.map(machine => MachineMapper.toEntity(machine));
+    const machines = result.map(machine => MachineMapper.toEntity(machine));
+    return { machines, count };
   }
 
   save(data: Machine): void {

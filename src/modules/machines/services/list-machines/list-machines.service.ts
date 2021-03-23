@@ -15,6 +15,13 @@ interface Request {
   pointOfSaleId: string;
   serialNumber: string;
   isActive: boolean;
+  offset: number;
+  limit: number;
+}
+
+interface Result {
+  machines: Machine[];
+  count: number;
 }
 
 @injectable()
@@ -38,7 +45,7 @@ class ListMachinesService {
     pointOfSaleId,
     serialNumber,
     isActive,
-  }: Request): Promise<Machine[]> {
+  }: Request): Promise<Result> {
     const filters: FindMachinesDto = {};
 
     const user = await this.usersRepository.findOne({
@@ -77,9 +84,9 @@ class ListMachinesService {
 
     filters.isActive = isActive;
 
-    const machines = await this.machinesRepository.find(filters);
+    const result = await this.machinesRepository.find(filters);
 
-    return machines;
+    return result;
   }
 }
 export default ListMachinesService;

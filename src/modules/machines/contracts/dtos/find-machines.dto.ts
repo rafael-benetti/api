@@ -8,4 +8,6 @@ export default interface FindMachinesDto {
   pointOfSaleId?: string;
   serialNumber?: string;
   isActive?: boolean;
+  limit?: number;
+  offset?: number;
 }

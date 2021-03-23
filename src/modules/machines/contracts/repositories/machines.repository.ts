@@ -6,6 +6,6 @@ import Machine from '../models/machine';
 export default interface MachinesRepository {
   create(data: CreateMachineDto): Machine;
   findOne(data: FindMachineDto): Promise<Machine | undefined>;
-  find(data: FindMachinesDto): Promise<Machine[]>;
+  find(data: FindMachinesDto): Promise<{ machines: Machine[]; count: number }>;
   save(data: Machine): void;
 }
