@@ -1,4 +1,3 @@
-import logger from '@config/logger';
 import CreateMachineDto from '@modules/machines/contracts/dtos/create-machine.dto';
 import FindMachineDto from '@modules/machines/contracts/dtos/find-machine.dto';
 import FindMachinesDto from '@modules/machines/contracts/dtos/find-machines.dto';
