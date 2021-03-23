@@ -74,6 +74,7 @@ class ListMachinesService {
     filters.routeId = routeId;
     filters.pointOfSaleId = pointOfSaleId;
     filters.serialNumber = serialNumber;
+
     filters.isActive = isActive;
 
     const machines = await this.machinesRepository.find(filters);

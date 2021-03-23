@@ -23,7 +23,7 @@ abstract class ListMachinesController {
       pointOfSaleId: pointOfSaleId as string,
       routeId: routeId as string,
       serialNumber: serialNumber as string,
-      isActive: isActive === 'true',
+      isActive: isActive?.toString() === 'true',
     });
 
     return res.json(machines);
