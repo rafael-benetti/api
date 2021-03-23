@@ -19,6 +19,7 @@ interface Request {
   locationId: string;
   operatorId: string;
   serialNumber: string;
+  isActive: boolean;
 }
 
 @injectable()
@@ -47,6 +48,7 @@ class EditMachineService {
     operatorId,
     serialNumber,
     userId,
+    isActive,
   }: Request): Promise<Machine> {
     const user = await this.usersRepository.findOne({
       by: 'id',
@@ -85,6 +87,8 @@ class EditMachineService {
     if (gameValue) machine.gameValue = gameValue;
 
     if (groupId) machine.groupId = groupId;
+
+    if (isActive !== undefined) machine.isActive = isActive;
 
     if (categoryId) {
       const category = await this.categoriesRepository.findOne({

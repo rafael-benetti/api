@@ -28,19 +28,40 @@ class MikroMachinesRepository implements MachinesRepository {
   }
 
   async find({
+    id,
     ownerId,
     groupIds,
-    id,
     operatorId,
-  }: FindMachinesDto): Promise<Machine[]> {
-    const machines = await this.repository.find({
-      ...(id && { id }),
-      ...(operatorId && { operatorId }),
-      ...(ownerId && { ownerId }),
-      ...(groupIds && { groupId: groupIds }),
-    });
+    categoryId,
+    pointOfSaleId,
+    routeId,
+    serialNumber,
+    isActive,
+    limit,
+    offset,
+  }: FindMachinesDto): Promise<{ machines: Machine[]; count: number }> {
+    const result = await this.repository.find(
+      {
+        ...(id && { id }),
+        ...(operatorId && { operatorId }),
+        ...(ownerId && { ownerId }),
+        ...(groupIds && { groupId: groupIds }),
+        ...(categoryId && { categoryId }),
+        ...(pointOfSaleId !== undefined && { locationId: pointOfSaleId }),
+        ...(routeId && { routeId }),
+        ...(serialNumber && {
+          serialNumber: new RegExp(serialNumber),
+        }),
+        ...(isActive !== undefined && { isActive }),
+      },
+      {
+        limit,
+        offset,
+      },
+    );
 
-    return machines.map(machine => MachineMapper.toEntity(machine));
+    const machines = result.map(machine => MachineMapper.toEntity(machine));
+    return { machines, count: machines.length };
   }
 
   save(data: Machine): void {

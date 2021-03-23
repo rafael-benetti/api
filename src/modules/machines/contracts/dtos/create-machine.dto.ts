@@ -20,4 +20,6 @@ export default interface CreateMachineDto {
   locationId: string;
 
   ownerId: string;
+
+  isActive: boolean;
 }

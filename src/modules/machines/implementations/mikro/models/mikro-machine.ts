@@ -6,7 +6,7 @@ import { v4 } from 'uuid';
 
 @Entity({ collection: 'machines' })
 class MikroMachine implements Machine {
-  @PrimaryKey()
+  @PrimaryKey({ fieldName: '_id' })
   id: string;
 
   @Property()
@@ -36,6 +36,9 @@ class MikroMachine implements Machine {
   @Property()
   categoryLabel: string;
 
+  @Property()
+  isActive: boolean;
+
   constructor(data?: CreateMachineDto) {
     if (data) {
       this.id = v4();
@@ -48,6 +51,7 @@ class MikroMachine implements Machine {
       this.locationId = data.locationId;
       this.ownerId = data.ownerId;
       this.categoryLabel = data.categoryLabel;
+      this.isActive = data.isActive;
     }
   }
 }

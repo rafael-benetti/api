@@ -20,23 +20,35 @@ machinesRouter.post(
       locationId: Joi.string(),
       operatorId: Joi.string(),
       boxes: Joi.array().items({
-        counters: Joi.array()
-          .items({
-            label: Joi.string().required(),
-            type: Joi.string().valid('IN', 'OUT').required(),
-            hasMechanical: Joi.boolean().required(),
-            hasDigital: Joi.boolean().required(),
-            pin: Joi.string().required(),
-          })
-          .min(1)
-          .required(),
+        counters: Joi.array().items({
+          label: Joi.string().required(),
+          type: Joi.string().valid('IN', 'OUT').required(),
+          hasMechanical: Joi.boolean().required(),
+          hasDigital: Joi.boolean().required(),
+          pin: Joi.string().required(),
+        }),
       }),
     },
   }),
   CreateMachineController.handle,
 );
 
-machinesRouter.get('/', ListMachinesController.handle);
+machinesRouter.get(
+  '/',
+  celebrate({
+    query: {
+      categoryId: Joi.string(),
+      groupId: Joi.string(),
+      routeId: Joi.string(),
+      pointOfSaleId: Joi.string().allow(null),
+      serialNumber: Joi.string(),
+      isActive: Joi.boolean().default(true),
+      limit: Joi.number(),
+      offset: Joi.number(),
+    },
+  }),
+  ListMachinesController.handle,
+);
 
 machinesRouter.put(
   '/:machineId',
@@ -48,17 +60,16 @@ machinesRouter.put(
       locationId: Joi.string(),
       operatorId: Joi.string(),
       groupId: Joi.string(),
+      isActive: Joi.boolean(),
       boxes: Joi.array().items({
         id: Joi.string(),
-        counters: Joi.array()
-          .items({
-            label: Joi.string().required(),
-            type: Joi.string().valid('IN', 'OUT').required(),
-            hasMechanical: Joi.boolean().required(),
-            hasDigital: Joi.boolean().required(),
-            pin: Joi.string().required(),
-          })
-          .min(1),
+        counters: Joi.array().items({
+          label: Joi.string().required(),
+          type: Joi.string().valid('IN', 'OUT').required(),
+          hasMechanical: Joi.boolean().required(),
+          hasDigital: Joi.boolean().required(),
+          pin: Joi.string().required(),
+        }),
       }),
     },
     params: {
