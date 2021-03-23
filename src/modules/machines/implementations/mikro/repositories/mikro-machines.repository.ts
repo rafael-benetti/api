@@ -1,3 +1,4 @@
+import logger from '@config/logger';
 import CreateMachineDto from '@modules/machines/contracts/dtos/create-machine.dto';
 import FindMachineDto from '@modules/machines/contracts/dtos/find-machine.dto';
 import FindMachinesDto from '@modules/machines/contracts/dtos/find-machines.dto';
@@ -40,6 +41,7 @@ class MikroMachinesRepository implements MachinesRepository {
     limit,
     offset,
   }: FindMachinesDto): Promise<{ machines: Machine[]; count: number }> {
+    logger.info(pointOfSaleId);
     const result = await this.repository.find(
       {
         ...(id && { id }),
@@ -47,7 +49,9 @@ class MikroMachinesRepository implements MachinesRepository {
         ...(ownerId && { ownerId }),
         ...(groupIds && { groupId: groupIds }),
         ...(categoryId && { categoryId }),
-        ...(pointOfSaleId !== undefined && { locationId: pointOfSaleId }),
+        ...(pointOfSaleId !== undefined && {
+          locationId: pointOfSaleId === 'null' ? null : pointOfSaleId,
+        }),
         ...(routeId && { routeId }),
         ...(serialNumber && {
           serialNumber: new RegExp(serialNumber),
