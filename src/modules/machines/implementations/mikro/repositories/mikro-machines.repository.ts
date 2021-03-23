@@ -32,19 +32,21 @@ class MikroMachinesRepository implements MachinesRepository {
     ownerId,
     groupIds,
     operatorId,
-    filters,
+    categoryId,
+    pointOfSaleId,
+    routeId,
+    serialNumber,
   }: FindMachinesDto): Promise<Machine[]> {
     const machines = await this.repository.find({
       ...(id && { id }),
       ...(operatorId && { operatorId }),
       ...(ownerId && { ownerId }),
       ...(groupIds && { groupId: groupIds }),
-      ...(filters?.categoryId && { categoryId: filters.categoryId }),
-      ...(filters?.groupId && { groupId: filters.groupId }),
-      ...(filters?.pointOfSaleId && { pointOfSaleId: filters.pointOfSaleId }),
-      ...(filters?.routeId && { routeId: filters.routeId }),
-      ...(filters?.serialNumber && {
-        serialNumber: new RegExp(filters.serialNumber),
+      ...(categoryId && { categoryId }),
+      ...(pointOfSaleId && { pointOfSaleId }),
+      ...(routeId && { routeId }),
+      ...(serialNumber && {
+        serialNumber: new RegExp(serialNumber),
       }),
     });
 

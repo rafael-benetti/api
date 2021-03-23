@@ -1,3 +1,4 @@
+import GroupsRepository from '@modules/groups/contracts/repositories/groups.repository';
 import FindMachinesDto from '@modules/machines/contracts/dtos/find-machines.dto';
 import Machine from '@modules/machines/contracts/models/machine';
 import MachinesRepository from '@modules/machines/contracts/repositories/machines.repository';
@@ -13,6 +14,7 @@ interface Request {
   routeId: string;
   pointOfSaleId: string;
   serialNumber: string;
+  isActive: boolean;
 }
 
 @injectable()
@@ -23,6 +25,9 @@ class ListMachinesService {
 
     @inject('UsersRepository')
     private usersRepository: UsersRepository,
+
+    @inject('GroupsRepository')
+    private groupsRepository: GroupsRepository,
   ) {}
 
   public async execute({
@@ -32,6 +37,7 @@ class ListMachinesService {
     routeId,
     pointOfSaleId,
     serialNumber,
+    isActive,
   }: Request): Promise<Machine[]> {
     const filters: FindMachinesDto = {};
 
@@ -48,13 +54,27 @@ class ListMachinesService {
 
     if (user.role === Role.OPERATOR) filters.operatorId = user.id;
 
-    filters.filters = {
-      groupId,
-      categoryId,
-      routeId,
-      pointOfSaleId,
-      serialNumber,
-    };
+    if (groupId) {
+      if (!user.groupIds?.includes(groupId) && user.role !== Role.OWNER)
+        throw AppError.authorizationError;
+
+      const group = await this.groupsRepository.findOne({
+        by: 'id',
+        value: groupId,
+      });
+
+      if (!group) throw AppError.groupNotFound;
+
+      if (user.role === Role.OWNER && user.id !== group.ownerId)
+        throw AppError.authorizationError;
+
+      filters.groupIds = [groupId];
+    }
+    filters.categoryId = categoryId;
+    filters.routeId = routeId;
+    filters.pointOfSaleId = pointOfSaleId;
+    filters.serialNumber = serialNumber;
+    filters.isActive = isActive;
 
     const machines = await this.machinesRepository.find(filters);
 

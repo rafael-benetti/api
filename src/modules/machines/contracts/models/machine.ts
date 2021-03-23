@@ -22,6 +22,8 @@ class Machine {
   locationId: string;
 
   ownerId: string;
+
+  isActive: boolean;
 }
 
 export default Machine;

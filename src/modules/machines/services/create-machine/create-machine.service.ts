@@ -95,6 +95,7 @@ class CreateMachineService {
       ownerId,
       serialNumber,
       categoryLabel: category.label,
+      isActive: true,
     });
 
     await this.ormProvider.commit();
