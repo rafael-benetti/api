@@ -88,7 +88,7 @@ class EditMachineService {
 
     if (groupId) machine.groupId = groupId;
 
-    if (isActive) machine.isActive = isActive;
+    if (isActive !== undefined) machine.isActive = isActive;
 
     if (categoryId) {
       const category = await this.categoriesRepository.findOne({
