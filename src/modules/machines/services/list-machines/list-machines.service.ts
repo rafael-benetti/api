@@ -45,6 +45,8 @@ class ListMachinesService {
     pointOfSaleId,
     serialNumber,
     isActive,
+    limit,
+    offset,
   }: Request): Promise<Result> {
     const filters: FindMachinesDto = {};
 
@@ -81,6 +83,8 @@ class ListMachinesService {
     filters.routeId = routeId;
     filters.pointOfSaleId = pointOfSaleId;
     filters.serialNumber = serialNumber;
+    filters.limit = limit;
+    filters.offset = offset;
 
     filters.isActive = isActive;
 

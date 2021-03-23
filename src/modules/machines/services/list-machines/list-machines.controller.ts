@@ -26,8 +26,8 @@ abstract class ListMachinesController {
       routeId: routeId as string,
       serialNumber: serialNumber as string,
       isActive: isActive?.toString() === 'true',
-      limit: Number(limit),
-      offset: Number(offset),
+      limit: Number(limit) as number,
+      offset: Number(offset) as number,
     });
 
     return res.json(machines);
