@@ -19,6 +19,7 @@ machinesRouter.post(
       gameValue: Joi.number().positive().required(),
       locationId: Joi.string(),
       operatorId: Joi.string(),
+      isActive: Joi.string(),
       boxes: Joi.array().items({
         counters: Joi.array().items({
           label: Joi.string().required(),
