@@ -14,6 +14,8 @@ interface Request {
   groupId: string;
   label: string;
   type: 'PRIZE' | 'SUPPLY';
+  quantity?: number;
+  cost?: number;
 }
 
 @injectable()
@@ -29,7 +31,13 @@ class CreateProductService {
     private ormProvider: OrmProvider,
   ) {}
 
-  async execute({ userId, groupId, label, type }: Request): Promise<Product> {
+  async execute({
+    userId,
+    groupId,
+    label,
+    type,
+    quantity,
+  }: Request): Promise<Product> {
     const user = await this.usersRepository.findOne({
       by: 'id',
       value: userId,
@@ -61,7 +69,7 @@ class CreateProductService {
     const product = {
       id: v4(),
       label,
-      quantity: 0,
+      quantity: quantity || 0,
     };
 
     if (type === 'PRIZE') group.stock.prizes.push(product);

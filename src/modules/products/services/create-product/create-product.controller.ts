@@ -5,7 +5,7 @@ import CreateProductService from './create-product.service';
 abstract class CreateProductController {
   static handle: RequestHandler = async (req, res) => {
     const { userId } = req;
-    const { groupId, label, type } = req.body;
+    const { groupId, label, type, quantity, cost } = req.body;
 
     const createProduct = container.resolve(CreateProductService);
 
@@ -14,6 +14,8 @@ abstract class CreateProductController {
       groupId,
       label,
       type,
+      quantity,
+      cost,
     });
 
     return res.status(201).json(product);

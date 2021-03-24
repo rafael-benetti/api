@@ -17,6 +17,8 @@ productsRoutes.post(
         groupId: Joi.string().uuid().required(),
         label: Joi.string().required(),
         type: Joi.string().valid('PRIZE', 'SUPPLY').required(),
+        quantity: Joi.number().positive().integer(),
+        cost: Joi.number().positive(),
       },
     },
     { abortEarly: false },
