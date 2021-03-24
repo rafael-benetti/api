@@ -39,4 +39,19 @@ productsRoutes.post(
   AddToStockController.handle,
 );
 
+productsRoutes.post(
+  '/:productId/transfer',
+  celebrate({
+    body: {
+      groupId: Joi.string().uuid(),
+      productType: Joi.string().valid('PRIZE', 'SUPPLY').required(),
+      productQuantity: Joi.number().integer().required(),
+      to: {
+        id: Joi.string().uuid().required(),
+        type: Joi.string().valid('GROUP', 'USER').required(),
+      },
+    },
+  }),
+);
+
 export default productsRoutes;
