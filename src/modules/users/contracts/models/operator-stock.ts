@@ -1,9 +1,8 @@
-import Prize from './prize';
-import Supply from './supply';
+import Product from './product';
 
 interface UserStock {
-  prizes: Prize[];
-  supplies: Supply[];
+  prizes: Product[];
+  supplies: Product[];
 }
 
 export default UserStock;

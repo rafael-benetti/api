@@ -3,6 +3,7 @@ import { celebrate, Joi } from 'celebrate';
 import { Router } from 'express';
 import AddToStockController from '../services/add-to-stock/add-to-stock.controller.ts';
 import CreateProductController from '../services/create-product/create-product.controller';
+import TransferProductController from '../services/transfer-product/transfer-product.controller';
 
 const productsRoutes = Router();
 
@@ -46,12 +47,14 @@ productsRoutes.post(
       groupId: Joi.string().uuid(),
       productType: Joi.string().valid('PRIZE', 'SUPPLY').required(),
       productQuantity: Joi.number().integer().required(),
-      to: {
+      cost: Joi.number(),
+      to: Joi.object({
         id: Joi.string().uuid().required(),
         type: Joi.string().valid('GROUP', 'USER').required(),
-      },
+      }).required(),
     },
   }),
+  TransferProductController.handle,
 );
 
 export default productsRoutes;

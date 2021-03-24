@@ -1,7 +1,7 @@
-interface Prize {
+interface Product {
   id: string;
   label: string;
   quantity: number;
 }
 
-export default Prize;
+export default Product;

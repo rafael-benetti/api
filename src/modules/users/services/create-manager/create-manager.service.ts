@@ -53,6 +53,8 @@ class CreateManagerService {
 
     const universe = await getGroupUniverse(user);
 
+    console.log(universe);
+
     if (
       !isInGroupUniverse({
         groups: groupIds,

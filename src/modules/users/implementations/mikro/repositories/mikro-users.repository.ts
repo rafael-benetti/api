@@ -1,4 +1,3 @@
-import logger from '@config/logger';
 import CreateUserDto from '@modules/users/contracts/dtos/create-user.dto';
 import FindUserDto from '@modules/users/contracts/dtos/find-user.dto';
 import FindUsersDto from '@modules/users/contracts/dtos/find-users.dto';
@@ -32,9 +31,18 @@ class MikroUsersRepository implements UsersRepository {
   }
 
   async find(data: FindUsersDto): Promise<User[]> {
+    const query: { [key: string]: unknown } = {};
+
+    if (data.filters.role) query.role = data.filters.role;
+    if (data.filters.ownerId) query.ownerId = data.filters.ownerId;
+    if (data.filters.groupIds)
+      query.groupIds = {
+        $in: data.filters.groupIds,
+      };
+
     const users = await this.repository.find(
       {
-        role: data.filters.role,
+        ...query,
       },
       {
         limit: data.limit,

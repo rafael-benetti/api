@@ -1,7 +1,6 @@
 import GroupsRepository from '@modules/groups/contracts/repositories/groups.repository';
 import Role from '@modules/users/contracts/enums/role';
-import Prize from '@modules/users/contracts/models/prize';
-import Supply from '@modules/users/contracts/models/supply';
+import Product from '@modules/users/contracts/models/product';
 import UsersRepository from '@modules/users/contracts/repositories/users.repository';
 import OrmProvider from '@providers/orm-provider/contracts/models/orm-provider';
 import AppError from '@shared/errors/app-error';
@@ -30,12 +29,7 @@ class CreateProductService {
     private ormProvider: OrmProvider,
   ) {}
 
-  async execute({
-    userId,
-    groupId,
-    label,
-    type,
-  }: Request): Promise<Supply | Prize> {
+  async execute({ userId, groupId, label, type }: Request): Promise<Product> {
     const user = await this.usersRepository.findOne({
       by: 'id',
       value: userId,
@@ -71,7 +65,7 @@ class CreateProductService {
     };
 
     if (type === 'PRIZE') group.stock.prizes.push(product);
-    else group.stock.prizes.push(product);
+    else group.stock.supplies.push(product);
 
     this.groupsRepository.save(group);
 

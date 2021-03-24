@@ -3,7 +3,8 @@ import Role from '../enums/role';
 interface FindUsersDto {
   filters: {
     role?: Role;
-    groupId?: string;
+    groupIds?: string[];
+    ownerId?: string;
   };
   limit?: number;
   offset?: number;

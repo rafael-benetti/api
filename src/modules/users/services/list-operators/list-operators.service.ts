@@ -29,13 +29,19 @@ class ListOperatorsService {
     if (user.role !== Role.OWNER && !user.permissions?.listOperators)
       throw AppError.authorizationError;
 
-    if (groupId && !user.groupIds?.includes(groupId))
-      throw AppError.authorizationError;
+    let groups: string[] | undefined;
+
+    if (groupId) {
+      groups = [groupId];
+    } else if (user.role !== Role.OWNER) {
+      groups = user.groupIds || [];
+    }
 
     const operators = await this.usersRepository.find({
       filters: {
         role: Role.OPERATOR,
-        groupId,
+        ownerId: user.role === Role.OWNER ? user.id : undefined,
+        groupIds: groups,
       },
       limit,
       offset,

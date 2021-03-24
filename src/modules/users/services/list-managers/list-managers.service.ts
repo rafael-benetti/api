@@ -32,10 +32,19 @@ class ListManagersService {
     if (groupId && !user.groupIds?.includes(groupId))
       throw AppError.authorizationError;
 
+    let groups: string[] | undefined;
+
+    if (groupId) {
+      groups = [groupId];
+    } else if (user.role !== Role.OWNER) {
+      groups = user.groupIds || [];
+    }
+
     const managers = await this.usersRepository.find({
       filters: {
         role: Role.MANAGER,
-        groupId,
+        ownerId: user.role === Role.OWNER ? user.id : undefined,
+        groupIds: groups,
       },
       limit,
       offset,
