@@ -1,4 +1,3 @@
-import logger from '@config/logger';
 import Role from '@modules/users/contracts/enums/role';
 import User from '@modules/users/contracts/models/user';
 import UsersRepository from '@modules/users/contracts/repositories/users.repository';

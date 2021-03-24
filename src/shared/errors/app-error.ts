@@ -131,6 +131,12 @@ export default class AppError {
     statusCode: 404,
   });
 
+  static missingGroupId = new AppError({
+    errorCode: 'MISSING_GROUP_ID',
+    message: 'Owners need to inform a group id to make transfers',
+    statusCode: 400,
+  });
+
   static authorizationError = new AppError({
     errorCode: 'AUTHORIZATION_ERROR',
     message: 'You do not have permission to access this resource.',

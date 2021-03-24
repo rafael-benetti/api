@@ -51,12 +51,18 @@ class CreateManagerService {
 
     if (!user) throw AppError.userNotFound;
 
-    const groupUniverse = await getGroupUniverse(user);
+    const universe = await getGroupUniverse(user);
 
     if (
-      (user.role !== Role.OWNER && !user.permissions?.createManagers) ||
-      !isInGroupUniverse(groupIds, groupUniverse)
+      !isInGroupUniverse({
+        groups: groupIds,
+        universe,
+        method: 'UNION',
+      })
     )
+      throw AppError.authorizationError;
+
+    if (user.role !== Role.OWNER && !user.permissions?.createManagers)
       throw AppError.authorizationError;
 
     if (

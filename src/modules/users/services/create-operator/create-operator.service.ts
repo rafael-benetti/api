@@ -6,6 +6,8 @@ import validatePermissions from '@modules/users/utils/validate-permissions';
 import HashProvider from '@providers/hash-provider/contracts/models/hash-provider';
 import OrmProvider from '@providers/orm-provider/contracts/models/orm-provider';
 import AppError from '@shared/errors/app-error';
+import getGroupUniverse from '@shared/utils/get-group-universe';
+import isInGroupUniverse from '@shared/utils/is-in-group-universe';
 import { inject, injectable } from 'tsyringe';
 
 interface Request {
@@ -45,11 +47,18 @@ class CreateOperatorService {
 
     if (!user) throw AppError.userNotFound;
 
+    const universe = await getGroupUniverse(user);
+
     if (
-      user.role !== Role.OWNER &&
-      (!user.permissions?.createOperators ||
-        groupIds.some(groupId => !user.groupIds?.includes(groupId)))
+      !isInGroupUniverse({
+        groups: groupIds,
+        universe,
+        method: 'UNION',
+      })
     )
+      throw AppError.authorizationError;
+
+    if (user.role !== Role.OWNER && !user.permissions?.createOperators)
       throw AppError.authorizationError;
 
     if (

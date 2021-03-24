@@ -5,6 +5,8 @@ import UsersRepository from '@modules/users/contracts/repositories/users.reposit
 import validatePermissions from '@modules/users/utils/validate-permissions';
 import OrmProvider from '@providers/orm-provider/contracts/models/orm-provider';
 import AppError from '@shared/errors/app-error';
+import getGroupUniverse from '@shared/utils/get-group-universe';
+import isInGroupUniverse from '@shared/utils/is-in-group-universe';
 import { inject, injectable } from 'tsyringe';
 
 interface Request {
@@ -65,7 +67,15 @@ class EditManagerService {
         .filter(x => !manager.groupIds?.includes(x))
         .concat(manager.groupIds?.filter(x => !groupIds.includes(x)) || []);
 
-      if (groupIdsDiff.some(groupId => !user.groupIds?.includes(groupId)))
+      const universe = await getGroupUniverse(user);
+
+      if (
+        !isInGroupUniverse({
+          groups: groupIdsDiff,
+          universe,
+          method: 'INTERSECTION',
+        })
+      )
         throw AppError.authorizationError;
 
       manager.groupIds = groupIds;

@@ -43,11 +43,17 @@ class CreateProductService {
 
     if (!user) throw AppError.userNotFound;
 
-    const groupUniverse = await getGroupUniverse(user);
+    if (user.role !== Role.OWNER && !user.permissions?.createProducts)
+      throw AppError.authorizationError;
+
+    const universe = await getGroupUniverse(user);
 
     if (
-      (user.role !== Role.OWNER && !user.permissions?.createProducts) ||
-      !isInGroupUniverse([groupId], groupUniverse)
+      !isInGroupUniverse({
+        groups: [groupId],
+        universe,
+        method: 'INTERSECTION',
+      })
     )
       throw AppError.authorizationError;
 

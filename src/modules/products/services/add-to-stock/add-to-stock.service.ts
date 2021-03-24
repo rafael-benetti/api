@@ -45,11 +45,17 @@ class AddToStockService {
 
     if (!user) throw AppError.userNotFound;
 
-    const groupUniverse = await getGroupUniverse(user);
+    if (user.role !== Role.OWNER && !user.permissions?.editProducts)
+      throw AppError.authorizationError;
+
+    const universe = await getGroupUniverse(user);
 
     if (
-      (user.role !== Role.OWNER && !user.permissions?.editProducts) ||
-      !isInGroupUniverse([groupId], groupUniverse)
+      !isInGroupUniverse({
+        groups: [groupId],
+        universe,
+        method: 'INTERSECTION',
+      })
     )
       throw AppError.authorizationError;
 
