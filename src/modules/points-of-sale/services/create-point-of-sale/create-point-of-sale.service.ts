@@ -53,7 +53,7 @@ class CreatePointOfSaleService {
     });
 
     if (!user) throw AppError.userNotFound;
-
+    // TODO: VERIFICAR ISSO AQUI EIN
     if (
       user.role !== Role.OWNER &&
       (!user.permissions?.createPointsOfSale ||

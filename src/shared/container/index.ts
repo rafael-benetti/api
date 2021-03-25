@@ -8,6 +8,8 @@ import MachinesRepository from '@modules/machines/contracts/repositories/machine
 import MikroMachinesRepository from '@modules/machines/implementations/mikro/repositories/mikro-machines.repository';
 import PointsOfSaleRepository from '@modules/points-of-sale/contracts/repositories/points-of-sale.repository';
 import MikroPointsOfSaleRepository from '@modules/points-of-sale/implementations/mikro/repositories/mikro-points-of-sale.repository';
+import RoutesRepository from '@modules/routes/contracts/repositories/routes.repository';
+import MikroRoutesRepository from '@modules/routes/implementations/mikro/repositories/mikro-routes.repository';
 import UsersRepository from '@modules/users/contracts/repositories/users.repository';
 import MikroUsersRepository from '@modules/users/implementations/mikro/repositories/mikro-users.repository';
 import { container } from 'tsyringe';
@@ -41,4 +43,9 @@ container.registerSingleton<CategoriesRepository>(
 container.registerSingleton<MachinesRepository>(
   'MachinesRepository',
   MikroMachinesRepository,
+);
+
+container.registerSingleton<RoutesRepository>(
+  'RoutesRepository',
+  MikroRoutesRepository,
 );

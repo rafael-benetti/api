@@ -5,9 +5,11 @@ import Machine from '@modules/machines/contracts/models/machine';
 import MachinesRepository from '@modules/machines/contracts/repositories/machines.repository';
 import Role from '@modules/users/contracts/enums/role';
 import UsersRepository from '@modules/users/contracts/repositories/users.repository';
+import PointsOfSaleRepository from '@modules/points-of-sale/contracts/repositories/points-of-sale.repository';
 import OrmProvider from '@providers/orm-provider/contracts/models/orm-provider';
 import AppError from '@shared/errors/app-error';
 import { inject, injectable } from 'tsyringe';
+import GroupsRepository from '@modules/groups/contracts/repositories/groups.repository';
 
 interface Request {
   userId: string;
@@ -35,6 +37,12 @@ class CreateMachineService {
 
     @inject('CategoriesRepository')
     private categoriesRepository: CategoriesRepository,
+
+    @inject('PointsOfSaleRepository')
+    private pointsOfSaleRepository: PointsOfSaleRepository,
+
+    @inject('GroupsRepository')
+    private groupsRepository: GroupsRepository,
   ) {}
 
   public async execute({
@@ -69,6 +77,18 @@ class CreateMachineService {
       if (!user.groupIds?.includes(groupId)) throw AppError.authorizationError;
     }
 
+    if (user.role === Role.OWNER) {
+      const groups = await this.groupsRepository.find({
+        filters: {
+          ownerId: user.id,
+        },
+      });
+
+      const groupIds = groups.map(group => group.id);
+
+      if (!groupIds.includes(groupId)) throw AppError.authorizationError;
+    }
+
     const ownerId = user.role === Role.OWNER ? user.id : user.ownerId;
 
     if (!ownerId) throw AppError.unknownError;
@@ -84,6 +104,25 @@ class CreateMachineService {
     });
 
     if (!category) throw AppError.machineCategoryNotFound;
+
+    if (locationId) {
+      const pointOfSale = await this.pointsOfSaleRepository.findOne({
+        by: 'id',
+        value: locationId,
+      });
+
+      if (pointOfSale?.groupId !== groupId) throw AppError.authorizationError;
+    }
+
+    if (operatorId) {
+      const operator = await this.usersRepository.findOne({
+        by: 'id',
+        value: operatorId,
+      });
+
+      if (!operator?.groupIds?.includes(groupId))
+        throw AppError.authorizationError;
+    }
 
     const machine = this.machinesRepository.create({
       boxes: entityBoxes,

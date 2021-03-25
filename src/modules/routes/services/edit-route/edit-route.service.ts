@@ -10,14 +10,15 @@ import OrmProvider from '@providers/orm-provider/contracts/models/orm-provider';
 
 interface Request {
   userId: string;
-  groupIds: string[];
-  machineIds: string[];
-  label: string;
-  operatorId: string;
+  routeId: string;
+  label?: string;
+  operatorId?: string;
+  groupIds?: string[];
+  machineIds?: string[];
 }
 
 @injectable()
-class CreateRouteService {
+class EditRouteService {
   constructor(
     @inject('RoutesRepository')
     private routesRepository: RoutesRepository,
@@ -37,10 +38,11 @@ class CreateRouteService {
 
   public async execute({
     userId,
+    routeId,
     label,
     groupIds,
-    machineIds,
     operatorId,
+    machineIds,
   }: Request): Promise<Route> {
     const user = await this.usersRepository.findOne({
       by: 'id',
@@ -49,14 +51,19 @@ class CreateRouteService {
 
     if (!user) throw AppError.userNotFound;
 
+    const route = await this.routesRepository.findOne({
+      id: routeId,
+    });
+
+    if (!route) throw AppError.routeNotFound;
+
     if (user.role !== Role.MANAGER && user.role !== Role.OWNER)
       throw AppError.authorizationError;
 
     if (user.role === Role.MANAGER) {
-      if (!user.permissions?.createRoutes) throw AppError.authorizationError;
-      if (!user.groupIds) throw AppError.unknownError;
+      if (!user.permissions?.editRoutes) throw AppError.authorizationError;
 
-      if (user.groupIds.some(groupId => !groupIds.includes(groupId)))
+      if (user.groupIds?.some(groupId => !route.groupIds.includes(groupId)))
         throw AppError.authorizationError;
     }
 
@@ -69,26 +76,21 @@ class CreateRouteService {
 
       const userGrupIds = userGroups.map(group => group.id);
 
-      if (groupIds.some(groupId => !userGrupIds.includes(groupId)))
+      if (route.groupIds.some(groupId => !userGrupIds.includes(groupId)))
         throw AppError.authorizationError;
     }
 
-    const checkRouteExists = await this.routesRepository.findOne({
-      label,
-    });
-
-    if (checkRouteExists) throw AppError.labelAlreadyInUsed;
-
-    if (operatorId) {
-      const operator = await this.usersRepository.findOne({
-        by: 'id',
-        value: operatorId,
+    if (label) {
+      const checkRouteExists = await this.routesRepository.findOne({
+        label,
       });
 
-      if (!operator) throw AppError.userNotFound;
+      if (checkRouteExists) throw AppError.labelAlreadyInUsed;
+
+      route.label = label;
     }
 
-    if (machineIds) {
+    if (machineIds !== undefined) {
       const { machines } = await this.machinesRepository.find({
         id: machineIds,
       });
@@ -97,25 +99,47 @@ class CreateRouteService {
 
       // TODO: VERIFICAR SE A MACHINE JÁ ESTA EM UMA ROTA
 
-      if (machines.some(machine => !groupIds.includes(machine.groupId)))
+      if (machines.some(machine => !groupIds?.includes(machine.groupId)))
         throw AppError.authorizationError;
+
+      route.machineIds = machineIds;
     }
 
-    const ownerId = user.role === Role.OWNER ? user.id : user.ownerId;
+    if (groupIds !== undefined) {
+      if (user.role === Role.MANAGER)
+        if (user.groupIds?.some(groupId => !groupIds.includes(groupId)))
+          throw AppError.authorizationError;
 
-    if (!ownerId) throw AppError.unknownError;
+      if (user.role === Role.OWNER) {
+        const userGroups = await this.groupsRepository.find({
+          filters: {
+            ownerId: user.id,
+          },
+        });
 
-    const route = this.routesRepository.create({
-      groupIds,
-      label,
-      machineIds,
-      operatorId,
-      ownerId,
-    });
+        const userGrupIds = userGroups.map(group => group.id);
+
+        if (groupIds.some(groupId => !userGrupIds.includes(groupId)))
+          throw AppError.authorizationError;
+      }
+
+      route.groupIds = groupIds;
+    }
+
+    if (operatorId !== undefined) {
+      const operator = await this.usersRepository.findOne({
+        by: 'id',
+        value: operatorId,
+      });
+
+      if (!operator) throw AppError.userNotFound;
+    }
+
+    this.routesRepository.save(route);
 
     await this.ormProvider.commit();
 
     return route;
   }
 }
-export default CreateRouteService;
+export default EditRouteService;

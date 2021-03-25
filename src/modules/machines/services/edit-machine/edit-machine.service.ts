@@ -5,9 +5,11 @@ import Machine from '@modules/machines/contracts/models/machine';
 import MachinesRepository from '@modules/machines/contracts/repositories/machines.repository';
 import Role from '@modules/users/contracts/enums/role';
 import UsersRepository from '@modules/users/contracts/repositories/users.repository';
+import GroupsRepository from '@modules/groups/contracts/repositories/groups.repository';
 import OrmProvider from '@providers/orm-provider/contracts/models/orm-provider';
 import AppError from '@shared/errors/app-error';
 import { inject, injectable } from 'tsyringe';
+import PointsOfSaleRepository from '@modules/points-of-sale/contracts/repositories/points-of-sale.repository';
 
 interface Request {
   userId: string;
@@ -36,6 +38,12 @@ class EditMachineService {
 
     @inject('CategoriesRepository')
     private categoriesRepository: CategoriesRepository,
+
+    @inject('GroupsRepository')
+    private groupsRepository: GroupsRepository,
+
+    @inject('PointsOfSaleRepository')
+    private pointsOfSaleRepository: PointsOfSaleRepository,
   ) {}
 
   public async execute({
@@ -78,15 +86,64 @@ class EditMachineService {
     if (user.role === Role.OWNER)
       if (user.id !== machine.ownerId) throw AppError.authorizationError;
 
-    if (serialNumber) machine.serialNumber = serialNumber;
+    if (serialNumber && serialNumber !== machine.serialNumber) {
+      const checkMachineExists = await this.machinesRepository.findOne({
+        by: 'serialNumber',
+        value: serialNumber,
+      });
 
-    if (operatorId) machine.operatorId = operatorId;
+      if (checkMachineExists) throw AppError.labelAlreadyInUsed;
 
-    machine.locationId = locationId;
+      machine.serialNumber = serialNumber;
+    }
+
+    if (operatorId) {
+      const operator = await this.usersRepository.findOne({
+        by: 'id',
+        value: operatorId,
+      });
+
+      if (!operator?.groupIds?.includes(groupId))
+        throw AppError.authorizationError;
+
+      machine.operatorId = operatorId;
+    }
+
+    if (locationId) {
+      const pointOfSale = await this.pointsOfSaleRepository.findOne({
+        by: 'id',
+        value: locationId,
+      });
+
+      if (pointOfSale?.groupId !== groupId) throw AppError.authorizationError;
+      machine.locationId = locationId;
+    } else if (locationId === null) {
+      machine.locationId = locationId;
+    }
 
     if (gameValue) machine.gameValue = gameValue;
 
-    if (groupId) machine.groupId = groupId;
+    if (groupId) {
+      if (user.role === Role.OWNER) {
+        const groups = await this.groupsRepository.find({
+          filters: {
+            ownerId: user.id,
+          },
+        });
+
+        const groupIds = groups.map(group => group.id);
+
+        if (!groupIds.includes(groupId)) throw AppError.authorizationError;
+      }
+
+      if (user.role === Role.MANAGER) {
+        if (!user.permissions?.createMachines)
+          throw AppError.authorizationError;
+        if (!user.groupIds?.includes(groupId))
+          throw AppError.authorizationError;
+      }
+      machine.groupId = groupId;
+    }
 
     if (isActive !== undefined) machine.isActive = isActive;
 

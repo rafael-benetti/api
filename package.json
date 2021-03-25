@@ -12,10 +12,11 @@
   "scripts": {
     "dev": "DEBUG=api* ts-node-dev -r dotenv/config -r tsconfig-paths/register --transpile-only --inspect --no-notify src/shared/server/express/server.ts",
     "test": "jest --clearCache && jest --passWithNoTests",
-    "typeorm": "ts-node-dev -r tsconfig-paths/register ./node_modules/typeorm/cli.js"
+    "typeorm": "ts-node-dev -r tsconfig-paths/register ./node_modules/typeorm/cli.js",
+    "migrate": "ts-node-dev -r dotenv/config -r tsconfig-paths/register --transpile-only --inspect --no-notify src/migration-script/exec.ts"
   },
   "dependencies": {
-    "@mikro-orm/core": "^4.4.4",
+    "@mikro-orm/core": "^4.5.0",
     "@mikro-orm/mongodb": "^4.4.4",
     "aws-sdk": "^2.843.0",
     "bcrypt": "^5.0.0",
@@ -58,6 +59,7 @@
     "@types/uuid": "^8.3.0",
     "@typescript-eslint/eslint-plugin": "^4.14.1",
     "@typescript-eslint/parser": "^4.14.1",
+    "add": "^2.0.6",
     "commitizen": "^4.2.3",
     "cz-conventional-changelog": "^3.3.0",
     "eslint": "^7.18.0",
@@ -73,8 +75,10 @@
     "ts-node-dev": "^1.1.1",
     "tsconfig-paths": "^3.9.0",
     "ttypescript": "^1.5.12",
+    "typeorm": "^0.2.31",
     "typescript": "^4.1.3",
-    "typescript-transform-paths": "^2.2.2"
+    "typescript-transform-paths": "^2.2.2",
+    "yarn": "^1.22.10"
   },
   "config": {
     "commitizen": {

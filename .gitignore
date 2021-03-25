@@ -3,3 +3,5 @@ coverage
 dist
 .env
 data
+src/migration-script
+ormconfig.json

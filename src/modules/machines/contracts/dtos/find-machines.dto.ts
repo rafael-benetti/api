@@ -1,5 +1,5 @@
 export default interface FindMachinesDto {
-  id?: string;
+  id?: string | string[];
   ownerId?: string;
   operatorId?: string;
   groupIds?: string[];

@@ -125,6 +125,12 @@ export default class AppError {
     statusCode: 404,
   });
 
+  static routeNotFound = new AppError({
+    errorCode: 'ROUTE_NOT_FOUND',
+    message: "Could not find the 'route'.",
+    statusCode: 404,
+  });
+
   static userNotFound = new AppError({
     errorCode: 'USER_NOT_FOUND',
     message: 'Could not find this user',
