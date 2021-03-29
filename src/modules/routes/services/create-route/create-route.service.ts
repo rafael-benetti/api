@@ -7,10 +7,10 @@ import MachinesRepository from '@modules/machines/contracts/repositories/machine
 import AppError from '@shared/errors/app-error';
 import { inject, injectable } from 'tsyringe';
 import OrmProvider from '@providers/orm-provider/contracts/models/orm-provider';
+import logger from '@config/logger';
 
 interface Request {
   userId: string;
-  groupIds: string[];
   machineIds: string[];
   label: string;
   operatorId: string;
@@ -38,10 +38,10 @@ class CreateRouteService {
   public async execute({
     userId,
     label,
-    groupIds,
     machineIds,
     operatorId,
   }: Request): Promise<Route> {
+    // Verificação de usuario existente
     const user = await this.usersRepository.findOne({
       by: 'id',
       value: userId,
@@ -49,8 +49,19 @@ class CreateRouteService {
 
     if (!user) throw AppError.userNotFound;
 
+    // Verificação de roles com autorização
     if (user.role !== Role.MANAGER && user.role !== Role.OWNER)
       throw AppError.authorizationError;
+
+    const { machines } = await this.machinesRepository.find({
+      id: machineIds,
+    });
+
+    if (machines.length !== machineIds.length) throw AppError.machineNotFound;
+
+    const groupIds = [...new Set(machines.map(machine => machine.groupId))];
+
+    logger.info(groupIds);
 
     if (user.role === Role.MANAGER) {
       if (!user.permissions?.createRoutes) throw AppError.authorizationError;
@@ -86,18 +97,14 @@ class CreateRouteService {
       });
 
       if (!operator) throw AppError.userNotFound;
-    }
 
-    if (machineIds) {
-      const { machines } = await this.machinesRepository.find({
-        id: machineIds,
+      const checkOperatorAlreadyInRoute = await this.routesRepository.findOne({
+        operatorId: user.id,
       });
 
-      if (machines.length !== machineIds.length) throw AppError.machineNotFound;
+      if (checkOperatorAlreadyInRoute) throw AppError.unknownError;
 
-      // TODO: VERIFICAR SE A MACHINE JÁ ESTA EM UMA ROTA
-
-      if (machines.some(machine => !groupIds.includes(machine.groupId)))
+      if (groupIds.some(groupId => !operator?.groupIds?.includes(groupId)))
         throw AppError.authorizationError;
     }
 

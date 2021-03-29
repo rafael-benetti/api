@@ -27,11 +27,17 @@ class MikroRoutesRepository implements RoutesRepository {
     return route ? RouteMapper.toEntity(route) : undefined;
   }
 
-  async find({ id, groupIds, operatorId }: FindRoutesDto): Promise<Route[]> {
+  async find({
+    id,
+    groupIds,
+    operatorId,
+    ownerId,
+  }: FindRoutesDto): Promise<Route[]> {
     const routes = await this.repository.find({
       ...(id && { id }),
       ...(operatorId && { operatorId }),
       ...(groupIds && { groupIds }),
+      ...(ownerId && { ownerId }),
     });
 
     return routes.map(route => RouteMapper.toEntity(route));

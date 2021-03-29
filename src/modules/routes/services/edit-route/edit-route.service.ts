@@ -13,8 +13,7 @@ interface Request {
   routeId: string;
   label?: string;
   operatorId?: string;
-  groupIds?: string[];
-  machineIds?: string[];
+  machineIds: string[];
 }
 
 @injectable()
@@ -40,7 +39,6 @@ class EditRouteService {
     userId,
     routeId,
     label,
-    groupIds,
     operatorId,
     machineIds,
   }: Request): Promise<Route> {
@@ -90,20 +88,18 @@ class EditRouteService {
       route.label = label;
     }
 
-    if (machineIds !== undefined) {
-      const { machines } = await this.machinesRepository.find({
-        id: machineIds,
-      });
+    const { machines } = await this.machinesRepository.find({
+      id: machineIds || route.machineIds,
+    });
 
-      if (machines.length !== machineIds.length) throw AppError.machineNotFound;
+    if (machineIds && machines.length !== machineIds.length)
+      throw AppError.machineNotFound;
 
-      // TODO: VERIFICAR SE A MACHINE JÁ ESTA EM UMA ROTA
-
-      if (machines.some(machine => !groupIds?.includes(machine.groupId)))
-        throw AppError.authorizationError;
-
-      route.machineIds = machineIds;
-    }
+    const groupIds = [
+      ...new Set(
+        machineIds ? machines.map(machine => machine.groupId) : route.groupIds,
+      ),
+    ];
 
     if (groupIds !== undefined) {
       if (user.role === Role.MANAGER)
@@ -133,6 +129,15 @@ class EditRouteService {
       });
 
       if (!operator) throw AppError.userNotFound;
+
+      const checkOperatorAlreadyInRoute = await this.routesRepository.findOne({
+        operatorId: user.id,
+      });
+
+      if (checkOperatorAlreadyInRoute) throw AppError.unknownError;
+
+      if (groupIds.some(groupId => !operator?.groupIds?.includes(groupId)))
+        throw AppError.authorizationError;
     }
 
     this.routesRepository.save(route);
