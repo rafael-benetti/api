@@ -84,8 +84,13 @@ class CreateRouteService {
         throw AppError.authorizationError;
     }
 
+    const ownerId = user.role === Role.OWNER ? user.id : user.ownerId;
+
+    if (!ownerId) throw AppError.unknownError;
+
     const checkRouteExists = await this.routesRepository.findOne({
       label,
+      ownerId,
     });
 
     if (checkRouteExists) throw AppError.labelAlreadyInUsed;
@@ -107,10 +112,6 @@ class CreateRouteService {
       if (groupIds.some(groupId => !operator?.groupIds?.includes(groupId)))
         throw AppError.authorizationError;
     }
-
-    const ownerId = user.role === Role.OWNER ? user.id : user.ownerId;
-
-    if (!ownerId) throw AppError.unknownError;
 
     const route = this.routesRepository.create({
       groupIds,

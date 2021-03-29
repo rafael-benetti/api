@@ -91,6 +91,7 @@ class EditRouteService {
     if (label) {
       const checkRouteExists = await this.routesRepository.findOne({
         label,
+        ownerId: route.ownerId,
       });
 
       if (checkRouteExists) throw AppError.labelAlreadyInUsed;
