@@ -6,13 +6,12 @@ abstract class EditRouteController {
   static async handle(req: Request, res: Response): Promise<Response> {
     const { userId } = req;
     const { routeId } = req.params;
-    const { groupIds, machineIds, label, operatorId } = req.body;
+    const { machineIds, label, operatorId } = req.body;
 
     const editRouteService = container.resolve(EditRouteService);
 
     const route = await editRouteService.execute({
       userId,
-      groupIds,
       label,
       machineIds,
       operatorId,

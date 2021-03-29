@@ -78,6 +78,16 @@ class EditRouteService {
         throw AppError.authorizationError;
     }
 
+    const { machines } = await this.machinesRepository.find({
+      id: machineIds || route.machineIds,
+    });
+
+    if (machineIds && machines.length !== machineIds.length)
+      throw AppError.machineNotFound;
+
+    if (machines.some(machine => !machine.locationId))
+      throw AppError.unknownError;
+
     if (label) {
       const checkRouteExists = await this.routesRepository.findOne({
         label,
@@ -87,14 +97,6 @@ class EditRouteService {
 
       route.label = label;
     }
-
-    const { machines } = await this.machinesRepository.find({
-      id: machineIds || route.machineIds,
-    });
-
-    if (machineIds && machines.length !== machineIds.length)
-      throw AppError.machineNotFound;
-
     const groupIds = [
       ...new Set(
         machineIds ? machines.map(machine => machine.groupId) : route.groupIds,

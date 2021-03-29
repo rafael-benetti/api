@@ -7,7 +7,6 @@ import MachinesRepository from '@modules/machines/contracts/repositories/machine
 import AppError from '@shared/errors/app-error';
 import { inject, injectable } from 'tsyringe';
 import OrmProvider from '@providers/orm-provider/contracts/models/orm-provider';
-import logger from '@config/logger';
 
 interface Request {
   userId: string;
@@ -59,9 +58,10 @@ class CreateRouteService {
 
     if (machines.length !== machineIds.length) throw AppError.machineNotFound;
 
-    const groupIds = [...new Set(machines.map(machine => machine.groupId))];
+    if (machines.some(machine => !machine.locationId))
+      throw AppError.machineNotFound;
 
-    logger.info(groupIds);
+    const groupIds = [...new Set(machines.map(machine => machine.groupId))];
 
     if (user.role === Role.MANAGER) {
       if (!user.permissions?.createRoutes) throw AppError.authorizationError;
