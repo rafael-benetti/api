@@ -10,6 +10,7 @@ import OrmProvider from '@providers/orm-provider/contracts/models/orm-provider';
 import AppError from '@shared/errors/app-error';
 import { inject, injectable } from 'tsyringe';
 import PointsOfSaleRepository from '@modules/points-of-sale/contracts/repositories/points-of-sale.repository';
+import CounterTypesRepository from '@modules/counter-types/contracts/repositories/couter-types.repository';
 
 interface Request {
   userId: string;
@@ -44,6 +45,9 @@ class EditMachineService {
 
     @inject('PointsOfSaleRepository')
     private pointsOfSaleRepository: PointsOfSaleRepository,
+
+    @inject('CounterTypesRepository')
+    private counterTypesRepository: CounterTypesRepository,
   ) {}
 
   public async execute({
@@ -160,10 +164,27 @@ class EditMachineService {
     }
 
     if (boxes) {
-      machine.boxes = boxes.map(box => {
+      const boxesEntities = boxes.map(box => {
         const counters = box.counters.map(counter => new Counter(counter));
         return new Box({ id: box.id, counters });
       });
+
+      const counterTypeIds = [
+        ...new Set(
+          boxesEntities.flatMap(boxe =>
+            boxe.counters.map(counter => counter.counterTypeId),
+          ),
+        ),
+      ];
+
+      const counterTypes = await this.counterTypesRepository.find({
+        id: counterTypeIds,
+      });
+
+      if (counterTypeIds.length !== counterTypes.length)
+        throw AppError.authorizationError;
+
+      machine.boxes = boxesEntities;
     }
 
     this.machinesRepository.save(machine);

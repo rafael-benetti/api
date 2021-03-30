@@ -10,6 +10,7 @@ import OrmProvider from '@providers/orm-provider/contracts/models/orm-provider';
 import AppError from '@shared/errors/app-error';
 import { inject, injectable } from 'tsyringe';
 import GroupsRepository from '@modules/groups/contracts/repositories/groups.repository';
+import CounterTypesRepository from '@modules/counter-types/contracts/repositories/couter-types.repository';
 
 interface Request {
   userId: string;
@@ -40,6 +41,9 @@ class CreateMachineService {
 
     @inject('PointsOfSaleRepository')
     private pointsOfSaleRepository: PointsOfSaleRepository,
+
+    @inject('CounterTypesRepository')
+    private counterTypesRepository: CounterTypesRepository,
 
     @inject('GroupsRepository')
     private groupsRepository: GroupsRepository,
@@ -93,10 +97,25 @@ class CreateMachineService {
 
     if (!ownerId) throw AppError.unknownError;
 
-    const entityBoxes = boxes.map(box => {
+    const boxesEntities = boxes.map(box => {
       const counters = box.counters.map(counter => new Counter(counter));
       return new Box({ id: box.id, counters });
     });
+
+    const counterTypeIds = [
+      ...new Set(
+        boxesEntities.flatMap(boxe =>
+          boxe.counters.map(counter => counter.counterTypeId),
+        ),
+      ),
+    ];
+
+    const counterTypes = await this.counterTypesRepository.find({
+      id: counterTypeIds,
+    });
+
+    if (counterTypeIds.length !== counterTypes.length)
+      throw AppError.authorizationError;
 
     const category = await this.categoriesRepository.findOne({
       by: 'id',
@@ -125,7 +144,7 @@ class CreateMachineService {
     }
 
     const machine = this.machinesRepository.create({
-      boxes: entityBoxes,
+      boxes: boxesEntities,
       categoryId: category.id,
       gameValue,
       groupId,
