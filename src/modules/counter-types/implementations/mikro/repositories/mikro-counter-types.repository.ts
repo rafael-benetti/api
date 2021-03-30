@@ -1,4 +1,3 @@
-import logger from '@config/logger';
 import CreateCounterTypesDto from '@modules/counter-types/contracts/dtos/create-counter-types.dto';
 import FindCounterTypesDto from '@modules/counter-types/contracts/dtos/find-counter-types.dto';
 import CounterType from '@modules/counter-types/contracts/models/counter-type';
@@ -29,14 +28,16 @@ class MikroCounterTypesRepository implements CounterTypesRepository {
     return counterType ? CounterTypeMapper.toEntity(counterType) : undefined;
   }
 
-  async find({ label, ownerId }: FindCounterTypesDto): Promise<CounterType[]> {
-    logger.info(ownerId);
-
+  async find({
+    id,
+    label,
+    ownerId,
+  }: FindCounterTypesDto): Promise<CounterType[]> {
     const counterTypes = await this.repository.find({
+      ...(id && { id }),
       ...(label && { label }),
       ...(ownerId && { ownerId }),
     });
-    logger.info(counterTypes);
 
     return counterTypes.map(counterType =>
       CounterTypeMapper.toEntity(counterType),
