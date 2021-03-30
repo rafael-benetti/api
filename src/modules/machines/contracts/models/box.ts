@@ -5,7 +5,7 @@ import Counter from './counter';
 class Box {
   id: string;
 
-  // prizes: Prize[];
+  prizes: Prize[];
 
   counters: Counter[];
 
@@ -13,7 +13,7 @@ class Box {
     if (data) {
       this.id = data.id ? data.id : v4();
       this.counters = data.counters;
-      // this.prizes = data.prizes; //TODO
+      this.prizes = data.prizes;
     }
   }
 }
