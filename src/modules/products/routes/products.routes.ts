@@ -53,7 +53,7 @@ productsRoutes.post(
         id: Joi.string().uuid().required(),
         type: Joi.string().valid('GROUP', 'USER', 'MACHINE').required(),
         boxId: Joi.when('type', {
-          is: true,
+          is: 'MACHINE',
           then: Joi.string().required(),
           otherwise: Joi.forbidden(),
         }),
@@ -62,7 +62,7 @@ productsRoutes.post(
         id: Joi.string().uuid().required(),
         type: Joi.string().valid('GROUP', 'USER', 'MACHINE').required(),
         boxId: Joi.when('type', {
-          is: true,
+          is: 'MACHINE',
           then: Joi.string().required(),
           otherwise: Joi.forbidden(),
         }),
