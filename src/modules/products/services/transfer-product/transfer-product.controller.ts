@@ -6,16 +6,16 @@ abstract class TransferProductController {
   static handle: RequestHandler = async (req, res) => {
     const { userId } = req;
     const { productId } = req.params;
-    const { groupId, productType, productQuantity, to } = req.body;
+    const { productType, productQuantity, from, to } = req.body;
 
     const transferProduct = container.resolve(TransferProductService);
 
     await transferProduct.execute({
       userId,
-      groupId,
       productId,
       productType,
       productQuantity,
+      from,
       to,
     });
 

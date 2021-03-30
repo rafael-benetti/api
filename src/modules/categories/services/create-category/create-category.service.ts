@@ -56,7 +56,7 @@ class CreateCategoryService {
 
     const boxesEntities = boxes.map(box => {
       const counters = box.counters.map(counter => new Counter(counter));
-      return new Box({ counters });
+      return new Box({ counters, prizes: [] });
     });
 
     const counterTypeIds = [
