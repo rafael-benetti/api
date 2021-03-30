@@ -8,7 +8,7 @@ abstract class ListCounterTypesController {
 
     const listCounterTypesService = container.resolve(ListCounterTypesService);
 
-    const counterTypes = listCounterTypesService.execute({
+    const counterTypes = await listCounterTypesService.execute({
       userId,
     });
 
