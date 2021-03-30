@@ -1,5 +1,7 @@
 import GroupsRepository from '@modules/groups/contracts/repositories/groups.repository';
+import MachinesRepository from '@modules/machines/contracts/repositories/machines.repository';
 import Role from '@modules/users/contracts/enums/role';
+import Product from '@modules/users/contracts/models/product';
 import UsersRepository from '@modules/users/contracts/repositories/users.repository';
 import OrmProvider from '@providers/orm-provider/contracts/models/orm-provider';
 import AppError from '@shared/errors/app-error';
@@ -9,13 +11,19 @@ import { inject, injectable } from 'tsyringe';
 
 interface Request {
   userId: string;
-  groupId?: string;
-  productId: string;
   productType: 'PRIZE' | 'SUPPLY';
+  productId: string;
   productQuantity: number;
-  to: {
+  cost?: number;
+  from: {
+    type: 'GROUP' | 'USER' | 'MACHINE';
     id: string;
-    type: 'GROUP' | 'USER';
+    boxId?: string;
+  };
+  to: {
+    type: 'GROUP' | 'USER' | 'MACHINE';
+    id: string;
+    boxId?: string;
   };
 }
 
@@ -28,16 +36,19 @@ class TransferProductService {
     @inject('GroupsRepository')
     private groupsRepository: GroupsRepository,
 
+    @inject('MachinesRepository')
+    private machinesRepository: MachinesRepository,
+
     @inject('OrmProvider')
     private ormProvider: OrmProvider,
   ) {}
 
   async execute({
     userId,
-    groupId,
-    productId,
     productType,
+    productId,
     productQuantity,
+    from,
     to,
   }: Request): Promise<void> {
     const user = await this.usersRepository.findOne({
@@ -47,63 +58,158 @@ class TransferProductService {
 
     if (!user) throw AppError.userNotFound;
 
-    const universe = await getGroupUniverse(user);
-    let originProduct;
-    let destinationProduct;
+    let fromProduct: Product | undefined;
+    let toProduct: Product | undefined;
 
-    if (groupId) {
-      if (
-        !isInGroupUniverse({
-          groups: [groupId],
-          universe,
-          method: 'INTERSECTION',
-        })
-      )
-        throw AppError.authorizationError;
+    if (from.type === 'USER') {
+      if (productType === 'PRIZE') {
+        fromProduct = user.stock?.prizes.find(p => p.id === productId);
+      } else {
+        fromProduct = user.stock?.supplies.find(p => p.id === productId);
+      }
 
-      const group = await this.groupsRepository.findOne({
-        by: 'id',
-        value: groupId,
-      });
+      if (!fromProduct) throw AppError.productNotFound;
 
-      if (!group) throw AppError.groupNotFound;
-
-      originProduct =
-        productType === 'PRIZE'
-          ? group.stock.prizes.find(p => p.id === productId)
-          : group.stock.supplies.find(p => p.id === productId);
-
-      if (!originProduct) throw AppError.productNotFound;
-
-      if (originProduct.quantity < productQuantity)
+      if (productQuantity > fromProduct.quantity)
         throw AppError.insufficientProducts;
 
-      originProduct.quantity -= productQuantity;
-
-      this.groupsRepository.save(group);
-    } else {
-      if (user.role === Role.OWNER) throw AppError.missingGroupId;
-
-      originProduct =
-        productType === 'PRIZE'
-          ? user.stock?.prizes.find(p => p.id === productId)
-          : user.stock?.supplies.find(p => p.id === productId);
-
-      if (!originProduct) throw AppError.productNotFound;
-
-      if (originProduct.quantity < productQuantity)
-        throw AppError.insufficientProducts;
-
-      originProduct.quantity -= productQuantity;
+      fromProduct.quantity -= productQuantity;
 
       this.usersRepository.save(user);
     }
 
-    if (to.type === 'GROUP') {
+    if (from.type === 'GROUP') {
+      const groupUniverse = await getGroupUniverse(user);
+
       if (
         !isInGroupUniverse({
+          universe: groupUniverse,
+          groups: [from.id],
+          method: 'INTERSECTION',
+        })
+      )
+        throw AppError.authorizationError;
+
+      const group = await this.groupsRepository.findOne({
+        by: 'id',
+        value: from.id,
+      });
+
+      if (!group) throw AppError.groupNotFound;
+
+      if (productType === 'PRIZE') {
+        fromProduct = group.stock.prizes.find(p => p.id === productId);
+      } else {
+        fromProduct = group.stock.supplies.find(p => p.id === productId);
+      }
+
+      if (!fromProduct) throw AppError.productNotFound;
+
+      if (productQuantity > fromProduct.quantity)
+        throw AppError.insufficientProducts;
+
+      fromProduct.quantity -= productQuantity;
+
+      this.groupsRepository.save(group);
+    }
+
+    if (from.type === 'MACHINE') {
+      const machine = await this.machinesRepository.findOne({
+        by: 'id',
+        value: from.id,
+      });
+
+      if (!machine) throw AppError.machineNotFound;
+
+      if (user.role === Role.OPERATOR) {
+        if (machine.operatorId !== user.id) throw AppError.authorizationError;
+      } else {
+        const groupUniverse = await getGroupUniverse(user);
+
+        if (
+          !isInGroupUniverse({
+            universe: groupUniverse,
+            groups: [machine.groupId],
+            method: 'INTERSECTION',
+          })
+        )
+          throw AppError.authorizationError;
+      }
+
+      if (!from.boxId) throw AppError.boxNotFound;
+
+      const box = machine.boxes.find(box => box.id === from.boxId);
+
+      if (!box) throw AppError.boxNotFound;
+
+      fromProduct = box.prizes.find(p => p.id === productId);
+
+      if (!fromProduct) throw AppError.productNotFound;
+
+      if (productQuantity > fromProduct.quantity)
+        throw AppError.insufficientProducts;
+
+      fromProduct.quantity -= productQuantity;
+
+      this.machinesRepository.save(machine);
+    }
+
+    if (to.type === 'USER') {
+      const toUser = await this.usersRepository.findOne({
+        by: 'id',
+        value: to.id,
+      });
+
+      if (!toUser) throw AppError.userNotFound;
+
+      if (user.role === Role.OPERATOR && toUser.role === Role.OPERATOR)
+        throw AppError.noTransfersBetweenOperators;
+
+      const groupUniverse = await getGroupUniverse(user);
+
+      if (
+        !isInGroupUniverse({
+          universe: groupUniverse,
+          groups: toUser.groupIds || [],
+          method: 'INTERSECTION',
+        })
+      )
+        throw AppError.authorizationError;
+
+      if (productType === 'PRIZE') {
+        toProduct = toUser.stock?.prizes.find(p => p.id === productId);
+
+        if (!toProduct) {
+          toUser.stock?.prizes.push({
+            ...(fromProduct as Product),
+            quantity: productQuantity,
+          });
+        } else {
+          toProduct.quantity += productQuantity;
+        }
+      } else {
+        toProduct = toUser.stock?.supplies.find(p => p.id === productId);
+
+        if (!toProduct) {
+          toUser.stock?.supplies.push({
+            ...(fromProduct as Product),
+            quantity: productQuantity,
+          });
+        } else {
+          toProduct.quantity += productQuantity;
+        }
+      }
+
+      this.usersRepository.save(toUser);
+    }
+
+    if (to.type === 'GROUP') {
+      const groupUniverse = await getGroupUniverse(user);
+
+      if (
+        !isInGroupUniverse({
+          universe: groupUniverse,
           groups: [to.id],
-          universe,
           method: 'INTERSECTION',
         })
       )
@@ -116,67 +222,78 @@ class TransferProductService {
 
       if (!group) throw AppError.groupNotFound;
 
-      destinationProduct =
-        productType === 'PRIZE'
-          ? group.stock.prizes.find(p => p.id === productId)
-          : group.stock.supplies.find(p => p.id === productId);
+      if (productType === 'PRIZE') {
+        toProduct = group.stock?.prizes.find(p => p.id === productId);
 
-      if (!destinationProduct) {
-        if (productType === 'PRIZE') {
-          group.stock.prizes.push({
-            ...originProduct,
+        if (!toProduct) {
+          group.stock?.prizes.push({
+            ...(fromProduct as Product),
             quantity: productQuantity,
           });
         } else {
-          group.stock.supplies.push({
-            ...originProduct,
-            quantity: productQuantity,
-          });
+          toProduct.quantity += productQuantity;
         }
       } else {
-        destinationProduct.quantity += productQuantity;
+        toProduct = group.stock?.supplies.find(p => p.id === productId);
+
+        if (!toProduct) {
+          group.stock?.supplies.push({
+            ...(fromProduct as Product),
+            quantity: productQuantity,
+          });
+        } else {
+          toProduct.quantity += productQuantity;
+        }
       }
 
       this.groupsRepository.save(group);
-    } else {
-      const user = await this.usersRepository.findOne({
+    }
+
+    if (to.type === 'MACHINE') {
+      if (from.type === 'MACHINE') throw AppError.noTransfersBetweenMachines;
+
+      const machine = await this.machinesRepository.findOne({
         by: 'id',
         value: to.id,
       });
 
-      if (!user) throw AppError.userNotFound;
+      if (!machine) throw AppError.machineNotFound;
 
-      if (
-        !isInGroupUniverse({
-          groups: user.groupIds || [],
-          universe,
-          method: 'INTERSECTION',
-        })
-      )
-        throw AppError.authorizationError;
+      if (!machine) throw AppError.machineNotFound;
 
-      destinationProduct =
-        productType === 'PRIZE'
-          ? user.stock?.prizes.find(p => p.id === productId)
-          : user.stock?.supplies.find(p => p.id === productId);
-
-      if (!destinationProduct) {
-        if (productType === 'PRIZE') {
-          user.stock?.prizes.push({
-            ...originProduct,
-            quantity: productQuantity,
-          });
-        } else {
-          user.stock?.supplies.push({
-            ...originProduct,
-            quantity: productQuantity,
-          });
-        }
+      if (user.role === Role.OPERATOR) {
+        if (machine.operatorId !== user.id) throw AppError.authorizationError;
       } else {
-        destinationProduct.quantity += productQuantity;
+        const groupUniverse = await getGroupUniverse(user);
+
+        if (
+          !isInGroupUniverse({
+            universe: groupUniverse,
+            groups: [machine.groupId],
+            method: 'INTERSECTION',
+          })
+        )
+          throw AppError.authorizationError;
       }
 
-      this.usersRepository.save(user);
+      if (!from.boxId) throw AppError.boxNotFound;
+
+      const box = machine.boxes.find(box => box.id === from.boxId);
+
+      if (!box) throw AppError.boxNotFound;
+
+      toProduct = box.prizes.find(p => p.id === productId);
+
+      if (!toProduct) {
+        box.prizes.push({
+          ...(fromProduct as Product),
+          quantity: productQuantity,
+        });
+      } else {
+        toProduct.quantity += productQuantity;
+      }
+
+      this.machinesRepository.save(machine);
     }
 
     await this.ormProvider.commit();

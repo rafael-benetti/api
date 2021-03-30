@@ -17,8 +17,8 @@ productsRoutes.post(
         groupId: Joi.string().uuid().required(),
         label: Joi.string().required(),
         type: Joi.string().valid('PRIZE', 'SUPPLY').required(),
-        quantity: Joi.number().positive().integer(),
-        cost: Joi.number().positive(),
+        quantity: Joi.number().integer().default(0),
+        cost: Joi.number().default(0),
       },
     },
     { abortEarly: false },
@@ -34,7 +34,7 @@ productsRoutes.post(
         groupId: Joi.string().uuid().required(),
         quantity: Joi.number().integer().required(),
         type: Joi.string().valid('PRIZE', 'SUPPLY').required(),
-        cost: Joi.number().positive().required(),
+        cost: Joi.number().required(),
       },
     },
     { abortEarly: false },
@@ -46,13 +46,26 @@ productsRoutes.post(
   '/:productId/transfer',
   celebrate({
     body: {
-      groupId: Joi.string().uuid(),
       productType: Joi.string().valid('PRIZE', 'SUPPLY').required(),
       productQuantity: Joi.number().integer().required(),
       cost: Joi.number(),
+      from: {
+        id: Joi.string().uuid().required(),
+        type: Joi.string().valid('GROUP', 'USER', 'MACHINE').required(),
+        boxId: Joi.when('type', {
+          is: true,
+          then: Joi.string().required(),
+          otherwise: Joi.forbidden(),
+        }),
+      },
       to: Joi.object({
         id: Joi.string().uuid().required(),
-        type: Joi.string().valid('GROUP', 'USER').required(),
+        type: Joi.string().valid('GROUP', 'USER', 'MACHINE').required(),
+        boxId: Joi.when('type', {
+          is: true,
+          then: Joi.string().required(),
+          otherwise: Joi.forbidden(),
+        }),
       }).required(),
     },
   }),

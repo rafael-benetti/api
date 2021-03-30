@@ -89,6 +89,18 @@ export default class AppError {
     statusCode: 409,
   });
 
+  static noTransfersBetweenOperators = new AppError({
+    errorCode: 'NO_TRANSFERS_BETWEEN_OPERATORS',
+    message: "You can't transfer to another operator",
+    statusCode: 409,
+  });
+
+  static noTransfersBetweenMachines = new AppError({
+    errorCode: 'NO_TRANSFERS_BETWEEN_MACHINES',
+    message: "You can't transfer to another machine",
+    statusCode: 409,
+  });
+
   static productNotFound = new AppError({
     errorCode: 'PRODUCT_NOT_FOUND',
     message: "Could not find the 'product'.",
@@ -122,6 +134,12 @@ export default class AppError {
   static machineNotFound = new AppError({
     errorCode: 'MACHINE_NOT_FOUND',
     message: "Could not find the 'machine'.",
+    statusCode: 404,
+  });
+
+  static boxNotFound = new AppError({
+    errorCode: 'BOX_NOT_FOUND',
+    message: 'We could not find this box',
     statusCode: 404,
   });
 

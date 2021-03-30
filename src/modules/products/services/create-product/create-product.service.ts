@@ -14,8 +14,8 @@ interface Request {
   groupId: string;
   label: string;
   type: 'PRIZE' | 'SUPPLY';
-  quantity?: number;
-  cost?: number;
+  quantity: number;
+  cost: number;
 }
 
 @injectable()
@@ -69,7 +69,7 @@ class CreateProductService {
     const product = {
       id: v4(),
       label,
-      quantity: quantity || 0,
+      quantity,
     };
 
     if (type === 'PRIZE') group.stock.prizes.push(product);
