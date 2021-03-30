@@ -1,9 +1,5 @@
-import CounterType from '../enums/counter-type';
-
 export default interface CreateCounterDto {
-  label: string;
-
-  type: CounterType;
+  counterTypeId: string;
 
   hasMechanical: boolean;
 

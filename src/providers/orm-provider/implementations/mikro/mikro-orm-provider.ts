@@ -4,6 +4,7 @@ import { MikroORM, RequestContext } from '@mikro-orm/core';
 import { MongoDriver, MongoEntityManager } from '@mikro-orm/mongodb';
 import MikroAdmin from '@modules/admins/implementations/mikro/models/mikro-admin';
 import MikroCategory from '@modules/categories/implementations/mikro/model/mikro-category';
+import MikroCounterType from '@modules/counter-types/implementations/mikro/models/mikro-counter-type';
 import MikroGroup from '@modules/groups/implementations/mikro/models/mikro-group';
 import MikroMachine from '@modules/machines/implementations/mikro/models/mikro-machine';
 import MikroPointOfSale from '@modules/points-of-sale/implementations/mikro/models/mikro-point-of-sale';
@@ -29,6 +30,7 @@ class MikroOrmProvider implements OrmProvider {
         MikroPointOfSale,
         MikroCategory,
         MikroRoute,
+        MikroCounterType,
       ],
       implicitTransactions: true,
       debug: true,

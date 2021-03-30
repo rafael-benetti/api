@@ -2,10 +2,10 @@ import Role from '@modules/users/contracts/enums/role';
 import UsersRepository from '@modules/users/contracts/repositories/users.repository';
 import AppError from '@shared/errors/app-error';
 import { inject, injectable } from 'tsyringe';
-import Type from '@modules/machines/contracts/enums/counter-type';
 import OrmProvider from '@providers/orm-provider/contracts/models/orm-provider';
 import CounterTypesRepository from '@modules/counter-types/contracts/repositories/couter-types.repository';
 import CounterType from '@modules/counter-types/contracts/models/counter-type';
+import Type from '@modules/counter-types/contracts/enums/type';
 
 interface Request {
   userId: string;
@@ -40,15 +40,16 @@ class CreateCounterTypeService {
     if (user.role === Role.MANAGER)
       if (!user.permissions?.editMachines) throw AppError.authorizationError;
 
-    const checkCounterTypeExists = await this.counterTypesRepository.findOne({
-      label,
-    });
-
-    if (checkCounterTypeExists) throw AppError.labelAlreadyInUsed;
-
     const ownerId = user.role === Role.OWNER ? user.id : user.ownerId;
 
     if (!ownerId) throw AppError.unknownError;
+
+    const checkCounterTypeExists = await this.counterTypesRepository.findOne({
+      label,
+      ownerId,
+    });
+
+    if (checkCounterTypeExists) throw AppError.labelAlreadyInUsed;
 
     const counterType = this.counterTypesRepository.create({
       label,

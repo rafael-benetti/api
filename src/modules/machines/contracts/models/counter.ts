@@ -1,12 +1,9 @@
 import CreateCounterDto from '../dtos/create-counter.dto';
-import CounterType from '../enums/counter-type';
 
 class Counter {
   id: string;
 
-  label: string;
-
-  type: CounterType;
+  counterTypeId: string;
 
   hasMechanical: boolean;
 
@@ -16,8 +13,7 @@ class Counter {
 
   constructor(data?: CreateCounterDto) {
     if (data) {
-      this.label = data.label;
-      this.type = data.type;
+      this.counterTypeId = data.counterTypeId;
       this.hasMechanical = data.hasMechanical;
       this.hasDigital = data.hasDigital;
       this.pin = data.pin;

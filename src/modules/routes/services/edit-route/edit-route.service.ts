@@ -7,6 +7,7 @@ import MachinesRepository from '@modules/machines/contracts/repositories/machine
 import AppError from '@shared/errors/app-error';
 import { inject, injectable } from 'tsyringe';
 import OrmProvider from '@providers/orm-provider/contracts/models/orm-provider';
+import PointsOfSaleRepository from '@modules/points-of-sale/contracts/repositories/points-of-sale.repository';
 
 interface Request {
   userId: string;
@@ -30,6 +31,9 @@ class EditRouteService {
 
     @inject('MachinesRepository')
     private machinesRepository: MachinesRepository,
+
+    @inject('PointsOfSaleRepository')
+    private pointsOfSaleRepository: PointsOfSaleRepository,
 
     @inject('OrmProvider')
     private ormProvider: OrmProvider,
@@ -141,6 +145,22 @@ class EditRouteService {
 
       if (groupIds.some(groupId => !operator?.groupIds?.includes(groupId)))
         throw AppError.authorizationError;
+    }
+
+    if (machineIds) {
+      const pointsOfSaleIds = [
+        ...new Set(machines.map(machine => machine.locationId)),
+      ];
+
+      const pointsOfSale = await this.pointsOfSaleRepository.find({
+        by: 'id',
+        value: pointsOfSaleIds,
+      });
+
+      pointsOfSale.forEach(pointOfSale => {
+        pointOfSale.routeId = route.id;
+        this.pointsOfSaleRepository.save(pointOfSale);
+      });
     }
 
     this.routesRepository.save(route);

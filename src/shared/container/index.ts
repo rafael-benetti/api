@@ -2,6 +2,8 @@ import AdminsRepository from '@modules/admins/contracts/repositories/admins.repo
 import MikroAdminsRepository from '@modules/admins/implementations/mikro/repositories/mikro-admins.repository';
 import CategoriesRepository from '@modules/categories/contracts/repositories/categories.repository';
 import MikroCategoriesRepository from '@modules/categories/implementations/mikro/repositories/mikro-categories.repositories';
+import CounterTypesRepository from '@modules/counter-types/contracts/repositories/couter-types.repository';
+import MikroCounterTypesRepository from '@modules/counter-types/implementations/mikro/repositories/mikro-counter-types.repository';
 import GroupsRepository from '@modules/groups/contracts/repositories/groups.repository';
 import MikroGroupsRepository from '@modules/groups/implementations/mikro/repositories/mikro-groups.repository';
 import MachinesRepository from '@modules/machines/contracts/repositories/machines.repository';
@@ -48,4 +50,9 @@ container.registerSingleton<MachinesRepository>(
 container.registerSingleton<RoutesRepository>(
   'RoutesRepository',
   MikroRoutesRepository,
+);
+
+container.registerSingleton<CounterTypesRepository>(
+  'CounterTypesRepository',
+  MikroCounterTypesRepository,
 );

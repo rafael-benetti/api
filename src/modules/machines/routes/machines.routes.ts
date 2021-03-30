@@ -21,8 +21,7 @@ machinesRouter.post(
       operatorId: Joi.string(),
       boxes: Joi.array().items({
         counters: Joi.array().items({
-          label: Joi.string().required(),
-          type: Joi.string().valid('IN', 'OUT').required(),
+          counterTypeId: Joi.string().required(),
           hasMechanical: Joi.boolean().required(),
           hasDigital: Joi.boolean().required(),
           pin: Joi.string().required(),
@@ -64,8 +63,7 @@ machinesRouter.put(
       boxes: Joi.array().items({
         id: Joi.string(),
         counters: Joi.array().items({
-          label: Joi.string().required(),
-          type: Joi.string().valid('IN', 'OUT').required(),
+          counterTypeId: Joi.string().required(),
           hasMechanical: Joi.boolean().required(),
           hasDigital: Joi.boolean().required(),
           pin: Joi.string().required(),
