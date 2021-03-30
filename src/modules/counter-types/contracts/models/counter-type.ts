@@ -1,4 +1,4 @@
-import Type from '@modules/machines/contracts/enums/counter-type';
+import Type from '../enums/type';
 
 class CounterType {
   id: string;

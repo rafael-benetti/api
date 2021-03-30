@@ -1,4 +1,3 @@
-import Prize from '@modules/users/contracts/models/prize';
 import { v4 } from 'uuid';
 import CreateBoxDto from '../dtos/create-box.dto';
 import Counter from './counter';
@@ -6,7 +5,7 @@ import Counter from './counter';
 class Box {
   id: string;
 
-  prizes: Prize[];
+  // prizes: Prize[];
 
   counters: Counter[];
 

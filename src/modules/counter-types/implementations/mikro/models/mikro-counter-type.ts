@@ -1,7 +1,7 @@
 import { Entity, PrimaryKey, Property } from '@mikro-orm/core';
 import CreateCounterTypeDto from '@modules/counter-types/contracts/dtos/create-counter-types.dto';
+import Type from '@modules/counter-types/contracts/enums/type';
 import CounterType from '@modules/counter-types/contracts/models/counter-type';
-import Type from '@modules/machines/contracts/enums/counter-type';
 import { v4 } from 'uuid';
 
 @Entity({ collection: 'counterType' })
