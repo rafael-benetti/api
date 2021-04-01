@@ -107,6 +107,12 @@ export default class AppError {
     statusCode: 404,
   });
 
+  static counterTypeNotFound = new AppError({
+    errorCode: 'COUNTER_TYPE_NOT_FOUND',
+    message: "Could not find the 'counter type'.",
+    statusCode: 404,
+  });
+
   static pointOfSaleNotFound = new AppError({
     errorCode: 'POINT_OF_SALE_NOT_FOUND',
     message: "Could not find the 'point of sale'.",

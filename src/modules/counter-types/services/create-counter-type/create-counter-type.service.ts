@@ -6,6 +6,7 @@ import OrmProvider from '@providers/orm-provider/contracts/models/orm-provider';
 import CounterTypesRepository from '@modules/counter-types/contracts/repositories/couter-types.repository';
 import CounterType from '@modules/counter-types/contracts/models/counter-type';
 import Type from '@modules/counter-types/contracts/enums/type';
+import logger from '@config/logger';
 
 interface Request {
   userId: string;
@@ -48,6 +49,8 @@ class CreateCounterTypeService {
       label,
       ownerId,
     });
+
+    logger.info(checkCounterTypeExists);
 
     if (checkCounterTypeExists) throw AppError.labelAlreadyInUsed;
 

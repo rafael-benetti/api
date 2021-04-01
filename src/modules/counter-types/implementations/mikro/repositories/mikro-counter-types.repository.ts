@@ -19,10 +19,14 @@ class MikroCounterTypesRepository implements CounterTypesRepository {
   }
 
   async findOne({
+    id,
     label,
+    ownerId,
   }: FindCounterTypesDto): Promise<CounterType | undefined> {
     const counterType = await this.repository.findOne({
-      label,
+      ...(id && { id }),
+      ...(label && { label }),
+      ...(ownerId && { ownerId }),
     });
 
     return counterType ? CounterTypeMapper.toEntity(counterType) : undefined;
