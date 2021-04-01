@@ -2,6 +2,6 @@ export default interface CreateRouteDto {
   label: string;
   operatorId: string;
   groupIds: string[];
-  machineIds: string[];
+  pointsOfSaleIds: string[];
   ownerId: string;
 }

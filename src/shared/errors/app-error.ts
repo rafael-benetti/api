@@ -17,6 +17,13 @@ export default class AppError {
     statusCode: 409,
   });
 
+  static machineBelongsToARoute = new AppError({
+    errorCode: 'MACHINE_BELONGS_TO_A_ROUTE',
+    message:
+      'You cannot change the operator of a machine that belongs to a route.',
+    statusCode: 400,
+  });
+
   static serialNumberAlreadyUsed = new AppError({
     errorCode: 'SERIAL_NUMBER_ALREADY_USED',
     message: 'This serial number is unavailable.',

@@ -13,7 +13,7 @@ class Box {
 
   constructor(data?: CreateBoxDto) {
     if (data) {
-      this.id = v4();
+      this.id = data.id || v4();
       this.numberOfPrizes = 0;
       this.currentMoney = 0;
       this.counters = data.counters;
