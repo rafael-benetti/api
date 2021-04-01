@@ -114,6 +114,12 @@ export default class AppError {
     statusCode: 404,
   });
 
+  static telemetryBoardNotFound = new AppError({
+    errorCode: 'TELEMETRY_BOARD_NOT_FOUND',
+    message: 'We could not find this telemetry board',
+    statusCode: 404,
+  });
+
   static counterTypeNotFound = new AppError({
     errorCode: 'COUNTER_TYPE_NOT_FOUND',
     message: "Could not find the 'counter type'.",
