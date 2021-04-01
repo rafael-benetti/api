@@ -3,6 +3,7 @@ import TelemetryBoard from '../entities/telemetry-board';
 
 interface TelemetryBoardsRepository {
   create(data: CreateTelemetryBoardDto): TelemetryBoard;
+  findById(id: string): Promise<TelemetryBoard | undefined>;
 }
 
 export default TelemetryBoardsRepository;
