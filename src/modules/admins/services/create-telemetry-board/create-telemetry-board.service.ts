@@ -8,6 +8,7 @@ import { inject, injectable } from 'tsyringe';
 
 interface Request {
   ownerId: string;
+  label: string;
 }
 
 @injectable()
@@ -23,7 +24,7 @@ class CreateTelemetryBoardService {
     private ormProvider: OrmProvider,
   ) {}
 
-  async execute({ ownerId }: Request): Promise<TelemetryBoard> {
+  async execute({ ownerId, label }: Request): Promise<TelemetryBoard> {
     const owner = await this.usersRepository.findOne({
       by: 'id',
       value: ownerId,
@@ -33,6 +34,7 @@ class CreateTelemetryBoardService {
 
     const telemetryBoard = this.telemetryBoardsRepository.create({
       ownerId,
+      label,
     });
 
     await this.ormProvider.commit();

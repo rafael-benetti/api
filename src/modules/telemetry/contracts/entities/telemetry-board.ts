@@ -6,6 +6,8 @@ class TelemetryBoard {
 
   ownerId: string;
 
+  label: string;
+
   machineId?: string;
 
   lastConnection?: Date;
@@ -18,6 +20,7 @@ class TelemetryBoard {
     if (data) {
       this.id = v4();
       this.ownerId = data.ownerId;
+      this.label = data.label;
     }
   }
 }
