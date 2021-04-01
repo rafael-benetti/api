@@ -99,7 +99,7 @@ class CreateMachineService {
 
     const boxesEntities = boxes.map(box => {
       const counters = box.counters.map(counter => new Counter(counter));
-      return new Box({ id: box.id, counters });
+      return new Box({ counters });
     });
 
     const counterTypeIds = [

@@ -19,14 +19,16 @@ machinesRouter.post(
       gameValue: Joi.number().positive().required(),
       locationId: Joi.string(),
       operatorId: Joi.string(),
-      boxes: Joi.array().items({
-        counters: Joi.array().items({
-          counterTypeId: Joi.string().required(),
-          hasMechanical: Joi.boolean().required(),
-          hasDigital: Joi.boolean().required(),
-          pin: Joi.string().required(),
+      boxes: Joi.array().items(
+        Joi.object({
+          counters: Joi.array().items({
+            counterTypeId: Joi.string().required(),
+            hasMechanical: Joi.boolean().required(),
+            hasDigital: Joi.boolean().required(),
+            pin: Joi.string().required(),
+          }),
         }),
-      }),
+      ),
     },
   }),
   CreateMachineController.handle,
