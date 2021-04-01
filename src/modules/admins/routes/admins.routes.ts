@@ -5,6 +5,7 @@ import { Router } from 'express';
 import AuthenticateAdminController from '../services/authenticate-admin/authenticate-admin.controller';
 import CreateAdminController from '../services/create-admin/create-admin.controller';
 import CreateOwnerController from '../services/create-owner/create-owner.controller';
+import CreateTelemetryBoardController from '../services/create-telemetry-board/create-telemetry-board.controller';
 import ListOwnersController from '../services/list-owners/list-owners.controller';
 
 const adminsRoutes = Router();
@@ -60,5 +61,15 @@ adminsRoutes.post(
 );
 
 adminsRoutes.get('/owners', ListOwnersController.handle);
+
+adminsRoutes.post(
+  '/telemetry-boards',
+  celebrate({
+    body: {
+      ownerId: Joi.string().uuid().required(),
+    },
+  }),
+  CreateTelemetryBoardController.handle,
+);
 
 export default adminsRoutes;

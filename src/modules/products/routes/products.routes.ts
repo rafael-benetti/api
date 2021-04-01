@@ -3,6 +3,7 @@ import { celebrate, Joi } from 'celebrate';
 import { Router } from 'express';
 import AddToStockController from '../services/add-to-stock/add-to-stock.controller.ts';
 import CreateProductController from '../services/create-product/create-product.controller';
+import DeleteProductController from '../services/delete-product/delete-product.controller';
 import TransferProductController from '../services/transfer-product/transfer-product.controller';
 
 const productsRoutes = Router();
@@ -51,18 +52,13 @@ productsRoutes.post(
       cost: Joi.number(),
       from: {
         id: Joi.string().uuid().required(),
-        type: Joi.string().valid('GROUP', 'USER', 'MACHINE').required(),
-        boxId: Joi.when('type', {
-          is: true,
-          then: Joi.string().required(),
-          otherwise: Joi.forbidden(),
-        }),
+        type: Joi.string().valid('GROUP', 'USER').required(),
       },
       to: Joi.object({
         id: Joi.string().uuid().required(),
         type: Joi.string().valid('GROUP', 'USER', 'MACHINE').required(),
         boxId: Joi.when('type', {
-          is: true,
+          is: 'MACHINE',
           then: Joi.string().required(),
           otherwise: Joi.forbidden(),
         }),
@@ -70,6 +66,20 @@ productsRoutes.post(
     },
   }),
   TransferProductController.handle,
+);
+
+productsRoutes.delete(
+  '/:productId',
+  celebrate({
+    body: {
+      productType: Joi.string().valid('PRIZE', 'SUPPLY').required(),
+      from: {
+        id: Joi.string().uuid().required(),
+        type: Joi.string().valid('GROUP', 'USER').required(),
+      },
+    },
+  }),
+  DeleteProductController.handle,
 );
 
 export default productsRoutes;

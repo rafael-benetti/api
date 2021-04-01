@@ -113,6 +113,13 @@ export default class AppError {
     statusCode: 404,
   });
 
+  static productInStock = new AppError({
+    errorCode: 'PRODUCT_IN_STOCK',
+    message:
+      'This product is still in stock. Remove all units before deleting the product',
+    statusCode: 409,
+  });
+
   static pointOfSaleNotFound = new AppError({
     errorCode: 'POINT_OF_SALE_NOT_FOUND',
     message: "Could not find the 'point of sale'.",

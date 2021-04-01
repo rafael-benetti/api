@@ -16,9 +16,8 @@ interface Request {
   productQuantity: number;
   cost?: number;
   from: {
-    type: 'GROUP' | 'USER' | 'MACHINE';
+    type: 'GROUP' | 'USER';
     id: string;
-    boxId?: string;
   };
   to: {
     type: 'GROUP' | 'USER' | 'MACHINE';
@@ -111,47 +110,6 @@ class TransferProductService {
       fromProduct.quantity -= productQuantity;
 
       this.groupsRepository.save(group);
-    }
-
-    if (from.type === 'MACHINE') {
-      const machine = await this.machinesRepository.findOne({
-        by: 'id',
-        value: from.id,
-      });
-
-      if (!machine) throw AppError.machineNotFound;
-
-      if (user.role === Role.OPERATOR) {
-        if (machine.operatorId !== user.id) throw AppError.authorizationError;
-      } else {
-        const groupUniverse = await getGroupUniverse(user);
-
-        if (
-          !isInGroupUniverse({
-            universe: groupUniverse,
-            groups: [machine.groupId],
-            method: 'INTERSECTION',
-          })
-        )
-          throw AppError.authorizationError;
-      }
-
-      if (!from.boxId) throw AppError.boxNotFound;
-
-      const box = machine.boxes.find(box => box.id === from.boxId);
-
-      if (!box) throw AppError.boxNotFound;
-
-      fromProduct = box.prizes.find(p => p.id === productId);
-
-      if (!fromProduct) throw AppError.productNotFound;
-
-      if (productQuantity > fromProduct.quantity)
-        throw AppError.insufficientProducts;
-
-      fromProduct.quantity -= productQuantity;
-
-      this.machinesRepository.save(machine);
     }
 
     if (to.type === 'USER') {
@@ -250,8 +208,6 @@ class TransferProductService {
     }
 
     if (to.type === 'MACHINE') {
-      if (from.type === 'MACHINE') throw AppError.noTransfersBetweenMachines;
-
       const machine = await this.machinesRepository.findOne({
         by: 'id',
         value: to.id,
@@ -276,22 +232,11 @@ class TransferProductService {
           throw AppError.authorizationError;
       }
 
-      if (!from.boxId) throw AppError.boxNotFound;
-
-      const box = machine.boxes.find(box => box.id === from.boxId);
+      const box = machine.boxes.find(box => box.id === to.boxId);
 
       if (!box) throw AppError.boxNotFound;
 
-      toProduct = box.prizes.find(p => p.id === productId);
-
-      if (!toProduct) {
-        box.prizes.push({
-          ...(fromProduct as Product),
-          quantity: productQuantity,
-        });
-      } else {
-        toProduct.quantity += productQuantity;
-      }
+      box.numberOfPrizes += productQuantity;
 
       this.machinesRepository.save(machine);
     }
