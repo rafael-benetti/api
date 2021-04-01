@@ -11,6 +11,9 @@ class MikroTelemetryBoard implements TelemetryBoard {
   @Property()
   ownerId: string;
 
+  @Property()
+  label: string;
+
   @Property({ unique: true })
   machineId?: string | undefined;
 
@@ -27,6 +30,7 @@ class MikroTelemetryBoard implements TelemetryBoard {
     if (data) {
       this.id = v4();
       this.ownerId = data.ownerId;
+      this.label = data.label;
     }
   }
 }

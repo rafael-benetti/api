@@ -67,6 +67,7 @@ adminsRoutes.post(
   celebrate({
     body: {
       ownerId: Joi.string().uuid().required(),
+      label: Joi.string().required(),
     },
   }),
   CreateTelemetryBoardController.handle,
