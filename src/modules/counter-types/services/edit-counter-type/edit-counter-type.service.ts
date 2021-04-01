@@ -53,7 +53,7 @@ class EditCounterTypeService {
       ownerId,
     });
 
-    if (checkLabelAlreadyExist?.id !== counterType.id)
+    if (checkLabelAlreadyExist && checkLabelAlreadyExist.id !== counterType.id)
       throw AppError.labelAlreadyInUsed;
 
     counterType.label = label;
