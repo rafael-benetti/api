@@ -25,7 +25,7 @@ class MikroRoute implements Route {
 
   constructor(data?: CreateRouteDto) {
     if (data) {
-      this.id = v4();
+      this.id = data.id || v4();
       this.label = data.label;
       this.pointsOfSaleIds = data.pointsOfSaleIds;
       this.operatorId = data.operatorId;

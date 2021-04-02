@@ -87,7 +87,7 @@ class EditRouteService {
       value: pointsOfSaleIds,
     });
 
-    if (pointsOfSale.length !== pointsOfSaleIds.length)
+    if (pointsOfSaleIds && pointsOfSale.length !== pointsOfSaleIds.length)
       throw AppError.pointOfSaleNotFound;
 
     if (label) {
