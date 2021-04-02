@@ -31,13 +31,14 @@ class MikroGroupsRepository implements GroupsRepository {
   }
 
   async find(data: FindGroupsDto): Promise<Group[]> {
-    const { ownerId, ids } = data.filters;
+    const { ownerId, isPersonal, ids } = data.filters;
 
     const query: {
       [key: string]: unknown;
     } = {};
 
     if (ownerId) query.ownerId = ownerId;
+    if (isPersonal !== undefined) query.isPersonal = isPersonal;
     if (ids) query.id = ids;
 
     const groups = await this.repository.find(

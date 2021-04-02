@@ -1,3 +1,4 @@
+import GroupsRepository from '@modules/groups/contracts/repositories/groups.repository';
 import TelemetryBoard from '@modules/telemetry/contracts/entities/telemetry-board';
 import TelemetryBoardsRepository from '@modules/telemetry/contracts/repositories/telemetry-boards.repository';
 import Role from '@modules/users/contracts/enums/role';
@@ -17,6 +18,9 @@ class CreateTelemetryBoardService {
     @inject('UsersRepository')
     private usersRepository: UsersRepository,
 
+    @inject('GroupsRepository')
+    private groupsRepository: GroupsRepository,
+
     @inject('TelemetryBoardsRepository')
     private telemetryBoardsRepository: TelemetryBoardsRepository,
 
@@ -32,8 +36,18 @@ class CreateTelemetryBoardService {
 
     if (!owner || owner.role !== Role.OWNER) throw AppError.authorizationError;
 
+    const personalGroup = await this.groupsRepository
+      .find({
+        filters: {
+          ownerId,
+          isPersonal: true,
+        },
+      })
+      .then(groups => groups[0]);
+
     const telemetryBoard = this.telemetryBoardsRepository.create({
       ownerId,
+      groupId: personalGroup.id,
       label,
     });
 
