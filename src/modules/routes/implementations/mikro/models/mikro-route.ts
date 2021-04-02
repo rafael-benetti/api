@@ -18,7 +18,7 @@ class MikroRoute implements Route {
   groupIds: string[];
 
   @Property()
-  machineIds: string[];
+  pointsOfSaleIds: string[];
 
   @Property()
   ownerId: string;
@@ -27,7 +27,7 @@ class MikroRoute implements Route {
     if (data) {
       this.id = v4();
       this.label = data.label;
-      this.machineIds = data.machineIds;
+      this.pointsOfSaleIds = data.pointsOfSaleIds;
       this.operatorId = data.operatorId;
       this.ownerId = data.ownerId;
       this.groupIds = data.groupIds;
