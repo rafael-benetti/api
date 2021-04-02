@@ -11,6 +11,7 @@ import AppError from '@shared/errors/app-error';
 import { inject, injectable } from 'tsyringe';
 import PointsOfSaleRepository from '@modules/points-of-sale/contracts/repositories/points-of-sale.repository';
 import CounterTypesRepository from '@modules/counter-types/contracts/repositories/couter-types.repository';
+import RoutesRepository from '@modules/routes/contracts/repositories/routes.repository';
 
 interface Request {
   userId: string;
@@ -48,6 +49,9 @@ class EditMachineService {
 
     @inject('CounterTypesRepository')
     private counterTypesRepository: CounterTypesRepository,
+
+    @inject('RoutesRepository')
+    private routesRepository: RoutesRepository,
   ) {}
 
   public async execute({
@@ -107,7 +111,16 @@ class EditMachineService {
         value: operatorId,
       });
 
-      if (!operator?.groupIds?.includes(groupId))
+      if (!operator) throw AppError.userNotFound;
+
+      const checkMachineRoute = await this.routesRepository.findOne({
+        machineIds: machineId,
+      });
+
+      if (checkMachineRoute && checkMachineRoute.operatorId !== operatorId)
+        throw AppError.machineBelongsToARoute;
+
+      if (!operator.groupIds?.includes(groupId))
         throw AppError.authorizationError;
 
       machine.operatorId = operatorId;

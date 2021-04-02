@@ -8,10 +8,11 @@ import AppError from '@shared/errors/app-error';
 import { inject, injectable } from 'tsyringe';
 import OrmProvider from '@providers/orm-provider/contracts/models/orm-provider';
 import PointsOfSaleRepository from '@modules/points-of-sale/contracts/repositories/points-of-sale.repository';
+import logger from '@config/logger';
 
 interface Request {
   userId: string;
-  machineIds: string[];
+  pointsOfSaleIds: string[];
   label: string;
   operatorId: string;
 }
@@ -41,7 +42,7 @@ class CreateRouteService {
   public async execute({
     userId,
     label,
-    machineIds,
+    pointsOfSaleIds,
     operatorId,
   }: Request): Promise<Route> {
     // Verificação de usuario existente
@@ -56,16 +57,20 @@ class CreateRouteService {
     if (user.role !== Role.MANAGER && user.role !== Role.OWNER)
       throw AppError.authorizationError;
 
-    const { machines } = await this.machinesRepository.find({
-      id: machineIds,
+    const pointsOfSale = await this.pointsOfSaleRepository.find({
+      by: 'id',
+      value: pointsOfSaleIds,
     });
 
-    if (machines.length !== machineIds.length) throw AppError.machineNotFound;
+    logger.info(pointsOfSaleIds);
+    logger.info(pointsOfSale);
 
-    if (machines.some(machine => !machine.locationId))
-      throw AppError.machineNotFound;
+    if (pointsOfSale.length !== pointsOfSaleIds.length)
+      throw AppError.pointOfSaleNotFound;
 
-    const groupIds = [...new Set(machines.map(machine => machine.groupId))];
+    const groupIds = [
+      ...new Set(pointsOfSale.map(pointOfSale => pointOfSale.groupId)),
+    ];
 
     if (user.role === Role.MANAGER) {
       if (!user.permissions?.createRoutes) throw AppError.authorizationError;
@@ -107,12 +112,6 @@ class CreateRouteService {
 
       if (!operator) throw AppError.userNotFound;
 
-      const checkOperatorAlreadyInRoute = await this.routesRepository.findOne({
-        operatorId: user.id,
-      });
-
-      if (checkOperatorAlreadyInRoute) throw AppError.unknownError;
-
       if (groupIds.some(groupId => !operator?.groupIds?.includes(groupId)))
         throw AppError.authorizationError;
     }
@@ -120,23 +119,23 @@ class CreateRouteService {
     const route = this.routesRepository.create({
       groupIds,
       label,
-      machineIds,
+      pointsOfSaleIds,
       operatorId,
       ownerId,
-    });
-
-    const pointsOfSaleIds = [
-      ...new Set(machines.map(machine => machine.locationId)),
-    ];
-
-    const pointsOfSale = await this.pointsOfSaleRepository.find({
-      by: 'id',
-      value: pointsOfSaleIds,
     });
 
     pointsOfSale.forEach(pointOfSale => {
       pointOfSale.routeId = route.id;
       this.pointsOfSaleRepository.save(pointOfSale);
+    });
+
+    const { machines } = await this.machinesRepository.find({
+      pointOfSaleId: pointsOfSaleIds,
+    });
+
+    machines.forEach(machine => {
+      machine.operatorId = operatorId;
+      this.machinesRepository.save(machine);
     });
 
     await this.ormProvider.commit();

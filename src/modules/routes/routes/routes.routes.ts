@@ -14,7 +14,7 @@ routesRouter.post(
   celebrate({
     body: {
       label: Joi.string().required(),
-      machineIds: Joi.array().items(Joi.string()).min(1).required(),
+      pointsOfSaleIds: Joi.array().items(Joi.string()).min(1),
       operatorId: Joi.string(),
     },
   }),
@@ -28,7 +28,7 @@ routesRouter.put(
   celebrate({
     body: {
       label: Joi.string(),
-      machineIds: Joi.array().items(Joi.string()).allow(null),
+      pointsOfSaleIds: Joi.array().items(Joi.string()).allow(null),
       operatorId: Joi.string().allow(null),
     },
   }),

@@ -1,4 +1,5 @@
 import AdminsRepository from '@modules/admins/contracts/repositories/admins.repository';
+import CounterTypesRepository from '@modules/counter-types/contracts/repositories/couter-types.repository';
 import GroupsRepository from '@modules/groups/contracts/repositories/groups.repository';
 import Role from '@modules/users/contracts/enums/role';
 import UsersRepository from '@modules/users/contracts/repositories/users.repository';
@@ -24,6 +25,9 @@ class CreateOwnerService {
 
     @inject('GroupsRepository')
     private groupsRepository: GroupsRepository,
+
+    @inject('CounterTypesRepository')
+    private counterTypesRepository: CounterTypesRepository,
 
     @inject('HashProvider')
     private hashProvider: HashProvider,
@@ -56,6 +60,30 @@ class CreateOwnerService {
 
     this.groupsRepository.create({
       isPersonal: true,
+      ownerId: user.id,
+    });
+
+    this.counterTypesRepository.create({
+      label: 'Moedeiro',
+      type: 'IN',
+      ownerId: user.id,
+    });
+
+    this.counterTypesRepository.create({
+      label: 'Noteiro',
+      type: 'IN',
+      ownerId: user.id,
+    });
+
+    this.counterTypesRepository.create({
+      label: 'Crédito',
+      type: 'IN',
+      ownerId: user.id,
+    });
+
+    this.counterTypesRepository.create({
+      label: 'Prêmio',
+      type: 'OUT',
       ownerId: user.id,
     });
 

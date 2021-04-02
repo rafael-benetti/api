@@ -5,7 +5,7 @@ export default interface FindMachinesDto {
   groupIds?: string[];
   categoryId?: string;
   routeId?: string;
-  pointOfSaleId?: string;
+  pointOfSaleId?: string | string[];
   serialNumber?: string;
   isActive?: boolean;
   limit?: number;

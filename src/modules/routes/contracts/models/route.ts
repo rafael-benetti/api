@@ -7,7 +7,7 @@ class Route {
 
   groupIds: string[];
 
-  machineIds: string[];
+  pointsOfSaleIds: string[];
 
   ownerId: string;
 }

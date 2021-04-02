@@ -14,7 +14,7 @@ interface Request {
   routeId: string;
   label?: string;
   operatorId?: string;
-  machineIds: string[];
+  pointsOfSaleIds: string[];
 }
 
 @injectable()
@@ -44,7 +44,7 @@ class EditRouteService {
     routeId,
     label,
     operatorId,
-    machineIds,
+    pointsOfSaleIds,
   }: Request): Promise<Route> {
     const user = await this.usersRepository.findOne({
       by: 'id',
@@ -82,15 +82,13 @@ class EditRouteService {
         throw AppError.authorizationError;
     }
 
-    const { machines } = await this.machinesRepository.find({
-      id: machineIds || route.machineIds,
+    const pointsOfSale = await this.pointsOfSaleRepository.find({
+      by: 'id',
+      value: pointsOfSaleIds,
     });
 
-    if (machineIds && machines.length !== machineIds.length)
-      throw AppError.machineNotFound;
-
-    if (machines.some(machine => !machine.locationId))
-      throw AppError.unknownError;
+    if (pointsOfSaleIds && pointsOfSale.length !== pointsOfSaleIds.length)
+      throw AppError.pointOfSaleNotFound;
 
     if (label) {
       const checkRouteExists = await this.routesRepository.findOne({
@@ -104,7 +102,9 @@ class EditRouteService {
     }
     const groupIds = [
       ...new Set(
-        machineIds ? machines.map(machine => machine.groupId) : route.groupIds,
+        pointsOfSaleIds
+          ? pointsOfSale.map(pointOfSale => pointOfSale.groupId)
+          : route.groupIds,
       ),
     ];
 
@@ -137,29 +137,25 @@ class EditRouteService {
 
       if (!operator) throw AppError.userNotFound;
 
-      const checkOperatorAlreadyInRoute = await this.routesRepository.findOne({
-        operatorId: user.id,
-      });
-
-      if (checkOperatorAlreadyInRoute) throw AppError.unknownError;
-
       if (groupIds.some(groupId => !operator?.groupIds?.includes(groupId)))
         throw AppError.authorizationError;
+
+      route.operatorId = operatorId;
     }
 
-    if (machineIds) {
-      const pointsOfSaleIds = [
-        ...new Set(machines.map(machine => machine.locationId)),
-      ];
-
-      const pointsOfSale = await this.pointsOfSaleRepository.find({
-        by: 'id',
-        value: pointsOfSaleIds,
-      });
-
+    if (pointsOfSaleIds) {
       pointsOfSale.forEach(pointOfSale => {
         pointOfSale.routeId = route.id;
         this.pointsOfSaleRepository.save(pointOfSale);
+      });
+
+      const { machines } = await this.machinesRepository.find({
+        pointOfSaleId: pointsOfSaleIds,
+      });
+
+      machines.forEach(machine => {
+        machine.operatorId = operatorId || route.operatorId;
+        this.machinesRepository.save(machine);
       });
     }
 
