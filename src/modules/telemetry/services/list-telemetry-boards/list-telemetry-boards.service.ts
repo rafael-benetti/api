@@ -3,7 +3,7 @@ import TelemetryBoardsRepository from '@modules/telemetry/contracts/repositories
 import Role from '@modules/users/contracts/enums/role';
 import UsersRepository from '@modules/users/contracts/repositories/users.repository';
 import AppError from '@shared/errors/app-error';
-import { injectable, inject } from 'tsyringe';
+import { inject, injectable } from 'tsyringe';
 
 interface Request {
   userId: string;

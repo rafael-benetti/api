@@ -55,6 +55,12 @@ class EditTelemetryBoardService {
     if (!group) throw AppError.groupNotFound;
 
     if (group.ownerId !== user.id) throw AppError.authorizationError;
+
+    telemetryBoard.groupId = group.id;
+
+    this.telemetryBoardsRepository.save(telemetryBoard);
+
+    return telemetryBoard;
   }
 }
 
