@@ -12,6 +12,8 @@ import PointsOfSaleRepository from '@modules/points-of-sale/contracts/repositori
 import MikroPointsOfSaleRepository from '@modules/points-of-sale/implementations/mikro/repositories/mikro-points-of-sale.repository';
 import RoutesRepository from '@modules/routes/contracts/repositories/routes.repository';
 import MikroRoutesRepository from '@modules/routes/implementations/mikro/repositories/mikro-routes.repository';
+import TelemetryBoardsRepository from '@modules/telemetry/contracts/repositories/telemetry-boards.repository';
+import MikroTelemetryBoardsRepository from '@modules/telemetry/implementations/mikro/repositories/mikro-telemetry-boards.repository';
 import UsersRepository from '@modules/users/contracts/repositories/users.repository';
 import MikroUsersRepository from '@modules/users/implementations/mikro/repositories/mikro-users.repository';
 import { container } from 'tsyringe';
@@ -55,4 +57,9 @@ container.registerSingleton<RoutesRepository>(
 container.registerSingleton<CounterTypesRepository>(
   'CounterTypesRepository',
   MikroCounterTypesRepository,
+);
+
+container.registerSingleton<TelemetryBoardsRepository>(
+  'TelemetryBoardsRepository',
+  MikroTelemetryBoardsRepository,
 );
