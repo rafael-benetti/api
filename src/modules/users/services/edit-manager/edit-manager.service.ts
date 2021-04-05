@@ -77,7 +77,6 @@ class EditManagerService {
         })
       )
         throw AppError.authorizationError;
-
       manager.groupIds = groupIds;
     }
 

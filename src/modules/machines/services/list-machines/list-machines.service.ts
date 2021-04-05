@@ -2,6 +2,7 @@ import GroupsRepository from '@modules/groups/contracts/repositories/groups.repo
 import FindMachinesDto from '@modules/machines/contracts/dtos/find-machines.dto';
 import Machine from '@modules/machines/contracts/models/machine';
 import MachinesRepository from '@modules/machines/contracts/repositories/machines.repository';
+import RoutesRepository from '@modules/routes/contracts/repositories/routes.repository';
 import Role from '@modules/users/contracts/enums/role';
 import UsersRepository from '@modules/users/contracts/repositories/users.repository';
 import AppError from '@shared/errors/app-error';
@@ -35,6 +36,9 @@ class ListMachinesService {
 
     @inject('GroupsRepository')
     private groupsRepository: GroupsRepository,
+
+    @inject('RoutesRepository')
+    private routesRepository: RoutesRepository,
   ) {}
 
   public async execute({
@@ -63,6 +67,19 @@ class ListMachinesService {
 
     if (user.role === Role.OPERATOR) filters.operatorId = user.id;
 
+    if (routeId) {
+      filters.routeId = routeId;
+      const route = await this.routesRepository.findOne({
+        id: routeId,
+      });
+
+      const machines = await this.machinesRepository.find({
+        pointOfSaleId: route?.pointsOfSaleIds,
+      });
+
+      filters.id = machines.machines.map(machine => machine.id);
+    }
+
     if (groupId) {
       if (!user.groupIds?.includes(groupId) && user.role !== Role.OWNER)
         throw AppError.authorizationError;
@@ -79,8 +96,8 @@ class ListMachinesService {
 
       filters.groupIds = [groupId];
     }
+
     filters.categoryId = categoryId;
-    filters.routeId = routeId;
     filters.pointOfSaleId = pointOfSaleId;
     filters.serialNumber = serialNumber;
     filters.limit = limit;

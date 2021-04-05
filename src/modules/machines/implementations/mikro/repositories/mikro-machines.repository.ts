@@ -34,7 +34,6 @@ class MikroMachinesRepository implements MachinesRepository {
     operatorId,
     categoryId,
     pointOfSaleId,
-    routeId,
     serialNumber,
     isActive,
     limit,
@@ -50,7 +49,6 @@ class MikroMachinesRepository implements MachinesRepository {
         ...(pointOfSaleId !== undefined && {
           locationId: pointOfSaleId === 'null' ? null : pointOfSaleId,
         }),
-        ...(routeId && { routeId }),
         ...(serialNumber && {
           serialNumber: new RegExp(serialNumber),
         }),
