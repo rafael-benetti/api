@@ -6,6 +6,7 @@ import machinesRoutes from '@modules/machines/routes/machines.routes';
 import pointsOfSaleRoutes from '@modules/points-of-sale/routes/points-of-sales.routes';
 import productsRoutes from '@modules/products/routes/products.routes';
 import routesRoutes from '@modules/routes/routes/routes.routes';
+import telemetryRoutes from '@modules/telemetry/routes/telemetry.routes';
 import usersRoutes from '@modules/users/routes/users.routes';
 import { Router } from 'express';
 
@@ -20,5 +21,6 @@ router.use('/categories', categoriesRoutes);
 router.use('/machines', machinesRoutes);
 router.use('/routes', routesRoutes);
 router.use('/counterTypes', counterTypesRoutes);
+router.use('/telemetry-boards', telemetryRoutes);
 
 export default router;
