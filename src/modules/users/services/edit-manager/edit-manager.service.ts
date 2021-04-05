@@ -69,7 +69,9 @@ class EditManagerService {
 
       const universe = await getGroupUniverse(user);
 
-      if (
+      console.log(groupIdsDiff)
+
+      if (groupIdsDiff.length > 0 &&
         !isInGroupUniverse({
           groups: groupIdsDiff,
           universe,
