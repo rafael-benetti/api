@@ -4,6 +4,7 @@ import ReceiveTelemetryMessageService from './receive-telemetry-message.service'
 
 abstract class ReceiveTelemetryMessageController {
   static handle: RequestHandler = async (req, res) => {
+    const { userId } = req;
     const { telemetryId } = req.params;
 
     const receiveTelemetryMessage = container.resolve(
@@ -11,6 +12,7 @@ abstract class ReceiveTelemetryMessageController {
     );
 
     await receiveTelemetryMessage.execute({
+      adminId: userId,
       telemetryId,
     });
 

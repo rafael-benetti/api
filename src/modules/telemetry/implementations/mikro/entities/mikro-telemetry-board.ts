@@ -17,7 +17,7 @@ class MikroTelemetryBoard implements TelemetryBoard {
   @Property()
   label: string;
 
-  @Property({ unique: true })
+  @Property()
   machineId?: string;
 
   @Property()
