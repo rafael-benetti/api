@@ -1,12 +1,11 @@
-interface FindGroupsDto {
+interface FindTelemetryBoardsDto {
   filters: {
-    ids?: string[];
+    groupIds?: string[];
     ownerId?: string;
-    isPersonal?: boolean;
   };
   limit?: number;
   offset?: number;
   populate?: string[];
 }
 
-export default FindGroupsDto;
+export default FindTelemetryBoardsDto;

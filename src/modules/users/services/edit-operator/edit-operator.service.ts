@@ -43,7 +43,7 @@ class EditOperatorService {
 
     if (!user) throw AppError.userNotFound;
 
-    if (user.role !== Role.OWNER && !user.permissions?.editOperators)
+    if (user.role !== Role.OWNER && !user.permissions?.createOperators)
       throw AppError.authorizationError;
 
     const operator = await this.usersRepository.findOne({

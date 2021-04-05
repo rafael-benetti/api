@@ -43,7 +43,7 @@ class EditManagerService {
 
     if (!user) throw AppError.userNotFound;
 
-    if (user.role !== Role.OWNER && !user.permissions?.editManagers)
+    if (user.role !== Role.OWNER && !user.permissions?.createManagers)
       throw AppError.authorizationError;
 
     const manager = await this.usersRepository.findOne({

@@ -9,8 +9,6 @@ class Machine {
 
   boxes: Box[];
 
-  // telemetryId: string; //TODO
-
   groupId: string;
 
   serialNumber: string;
