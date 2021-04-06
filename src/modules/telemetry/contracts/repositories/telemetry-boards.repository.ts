@@ -6,6 +6,7 @@ interface TelemetryBoardsRepository {
   create(data: CreateTelemetryBoardDto): TelemetryBoard;
   findById(id: string): Promise<TelemetryBoard | undefined>;
   find(data: FindTelemetryBoardsDto): Promise<TelemetryBoard[]>;
+  save(data: TelemetryBoard): void;
 }
 
 export default TelemetryBoardsRepository;

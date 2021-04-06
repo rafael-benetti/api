@@ -12,24 +12,28 @@ class MikroTelemetryBoard implements TelemetryBoard {
   ownerId: string;
 
   @Property()
+  groupId: string;
+
+  @Property()
   label: string;
 
-  @Property({ unique: true })
-  machineId?: string | undefined;
+  @Property()
+  machineId?: string;
 
   @Property()
-  lastConnection?: Date | undefined;
+  lastConnection?: Date;
 
   @Property()
-  connectionSignal?: string | undefined;
+  connectionSignal?: string;
 
   @Property()
-  connectionType?: string | undefined;
+  connectionType?: string;
 
   constructor(data?: CreateTelemetryBoardDto) {
     if (data) {
       this.id = v4();
       this.ownerId = data.ownerId;
+      this.groupId = data.groupId;
       this.label = data.label;
     }
   }
