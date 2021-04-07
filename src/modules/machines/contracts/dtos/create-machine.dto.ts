@@ -5,7 +5,7 @@ export default interface CreateMachineDto {
 
   boxes: Box[];
 
-  // telemetryId: string; //TODO
+  telemetryBoardId: string;
 
   groupId: string;
 

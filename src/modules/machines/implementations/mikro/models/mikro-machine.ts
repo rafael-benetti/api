@@ -19,6 +19,9 @@ class MikroMachine implements Machine {
   groupId: string;
 
   @Property()
+  telemetryBoardId: string;
+
+  @Property()
   serialNumber: string;
 
   @Property()
@@ -52,6 +55,7 @@ class MikroMachine implements Machine {
       this.ownerId = data.ownerId;
       this.categoryLabel = data.categoryLabel;
       this.isActive = data.isActive;
+      this.telemetryBoardId = data.telemetryBoardId;
     }
   }
 }
