@@ -158,6 +158,8 @@ class EditRouteService {
         machine.operatorId = operatorId || route.operatorId;
         this.machinesRepository.save(machine);
       });
+
+      route.pointsOfSaleIds = pointsOfSaleIds;
     }
 
     this.routesRepository.save(route);
