@@ -63,7 +63,7 @@ machinesRouter.put(
       operatorId: Joi.string(),
       groupId: Joi.string(),
       isActive: Joi.boolean(),
-      telemetryBoardId: Joi.string(),
+      telemetryBoardId: Joi.number(),
       boxes: Joi.array().items({
         id: Joi.string(),
         counters: Joi.array().items({
