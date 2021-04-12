@@ -148,6 +148,20 @@ class CreateMachineService {
         throw AppError.authorizationError;
     }
 
+    const machine = this.machinesRepository.create({
+      boxes: boxesEntities,
+      categoryId: category.id,
+      gameValue,
+      groupId,
+      locationId,
+      operatorId,
+      ownerId,
+      serialNumber,
+      categoryLabel: category.label,
+      isActive: true,
+      telemetryBoardId,
+    });
+
     if (telemetryBoardId) {
       const telemetryBoard = await this.telemetryBoardsRepository.findById(
         telemetryBoardId,
@@ -163,21 +177,11 @@ class CreateMachineService {
 
       if (user.role === Role.OWNER && telemetryBoard.ownerId !== user.id)
         throw AppError.authorizationError;
-    }
 
-    const machine = this.machinesRepository.create({
-      boxes: boxesEntities,
-      categoryId: category.id,
-      gameValue,
-      groupId,
-      locationId,
-      operatorId,
-      ownerId,
-      serialNumber,
-      categoryLabel: category.label,
-      isActive: true,
-      telemetryBoardId,
-    });
+      telemetryBoard.machineId = machine.id;
+
+      this.telemetryBoardsRepository.save(telemetryBoard);
+    }
 
     await this.ormProvider.commit();
 

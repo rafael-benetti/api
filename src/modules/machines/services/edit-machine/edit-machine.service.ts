@@ -226,6 +226,10 @@ class EditMachineService {
           throw AppError.authorizationError;
 
         machine.telemetryBoardId = telemetryBoardId;
+
+        telemetryBoard.machineId = machine.id;
+
+        this.telemetryBoardsRepository.save(telemetryBoard);
       }
     }
 
