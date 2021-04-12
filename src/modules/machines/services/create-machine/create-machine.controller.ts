@@ -13,6 +13,7 @@ abstract class CreateMachineController {
       locationId,
       operatorId,
       serialNumber,
+      telemetryBoardId,
     } = req.body;
 
     const createMachineService = container.resolve(CreateMachineService);
@@ -26,6 +27,7 @@ abstract class CreateMachineController {
       operatorId,
       serialNumber,
       userId,
+      telemetryBoardId,
     });
 
     return res.json(machine);
