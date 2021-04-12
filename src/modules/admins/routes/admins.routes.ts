@@ -64,12 +64,7 @@ adminsRoutes.get('/owners', ListOwnersController.handle);
 
 adminsRoutes.post(
   '/telemetry-boards',
-  celebrate({
-    body: {
-      ownerId: Joi.string().uuid().required(),
-      label: Joi.string().required(),
-    },
-  }),
+  CreateTelemetryBoardController.validate,
   CreateTelemetryBoardController.handle,
 );
 

@@ -12,13 +12,16 @@ class MikroTelemetryBoardsRepository implements TelemetryBoardsRepository {
     .resolve<MikroOrmProvider>('OrmProvider')
     .entityManager.getRepository(MikroTelemetryBoard);
 
-  create(data: CreateTelemetryBoardDto): TelemetryBoard {
+  async create(data: CreateTelemetryBoardDto): Promise<TelemetryBoard> {
+    const id = (await this.repository.count()) + 1;
     const telemetryBoard = new MikroTelemetryBoard(data);
+    telemetryBoard.id = id;
+
     this.repository.persist(telemetryBoard);
     return TelemetryBoardMapper.toApi(telemetryBoard);
   }
 
-  async findById(id: string): Promise<TelemetryBoard | undefined> {
+  async findById(id: number): Promise<TelemetryBoard | undefined> {
     const telemetryBoard = await this.repository.findOne({
       id,
     });
