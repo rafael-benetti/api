@@ -90,7 +90,7 @@ class EditRouteService {
     if (pointsOfSaleIds && pointsOfSale.length !== pointsOfSaleIds.length)
       throw AppError.pointOfSaleNotFound;
 
-    if (label) {
+    if (label && label !== route.label) {
       const checkRouteExists = await this.routesRepository.findOne({
         label,
         ownerId: route.ownerId,
@@ -100,6 +100,7 @@ class EditRouteService {
 
       route.label = label;
     }
+
     const groupIds = [
       ...new Set(
         pointsOfSaleIds
@@ -157,6 +158,8 @@ class EditRouteService {
         machine.operatorId = operatorId || route.operatorId;
         this.machinesRepository.save(machine);
       });
+
+      route.pointsOfSaleIds = pointsOfSaleIds;
     }
 
     this.routesRepository.save(route);

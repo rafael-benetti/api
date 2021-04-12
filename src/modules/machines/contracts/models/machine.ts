@@ -11,6 +11,8 @@ class Machine {
 
   groupId: string;
 
+  telemetryBoardId: string;
+
   serialNumber: string;
 
   gameValue: number;
