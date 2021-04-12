@@ -50,7 +50,7 @@ class MikroMachinesRepository implements MachinesRepository {
           locationId: pointOfSaleId === 'null' ? null : pointOfSaleId,
         }),
         ...(serialNumber && {
-          serialNumber: new RegExp(serialNumber),
+          serialNumber: new RegExp(serialNumber, 'i'),
         }),
         ...(isActive !== undefined && { isActive }),
       },

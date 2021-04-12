@@ -7,11 +7,11 @@ class Machine {
 
   categoryLabel: string;
 
-  boxes: Box[];
+  telemetryBoardId?: number | null;
 
   groupId: string;
 
-  telemetryBoardId: string;
+  boxes: Box[];
 
   serialNumber: string;
 

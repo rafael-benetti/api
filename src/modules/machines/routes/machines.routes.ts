@@ -19,7 +19,7 @@ machinesRouter.post(
       gameValue: Joi.number().positive().required(),
       locationId: Joi.string(),
       operatorId: Joi.string(),
-      telemetryBoardId: Joi.string(),
+      telemetryBoardId: Joi.number(),
       boxes: Joi.array().items(
         Joi.object({
           counters: Joi.array().items({
@@ -63,7 +63,7 @@ machinesRouter.put(
       operatorId: Joi.string(),
       groupId: Joi.string(),
       isActive: Joi.boolean(),
-      telemetryBoardId: Joi.string(),
+      telemetryBoardId: Joi.number(),
       boxes: Joi.array().items({
         id: Joi.string(),
         counters: Joi.array().items({

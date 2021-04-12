@@ -19,7 +19,7 @@ class MikroMachine implements Machine {
   groupId: string;
 
   @Property()
-  telemetryBoardId: string;
+  telemetryBoardId?: number | null;
 
   @Property()
   serialNumber: string;
