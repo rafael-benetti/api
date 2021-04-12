@@ -11,12 +11,13 @@ import AppError from '@shared/errors/app-error';
 import { inject, injectable } from 'tsyringe';
 import GroupsRepository from '@modules/groups/contracts/repositories/groups.repository';
 import CounterTypesRepository from '@modules/counter-types/contracts/repositories/couter-types.repository';
+import TelemetryBoardsRepository from '@modules/telemetry/contracts/repositories/telemetry-boards.repository';
 
 interface Request {
   userId: string;
   categoryId: string;
   boxes: Box[];
-  // telemetryId: string; //TODO
+  telemetryBoardId?: number;
   groupId: string;
   serialNumber: string;
   gameValue: number;
@@ -47,6 +48,9 @@ class CreateMachineService {
 
     @inject('GroupsRepository')
     private groupsRepository: GroupsRepository,
+
+    @inject('TelemetryBoardsRepository')
+    private telemetryBoardsRepository: TelemetryBoardsRepository,
   ) {}
 
   public async execute({
@@ -58,6 +62,7 @@ class CreateMachineService {
     locationId,
     operatorId,
     serialNumber,
+    telemetryBoardId,
   }: Request): Promise<Machine> {
     const user = await this.usersRepository.findOne({
       by: 'id',
@@ -143,6 +148,23 @@ class CreateMachineService {
         throw AppError.authorizationError;
     }
 
+    if (telemetryBoardId) {
+      const telemetryBoard = await this.telemetryBoardsRepository.findById(
+        telemetryBoardId,
+      );
+
+      if (!telemetryBoard) throw AppError.telemetryBoardNotFound;
+
+      if (
+        user.role === Role.MANAGER &&
+        !user.groupIds?.includes(telemetryBoard.groupId)
+      )
+        throw AppError.authorizationError;
+
+      if (user.role === Role.OWNER && telemetryBoard.ownerId !== user.id)
+        throw AppError.authorizationError;
+    }
+
     const machine = this.machinesRepository.create({
       boxes: boxesEntities,
       categoryId: category.id,
@@ -154,6 +176,7 @@ class CreateMachineService {
       serialNumber,
       categoryLabel: category.label,
       isActive: true,
+      telemetryBoardId,
     });
 
     await this.ormProvider.commit();

@@ -15,6 +15,7 @@ abstract class EditMachineController {
       operatorId,
       serialNumber,
       isActive,
+      telemetryBoardId,
     } = req.body;
 
     const editMachineService = container.resolve(EditMachineService);
@@ -30,6 +31,7 @@ abstract class EditMachineController {
       serialNumber,
       userId,
       isActive,
+      telemetryBoardId,
     });
 
     return res.json(machine);

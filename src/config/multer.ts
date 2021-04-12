@@ -3,7 +3,6 @@ import path from 'path';
 import crypto from 'crypto';
 import aws from 'aws-sdk';
 import multerS3 from 'multer-s3';
-import logger from './logger';
 
 const MAX_SIZE_TWO_MEGABYTES = 15 * 1024 * 1024;
 

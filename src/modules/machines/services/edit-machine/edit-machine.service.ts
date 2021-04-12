@@ -12,6 +12,7 @@ import { inject, injectable } from 'tsyringe';
 import PointsOfSaleRepository from '@modules/points-of-sale/contracts/repositories/points-of-sale.repository';
 import CounterTypesRepository from '@modules/counter-types/contracts/repositories/couter-types.repository';
 import RoutesRepository from '@modules/routes/contracts/repositories/routes.repository';
+import TelemetryBoardsRepository from '@modules/telemetry/contracts/repositories/telemetry-boards.repository';
 
 interface Request {
   userId: string;
@@ -24,6 +25,7 @@ interface Request {
   operatorId: string;
   serialNumber: string;
   isActive: boolean;
+  telemetryBoardId: number;
 }
 
 @injectable()
@@ -52,6 +54,9 @@ class EditMachineService {
 
     @inject('RoutesRepository')
     private routesRepository: RoutesRepository,
+
+    @inject('TelemetryBoardsRepository')
+    private telemetryBoardsRepository: TelemetryBoardsRepository,
   ) {}
 
   public async execute({
@@ -65,6 +70,7 @@ class EditMachineService {
     serialNumber,
     userId,
     isActive,
+    telemetryBoardId,
   }: Request): Promise<Machine> {
     const user = await this.usersRepository.findOne({
       by: 'id',
@@ -198,6 +204,29 @@ class EditMachineService {
         throw AppError.authorizationError;
 
       machine.boxes = boxesEntities;
+    }
+
+    if (telemetryBoardId !== undefined) {
+      if (telemetryBoardId === null) {
+        machine.telemetryBoardId = null;
+      } else if (telemetryBoardId !== machine.telemetryBoardId) {
+        const telemetryBoard = await this.telemetryBoardsRepository.findById(
+          telemetryBoardId,
+        );
+
+        if (!telemetryBoard) throw AppError.telemetryBoardNotFound;
+
+        if (
+          (user.role === Role.MANAGER || user.role === Role.OPERATOR) &&
+          !user.groupIds?.includes(telemetryBoard.groupId)
+        )
+          throw AppError.authorizationError;
+
+        if (user.role === Role.OWNER && telemetryBoard.ownerId !== user.id)
+          throw AppError.authorizationError;
+
+        machine.telemetryBoardId = telemetryBoardId;
+      }
     }
 
     this.machinesRepository.save(machine);

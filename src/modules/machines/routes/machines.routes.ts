@@ -19,7 +19,7 @@ machinesRouter.post(
       gameValue: Joi.number().positive().required(),
       locationId: Joi.string(),
       operatorId: Joi.string(),
-      telemetryBoardId: Joi.string(),
+      telemetryBoardId: Joi.number(),
       boxes: Joi.array().items(
         Joi.object({
           counters: Joi.array().items({
