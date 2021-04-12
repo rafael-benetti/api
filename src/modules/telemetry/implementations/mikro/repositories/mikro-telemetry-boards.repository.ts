@@ -3,14 +3,20 @@ import FindTelemetryBoardsDto from '@modules/telemetry/contracts/dtos/find-telem
 import TelemetryBoard from '@modules/telemetry/contracts/entities/telemetry-board';
 import TelemetryBoardsRepository from '@modules/telemetry/contracts/repositories/telemetry-boards.repository';
 import MikroOrmProvider from '@providers/orm-provider/implementations/mikro/mikro-orm-provider';
-import { container } from 'tsyringe';
+import { inject, injectable } from 'tsyringe';
 import MikroTelemetryBoard from '../entities/mikro-telemetry-board';
 import TelemetryBoardMapper from '../mappers/telemetry-board.mapper';
 
+@injectable()
 class MikroTelemetryBoardsRepository implements TelemetryBoardsRepository {
-  private repository = container
-    .resolve<MikroOrmProvider>('OrmProvider')
-    .entityManager.getRepository(MikroTelemetryBoard);
+  private repository = this.ormProvider.entityManager.getRepository(
+    MikroTelemetryBoard,
+  );
+
+  constructor(
+    @inject('OrmProvider')
+    private ormProvider: MikroOrmProvider,
+  ) {}
 
   async create(data: CreateTelemetryBoardDto): Promise<TelemetryBoard> {
     const id = (await this.repository.count()) + 1;

@@ -8,7 +8,7 @@ import { inject, injectable } from 'tsyringe';
 
 interface Request {
   userId: string;
-  telemetryId: string;
+  telemetryId: number;
   groupId: string;
 }
 

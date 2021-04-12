@@ -20,7 +20,7 @@ class MikroTelemetryBoard implements TelemetryBoard {
   lastConnection?: Date;
 
   @Property()
-  connectionSignal?: string;
+  connectionStrength?: string;
 
   @Property()
   connectionType?: string;
