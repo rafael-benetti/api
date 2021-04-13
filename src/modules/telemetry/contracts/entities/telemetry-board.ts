@@ -11,7 +11,7 @@ class TelemetryBoard {
 
   lastConnection?: Date;
 
-  connectionSignal?: string;
+  connectionStrength?: string;
 
   connectionType?: string;
 

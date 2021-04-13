@@ -1,3 +1,5 @@
+import MachinesRepository from '@modules/machines/contracts/repositories/machines.repository';
+import RoutesRepository from '@modules/routes/contracts/repositories/routes.repository';
 import Role from '@modules/users/contracts/enums/role';
 import Permissions from '@modules/users/contracts/models/permissions';
 import User from '@modules/users/contracts/models/user';
@@ -23,6 +25,12 @@ class EditOperatorService {
   constructor(
     @inject('UsersRepository')
     private usersRepository: UsersRepository,
+
+    @inject('RoutesRepository')
+    private routesRepository: RoutesRepository,
+
+    @inject('MachinesRepository')
+    private machinesRepository: MachinesRepository,
 
     @inject('OrmProvider')
     private ormProvider: OrmProvider,
@@ -59,23 +67,53 @@ class EditOperatorService {
       throw AppError.authorizationError;
 
     if (groupIds) {
-      const groupIdsDiff = groupIds
-        .filter(x => !operator.groupIds?.includes(x))
-        .concat(operator.groupIds?.filter(x => !groupIds.includes(x)) || []);
-
       const universe = await getGroupUniverse(user);
-
       if (
-        groupIdsDiff.length > 0 &&
         !isInGroupUniverse({
-          groups: groupIdsDiff,
+          groups: groupIds,
           universe,
           method: 'INTERSECTION',
         })
       )
         throw AppError.authorizationError;
 
-      operator.groupIds = groupIds;
+      const commonGroups = operator.groupIds?.filter(group =>
+        user.groupIds?.includes(group),
+      );
+
+      const deletedGroups = commonGroups?.filter(
+        group => !groupIds.includes(group),
+      );
+
+      const routesToDelete = await this.routesRepository.find({
+        operatorId: operator.id,
+        groupIds: deletedGroups,
+      });
+
+      routesToDelete.forEach(route => {
+        delete route.operatorId;
+
+        this.routesRepository.save(route);
+      });
+
+      const { machines: machinesToDelete } = await this.machinesRepository.find(
+        {
+          operatorId: operator.id,
+          groupIds: deletedGroups,
+        },
+      );
+
+      machinesToDelete.forEach(machine => {
+        delete machine.operatorId;
+
+        this.machinesRepository.save(machine);
+      });
+
+      const uncommonGroups = operator.groupIds?.filter(
+        group => !commonGroups?.includes(group),
+      );
+
+      operator.groupIds = [...groupIds, ...(uncommonGroups || [])];
     }
 
     if (permissions) {

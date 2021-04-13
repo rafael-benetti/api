@@ -1,4 +1,4 @@
-import GroupsRepository from '@modules/groups/contracts/repositories/groups.repository';
+import { randomBytes } from 'crypto';
 import Role from '@modules/users/contracts/enums/role';
 import Permissions from '@modules/users/contracts/models/permissions';
 import User from '@modules/users/contracts/models/user';
@@ -10,6 +10,8 @@ import AppError from '@shared/errors/app-error';
 import getGroupUniverse from '@shared/utils/get-group-universe';
 import isInGroupUniverse from '@shared/utils/is-in-group-universe';
 import { inject, injectable } from 'tsyringe';
+import MailProvider from '@providers/mail-provider/contracts/models/mail.provider';
+import signUpEmailTemplate from '@providers/mail-provider/templates/sign-up-email-template';
 
 interface Request {
   userId: string;
@@ -26,8 +28,8 @@ class CreateManagerService {
     @inject('UsersRepository')
     private usersRepository: UsersRepository,
 
-    @inject('GroupsRepository')
-    private groupsRepository: GroupsRepository,
+    @inject('MailProvider')
+    private mailProvider: MailProvider,
 
     @inject('HashProvider')
     private hashProvider: HashProvider,
@@ -80,9 +82,11 @@ class CreateManagerService {
 
     if (emailExists) throw AppError.emailAlreadyUsed;
 
+    const password = randomBytes(3).toString('hex');
+
     const manager = this.usersRepository.create({
       email,
-      password: this.hashProvider.hash('q1'),
+      password: this.hashProvider.hash(password),
       name,
       role: Role.MANAGER,
       groupIds,
@@ -94,6 +98,20 @@ class CreateManagerService {
       phoneNumber,
       isActive: true,
       ownerId: user.ownerId || user.id,
+    });
+
+    const mailData = signUpEmailTemplate({
+      receiverName: manager.name,
+      receiverEmail: manager.email,
+      password,
+    });
+
+    this.mailProvider.send({
+      receiverName: manager.name,
+      receiverEmail: manager.email,
+      subject: mailData.subject,
+      html: mailData.htmlBody,
+      text: mailData.plainText,
     });
 
     await this.ormProvider.commit();

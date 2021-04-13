@@ -3,12 +3,13 @@ import TelemetryBoard from '@modules/telemetry/contracts/entities/telemetry-boar
 import TelemetryBoardsRepository from '@modules/telemetry/contracts/repositories/telemetry-boards.repository';
 import Role from '@modules/users/contracts/enums/role';
 import UsersRepository from '@modules/users/contracts/repositories/users.repository';
+import OrmProvider from '@providers/orm-provider/contracts/models/orm-provider';
 import AppError from '@shared/errors/app-error';
 import { inject, injectable } from 'tsyringe';
 
 interface Request {
   userId: string;
-  telemetryId: string;
+  telemetryId: number;
   groupId: string;
 }
 
@@ -23,6 +24,9 @@ class EditTelemetryBoardService {
 
     @inject('GroupsRepository')
     private groupsRepository: GroupsRepository,
+
+    @inject('OrmProvider')
+    private ormProvider: OrmProvider,
   ) {}
 
   async execute({
@@ -45,6 +49,7 @@ class EditTelemetryBoardService {
 
     if (!telemetryBoard) throw AppError.telemetryBoardNotFound;
 
+    if (telemetryBoard.machineId) throw AppError.unknownError;
     if (telemetryBoard.ownerId !== user.id) throw AppError.authorizationError;
 
     const group = await this.groupsRepository.findOne({
@@ -59,6 +64,7 @@ class EditTelemetryBoardService {
     telemetryBoard.groupId = group.id;
 
     this.telemetryBoardsRepository.save(telemetryBoard);
+    await this.ormProvider.commit();
 
     return telemetryBoard;
   }
