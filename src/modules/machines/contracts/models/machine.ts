@@ -17,7 +17,7 @@ class Machine {
 
   gameValue: number;
 
-  operatorId: string;
+  operatorId?: string;
 
   locationId: string;
 

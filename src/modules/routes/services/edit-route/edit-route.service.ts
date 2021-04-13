@@ -131,17 +131,31 @@ class EditRouteService {
     }
 
     if (operatorId !== undefined) {
-      const operator = await this.usersRepository.findOne({
-        by: 'id',
-        value: operatorId,
-      });
+      if (operatorId === null && route.operatorId !== null) {
+        const { machines } = await this.machinesRepository.find({
+          operatorId: route.operatorId,
+          routeId: route.id,
+        });
 
-      if (!operator) throw AppError.userNotFound;
+        machines.forEach(machine => {
+          machine.operatorId = undefined;
+          this.machinesRepository.save(machine);
+        });
 
-      if (groupIds.some(groupId => !operator?.groupIds?.includes(groupId)))
-        throw AppError.authorizationError;
+        route.operatorId = undefined;
+      } else {
+        const operator = await this.usersRepository.findOne({
+          by: 'id',
+          value: operatorId,
+        });
 
-      route.operatorId = operatorId;
+        if (!operator) throw AppError.userNotFound;
+
+        if (groupIds.some(groupId => !operator?.groupIds?.includes(groupId)))
+          throw AppError.authorizationError;
+
+        route.operatorId = operatorId;
+      }
     }
 
     if (pointsOfSaleIds) {
