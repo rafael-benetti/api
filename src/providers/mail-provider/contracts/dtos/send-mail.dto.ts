@@ -1,7 +1,9 @@
 interface SendMailDto {
   receiverName: string;
   receiverEmail: string;
-  password: string;
+  subject: string;
+  html: string;
+  text: string;
 }
 
 export default SendMailDto;

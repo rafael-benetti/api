@@ -5,8 +5,8 @@ import MailProvider from '@providers/mail-provider/contracts/models/mail.provide
 
 class NodemailerMailProvider implements MailProvider {
   private transporter = createTransport({
-    host: 'smtp.gmail.com',
-    port: 587,
+    host: mailConfig.host,
+    port: mailConfig.port,
     auth: {
       user: mailConfig.user,
       pass: mailConfig.pass,
@@ -20,11 +20,12 @@ class NodemailerMailProvider implements MailProvider {
         address: mailConfig.user,
       },
       to: {
-        name: 'Nome',
-        address: data.to,
+        name: data.receiverName,
+        address: data.receiverEmail,
       },
       subject: data.subject,
-      html: data.body,
+      html: data.html,
+      text: data.text,
     });
   }
 }
