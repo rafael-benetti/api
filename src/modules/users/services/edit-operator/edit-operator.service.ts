@@ -59,23 +59,24 @@ class EditOperatorService {
       throw AppError.authorizationError;
 
     if (groupIds) {
-      const groupIdsDiff = groupIds
-        .filter(x => !operator.groupIds?.includes(x))
-        .concat(operator.groupIds?.filter(x => !groupIds.includes(x)) || []);
-
       const universe = await getGroupUniverse(user);
-
       if (
-        groupIdsDiff.length > 0 &&
         !isInGroupUniverse({
-          groups: groupIdsDiff,
+          groups: groupIds,
           universe,
           method: 'INTERSECTION',
         })
       )
         throw AppError.authorizationError;
 
-      operator.groupIds = groupIds;
+      const uncommonGroups = operator.groupIds?.filter(
+        group =>
+          !operator.groupIds
+            ?.filter(group => user.groupIds?.includes(group))
+            ?.includes(group),
+      );
+
+      operator.groupIds = [...groupIds, ...(uncommonGroups || [])];
     }
 
     if (permissions) {

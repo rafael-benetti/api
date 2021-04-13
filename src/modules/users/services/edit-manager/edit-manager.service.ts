@@ -43,7 +43,7 @@ class EditManagerService {
 
     if (!user) throw AppError.userNotFound;
 
-    if (user.role !== Role.OWNER && !user.permissions?.editManagers)
+    if (user.role !== Role.OWNER && !user.permissions?.createManagers)
       throw AppError.authorizationError;
 
     const manager = await this.usersRepository.findOne({
@@ -63,23 +63,24 @@ class EditManagerService {
       throw AppError.authorizationError;
 
     if (groupIds) {
-      const groupIdsDiff = groupIds
-        .filter(x => !manager.groupIds?.includes(x))
-        .concat(manager.groupIds?.filter(x => !groupIds.includes(x)) || []);
-
       const universe = await getGroupUniverse(user);
-
-      console.log(groupIdsDiff)
-
-      if (groupIdsDiff.length > 0 &&
+      if (
         !isInGroupUniverse({
-          groups: groupIdsDiff,
+          groups: groupIds,
           universe,
           method: 'INTERSECTION',
         })
       )
         throw AppError.authorizationError;
-      manager.groupIds = groupIds;
+
+      const uncommonGroups = manager.groupIds?.filter(
+        group =>
+          !manager.groupIds
+            ?.filter(group => user.groupIds?.includes(group))
+            ?.includes(group),
+      );
+
+      manager.groupIds = [...groupIds, ...(uncommonGroups || [])];
     }
 
     if (permissions) {
