@@ -3,7 +3,7 @@ class Route {
 
   label: string;
 
-  operatorId: string;
+  operatorId?: string;
 
   groupIds: string[];
 
