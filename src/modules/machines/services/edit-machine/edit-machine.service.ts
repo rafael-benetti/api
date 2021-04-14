@@ -209,14 +209,16 @@ class EditMachineService {
     }
 
     if (telemetryBoardId !== undefined) {
-      if (telemetryBoardId === null && machine.telemetryBoardId !== null) {
-        const { machines } = await this.machinesRepository.find({
-          telemetryBoardId: machine.telemetryBoardId,
-        });
-
-        machines.forEach(machine => {
-          delete machine.telemetryBoardId;
-        });
+      if (telemetryBoardId === null) {
+        if (machine.telemetryBoardId) {
+          const telemetry = await this.telemetryBoardsRepository.findById(
+            machine.telemetryBoardId,
+          );
+          if (telemetry) {
+            delete telemetry?.machineId;
+            this.telemetryBoardsRepository.save(telemetry);
+          }
+        }
 
         delete machine.telemetryBoardId;
       } else if (telemetryBoardId !== machine.telemetryBoardId) {
