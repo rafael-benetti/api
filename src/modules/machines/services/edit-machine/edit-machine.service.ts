@@ -237,16 +237,15 @@ class EditMachineService {
         if (user.role === Role.OWNER && telemetryBoard.ownerId !== user.id)
           throw AppError.authorizationError;
 
-        const machineWithOlfTelemetryId = await this.machinesRepository.findOne(
-          {
-            by: 'telemetryBoardId',
-            value: telemetryBoardId,
-          },
-        );
+        if (machine.telemetryBoardId) {
+          const oldTelemetry = await this.telemetryBoardsRepository.findById(
+            machine.telemetryBoardId,
+          );
 
-        if (machineWithOlfTelemetryId) {
-          delete machineWithOlfTelemetryId.telemetryBoardId;
-          this.machinesRepository.save(machineWithOlfTelemetryId);
+          if (oldTelemetry) {
+            delete oldTelemetry.machineId;
+            this.telemetryBoardsRepository.save(oldTelemetry);
+          }
         }
 
         machine.telemetryBoardId = telemetryBoardId;
