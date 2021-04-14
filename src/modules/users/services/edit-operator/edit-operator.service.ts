@@ -68,6 +68,7 @@ class EditOperatorService {
 
     if (groupIds) {
       const universe = await getGroupUniverse(user);
+
       if (
         !isInGroupUniverse({
           groups: groupIds,

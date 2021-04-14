@@ -1,6 +1,12 @@
 interface FindMachineDto {
-  by: 'id' | 'serialNumber' | 'ownerId' | 'groupId' | 'operatorId';
-  value: string | string[];
+  by:
+    | 'id'
+    | 'serialNumber'
+    | 'ownerId'
+    | 'groupId'
+    | 'operatorId'
+    | 'telemetryBoardId';
+  value: string | string[] | number;
   populate?: string[];
 }
 

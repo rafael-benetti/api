@@ -36,6 +36,7 @@ class MikroMachinesRepository implements MachinesRepository {
     pointOfSaleId,
     serialNumber,
     isActive,
+    telemetryBoardId,
     limit,
     offset,
   }: FindMachinesDto): Promise<{ machines: Machine[]; count: number }> {
@@ -45,6 +46,7 @@ class MikroMachinesRepository implements MachinesRepository {
         ...(operatorId && { operatorId }),
         ...(ownerId && { ownerId }),
         ...(groupIds && { groupId: groupIds }),
+        ...(telemetryBoardId && { telemetryBoardId }),
         ...(categoryId && { categoryId }),
         ...(pointOfSaleId !== undefined && {
           locationId: pointOfSaleId === 'null' ? null : pointOfSaleId,

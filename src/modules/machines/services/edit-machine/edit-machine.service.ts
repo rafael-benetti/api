@@ -207,8 +207,16 @@ class EditMachineService {
     }
 
     if (telemetryBoardId !== undefined) {
-      if (telemetryBoardId === null) {
-        machine.telemetryBoardId = null;
+      if (telemetryBoardId === null && machine.telemetryBoardId !== null) {
+        const { machines } = await this.machinesRepository.find({
+          telemetryBoardId: machine.telemetryBoardId,
+        });
+
+        machines.forEach(machine => {
+          delete machine.telemetryBoardId;
+        });
+
+        delete machine.telemetryBoardId;
       } else if (telemetryBoardId !== machine.telemetryBoardId) {
         const telemetryBoard = await this.telemetryBoardsRepository.findById(
           telemetryBoardId,
@@ -224,6 +232,18 @@ class EditMachineService {
 
         if (user.role === Role.OWNER && telemetryBoard.ownerId !== user.id)
           throw AppError.authorizationError;
+
+        const machineWithOlfTelemetryId = await this.machinesRepository.findOne(
+          {
+            by: 'telemetryBoardId',
+            value: telemetryBoardId,
+          },
+        );
+
+        if (machineWithOlfTelemetryId) {
+          delete machineWithOlfTelemetryId.telemetryBoardId;
+          this.machinesRepository.save(machineWithOlfTelemetryId);
+        }
 
         machine.telemetryBoardId = telemetryBoardId;
 
