@@ -111,28 +111,30 @@ class EditMachineService {
       machine.serialNumber = serialNumber;
     }
 
-    if (operatorId) {
-      const operator = await this.usersRepository.findOne({
-        by: 'id',
-        value: operatorId,
-      });
+    if (operatorId !== undefined) {
+      if (operatorId !== machine.operatorId && operatorId !== null) {
+        const operator = await this.usersRepository.findOne({
+          by: 'id',
+          value: operatorId,
+        });
 
-      if (!operator) throw AppError.userNotFound;
+        if (!operator) throw AppError.userNotFound;
 
-      const checkMachineRoute = await this.routesRepository.findOne({
-        machineIds: machineId,
-      });
+        const checkMachineRoute = await this.routesRepository.findOne({
+          machineIds: machineId,
+        });
 
-      if (checkMachineRoute && checkMachineRoute.operatorId !== operatorId)
-        throw AppError.machineBelongsToARoute;
+        if (checkMachineRoute && checkMachineRoute.operatorId !== operatorId)
+          throw AppError.machineBelongsToARoute;
 
-      if (!operator.groupIds?.includes(groupId))
-        throw AppError.authorizationError;
+        if (!operator.groupIds?.includes(groupId))
+          throw AppError.authorizationError;
 
-      machine.operatorId = operatorId;
+        machine.operatorId = operatorId;
+      } else if (operatorId === null) delete machine.operatorId;
     }
 
-    if (locationId) {
+    if (locationId !== undefined && locationId !== null) {
       const pointOfSale = await this.pointsOfSaleRepository.findOne({
         by: 'id',
         value: locationId,
