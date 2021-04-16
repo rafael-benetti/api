@@ -1,3 +1,4 @@
+import logger from '@config/logger';
 import MachinesRepository from '@modules/machines/contracts/repositories/machines.repository';
 import RoutesRepository from '@modules/routes/contracts/repositories/routes.repository';
 import Role from '@modules/users/contracts/enums/role';
@@ -68,6 +69,7 @@ class EditOperatorService {
 
     if (groupIds) {
       const universe = await getGroupUniverse(user);
+
       if (
         !isInGroupUniverse({
           groups: groupIds,
@@ -113,10 +115,17 @@ class EditOperatorService {
 
         this.machinesRepository.save(machine);
       });
+      let uncommonGroups;
+      if (user.role === Role.OWNER) {
+        uncommonGroups = operator.groupIds?.filter(
+          group =>
+            !operator.groupIds
+              ?.filter(group => user.groupIds?.includes(group))
+              ?.includes(group),
+        );
+      }
 
-      const uncommonGroups = operator.groupIds?.filter(
-        group => !commonGroups?.includes(group),
-      );
+      logger.info(uncommonGroups);
 
       operator.groupIds = [...groupIds, ...(uncommonGroups || [])];
     }

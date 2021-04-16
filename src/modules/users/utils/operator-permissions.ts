@@ -1,8 +1,8 @@
 const operatorPermissions = [
+  'addRemoteCredit',
+  'toggleMaintenanceMode',
   'editMachines',
   'deleteMachines',
-  'toggleMaintenanceMode',
-  'addRemoteCredit',
   'editCollections',
   'deleteCollections',
 ];

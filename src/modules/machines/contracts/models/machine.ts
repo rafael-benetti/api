@@ -7,7 +7,7 @@ class Machine {
 
   categoryLabel: string;
 
-  telemetryBoardId?: number | null;
+  telemetryBoardId?: number;
 
   groupId: string;
 

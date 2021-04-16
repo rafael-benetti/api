@@ -17,9 +17,9 @@ machinesRouter.post(
       categoryId: Joi.string().required(),
       groupId: Joi.string().required(),
       gameValue: Joi.number().positive().required(),
-      locationId: Joi.string(),
-      operatorId: Joi.string(),
-      telemetryBoardId: Joi.number(),
+      locationId: Joi.string().allow(null),
+      operatorId: Joi.string().allow(null),
+      telemetryBoardId: Joi.number().allow(null),
       boxes: Joi.array().items(
         Joi.object({
           counters: Joi.array().items({
@@ -59,11 +59,11 @@ machinesRouter.put(
       serialNumber: Joi.string(),
       categoryId: Joi.string(),
       gameValue: Joi.number().positive(),
-      locationId: Joi.string(),
-      operatorId: Joi.string(),
+      locationId: Joi.string().allow(null),
+      operatorId: Joi.string().allow(null),
       groupId: Joi.string(),
       isActive: Joi.boolean(),
-      telemetryBoardId: Joi.number(),
+      telemetryBoardId: Joi.number().allow(null),
       boxes: Joi.array().items({
         id: Joi.string(),
         counters: Joi.array().items({

@@ -111,28 +111,30 @@ class EditMachineService {
       machine.serialNumber = serialNumber;
     }
 
-    if (operatorId) {
-      const operator = await this.usersRepository.findOne({
-        by: 'id',
-        value: operatorId,
-      });
+    if (operatorId !== undefined) {
+      if (operatorId !== machine.operatorId && operatorId !== null) {
+        const operator = await this.usersRepository.findOne({
+          by: 'id',
+          value: operatorId,
+        });
 
-      if (!operator) throw AppError.userNotFound;
+        if (!operator) throw AppError.userNotFound;
 
-      const checkMachineRoute = await this.routesRepository.findOne({
-        machineIds: machineId,
-      });
+        const checkMachineRoute = await this.routesRepository.findOne({
+          machineIds: machineId,
+        });
 
-      if (checkMachineRoute && checkMachineRoute.operatorId !== operatorId)
-        throw AppError.machineBelongsToARoute;
+        if (checkMachineRoute && checkMachineRoute.operatorId !== operatorId)
+          throw AppError.machineBelongsToARoute;
 
-      if (!operator.groupIds?.includes(groupId))
-        throw AppError.authorizationError;
+        if (!operator.groupIds?.includes(groupId))
+          throw AppError.authorizationError;
 
-      machine.operatorId = operatorId;
+        machine.operatorId = operatorId;
+      } else if (operatorId === null) delete machine.operatorId;
     }
 
-    if (locationId) {
+    if (locationId !== undefined && locationId !== null) {
       const pointOfSale = await this.pointsOfSaleRepository.findOne({
         by: 'id',
         value: locationId,
@@ -208,7 +210,17 @@ class EditMachineService {
 
     if (telemetryBoardId !== undefined) {
       if (telemetryBoardId === null) {
-        machine.telemetryBoardId = null;
+        if (machine.telemetryBoardId) {
+          const telemetry = await this.telemetryBoardsRepository.findById(
+            machine.telemetryBoardId,
+          );
+          if (telemetry) {
+            delete telemetry?.machineId;
+            this.telemetryBoardsRepository.save(telemetry);
+          }
+        }
+
+        delete machine.telemetryBoardId;
       } else if (telemetryBoardId !== machine.telemetryBoardId) {
         const telemetryBoard = await this.telemetryBoardsRepository.findById(
           telemetryBoardId,
@@ -224,6 +236,17 @@ class EditMachineService {
 
         if (user.role === Role.OWNER && telemetryBoard.ownerId !== user.id)
           throw AppError.authorizationError;
+
+        if (machine.telemetryBoardId) {
+          const oldTelemetry = await this.telemetryBoardsRepository.findById(
+            machine.telemetryBoardId,
+          );
+
+          if (oldTelemetry) {
+            delete oldTelemetry.machineId;
+            this.telemetryBoardsRepository.save(oldTelemetry);
+          }
+        }
 
         machine.telemetryBoardId = telemetryBoardId;
 
