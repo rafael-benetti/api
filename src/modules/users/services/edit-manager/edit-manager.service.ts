@@ -55,11 +55,7 @@ class EditManagerService {
 
     if (manager.role !== Role.MANAGER) throw AppError.userNotFound;
 
-    if (user.role === Role.OWNER) {
-      if (manager.ownerId !== user.id) throw AppError.authorizationError;
-    } else if (
-      manager.groupIds?.every(groupId => !user.groupIds?.includes(groupId))
-    )
+    if (user.role === Role.OWNER && manager.ownerId !== user.id)
       throw AppError.authorizationError;
 
     if (groupIds) {
@@ -73,10 +69,15 @@ class EditManagerService {
       )
         throw AppError.authorizationError;
 
+      if (user.role !== Role.OWNER) {
+        if (manager.groupIds?.every(groupId => !universe.includes(groupId)))
+          throw AppError.authorizationError;
+      }
+
       const uncommonGroups = manager.groupIds?.filter(
         group =>
           !manager.groupIds
-            ?.filter(group => user.groupIds?.includes(group))
+            ?.filter(group => universe.includes(group))
             ?.includes(group),
       );
 
