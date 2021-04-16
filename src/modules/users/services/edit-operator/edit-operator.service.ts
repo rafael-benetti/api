@@ -64,11 +64,7 @@ class EditOperatorService {
 
     if (operator.role !== Role.OPERATOR) throw AppError.userNotFound;
 
-    if (user.role === Role.OWNER) {
-      if (operator.ownerId !== user.id) throw AppError.authorizationError;
-    } else if (
-      operator.groupIds?.every(groupId => !user.groupIds?.includes(groupId))
-    )
+    if (user.role === Role.OWNER && operator.ownerId !== user.id)
       throw AppError.authorizationError;
 
     if (groupIds) {
@@ -83,8 +79,13 @@ class EditOperatorService {
       )
         throw AppError.authorizationError;
 
+      if (user.role !== Role.OWNER) {
+        if (operator.groupIds?.every(groupId => !universe.includes(groupId)))
+          throw AppError.authorizationError;
+      }
+
       const commonGroups = operator.groupIds?.filter(group =>
-        user.groupIds?.includes(group),
+        universe.includes(group),
       );
 
       const deletedGroups = commonGroups?.filter(
