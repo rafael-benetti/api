@@ -98,7 +98,13 @@ class CreateOwnerService {
     });
 
     this.counterTypesRepository.create({
-      label: 'Crédito',
+      label: 'Cartão',
+      type: 'IN',
+      ownerId: user.id,
+    });
+
+    this.counterTypesRepository.create({
+      label: 'Crédito Remoto',
       type: 'IN',
       ownerId: user.id,
     });
