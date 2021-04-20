@@ -29,7 +29,7 @@ class ListPointsOfSaleService {
     groupId,
     limit,
     offset,
-  }: Request): Promise<PointOfSale[]> {
+  }: Request): Promise<{ count: number; pointsOfSale: PointOfSale[] }> {
     const user = await this.usersRepository.findOne({
       by: 'id',
       value: userId,
@@ -38,7 +38,7 @@ class ListPointsOfSaleService {
     if (!user) throw AppError.userNotFound;
 
     if (user.role === Role.OWNER) {
-      const pointsOfSale = await this.pointsOfSaleRepository.find({
+      const response = await this.pointsOfSaleRepository.find({
         by: 'ownerId',
         value: user.id,
         filters: {
@@ -49,17 +49,23 @@ class ListPointsOfSaleService {
         },
       });
 
-      return pointsOfSale;
+      return response;
     }
 
     if (user.groupIds) {
-      const pointsOfSale = await this.pointsOfSaleRepository.findByGroupIds(
-        user.groupIds,
-      );
-      return pointsOfSale;
+      const response = await this.pointsOfSaleRepository.find({
+        by: 'groupId',
+        value: user.groupIds,
+        filters: {
+          label,
+          limit,
+          offset,
+        },
+      });
+      return response;
     }
 
-    return [];
+    return { count: 0, pointsOfSale: [] };
   }
 }
 export default ListPointsOfSaleService;
