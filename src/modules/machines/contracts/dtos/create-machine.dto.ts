@@ -15,7 +15,7 @@ export default interface CreateMachineDto {
 
   gameValue: number;
 
-  operatorId: string;
+  operatorId?: string;
 
   locationId: string;
 
