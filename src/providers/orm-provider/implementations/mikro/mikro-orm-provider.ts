@@ -35,7 +35,7 @@ class MikroOrmProvider implements OrmProvider {
       ],
       implicitTransactions: true,
       debug: true,
-      ensureIndexes: true,
+      // ensureIndexes: true,
     });
 
     this.entityManager = orm.em;
