@@ -5,6 +5,14 @@ import UsersRepository from '@modules/users/contracts/repositories/users.reposit
 import AppError from '@shared/errors/app-error';
 import { inject, injectable } from 'tsyringe';
 
+interface Request {
+  userId: string;
+  groupId: string;
+  label: string;
+  limit: number;
+  offset: number;
+}
+
 @injectable()
 class ListPointsOfSaleService {
   constructor(
@@ -15,7 +23,13 @@ class ListPointsOfSaleService {
     private usersRepository: UsersRepository,
   ) {}
 
-  public async execute(userId: string): Promise<PointOfSale[]> {
+  public async execute({
+    userId,
+    label,
+    groupId,
+    limit,
+    offset,
+  }: Request): Promise<PointOfSale[]> {
     const user = await this.usersRepository.findOne({
       by: 'id',
       value: userId,
@@ -27,6 +41,12 @@ class ListPointsOfSaleService {
       const pointsOfSale = await this.pointsOfSaleRepository.find({
         by: 'ownerId',
         value: user.id,
+        filters: {
+          groupId,
+          limit,
+          label,
+          offset,
+        },
       });
 
       return pointsOfSale;

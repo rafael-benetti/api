@@ -48,6 +48,10 @@ class MikroOrmProvider implements OrmProvider {
     await this.entityManager.flush();
   }
 
+  async clear(): Promise<void> {
+    this.entityManager.clear();
+  }
+
   forkMiddleware: RequestHandler = (req, res, next) => {
     RequestContext.create(this.entityManager, next);
   };

@@ -1,3 +1,4 @@
+import logger from '@config/logger';
 import CreateUserDto from '@modules/users/contracts/dtos/create-user.dto';
 import FindUserDto from '@modules/users/contracts/dtos/find-user.dto';
 import FindUsersDto from '@modules/users/contracts/dtos/find-users.dto';
@@ -57,6 +58,7 @@ class MikroUsersRepository implements UsersRepository {
   save(data: User): void {
     const user = UserMapper.toOrm(data);
     this.repository.persist(user);
+    logger.info(user);
   }
 
   delete(data: User): void {

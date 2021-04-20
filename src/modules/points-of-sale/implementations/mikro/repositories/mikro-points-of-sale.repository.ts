@@ -33,8 +33,16 @@ class MikroPointsOfSaleRepository implements PointsOfSaleRepository {
     const pointsOfSale = await this.repository.find(
       {
         [data.by]: data.value,
+        ...(data.filters.groupId && { groupId: data.filters.groupId }),
+        ...(data.filters.label && {
+          label: new RegExp(data.filters.label, 'i'),
+        }),
       },
-      data.populate,
+      {
+        populate: data.populate,
+        offset: data.filters.offset,
+        limit: data.filters.limit,
+      },
     );
 
     return pointsOfSale.map(pointOfSale =>
