@@ -1,6 +1,7 @@
+import { v4 } from 'uuid';
 import CreateCounterDto from '../dtos/create-counter.dto';
 
-class Counter {
+export default class Counter {
   id: string;
 
   counterTypeId: string;
@@ -13,6 +14,7 @@ class Counter {
 
   constructor(data?: CreateCounterDto) {
     if (data) {
+      this.id = data.id || v4();
       this.counterTypeId = data.counterTypeId;
       this.hasMechanical = data.hasMechanical;
       this.hasDigital = data.hasDigital;
@@ -20,5 +22,3 @@ class Counter {
     }
   }
 }
-
-export default Counter;
