@@ -28,9 +28,12 @@ class MikroTelemetryBoardsRepository implements TelemetryBoardsRepository {
   }
 
   async findById(id: number): Promise<TelemetryBoard | undefined> {
-    const telemetryBoard = await this.repository.findOne({
-      id,
-    });
+    const telemetryBoard = await this.repository.findOne(
+      {
+        id,
+      },
+      ['machine'],
+    );
 
     return telemetryBoard
       ? TelemetryBoardMapper.toApi(telemetryBoard)
@@ -49,7 +52,7 @@ class MikroTelemetryBoardsRepository implements TelemetryBoardsRepository {
 
     const telemetryBoards = (await this.repository.find(
       { ...query },
-      { limit: data.limit, offset: data.offset, populate: data.populate },
+      { limit: data.limit, offset: data.offset, populate: ['machine'] },
     )) as MikroTelemetryBoard[];
 
     return telemetryBoards.map(board => TelemetryBoardMapper.toApi(board));
