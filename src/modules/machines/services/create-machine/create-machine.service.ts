@@ -79,7 +79,7 @@ class CreateMachineService {
       value: serialNumber,
     });
 
-    if (checkMachineExists) throw AppError.labelAlreadyInUsed;
+    if (checkMachineExists) throw AppError.serialNumberAlreadyUsed;
 
     if (user.role === Role.MANAGER) {
       if (!user.permissions?.createMachines) throw AppError.authorizationError;
