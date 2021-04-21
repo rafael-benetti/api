@@ -7,5 +7,5 @@ export default interface CreateCounterDto {
 
   hasDigital: boolean;
 
-  pin: string;
+  pin?: string;
 }

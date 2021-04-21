@@ -19,6 +19,10 @@ class TelemetryBoard {
     if (data) {
       this.ownerId = data.ownerId;
       this.groupId = data.groupId;
+      this.connectionStrength = data.connectionStrength;
+      this.connectionType = data.connectionType;
+      this.lastConnection = data.lastConnection;
+      this.machineId = data.machineId;
     }
   }
 }

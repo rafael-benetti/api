@@ -10,7 +10,7 @@ class MikroMachine implements Machine {
   id: string;
 
   @Property()
-  categoryId: string;
+  categoryId?: string;
 
   @Property()
   boxes: Box[];
@@ -28,7 +28,7 @@ class MikroMachine implements Machine {
   gameValue: number;
 
   @Property()
-  operatorId: string;
+  operatorId?: string;
 
   @Property()
   locationId: string;
@@ -41,6 +41,9 @@ class MikroMachine implements Machine {
 
   @Property()
   isActive: boolean;
+
+  @Property()
+  maintenance: boolean;
 
   constructor(data?: CreateMachineDto) {
     if (data) {
@@ -56,6 +59,7 @@ class MikroMachine implements Machine {
       this.categoryLabel = data.categoryLabel;
       this.isActive = data.isActive;
       this.telemetryBoardId = data.telemetryBoardId;
+      this.maintenance = false;
     }
   }
 }

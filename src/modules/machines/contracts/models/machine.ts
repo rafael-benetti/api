@@ -3,7 +3,7 @@ import Box from './box';
 class Machine {
   id: string;
 
-  categoryId: string;
+  categoryId?: string;
 
   categoryLabel: string;
 
@@ -24,6 +24,8 @@ class Machine {
   ownerId: string;
 
   isActive: boolean;
+
+  maintenance: boolean;
 }
 
 export default Machine;

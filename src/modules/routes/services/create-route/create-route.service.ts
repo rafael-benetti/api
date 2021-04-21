@@ -61,11 +61,13 @@ class CreateRouteService {
       value: pointsOfSaleIds,
     });
 
-    if (pointsOfSale.length !== pointsOfSaleIds.length)
+    if (pointsOfSale.pointsOfSale.length !== pointsOfSaleIds.length)
       throw AppError.pointOfSaleNotFound;
 
     const groupIds = [
-      ...new Set(pointsOfSale.map(pointOfSale => pointOfSale.groupId)),
+      ...new Set(
+        pointsOfSale.pointsOfSale.map(pointOfSale => pointOfSale.groupId),
+      ),
     ];
 
     if (user.role === Role.MANAGER) {

@@ -10,7 +10,8 @@ export default class Counter {
 
   hasDigital: boolean;
 
-  pin: string;
+  // TODO: FOI EDITADO PRA STRING|UNDEFINED POR CAUSA DO BANCO ANTIGO, ALGUNS CONTADORES ESTÃO COM O PIN NULL
+  pin?: string;
 
   constructor(data?: CreateCounterDto) {
     if (data) {
