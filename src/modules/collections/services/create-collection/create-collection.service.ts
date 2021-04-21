@@ -96,10 +96,6 @@ class CreateCollectionService {
     if (!machine) throw AppError.machineNotFound;
     if (!machine.locationId) throw AppError.productInStock;
 
-    machine.boxes.forEach(box => {
-      box.currentMoney = 0;
-    });
-
     if (user.role === Role.OPERATOR && machine.operatorId !== user.id)
       throw AppError.authorizationError;
 
@@ -138,6 +134,8 @@ class CreateCollectionService {
         const box = machine.boxes.find(box => box.id === boxCollection.boxId);
 
         if (!box) throw AppError.boxNotFound;
+
+        box.currentMoney = 0;
 
         await Promise.all(
           boxCollection.counterCollections.map(async counterCollection => {
@@ -180,6 +178,7 @@ class CreateCollectionService {
 
     this.collectionsRepository.save(collection);
     this.machinesRepository.save(machine);
+
     await this.ormProvider.commit();
 
     return collection;
