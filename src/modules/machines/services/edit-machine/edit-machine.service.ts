@@ -26,6 +26,7 @@ interface Request {
   serialNumber: string;
   isActive: boolean;
   telemetryBoardId: number;
+  maintenance: boolean;
 }
 
 @injectable()
@@ -71,6 +72,7 @@ class EditMachineService {
     userId,
     isActive,
     telemetryBoardId,
+    maintenance,
   }: Request): Promise<Machine> {
     const user = await this.usersRepository.findOne({
       by: 'id',
@@ -255,6 +257,8 @@ class EditMachineService {
         this.telemetryBoardsRepository.save(telemetryBoard);
       }
     }
+
+    if (maintenance !== undefined) machine.maintenance = maintenance;
 
     this.machinesRepository.save(machine);
 

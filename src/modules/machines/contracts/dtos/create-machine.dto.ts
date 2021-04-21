@@ -1,7 +1,7 @@
 import Box from '../models/box';
 
 export default interface CreateMachineDto {
-  categoryId: string;
+  categoryId?: string;
 
   boxes: Box[];
 
