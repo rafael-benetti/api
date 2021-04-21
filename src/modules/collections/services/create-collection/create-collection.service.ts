@@ -3,6 +3,7 @@ import Collection from '@modules/collections/contracts/entities/collection';
 import CollectionsRepository from '@modules/collections/contracts/repositories/collections.repository';
 import MachinesRepository from '@modules/machines/contracts/repositories/machines.repository';
 import RoutesRepository from '@modules/routes/contracts/repositories/routes.repository';
+import TelemetryLogsRepository from '@modules/telemetry-logs/contracts/repositories/telemetry-logs.repository';
 import Role from '@modules/users/contracts/enums/role';
 import Photo from '@modules/users/contracts/models/photo';
 import UsersRepository from '@modules/users/contracts/repositories/users.repository';
@@ -28,7 +29,7 @@ interface Request {
       photos: Photo[];
     }[];
   }[];
-  files: any[];
+  files?: any[];
 }
 
 @injectable()
@@ -45,6 +46,9 @@ class CreateCollectionService {
 
     @inject('StorageProvider')
     private storageProvider: StorageProvider,
+
+    @inject('TelemetryLogsRepository')
+    private telemetryLogsRepository: TelemetryLogsRepository,
 
     @inject('CollectionsRepository')
     private collectionsRepository: CollectionsRepository,
@@ -66,7 +70,7 @@ class CreateCollectionService {
       };
     } = {};
 
-    files.forEach(file => {
+    files?.forEach(file => {
       const [boxId, counterId] = file.fieldname.split(':');
 
       if (!boxId || !counterId) throw AppError.incorrectFilters;
@@ -92,10 +96,6 @@ class CreateCollectionService {
     if (!machine) throw AppError.machineNotFound;
     if (!machine.locationId) throw AppError.productInStock;
 
-    machine.boxes.forEach(box => {
-      box.currentMoney = 0;
-    });
-
     if (user.role === Role.OPERATOR && machine.operatorId !== user.id)
       throw AppError.authorizationError;
 
@@ -117,11 +117,25 @@ class CreateCollectionService {
       machineId,
     );
 
+    const telemetryLogs = await this.telemetryLogsRepository.find({
+      filters: {
+        date: {
+          startDate: previousCollection?.date,
+          endDate: new Date(),
+        },
+        machineId,
+        maintenance: false,
+        type: 'IN',
+      },
+    });
+
     await Promise.all(
       boxCollections.map(async boxCollection => {
         const box = machine.boxes.find(box => box.id === boxCollection.boxId);
 
         if (!box) throw AppError.boxNotFound;
+
+        box.currentMoney = 0;
 
         await Promise.all(
           boxCollection.counterCollections.map(async counterCollection => {
@@ -131,15 +145,21 @@ class CreateCollectionService {
 
             if (!counter) throw AppError.counterNotFound;
 
-            await Promise.all(
-              parsedFiles[box.id][counter.id].map(async file => {
-                const photo = await this.storageProvider.uploadFile(file);
+            counterCollection.telemetryCount = telemetryLogs
+              .map(log => log.value)
+              .reduce((a, b) => a + b, 0);
 
-                if (!counterCollection.photos) counterCollection.photos = [];
+            if (files) {
+              await Promise.all(
+                parsedFiles[box.id][counter.id].map(async file => {
+                  const photo = await this.storageProvider.uploadFile(file);
 
-                counterCollection.photos.push(photo);
-              }),
-            );
+                  if (!counterCollection.photos) counterCollection.photos = [];
+
+                  counterCollection.photos.push(photo);
+                }),
+              );
+            }
           }),
         );
       }),
@@ -158,6 +178,7 @@ class CreateCollectionService {
 
     this.collectionsRepository.save(collection);
     this.machinesRepository.save(machine);
+
     await this.ormProvider.commit();
 
     return collection;

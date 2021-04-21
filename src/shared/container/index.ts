@@ -2,7 +2,7 @@ import AdminsRepository from '@modules/admins/contracts/repositories/admins.repo
 import MikroAdminsRepository from '@modules/admins/implementations/mikro/repositories/mikro-admins.repository';
 import CategoriesRepository from '@modules/categories/contracts/repositories/categories.repository';
 import MikroCategoriesRepository from '@modules/categories/implementations/mikro/repositories/mikro-categories.repositories';
-import CollectionsRepository from '@modules/collections/contracts/repositories/collections-repository';
+import CollectionsRepository from '@modules/collections/contracts/repositories/collections.repository';
 import MikroCollectionsRepository from '@modules/collections/implementations/mikro/repositories/mikro-collections.repository';
 import CounterTypesRepository from '@modules/counter-types/contracts/repositories/couter-types.repository';
 import MikroCounterTypesRepository from '@modules/counter-types/implementations/mikro/repositories/mikro-counter-types.repository';
@@ -14,6 +14,8 @@ import PointsOfSaleRepository from '@modules/points-of-sale/contracts/repositori
 import MikroPointsOfSaleRepository from '@modules/points-of-sale/implementations/mikro/repositories/mikro-points-of-sale.repository';
 import RoutesRepository from '@modules/routes/contracts/repositories/routes.repository';
 import MikroRoutesRepository from '@modules/routes/implementations/mikro/repositories/mikro-routes.repository';
+import TelemetryLogsRepository from '@modules/telemetry-logs/contracts/repositories/telemetry-logs.repository';
+import MikroTelemetryLogsRepository from '@modules/telemetry-logs/implementations/mikro/repositories/mikro-telemetry-logs.repository';
 import TelemetryBoardsRepository from '@modules/telemetry/contracts/repositories/telemetry-boards.repository';
 import MikroTelemetryBoardsRepository from '@modules/telemetry/implementations/mikro/repositories/mikro-telemetry-boards.repository';
 import UsersRepository from '@modules/users/contracts/repositories/users.repository';
@@ -69,4 +71,9 @@ container.registerSingleton<TelemetryBoardsRepository>(
 container.registerSingleton<CollectionsRepository>(
   'CollectionsRepository',
   MikroCollectionsRepository,
+);
+
+container.registerSingleton<TelemetryLogsRepository>(
+  'TelemetryLogsRepository',
+  MikroTelemetryLogsRepository,
 );

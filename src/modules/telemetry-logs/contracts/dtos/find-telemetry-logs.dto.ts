@@ -1,11 +1,13 @@
 interface FindTelemetryLogsDto {
   filters: {
     machineId?: string;
-    startDate?: Date;
-    endDate?: Date;
+    date?: {
+      startDate?: Date;
+      endDate: Date;
+    };
+    maintenance?: boolean;
+    type?: 'IN' | 'OUT';
   };
-  limit?: number;
-  offset?: number;
 }
 
 export default FindTelemetryLogsDto;

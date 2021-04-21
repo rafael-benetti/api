@@ -1,7 +1,9 @@
 class TelemetryLog {
+  id: string;
+
   telemetryBoardId: string;
 
-  machineId: string;
+  machineId?: string;
 
   pointOfSaleId?: string;
 
@@ -14,6 +16,8 @@ class TelemetryLog {
   date: Date;
 
   pin: string;
+
+  type: 'IN' | 'OUT';
 
   maintenance: boolean;
 }
