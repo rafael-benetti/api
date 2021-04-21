@@ -2,6 +2,8 @@ import AdminsRepository from '@modules/admins/contracts/repositories/admins.repo
 import MikroAdminsRepository from '@modules/admins/implementations/mikro/repositories/mikro-admins.repository';
 import CategoriesRepository from '@modules/categories/contracts/repositories/categories.repository';
 import MikroCategoriesRepository from '@modules/categories/implementations/mikro/repositories/mikro-categories.repositories';
+import CollectionsRepository from '@modules/collections/contracts/repositories/collections-repository';
+import MikroCollectionsRepository from '@modules/collections/implementations/mikro/repositories/mikro-collections.repository';
 import CounterTypesRepository from '@modules/counter-types/contracts/repositories/couter-types.repository';
 import MikroCounterTypesRepository from '@modules/counter-types/implementations/mikro/repositories/mikro-counter-types.repository';
 import GroupsRepository from '@modules/groups/contracts/repositories/groups.repository';
@@ -62,4 +64,9 @@ container.registerSingleton<CounterTypesRepository>(
 container.registerSingleton<TelemetryBoardsRepository>(
   'TelemetryBoardsRepository',
   MikroTelemetryBoardsRepository,
+);
+
+container.registerSingleton<CollectionsRepository>(
+  'CollectionsRepository',
+  MikroCollectionsRepository,
 );

@@ -17,7 +17,7 @@ export default interface CreateMachineDto {
 
   operatorId?: string;
 
-  locationId: string;
+  locationId?: string;
 
   ownerId: string;
 

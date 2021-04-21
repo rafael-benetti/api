@@ -19,7 +19,7 @@ class Machine {
 
   operatorId?: string;
 
-  locationId: string;
+  locationId?: string;
 
   ownerId: string;
 

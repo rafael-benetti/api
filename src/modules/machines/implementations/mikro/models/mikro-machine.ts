@@ -28,10 +28,10 @@ class MikroMachine implements Machine {
   gameValue: number;
 
   @Property()
-  operatorId: string;
+  operatorId?: string;
 
   @Property()
-  locationId: string;
+  locationId?: string;
 
   @Property()
   ownerId: string;
