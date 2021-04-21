@@ -169,6 +169,12 @@ export default class AppError {
     statusCode: 404,
   });
 
+  static counterNotFound = new AppError({
+    errorCode: 'COUNTER_NOT_FOUND',
+    message: 'We could not find this counter',
+    statusCode: 404,
+  });
+
   static routeNotFound = new AppError({
     errorCode: 'ROUTE_NOT_FOUND',
     message: "Could not find the 'route'.",

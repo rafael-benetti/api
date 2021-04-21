@@ -1,5 +1,6 @@
 import adminsRoutes from '@modules/admins/routes/admins.routes';
 import categoriesRoutes from '@modules/categories/routes/categories.routes';
+import collectionsRoutes from '@modules/collections/routes/collections.routes';
 import counterTypesRoutes from '@modules/counter-types/routes/counter-types.routes';
 import groupsRoutes from '@modules/groups/routes/groups.routes';
 import machinesRoutes from '@modules/machines/routes/machines.routes';
@@ -22,5 +23,6 @@ router.use('/machines', machinesRoutes);
 router.use('/routes', routesRoutes);
 router.use('/counterTypes', counterTypesRoutes);
 router.use('/telemetry-boards', telemetryRoutes);
+router.use('/collections', collectionsRoutes);
 
 export default router;

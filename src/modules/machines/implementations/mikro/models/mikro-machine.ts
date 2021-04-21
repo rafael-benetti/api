@@ -31,7 +31,7 @@ class MikroMachine implements Machine {
   operatorId?: string;
 
   @Property()
-  locationId: string;
+  locationId?: string;
 
   @Property()
   ownerId: string;

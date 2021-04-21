@@ -1,4 +1,5 @@
-import { Entity, PrimaryKey, Property } from '@mikro-orm/core';
+import { Entity, OneToOne, PrimaryKey, Property } from '@mikro-orm/core';
+import MikroMachine from '@modules/machines/implementations/mikro/models/mikro-machine';
 import CreateTelemetryBoardDto from '@modules/telemetry/contracts/dtos/create-telemetry-board.dto';
 import TelemetryBoard from '@modules/telemetry/contracts/entities/telemetry-board';
 
@@ -15,6 +16,9 @@ class MikroTelemetryBoard implements TelemetryBoard {
 
   @Property()
   machineId?: string;
+
+  @OneToOne({ name: 'machineId' })
+  machine?: MikroMachine;
 
   @Property()
   lastConnection?: Date;

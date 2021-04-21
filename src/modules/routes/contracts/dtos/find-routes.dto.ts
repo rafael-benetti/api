@@ -3,7 +3,7 @@ export default interface FindRoutesDto {
   operatorId?: string;
   ownerId?: string;
   label?: string;
-  machineIds?: string | string[];
+  pointsOfSaleId?: string;
   groupIds?: string[];
   populate?: string[];
 }

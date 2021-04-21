@@ -49,7 +49,20 @@ class MikroTelemetryBoardsRepository implements TelemetryBoardsRepository {
 
     const telemetryBoards = (await this.repository.find(
       { ...query },
-      { limit: data.limit, offset: data.offset, populate: data.populate },
+      {
+        limit: data.limit,
+        offset: data.offset,
+        populate: ['machine'],
+        fields: [
+          'ownerId',
+          'groupId',
+          'machineId',
+          'machine.serialNumber',
+          'lastConnection',
+          'connectionStrength',
+          'connectionType',
+        ],
+      },
     )) as MikroTelemetryBoard[];
 
     return telemetryBoards.map(board => TelemetryBoardMapper.toApi(board));
