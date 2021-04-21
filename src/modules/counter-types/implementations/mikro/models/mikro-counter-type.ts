@@ -4,7 +4,7 @@ import Type from '@modules/counter-types/contracts/enums/type';
 import CounterType from '@modules/counter-types/contracts/models/counter-type';
 import { v4 } from 'uuid';
 
-@Entity({ collection: 'counterType' })
+@Entity({ collection: 'counter-types' })
 class MikroCounterType implements CounterType {
   @PrimaryKey({ fieldName: '_id' })
   id: string;

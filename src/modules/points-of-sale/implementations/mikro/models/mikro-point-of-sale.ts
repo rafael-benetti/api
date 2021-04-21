@@ -4,7 +4,7 @@ import Address from '@modules/points-of-sale/contracts/models/address';
 import PointOfSale from '@modules/points-of-sale/contracts/models/point-of-sale';
 import { v4 } from 'uuid';
 
-@Entity({ collection: 'pointsOfSale' })
+@Entity({ collection: 'points-of-sale' })
 class MikroPointOfSale implements PointOfSale {
   @PrimaryKey({ fieldName: '_id' })
   id: string;

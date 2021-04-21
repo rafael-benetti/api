@@ -172,7 +172,7 @@ class EditMachineService {
       machine.groupId = groupId;
     }
 
-    if (isActive !== undefined) machine.isActive = isActive;
+    if (isActive !== undefined) machine.isActive = isActive; // TODO REMOVER O TELEMETRY BOARD
 
     if (categoryId) {
       const category = await this.categoriesRepository.findOne({
