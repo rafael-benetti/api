@@ -16,9 +16,9 @@ export default abstract class CreateCollectionController {
               .items(
                 Joi.object({
                   counterId: Joi.string().required(),
-                  mechanicalCount: Joi.number().required(),
-                  digitalCount: Joi.number().required(),
-                  userCount: Joi.number().required(),
+                  mechanicalCount: Joi.number(),
+                  digitalCount: Joi.number(),
+                  userCount: Joi.number(),
                 }),
               )
               .required(),
