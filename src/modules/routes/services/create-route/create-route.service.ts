@@ -56,18 +56,16 @@ class CreateRouteService {
     if (user.role !== Role.MANAGER && user.role !== Role.OWNER)
       throw AppError.authorizationError;
 
-    const pointsOfSale = await this.pointsOfSaleRepository.find({
+    const { pointsOfSale } = await this.pointsOfSaleRepository.find({
       by: 'id',
       value: pointsOfSaleIds,
     });
 
-    if (pointsOfSale.pointsOfSale.length !== pointsOfSaleIds.length)
+    if (pointsOfSale.length !== pointsOfSaleIds.length)
       throw AppError.pointOfSaleNotFound;
 
     const groupIds = [
-      ...new Set(
-        pointsOfSale.pointsOfSale.map(pointOfSale => pointOfSale.groupId),
-      ),
+      ...new Set(pointsOfSale.map(pointOfSale => pointOfSale.groupId)),
     ];
 
     if (user.role === Role.MANAGER) {

@@ -150,15 +150,17 @@ class CreateCollectionService {
               .reduce((a, b) => a + b, 0);
 
             if (files && files.length > 0) {
-              await Promise.all(
-                parsedFiles[box.id][counter.id].map(async file => {
-                  const photo = await this.storageProvider.uploadFile(file);
+              if (parsedFiles[box.id] && parsedFiles[box.id][counter.id])
+                await Promise.all(
+                  parsedFiles[box.id][counter.id].map(async file => {
+                    const photo = await this.storageProvider.uploadFile(file);
 
-                  if (!counterCollection.photos) counterCollection.photos = [];
+                    if (!counterCollection.photos)
+                      counterCollection.photos = [];
 
-                  counterCollection.photos.push(photo);
-                }),
-              );
+                    counterCollection.photos.push(photo);
+                  }),
+                );
             }
           }),
         );
