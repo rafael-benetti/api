@@ -31,8 +31,10 @@ export default class MikroCollectionsRepository
     return collection ? CollectionsMapper.map(collection) : undefined;
   }
 
-  async find(data: FindCollectionsDto): Promise<Collection[]> {
-    const collections = await this.repository.find(
+  async find(
+    data: FindCollectionsDto,
+  ): Promise<{ collections: Collection[]; count: number }> {
+    const [collections, count] = await this.repository.findAndCount(
       {
         groupId: {
           $in: data.groupIds,
@@ -45,7 +47,12 @@ export default class MikroCollectionsRepository
       },
     );
 
-    return collections.map(collection => CollectionsMapper.map(collection));
+    return {
+      collections: collections.map(collection =>
+        CollectionsMapper.map(collection),
+      ),
+      count,
+    };
   }
 
   save(data: Collection): void {
