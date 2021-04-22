@@ -1,7 +1,9 @@
-import { Entity, PrimaryKey, Property } from '@mikro-orm/core';
+import { Entity, OneToOne, PrimaryKey, Property } from '@mikro-orm/core';
 import CreateMachineDto from '@modules/machines/contracts/dtos/create-machine.dto';
 import Box from '@modules/machines/contracts/models/box';
 import Machine from '@modules/machines/contracts/models/machine';
+import TelemetryBoard from '@modules/telemetry/contracts/entities/telemetry-board';
+import MikroTelemetryBoard from '@modules/telemetry/implementations/mikro/entities/mikro-telemetry-board';
 import { v4 } from 'uuid';
 
 @Entity({ collection: 'machines' })
@@ -20,6 +22,15 @@ class MikroMachine implements Machine {
 
   @Property()
   telemetryBoardId?: number;
+
+  @OneToOne(
+    () => MikroTelemetryBoard,
+    mikroTelemetryBoard => mikroTelemetryBoard.machine,
+    {
+      name: 'telemetryBoardId',
+    },
+  )
+  telemetryBoard?: MikroTelemetryBoard;
 
   @Property()
   serialNumber: string;

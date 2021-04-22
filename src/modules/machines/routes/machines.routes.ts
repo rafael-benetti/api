@@ -3,6 +3,7 @@ import { celebrate, Joi } from 'celebrate';
 import { Router } from 'express';
 import CreateMachineController from '../services/create-machine/create-machine.controller';
 import EditMachineController from '../services/edit-machine/edit-machine.controller';
+import GetMachineDetailsController from '../services/get-machine-details/get-machine-details.controller';
 import ListMachinesController from '../services/list-machines/list-machines.controller';
 
 const machinesRouter = Router();
@@ -51,6 +52,8 @@ machinesRouter.get(
   }),
   ListMachinesController.handle,
 );
+
+machinesRouter.get('/:machineId', GetMachineDetailsController.handle);
 
 machinesRouter.put(
   '/:machineId',

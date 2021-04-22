@@ -3,6 +3,7 @@ import { celebrate, Joi } from 'celebrate';
 import { Router } from 'express';
 import CreatePointOfSaleController from '../services/create-point-of-sale/create-point-of-sale.controller';
 import EditPointOfSaleController from '../services/edit-point-of-sale/edit-point-of-sale.controller';
+import GetPointOfSaleDetailsController from '../services/get-point-of-sale-details/get-point-of-sale-details.controller';
 import ListPointsOfSaleController from '../services/list-points-of-sale/list-points-of-sale.controller';
 
 const pointsOfSaleRoutes = Router();
@@ -56,5 +57,10 @@ pointsOfSaleRoutes.patch(
 );
 
 pointsOfSaleRoutes.get('/', ListPointsOfSaleController.handle);
+
+pointsOfSaleRoutes.get(
+  '/:pointOfSaleId',
+  GetPointOfSaleDetailsController.handle,
+);
 
 export default pointsOfSaleRoutes;

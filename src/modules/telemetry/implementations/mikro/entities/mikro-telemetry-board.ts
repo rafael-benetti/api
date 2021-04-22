@@ -17,7 +17,11 @@ class MikroTelemetryBoard implements TelemetryBoard {
   @Property()
   machineId?: string;
 
-  @OneToOne({ name: 'machineId' })
+  @OneToOne(() => MikroMachine, mikroMachine => mikroMachine.telemetryBoard, {
+    owner: true,
+    orphanRemoval: true,
+    name: 'machineId',
+  })
   machine?: MikroMachine;
 
   @Property()
