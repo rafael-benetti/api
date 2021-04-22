@@ -1,5 +1,7 @@
-import { Entity, PrimaryKey, Property } from '@mikro-orm/core';
+import { Collection, Entity, PrimaryKey, Property } from '@mikro-orm/core';
+import MikroPointOfSale from '@modules/points-of-sale/implementations/mikro/models/mikro-point-of-sale';
 import CreateRouteDto from '@modules/routes/contracts/dtos/create-route.dto';
+import { OneToMany } from 'typeorm';
 import { v4 } from 'uuid';
 import Route from '../../../contracts/models/route';
 

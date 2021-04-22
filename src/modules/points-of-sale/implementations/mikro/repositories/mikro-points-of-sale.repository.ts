@@ -41,7 +41,6 @@ class MikroPointsOfSaleRepository implements PointsOfSaleRepository {
         }),
       },
       {
-        populate: data.populate,
         offset: data.filters?.offset,
         limit: data.filters?.limit,
       },

@@ -1,10 +1,13 @@
+import Machine from '@modules/machines/contracts/models/machine';
 import MachinesRepository from '@modules/machines/contracts/repositories/machines.repository';
-import PointOfSale from '@modules/points-of-sale/contracts/models/point-of-sale';
 import PointsOfSaleRepository from '@modules/points-of-sale/contracts/repositories/points-of-sale.repository';
+import Route from '@modules/routes/contracts/models/route';
+import RoutesRepository from '@modules/routes/contracts/repositories/routes.repository';
+import TelemetryLogsRepository from '@modules/telemetry-logs/contracts/repositories/telemetry-logs.repository';
 import Role from '@modules/users/contracts/enums/role';
 import UsersRepository from '@modules/users/contracts/repositories/users.repository';
-import OrmProvider from '@providers/orm-provider/contracts/models/orm-provider';
 import AppError from '@shared/errors/app-error';
+import { startOfMonth } from 'date-fns';
 import { inject, injectable } from 'tsyringe';
 
 interface Request {
@@ -12,7 +15,15 @@ interface Request {
   pointOfSaleId: string;
 }
 
-interface Response {}
+interface MachineInfo {
+  machine: Machine;
+  income: number;
+}
+
+interface Response {
+  machines: MachineInfo[];
+  route?: Route;
+}
 
 @injectable()
 class GetPointOfSaleDetailsService {
@@ -26,8 +37,11 @@ class GetPointOfSaleDetailsService {
     @inject('MachinesRepository')
     private machinesRepository: MachinesRepository,
 
-    @inject('OrmProvider')
-    private ormProvider: OrmProvider,
+    @inject('TelemetryLogsRepository')
+    private telemetryLogsRepository: TelemetryLogsRepository,
+
+    @inject('RoutesRepository')
+    private routesRepository: RoutesRepository,
   ) {}
 
   public async execute({ userId, pointOfSaleId }: Request): Promise<Response> {
@@ -56,11 +70,27 @@ class GetPointOfSaleDetailsService {
 
     const { machines } = await this.machinesRepository.find({
       pointOfSaleId,
+      populate: ['telemetryBoard'],
     });
 
-    // TODO: ADICIONAR INFORMAÇÕES REFERENTES A FATURAMENTO DO MES DA MAGUINE
+    let route;
+    if (pointOfSale.routeId) {
+      route = await this.routesRepository.findOne({
+        id: pointOfSale.routeId,
+      });
+    }
 
-    // TODO: RETORNAR INFORMAÇÕES REFERENTES AO HISTORICO DE 6 MESES DE FUNCIONAMENTO DA MAGUINE
+    const machinesInfos: MachineInfo[] = machines.map(machine => {
+      return {
+        machine,
+        income: machine.boxes.reduce((a, b) => a + b.currentMoney, 0),
+      };
+    });
+
+    return {
+      machines: machinesInfos,
+      route,
+    };
   }
 }
 export default GetPointOfSaleDetailsService;

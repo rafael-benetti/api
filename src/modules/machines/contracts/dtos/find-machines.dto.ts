@@ -11,4 +11,5 @@ export default interface FindMachinesDto {
   isActive?: boolean;
   limit?: number;
   offset?: number;
+  populate?: string[];
 }

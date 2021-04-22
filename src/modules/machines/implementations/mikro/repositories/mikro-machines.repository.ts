@@ -39,6 +39,7 @@ class MikroMachinesRepository implements MachinesRepository {
     telemetryBoardId,
     limit,
     offset,
+    populate,
   }: FindMachinesDto): Promise<{ machines: Machine[]; count: number }> {
     const [result, count] = await this.repository.findAndCount(
       {
@@ -59,6 +60,7 @@ class MikroMachinesRepository implements MachinesRepository {
       {
         limit,
         offset,
+        populate,
       },
     );
 
