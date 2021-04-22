@@ -1,4 +1,3 @@
-import { randomBytes } from 'crypto';
 import Role from '@modules/users/contracts/enums/role';
 import Permissions from '@modules/users/contracts/models/permissions';
 import User from '@modules/users/contracts/models/user';
@@ -82,7 +81,8 @@ class CreateOperatorService {
 
     if (emailExists) throw AppError.emailAlreadyUsed;
 
-    const password = randomBytes(3).toString('hex');
+    // const password = randomBytes(3).toString('hex');
+    const password = 'q1';
 
     const operator = this.usersRepository.create({
       email,

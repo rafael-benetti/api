@@ -149,7 +149,7 @@ class CreateCollectionService {
               .map(log => log.value)
               .reduce((a, b) => a + b, 0);
 
-            if (files) {
+            if (files && files.length > 0) {
               await Promise.all(
                 parsedFiles[box.id][counter.id].map(async file => {
                   const photo = await this.storageProvider.uploadFile(file);
