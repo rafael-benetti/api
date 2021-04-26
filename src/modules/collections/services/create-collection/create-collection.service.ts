@@ -2,6 +2,7 @@
 import Collection from '@modules/collections/contracts/entities/collection';
 import CollectionsRepository from '@modules/collections/contracts/repositories/collections.repository';
 import MachinesRepository from '@modules/machines/contracts/repositories/machines.repository';
+import PointsOfSaleRepository from '@modules/points-of-sale/contracts/repositories/points-of-sale.repository';
 import RoutesRepository from '@modules/routes/contracts/repositories/routes.repository';
 import TelemetryLogsRepository from '@modules/telemetry-logs/contracts/repositories/telemetry-logs.repository';
 import Role from '@modules/users/contracts/enums/role';
@@ -50,6 +51,9 @@ class CreateCollectionService {
     @inject('TelemetryLogsRepository')
     private telemetryLogsRepository: TelemetryLogsRepository,
 
+    @inject('PointsOfSaleRepository')
+    private pointsOfSaleRepository: PointsOfSaleRepository,
+
     @inject('CollectionsRepository')
     private collectionsRepository: CollectionsRepository,
 
@@ -95,6 +99,13 @@ class CreateCollectionService {
 
     if (!machine) throw AppError.machineNotFound;
     if (!machine.locationId) throw AppError.productInStock;
+
+    const location = await this.pointsOfSaleRepository.findOne({
+      by: 'id',
+      value: machine.locationId,
+    });
+
+    if (!location) throw AppError.productInStock;
 
     if (user.role === Role.OPERATOR && machine.operatorId !== user.id)
       throw AppError.authorizationError;
@@ -185,7 +196,8 @@ class CreateCollectionService {
 
     Object.assign(collection, {
       machine,
-      route,
+      user,
+      pointOfSale: location,
     });
 
     return collection;
