@@ -44,7 +44,7 @@ export default class MikroCollectionsRepository
       {
         limit: data.limit,
         orderBy: {
-          date: 'ASC',
+          date: 'DESC',
         },
         offset: data.offset,
         populate: [
