@@ -42,6 +42,30 @@ export default class MikroCollectionsRepository
       {
         limit: data.limit,
         offset: data.offset,
+        populate: [
+          'machine',
+          'previousCollection',
+          'user',
+          'group',
+          'pointOfSale',
+          'route',
+        ],
+        fields: [
+          'machine',
+          'machine.serialNumber',
+          'previousCollection',
+          'observations',
+          'date',
+          'boxCollections',
+          'user',
+          'user.name',
+          'route',
+          'route.label',
+          'pointOfSale',
+          'pointOfSale.label',
+          'group',
+          'group.stock',
+        ],
       },
     );
 

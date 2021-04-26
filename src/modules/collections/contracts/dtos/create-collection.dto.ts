@@ -7,6 +7,6 @@ export default interface CreateCollectionDto {
   userId: string;
   pointOfSaleId: string;
   routeId?: string;
-  observations?: string;
+  observations: string;
   boxCollections: BoxCollection[];
 }

@@ -7,7 +7,6 @@ import TelemetryLogsRepository from '@modules/telemetry-logs/contracts/repositor
 import Role from '@modules/users/contracts/enums/role';
 import UsersRepository from '@modules/users/contracts/repositories/users.repository';
 import AppError from '@shared/errors/app-error';
-import { startOfMonth } from 'date-fns';
 import { inject, injectable } from 'tsyringe';
 
 interface Request {
@@ -80,12 +79,15 @@ class GetPointOfSaleDetailsService {
       });
     }
 
+    // ? LISTA MAGUINES POPULADO COM TELEMETRIA E COM FATURAMENTO DO ULTIMA MÊS
     const machinesInfos: MachineInfo[] = machines.map(machine => {
       return {
         machine,
         income: machine.boxes.reduce((a, b) => a + b.currentMoney, 0),
       };
     });
+
+    // ?
 
     return {
       machines: machinesInfos,

@@ -17,7 +17,7 @@ export default class Collection {
 
   routeId?: string;
 
-  observations?: string;
+  observations: string;
 
   date: Date;
 
