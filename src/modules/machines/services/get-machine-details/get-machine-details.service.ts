@@ -87,7 +87,7 @@ class GetMachineDetailsService {
     const machine = await this.machinesRepository.findOne({
       by: 'id',
       value: machineId,
-      populate: ['telemetryBoard', 'operator'],
+      populate: ['telemetryBoard', 'operator', 'group', 'pointOfSale'],
     });
 
     if (!machine) throw AppError.machineNotFound;
