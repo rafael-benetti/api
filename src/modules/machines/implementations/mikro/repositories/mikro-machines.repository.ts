@@ -20,9 +20,14 @@ class MikroMachinesRepository implements MachinesRepository {
   }
 
   async findOne(data: FindMachineDto): Promise<Machine | undefined> {
-    const machine = await this.repository.findOne({
-      [data.by]: data.value,
-    });
+    const machine = await this.repository.findOne(
+      {
+        [data.by]: data.value,
+      },
+      {
+        populate: data.populate,
+      },
+    );
 
     return machine ? MachineMapper.toEntity(machine) : undefined;
   }

@@ -1,5 +1,5 @@
 enum Period {
-  DAILY = 'DAYLY',
+  DAILY = 'DAILY',
   WEEKLY = 'WEEKLY',
   MONTHLY = 'MONTHLY',
 }

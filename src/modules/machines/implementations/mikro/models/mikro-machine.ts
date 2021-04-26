@@ -3,6 +3,7 @@ import CreateMachineDto from '@modules/machines/contracts/dtos/create-machine.dt
 import Box from '@modules/machines/contracts/models/box';
 import Machine from '@modules/machines/contracts/models/machine';
 import MikroTelemetryBoard from '@modules/telemetry/implementations/mikro/entities/mikro-telemetry-board';
+import MikroUser from '@modules/users/implementations/mikro/models/mikro-user';
 import { v4 } from 'uuid';
 
 @Entity({ collection: 'machines' })
@@ -39,6 +40,9 @@ class MikroMachine implements Machine {
 
   @Property()
   operatorId?: string;
+
+  @OneToOne({ name: 'operatorId' })
+  operator: MikroUser;
 
   @Property()
   locationId?: string;

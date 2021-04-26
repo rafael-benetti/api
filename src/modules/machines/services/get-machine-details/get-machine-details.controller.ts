@@ -1,3 +1,4 @@
+import Period from '@modules/machines/contracts/dtos/period.dto';
 import { Response, Request } from 'express';
 import { container } from 'tsyringe';
 import GetMachineDetailsService from './get-machine-details.service';
@@ -15,6 +16,7 @@ abstract class GetMachineDetailsController {
     const response = await getMachineDetailsService.execute({
       machineId,
       userId,
+      period: period as Period,
     });
 
     return res.json(response);

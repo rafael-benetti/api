@@ -1,6 +1,7 @@
 import CollectionsRepository from '@modules/collections/contracts/repositories/collections.repository';
 import CounterTypesRepository from '@modules/counter-types/contracts/repositories/couter-types.repository';
 import Period from '@modules/machines/contracts/dtos/period.dto';
+import Machine from '@modules/machines/contracts/models/machine';
 import MachinesRepository from '@modules/machines/contracts/repositories/machines.repository';
 import TelemetryLog from '@modules/telemetry-logs/contracts/entities/telemetry-log';
 import TelemetryLogsRepository from '@modules/telemetry-logs/contracts/repositories/telemetry-logs.repository';
@@ -14,6 +15,7 @@ import {
   isSameDay,
   isSameHour,
   startOfDay,
+  subMonths,
   subWeeks,
 } from 'date-fns';
 import { inject, injectable } from 'tsyringe';
@@ -25,24 +27,25 @@ interface Request {
 }
 
 interface ChartData {
-  [key: string]: {
-    prizeCount: number;
-    income: number;
-  };
+  date: string;
+  prizeCount: number;
+  income: number;
 }
 
 interface BoxInfo {
+  boxId: string;
   currentMoney: number;
   currentPrizeCount: number;
   givenPrizes: number;
 }
 
 interface Response {
+  machine: Machine;
   lastConnection?: Date;
   lastCollection?: Date;
   income: number;
   givenPrizes: number;
-  chartData: ChartData;
+  chartData: ChartData[];
   boxesInfo: BoxInfo[];
   transctionHistory: TelemetryLog[];
 }
@@ -84,6 +87,7 @@ class GetMachineDetailsService {
     const machine = await this.machinesRepository.findOne({
       by: 'id',
       value: machineId,
+      populate: ['telemetryBoard', 'operator'],
     });
 
     if (!machine) throw AppError.machineNotFound;
@@ -108,9 +112,9 @@ class GetMachineDetailsService {
     let startDate;
     if (period === Period.DAILY) startDate = startOfDay(endDate);
     if (period === Period.WEEKLY) startDate = subWeeks(endDate, 1);
-    if (period === Period.MONTHLY) startDate = subWeeks(endDate, 1);
+    if (period === Period.MONTHLY) startDate = subMonths(endDate, 1);
 
-    if (!startDate) throw AppError.unknownError;
+    if (startDate === undefined) throw AppError.unknownError;
 
     const telemetryLogsOfPeriod = await this.telemetryLogsRepository.find({
       filters: {
@@ -122,6 +126,14 @@ class GetMachineDetailsService {
         maintenance: false,
       },
     });
+
+    const telemetryLogsOfPeriodIn = telemetryLogsOfPeriod.filter(
+      telemetryLog => telemetryLog.type === 'IN',
+    );
+
+    const telemetryLogsOfPeriodOut = telemetryLogsOfPeriod.filter(
+      telemetryLog => telemetryLog.type === 'OUT',
+    );
 
     const telemetryLogsIn = telemetryLogs.filter(
       telemetryLog => telemetryLog.type === 'IN',
@@ -136,7 +148,9 @@ class GetMachineDetailsService {
     });
 
     // ? ULTIMA COMUNICAÇÃO
-    const lastConnection = telemetryLogs[0].date;
+    const lastConnection = telemetryLogs[0].date
+      ? telemetryLogs[0].date
+      : undefined;
 
     // ? ULTIMA COLETA
     const lastCollection = (
@@ -144,13 +158,13 @@ class GetMachineDetailsService {
     )?.date;
 
     // ? FATURAMENTO
-    const income = telemetryLogsIn.reduce(
+    const income = telemetryLogsOfPeriodIn.reduce(
       (accumulator, currentValue) => accumulator + currentValue.value,
       0,
     );
 
     // ? PREMIOS ENTREGUES
-    const givenPrizes = telemetryLogsOut.reduce(
+    const givenPrizes = telemetryLogsOfPeriodOut.reduce(
       (accumulator, currentValue) => accumulator + currentValue.value,
       0,
     );
@@ -182,13 +196,14 @@ class GetMachineDetailsService {
       //* givenPrizes: number;
 
       return {
+        boxId: boxe.id,
         givenPrizes: givenPrizesCount,
         currentMoney: boxe.currentMoney,
         currentPrizeCount: boxe.numberOfPrizes,
       };
     });
 
-    let chartData;
+    let chartData: ChartData[] = [];
 
     // ? CHART DATA PARA O PERIODO DIARIO
     if (period === Period.DAILY) {
@@ -213,10 +228,9 @@ class GetMachineDetailsService {
           );
 
         return {
-          [hour.getHours()]: {
-            prizesCount: prizesCountInHour,
-            income: incomeInHour,
-          },
+          date: hour.getHours().toString(),
+          prizeCount: prizesCountInHour,
+          income: incomeInHour,
         };
       });
     }
@@ -229,14 +243,14 @@ class GetMachineDetailsService {
       });
 
       chartData = daysOfInterval.map(day => {
-        const incomeInDay = telemetryLogsOfPeriod
+        const incomeInDay = telemetryLogsOfPeriodIn
           .filter(telemetry => isSameDay(day, telemetry.date))
           .reduce(
             (accumulator, currentValue) => accumulator + currentValue.value,
             0,
           );
 
-        const prizesCountInHour = telemetryLogsOut
+        const prizesCountInDay = telemetryLogsOfPeriodOut
           .filter(telemetry => isSameHour(day, telemetry.date))
           .reduce(
             (accumulator, currentValue) => accumulator + currentValue.value,
@@ -244,22 +258,24 @@ class GetMachineDetailsService {
           );
 
         return {
-          [hour.getHours()]: {
-            prizesCount: prizesCountInHour,
-            income: incomeInHour,
-          },
+          date: day.toISOString(),
+          prizeCount: prizesCountInDay,
+          income: incomeInDay,
         };
       });
     }
+    // TODO: HISTORICO DE EVENTOS
+    const transctionHistory = telemetryLogsOfPeriod.slice(5);
 
     return {
+      machine,
       income,
       lastCollection,
       lastConnection,
       boxesInfo,
       givenPrizes,
-      chartData: (chartData as unknown) as ChartData,
-      transctionHistory: [],
+      chartData,
+      transctionHistory,
     };
 
     // TODO: TOTAL DE PREMIOS NAS GABINES DE SAIDA
@@ -267,8 +283,6 @@ class GetMachineDetailsService {
     // TODO: INFORMAÇÕES DO GRAFICO SENDO ELAS: DIARIO(24HRS), SEMANAL(ULTIMAS 7 DIAS) E MENSAL(ULTIMOS 30 DIAS)
 
     // TODO: ESTOQUE NAS GABINES
-
-    // TODO: HISTORICO DE EVENTOS
   }
 }
 export default GetMachineDetailsService;
