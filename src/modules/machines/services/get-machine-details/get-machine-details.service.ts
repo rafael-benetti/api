@@ -47,7 +47,7 @@ interface Response {
   givenPrizes: number;
   chartData: ChartData[];
   boxesInfo: BoxInfo[];
-  transctionHistory: TelemetryLog[];
+  transactionHistory: TelemetryLog[];
 }
 
 @injectable()
@@ -148,7 +148,7 @@ class GetMachineDetailsService {
     });
 
     // ? ULTIMA COMUNICAÇÃO
-    const lastConnection = telemetryLogs[0].date
+    const lastConnection = telemetryLogs[0]?.date
       ? telemetryLogs[0].date
       : undefined;
 
@@ -228,7 +228,7 @@ class GetMachineDetailsService {
           );
 
         return {
-          date: hour.getHours().toString(),
+          date: hour,
           prizeCount: prizesCountInHour,
           income: incomeInHour,
         };
@@ -265,7 +265,7 @@ class GetMachineDetailsService {
       });
     }
     // TODO: HISTORICO DE EVENTOS
-    const transctionHistory = telemetryLogsOfPeriod.slice(5);
+    const transactionHistory = telemetryLogs.slice(5);
 
     return {
       machine,
@@ -275,7 +275,7 @@ class GetMachineDetailsService {
       boxesInfo,
       givenPrizes,
       chartData,
-      transctionHistory,
+      transactionHistory,
     };
 
     // TODO: TOTAL DE PREMIOS NAS GABINES DE SAIDA
