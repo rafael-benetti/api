@@ -30,6 +30,7 @@ export default abstract class CreateCollectionController {
 
   static handle: RequestHandler = async (request, response) => {
     const { userId, files } = request;
+    console.log(request.body);
 
     const { machineId, observations, boxCollections } = request.body;
 

@@ -18,13 +18,13 @@ export default abstract class GetCollectionsController {
 
     const getCollections = container.resolve(GetCollectionsService);
 
-    const collections = await getCollections.execute({
+    const { collections, count } = await getCollections.execute({
       userId,
       machineId,
       limit,
       offset,
     });
 
-    return response.json(collections);
+    return response.json({ collections, count });
   };
 }

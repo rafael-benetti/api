@@ -12,6 +12,11 @@ interface Request {
   offset?: number;
 }
 
+interface Response {
+  collections: Collection[];
+  count: number;
+}
+
 @injectable()
 export default class GetCollectionsService {
   constructor(
@@ -27,7 +32,7 @@ export default class GetCollectionsService {
     machineId,
     limit,
     offset,
-  }: Request): Promise<Collection[]> {
+  }: Request): Promise<Response> {
     const user = await this.usersRepository.findOne({
       by: 'id',
       value: userId,
@@ -37,13 +42,16 @@ export default class GetCollectionsService {
 
     const groupIds = await getGroupUniverse(user);
 
-    const collections = await this.collectionsRepository.find({
+    const { collections, count } = await this.collectionsRepository.find({
       groupIds,
       machineId,
       limit,
       offset,
     });
 
-    return collections;
+    return {
+      collections,
+      count,
+    };
   }
 }
