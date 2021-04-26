@@ -21,7 +21,7 @@ interface ChartData {
   [key: string]: {
     prizeCount: number;
     income: number;
-  };
+  }[];
 }
 
 interface BoxInfo {
@@ -175,8 +175,10 @@ class GetMachineDetailsService {
       start: startDate,
       end: endDate,
     });
+    // ? { [x: number]: { prizesCount: number; income: number; }; }[]
+    // ? { [x: number]: { prizesCount: number; income: number; }; }[]
 
-    const chartData: ChartData = hoursOfInterval.map(hour => {
+    const chartData: ChartData = hoursOfInterval.map((hour: ChartData) => {
       const incomeInHour = telemetryLogsIn
         .filter(telemetry => isSameHour(hour, telemetry.date))
         .reduce(
@@ -210,6 +212,7 @@ class GetMachineDetailsService {
     };
 
     // TODO: TOTAL DE PREMIOS NAS GABINES DE SAIDA
+
     // TODO: INFORMAÇÕES DO GRAFICO SENDO ELAS: DIARIO(24HRS), SEMANAL(ULTIMAS 7 DIAS) E MENSAL(ULTIMOS 30 DIAS)
 
     // TODO: ESTOQUE NAS GABINES
