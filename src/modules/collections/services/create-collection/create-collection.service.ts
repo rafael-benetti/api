@@ -183,6 +183,11 @@ class CreateCollectionService {
 
     await this.ormProvider.commit();
 
+    Object.assign(collection, {
+      machine,
+      route,
+    });
+
     return collection;
   }
 }
