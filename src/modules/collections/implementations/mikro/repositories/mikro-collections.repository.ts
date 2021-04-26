@@ -67,6 +67,9 @@ export default class MikroCollectionsRepository
           'pointOfSale.label',
         ],
       },
+      {
+        data: 'ASC',
+      },
     );
 
     return {

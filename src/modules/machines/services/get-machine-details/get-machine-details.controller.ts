@@ -6,6 +6,7 @@ abstract class GetMachineDetailsController {
   static async handle(req: Request, res: Response): Promise<Response> {
     const { userId } = req;
     const { machineId } = req.params;
+    const { period } = req.query;
 
     const getMachineDetailsService = container.resolve(
       GetMachineDetailsService,
