@@ -198,6 +198,7 @@ class CreateCollectionService {
       machine,
       user,
       pointOfSale: location,
+      previousCollection,
     });
 
     return collection;
