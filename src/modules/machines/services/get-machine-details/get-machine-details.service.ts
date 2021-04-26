@@ -265,7 +265,7 @@ class GetMachineDetailsService {
       });
     }
     // TODO: HISTORICO DE EVENTOS
-    const transactionHistory = telemetryLogs.slice(5);
+    const transactionHistory = telemetryLogs.slice(0, 5);
 
     return {
       machine,
