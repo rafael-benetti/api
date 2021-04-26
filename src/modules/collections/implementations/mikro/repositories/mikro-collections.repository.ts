@@ -43,6 +43,9 @@ export default class MikroCollectionsRepository
       },
       {
         limit: data.limit,
+        orderBy: {
+          date: 'ASC',
+        },
         offset: data.offset,
         populate: [
           'machine',
@@ -66,9 +69,6 @@ export default class MikroCollectionsRepository
           'pointOfSale',
           'pointOfSale.label',
         ],
-      },
-      {
-        data: 'ASC',
       },
     );
 
