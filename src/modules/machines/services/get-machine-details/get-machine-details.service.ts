@@ -15,6 +15,7 @@ import {
   isSameDay,
   isSameHour,
   startOfDay,
+  subDays,
   subMonths,
   subWeeks,
 } from 'date-fns';
@@ -110,7 +111,7 @@ class GetMachineDetailsService {
 
     const endDate = new Date(Date.now());
     let startDate;
-    if (period === Period.DAILY) startDate = startOfDay(endDate);
+    if (period === Period.DAILY) startDate = subDays(endDate, 1);
     if (period === Period.WEEKLY) startDate = subWeeks(endDate, 1);
     if (period === Period.MONTHLY) startDate = subMonths(endDate, 1);
 
@@ -264,7 +265,7 @@ class GetMachineDetailsService {
         };
       });
     }
-    // TODO: HISTORICO DE EVENTOS
+    // ? HISTORICO DE EVENTOS
     const transactionHistory = telemetryLogs.slice(0, 5);
 
     return {
