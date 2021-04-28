@@ -146,7 +146,7 @@ class EditMachineService {
     if (gameValue) machine.gameValue = gameValue;
 
     if (groupId && groupId !== machine.groupId) {
-      if (machine.locationId !== null) throw AppError.machineHasLocation;
+      if (machine.locationId) throw AppError.machineHasLocation;
       if (user.role === Role.OWNER) {
         const groups = await this.groupsRepository.find({
           filters: {
