@@ -8,7 +8,15 @@ import TelemetryLogsRepository from '@modules/telemetry-logs/contracts/repositor
 import Role from '@modules/users/contracts/enums/role';
 import UsersRepository from '@modules/users/contracts/repositories/users.repository';
 import AppError from '@shared/errors/app-error';
-import { subDays, subMonths, subWeeks } from 'date-fns';
+import {
+  eachDayOfInterval,
+  eachHourOfInterval,
+  isSameDay,
+  isSameHour,
+  subDays,
+  subMonths,
+  subWeeks,
+} from 'date-fns';
 import { inject, injectable } from 'tsyringe';
 
 interface Request {
@@ -22,9 +30,18 @@ interface MachineInfo {
   income: number;
 }
 
+interface ChartData {
+  date: string;
+  prizeCount: number;
+  income: number;
+}
+
 interface Response {
   machines: MachineInfo[];
   route?: Route;
+  chartData: ChartData[];
+  income: number;
+  givenPrizesCount: number;
 }
 
 @injectable()
@@ -123,13 +140,80 @@ class GetPointOfSaleDetailsService {
       telemetryLog => telemetryLog.type === 'OUT',
     );
 
-    const income = telemetryLogsIn.reduce((a, b) => {
-      a + b.value, 0;
-    });
+    // ? FATURAMENTO
+    const income = telemetryLogsIn.reduce((a, b) => a + b.value, 0);
+
+    // ? PREMIOS ENTREGUES
+    const givenPrizesCount = telemetryLogsOut.reduce((a, b) => a + b.value, 0);
+
+    let chartData: ChartData[] = [];
+
+    // ? CHART DATA PARA O PERIODO DIARIO
+    if (period === Period.DAILY) {
+      const hoursOfInterval = eachHourOfInterval({
+        start: startDate,
+        end: endDate,
+      });
+
+      chartData = hoursOfInterval.map(hour => {
+        const incomeInHour = telemetryLogsIn
+          .filter(telemetry => isSameHour(hour, telemetry.date))
+          .reduce(
+            (accumulator, currentValue) => accumulator + currentValue.value,
+            0,
+          );
+
+        const prizesCountInHour = telemetryLogsOut
+          .filter(telemetry => isSameHour(hour, telemetry.date))
+          .reduce(
+            (accumulator, currentValue) => accumulator + currentValue.value,
+            0,
+          );
+
+        return {
+          date: hour.toISOString(),
+          prizeCount: prizesCountInHour,
+          income: incomeInHour,
+        };
+      });
+    }
+
+    // ? CHART DATA PARA PERIODO SEMANAL E MENSAL
+    if (period === Period.MONTHLY || period === Period.WEEKLY) {
+      const daysOfInterval = eachDayOfInterval({
+        start: startDate,
+        end: endDate,
+      });
+
+      chartData = daysOfInterval.map(day => {
+        const incomeInDay = telemetryLogsIn
+          .filter(telemetry => isSameDay(day, telemetry.date))
+          .reduce(
+            (accumulator, currentValue) => accumulator + currentValue.value,
+            0,
+          );
+
+        const prizesCountInDay = telemetryLogsOut
+          .filter(telemetry => isSameDay(day, telemetry.date))
+          .reduce(
+            (accumulator, currentValue) => accumulator + currentValue.value,
+            0,
+          );
+
+        return {
+          date: day.toISOString(),
+          prizeCount: prizesCountInDay,
+          income: incomeInDay,
+        };
+      });
+    }
 
     return {
       machines: machinesInfos,
       route,
+      chartData,
+      givenPrizesCount,
+      income,
     };
   }
 }

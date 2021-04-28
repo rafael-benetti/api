@@ -38,7 +38,7 @@ class MikroTelemetryLogsRepository implements TelemetryLogsRepository {
 
     const telemetryLogs = await this.repository.find(
       { ...query },
-      { orderBy: { date: 'DESC' } },
+      { orderBy: { date: 'DESC' }, limit: data.limit },
     );
 
     return telemetryLogs;

@@ -60,6 +60,14 @@ pointsOfSaleRoutes.get('/', ListPointsOfSaleController.handle);
 
 pointsOfSaleRoutes.get(
   '/:pointOfSaleId',
+  celebrate({
+    query: {
+      period: Joi.string().valid('DAILY', 'WEEKLY', 'MONTHLY').default('DAILY'),
+    },
+    params: {
+      pointOfSaleId: Joi.string().required(),
+    },
+  }),
   GetPointOfSaleDetailsController.handle,
 );
 

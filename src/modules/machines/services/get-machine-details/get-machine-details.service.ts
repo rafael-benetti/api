@@ -146,10 +146,6 @@ class GetMachineDetailsService {
       telemetryLog => telemetryLog.type === 'OUT',
     );
 
-    const telemetryLogsIn = telemetryLogs.filter(
-      telemetryLog => telemetryLog.type === 'IN',
-    );
-
     const telemetryLogsOut = telemetryLogs.filter(
       telemetryLog => telemetryLog.type === 'OUT',
     );
@@ -185,7 +181,7 @@ class GetMachineDetailsService {
         )?.type;
 
         if (counterType === 'OUT') {
-          const counterLogs = telemetryLogsOfPeriodOut.filter(telemetryLog => {
+          const counterLogs = telemetryLogsOut.filter(telemetryLog => {
             return (
               telemetryLog.pin.toString() === counter.pin?.replace('Pino ', '')
             );
@@ -215,14 +211,14 @@ class GetMachineDetailsService {
       });
 
       chartData = hoursOfInterval.map(hour => {
-        const incomeInHour = telemetryLogsIn
+        const incomeInHour = telemetryLogsOfPeriodIn
           .filter(telemetry => isSameHour(hour, telemetry.date))
           .reduce(
             (accumulator, currentValue) => accumulator + currentValue.value,
             0,
           );
 
-        const prizesCountInHour = telemetryLogsOut
+        const prizesCountInHour = telemetryLogsOfPeriodOut
           .filter(telemetry => isSameHour(hour, telemetry.date))
           .reduce(
             (accumulator, currentValue) => accumulator + currentValue.value,
@@ -230,7 +226,7 @@ class GetMachineDetailsService {
           );
 
         return {
-          date: hour,
+          date: hour.toISOString(),
           prizeCount: prizesCountInHour,
           income: incomeInHour,
         };
@@ -253,7 +249,7 @@ class GetMachineDetailsService {
           );
 
         const prizesCountInDay = telemetryLogsOfPeriodOut
-          .filter(telemetry => isSameHour(day, telemetry.date))
+          .filter(telemetry => isSameDay(day, telemetry.date))
           .reduce(
             (accumulator, currentValue) => accumulator + currentValue.value,
             0,
@@ -266,8 +262,12 @@ class GetMachineDetailsService {
         };
       });
     }
+
     // ? HISTORICO DE EVENTOS
-    const transactionHistory = telemetryLogs.slice(0, 5);
+    const transactionHistory = await this.telemetryLogsRepository.find({
+      filters: {},
+      limit: 5,
+    });
 
     return {
       machine,

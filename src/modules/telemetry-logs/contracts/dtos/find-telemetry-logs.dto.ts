@@ -8,6 +8,7 @@ interface FindTelemetryLogsDto {
     maintenance?: boolean;
     type?: 'IN' | 'OUT';
   };
+  limit?: number;
 }
 
 export default FindTelemetryLogsDto;
