@@ -1,3 +1,4 @@
+import logger from '@config/logger';
 import Period from '@modules/machines/contracts/dtos/period.dto';
 import Machine from '@modules/machines/contracts/models/machine';
 import MachinesRepository from '@modules/machines/contracts/repositories/machines.repository';
@@ -106,14 +107,6 @@ class GetPointOfSaleDetailsService {
       });
     }
 
-    // ? LISTA MAGUINES POPULADO COM TELEMETRIA E COM FATURAMENTO DO ULTIMA MÊS
-    const machinesInfos: MachineInfo[] = machines.map(machine => {
-      return {
-        machine,
-        income: machine.boxes.reduce((a, b) => a + b.currentMoney, 0),
-      };
-    });
-
     const endDate = new Date(Date.now());
     let startDate;
     if (period === Period.DAILY) startDate = subDays(endDate, 1);
@@ -124,7 +117,7 @@ class GetPointOfSaleDetailsService {
 
     const telemetryLogs = await this.telemetryLogsRepository.find({
       filters: {
-        machineId: machinesInfos.map(machineInfo => machineInfo.machine.id),
+        machineId: machines.map(machine => machine.id),
         pointOfSaleId: pointOfSale.id,
         date: {
           startDate,
@@ -210,9 +203,24 @@ class GetPointOfSaleDetailsService {
       });
     }
 
+    const machinesInfo = machines.map(machine => {
+      logger.info(
+        telemetryLogsIn
+          .filter(telemetryLog => telemetryLog.machineId === machine.id)
+          .reduce((a, b) => a + b.value, 0),
+      );
+
+      return {
+        machine,
+        income: telemetryLogsIn
+          .filter(telemetryLog => telemetryLog.machineId === machine.id)
+          .reduce((a, b) => a + b.value, 0),
+      };
+    });
+
     return {
       pointOfSale,
-      machinesInfo: machinesInfos,
+      machinesInfo,
       route,
       chartData,
       givenPrizesCount,
