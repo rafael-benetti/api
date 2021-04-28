@@ -1,9 +1,8 @@
-import { Entity, ManyToOne, PrimaryKey, Property } from '@mikro-orm/core';
+import { Entity, OneToOne, PrimaryKey, Property } from '@mikro-orm/core';
+import MikroGroup from '@modules/groups/implementations/mikro/models/mikro-group';
 import CreatePointOfSaleDto from '@modules/points-of-sale/contracts/dtos/create-point-of-sale.dto';
 import Address from '@modules/points-of-sale/contracts/models/address';
 import PointOfSale from '@modules/points-of-sale/contracts/models/point-of-sale';
-import MikroRoute from '@modules/routes/implementations/mikro/models/mikro-route';
-import { OneToMany } from 'typeorm';
 import { v4 } from 'uuid';
 
 @Entity({ collection: 'points-of-sale' })
@@ -16,6 +15,9 @@ class MikroPointOfSale implements PointOfSale {
 
   @Property()
   groupId: string;
+
+  @OneToOne({ name: 'groupId' })
+  group: MikroGroup;
 
   @Property()
   routeId?: string;

@@ -80,6 +80,7 @@ class GetPointOfSaleDetailsService {
     const pointOfSale = await this.pointsOfSaleRepository.findOne({
       by: 'id',
       value: pointOfSaleId,
+      populate: ['group'],
     });
 
     if (!pointOfSale) throw AppError.pointOfSaleNotFound;
