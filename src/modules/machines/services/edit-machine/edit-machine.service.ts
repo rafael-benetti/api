@@ -171,7 +171,8 @@ class EditMachineService {
         by: 'id',
         value: locationId,
       });
-      if (pointOfSale?.groupId !== groupId) throw AppError.authorizationError;
+
+      if (!pointOfSale) throw AppError.pointOfSaleNotFound;
       machine.locationId = locationId;
     } else if (locationId === null) {
       machine.locationId = locationId;
