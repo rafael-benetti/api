@@ -1,6 +1,7 @@
 import Period from '@modules/machines/contracts/dtos/period.dto';
 import Machine from '@modules/machines/contracts/models/machine';
 import MachinesRepository from '@modules/machines/contracts/repositories/machines.repository';
+import PointOfSale from '@modules/points-of-sale/contracts/models/point-of-sale';
 import PointsOfSaleRepository from '@modules/points-of-sale/contracts/repositories/points-of-sale.repository';
 import Route from '@modules/routes/contracts/models/route';
 import RoutesRepository from '@modules/routes/contracts/repositories/routes.repository';
@@ -37,6 +38,7 @@ interface ChartData {
 }
 
 interface Response {
+  pointOfSale: PointOfSale;
   machinesInfo: MachineInfo[];
   route?: Route;
   chartData: ChartData[];
@@ -208,6 +210,7 @@ class GetPointOfSaleDetailsService {
     }
 
     return {
+      pointOfSale,
       machinesInfo: machinesInfos,
       route,
       chartData,
