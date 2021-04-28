@@ -13,6 +13,7 @@ import PointsOfSaleRepository from '@modules/points-of-sale/contracts/repositori
 import CounterTypesRepository from '@modules/counter-types/contracts/repositories/couter-types.repository';
 import RoutesRepository from '@modules/routes/contracts/repositories/routes.repository';
 import TelemetryBoardsRepository from '@modules/telemetry/contracts/repositories/telemetry-boards.repository';
+import logger from '@config/logger';
 
 interface Request {
   userId: string;
@@ -122,12 +123,18 @@ class EditMachineService {
 
         if (!operator) throw AppError.userNotFound;
 
-        const checkMachineRoute = await this.routesRepository.findOne({
-          machineIds: machineId,
-        });
+        if (machine.locationId !== undefined) {
+          const checkMachineRoute = await this.routesRepository.findOne({
+            pointsOfSaleId: machine.locationId,
+          });
 
-        if (checkMachineRoute && checkMachineRoute.operatorId !== operatorId)
-          throw AppError.machineBelongsToARoute;
+          if (
+            checkMachineRoute &&
+            checkMachineRoute.operatorId &&
+            checkMachineRoute.operatorId !== operatorId
+          )
+            throw AppError.machineBelongsToARoute;
+        }
 
         if (!operator.groupIds?.includes(groupId))
           throw AppError.authorizationError;

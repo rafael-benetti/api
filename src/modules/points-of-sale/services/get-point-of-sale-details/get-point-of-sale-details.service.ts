@@ -1,3 +1,4 @@
+import Period from '@modules/machines/contracts/dtos/period.dto';
 import Machine from '@modules/machines/contracts/models/machine';
 import MachinesRepository from '@modules/machines/contracts/repositories/machines.repository';
 import PointsOfSaleRepository from '@modules/points-of-sale/contracts/repositories/points-of-sale.repository';
@@ -7,11 +8,13 @@ import TelemetryLogsRepository from '@modules/telemetry-logs/contracts/repositor
 import Role from '@modules/users/contracts/enums/role';
 import UsersRepository from '@modules/users/contracts/repositories/users.repository';
 import AppError from '@shared/errors/app-error';
+import { subDays, subMonths, subWeeks } from 'date-fns';
 import { inject, injectable } from 'tsyringe';
 
 interface Request {
   userId: string;
   pointOfSaleId: string;
+  period: Period;
 }
 
 interface MachineInfo {
@@ -43,7 +46,11 @@ class GetPointOfSaleDetailsService {
     private routesRepository: RoutesRepository,
   ) {}
 
-  public async execute({ userId, pointOfSaleId }: Request): Promise<Response> {
+  public async execute({
+    userId,
+    pointOfSaleId,
+    period,
+  }: Request): Promise<Response> {
     const user = await this.usersRepository.findOne({
       by: 'id',
       value: userId,
@@ -87,7 +94,38 @@ class GetPointOfSaleDetailsService {
       };
     });
 
-    // ?
+    // ? FATURAMENTO
+
+    const endDate = new Date(Date.now());
+    let startDate;
+    if (period === Period.DAILY) startDate = subDays(endDate, 1);
+    if (period === Period.WEEKLY) startDate = subWeeks(endDate, 1);
+    if (period === Period.MONTHLY) startDate = subMonths(endDate, 1);
+
+    if (startDate === undefined) throw AppError.unknownError;
+
+    const telemetryLogs = await this.telemetryLogsRepository.find({
+      filters: {
+        machineId: machinesInfos.map(machineInfo => machineInfo.machine.id),
+        date: {
+          startDate,
+          endDate,
+        },
+        maintenance: false,
+      },
+    });
+
+    const telemetryLogsIn = telemetryLogs.filter(
+      telemetryLog => telemetryLog.type === 'IN',
+    );
+
+    const telemetryLogsOut = telemetryLogs.filter(
+      telemetryLog => telemetryLog.type === 'OUT',
+    );
+
+    const income = telemetryLogsIn.reduce((a, b) => {
+      a + b.value, 0;
+    });
 
     return {
       machines: machinesInfos,

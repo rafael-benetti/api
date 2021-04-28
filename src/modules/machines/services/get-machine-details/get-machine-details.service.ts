@@ -14,7 +14,6 @@ import {
   eachHourOfInterval,
   isSameDay,
   isSameHour,
-  startOfDay,
   subDays,
   subMonths,
   subWeeks,
@@ -85,6 +84,8 @@ class GetMachineDetailsService {
 
     if (!user) throw AppError.userNotFound;
 
+    // TODO: VERIFICAR SE ELE É UM OPERADOR PARA LIMITAR ALGUMAS
+
     const machine = await this.machinesRepository.findOne({
       by: 'id',
       value: machineId,
@@ -102,10 +103,19 @@ class GetMachineDetailsService {
     if (user.role === Role.MANAGER && !user.groupIds?.includes(machine.groupId))
       throw AppError.authorizationError;
 
+    // ? ULTIMA COLETA
+    const lastCollection = (
+      await this.collectionsRepository.findLastCollection(machineId)
+    )?.date;
+
     const telemetryLogs = await this.telemetryLogsRepository.find({
       filters: {
         machineId,
         maintenance: false,
+        date: {
+          startDate: lastCollection,
+          endDate: new Date(Date.now()),
+        },
       },
     });
 
@@ -153,11 +163,6 @@ class GetMachineDetailsService {
       ? telemetryLogs[0].date
       : undefined;
 
-    // ? ULTIMA COLETA
-    const lastCollection = (
-      await this.collectionsRepository.findLastCollection(machineId)
-    )?.date;
-
     // ? FATURAMENTO
     const income = telemetryLogsOfPeriodIn.reduce(
       (accumulator, currentValue) => accumulator + currentValue.value,
@@ -180,7 +185,7 @@ class GetMachineDetailsService {
         )?.type;
 
         if (counterType === 'OUT') {
-          const counterLogs = telemetryLogsOut.filter(telemetryLog => {
+          const counterLogs = telemetryLogsOfPeriodOut.filter(telemetryLog => {
             return (
               telemetryLog.pin.toString() === counter.pin?.replace('Pino ', '')
             );
@@ -191,10 +196,6 @@ class GetMachineDetailsService {
           );
         }
       });
-
-      //* currentMoney: number;
-      //* currentPrizeCount: number;
-      //* givenPrizes: number;
 
       return {
         boxId: boxe.id,
@@ -278,12 +279,6 @@ class GetMachineDetailsService {
       chartData,
       transactionHistory,
     };
-
-    // TODO: TOTAL DE PREMIOS NAS GABINES DE SAIDA
-
-    // TODO: INFORMAÇÕES DO GRAFICO SENDO ELAS: DIARIO(24HRS), SEMANAL(ULTIMAS 7 DIAS) E MENSAL(ULTIMOS 30 DIAS)
-
-    // TODO: ESTOQUE NAS GABINES
   }
 }
 export default GetMachineDetailsService;
