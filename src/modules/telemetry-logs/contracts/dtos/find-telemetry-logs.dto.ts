@@ -1,6 +1,7 @@
 interface FindTelemetryLogsDto {
   filters: {
     machineId?: string | string[];
+    pointOfSaleId?: string;
     date?: {
       startDate?: Date;
       endDate: Date;

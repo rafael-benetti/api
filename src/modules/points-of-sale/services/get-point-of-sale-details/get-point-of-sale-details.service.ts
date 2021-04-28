@@ -37,7 +37,7 @@ interface ChartData {
 }
 
 interface Response {
-  machines: MachineInfo[];
+  machinesInfo: MachineInfo[];
   route?: Route;
   chartData: ChartData[];
   income: number;
@@ -111,8 +111,6 @@ class GetPointOfSaleDetailsService {
       };
     });
 
-    // ? FATURAMENTO
-
     const endDate = new Date(Date.now());
     let startDate;
     if (period === Period.DAILY) startDate = subDays(endDate, 1);
@@ -124,6 +122,7 @@ class GetPointOfSaleDetailsService {
     const telemetryLogs = await this.telemetryLogsRepository.find({
       filters: {
         machineId: machinesInfos.map(machineInfo => machineInfo.machine.id),
+        pointOfSaleId: pointOfSale.id,
         date: {
           startDate,
           endDate,
@@ -209,7 +208,7 @@ class GetPointOfSaleDetailsService {
     }
 
     return {
-      machines: machinesInfos,
+      machinesInfo: machinesInfos,
       route,
       chartData,
       givenPrizesCount,
