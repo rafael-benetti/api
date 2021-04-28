@@ -17,6 +17,13 @@ export default class AppError {
     statusCode: 409,
   });
 
+  static machineHasLocation = new AppError({
+    errorCode: 'MACHINE_HAS_POINT_OF_SALE',
+    message:
+      'You cannot change the group of a machine which has a point of sale.',
+    statusCode: 409,
+  });
+
   static machineBelongsToARoute = new AppError({
     errorCode: 'MACHINE_BELONGS_TO_A_ROUTE',
     message:

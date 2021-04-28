@@ -142,21 +142,10 @@ class EditMachineService {
       } else if (operatorId === null) delete machine.operatorId;
     }
 
-    if (locationId !== undefined && locationId !== null) {
-      const pointOfSale = await this.pointsOfSaleRepository.findOne({
-        by: 'id',
-        value: locationId,
-      });
-
-      if (pointOfSale?.groupId !== groupId) throw AppError.authorizationError;
-      machine.locationId = locationId;
-    } else if (locationId === null) {
-      machine.locationId = locationId;
-    }
-
     if (gameValue) machine.gameValue = gameValue;
 
-    if (groupId) {
+    if (groupId && groupId !== machine.groupId) {
+      if (machine.locationId !== null) throw AppError.machineHasLocation;
       if (user.role === Role.OWNER) {
         const groups = await this.groupsRepository.find({
           filters: {
@@ -165,7 +154,6 @@ class EditMachineService {
         });
 
         const groupIds = groups.map(group => group.id);
-
         if (!groupIds.includes(groupId)) throw AppError.authorizationError;
       }
 
@@ -176,6 +164,17 @@ class EditMachineService {
           throw AppError.authorizationError;
       }
       machine.groupId = groupId;
+    }
+
+    if (locationId !== undefined && locationId !== null) {
+      const pointOfSale = await this.pointsOfSaleRepository.findOne({
+        by: 'id',
+        value: locationId,
+      });
+      if (pointOfSale?.groupId !== groupId) throw AppError.authorizationError;
+      machine.locationId = locationId;
+    } else if (locationId === null) {
+      machine.locationId = locationId;
     }
 
     if (isActive !== undefined) machine.isActive = isActive; // TODO REMOVER O TELEMETRY BOARD
