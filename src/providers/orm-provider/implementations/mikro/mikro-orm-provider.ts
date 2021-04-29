@@ -9,8 +9,10 @@ import MikroCounterType from '@modules/counter-types/implementations/mikro/model
 import MikroGroup from '@modules/groups/implementations/mikro/models/mikro-group';
 import MikroMachine from '@modules/machines/implementations/mikro/models/mikro-machine';
 import MikroPointOfSale from '@modules/points-of-sale/implementations/mikro/models/mikro-point-of-sale';
+import MikroProductLog from '@modules/products/implementations/mikro/entities/mikro-product-log';
 import MikroRoute from '@modules/routes/implementations/mikro/models/mikro-route';
 import MikroTelemetryLog from '@modules/telemetry-logs/implementations/mikro/entities/mikro-telemetry-log';
+
 import MikroTelemetryBoard from '@modules/telemetry/implementations/mikro/entities/mikro-telemetry-board';
 import MikroUser from '@modules/users/implementations/mikro/models/mikro-user';
 import OrmProvider from '@providers/orm-provider/contracts/models/orm-provider';
@@ -36,6 +38,7 @@ class MikroOrmProvider implements OrmProvider {
         MikroTelemetryBoard,
         MikroCollection,
         MikroTelemetryLog,
+        MikroProductLog,
       ],
       implicitTransactions: true,
       debug: true,
