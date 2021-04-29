@@ -43,6 +43,9 @@ export default class MikroCollectionsRepository
       },
       {
         limit: data.limit,
+        orderBy: {
+          date: 'DESC',
+        },
         offset: data.offset,
         populate: [
           'machine',

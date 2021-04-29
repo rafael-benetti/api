@@ -1,5 +1,8 @@
+import logger from '@config/logger';
+import Period from '@modules/machines/contracts/dtos/period.dto';
 import Machine from '@modules/machines/contracts/models/machine';
 import MachinesRepository from '@modules/machines/contracts/repositories/machines.repository';
+import PointOfSale from '@modules/points-of-sale/contracts/models/point-of-sale';
 import PointsOfSaleRepository from '@modules/points-of-sale/contracts/repositories/points-of-sale.repository';
 import Route from '@modules/routes/contracts/models/route';
 import RoutesRepository from '@modules/routes/contracts/repositories/routes.repository';
@@ -7,11 +10,21 @@ import TelemetryLogsRepository from '@modules/telemetry-logs/contracts/repositor
 import Role from '@modules/users/contracts/enums/role';
 import UsersRepository from '@modules/users/contracts/repositories/users.repository';
 import AppError from '@shared/errors/app-error';
+import {
+  eachDayOfInterval,
+  eachHourOfInterval,
+  isSameDay,
+  isSameHour,
+  subDays,
+  subMonths,
+  subWeeks,
+} from 'date-fns';
 import { inject, injectable } from 'tsyringe';
 
 interface Request {
   userId: string;
   pointOfSaleId: string;
+  period: Period;
 }
 
 interface MachineInfo {
@@ -19,9 +32,19 @@ interface MachineInfo {
   income: number;
 }
 
+interface ChartData {
+  date: string;
+  prizeCount: number;
+  income: number;
+}
+
 interface Response {
-  machines: MachineInfo[];
+  pointOfSale: PointOfSale;
+  machinesInfo: MachineInfo[];
   route?: Route;
+  chartData: ChartData[];
+  income: number;
+  givenPrizesCount: number;
 }
 
 @injectable()
@@ -43,7 +66,11 @@ class GetPointOfSaleDetailsService {
     private routesRepository: RoutesRepository,
   ) {}
 
-  public async execute({ userId, pointOfSaleId }: Request): Promise<Response> {
+  public async execute({
+    userId,
+    pointOfSaleId,
+    period,
+  }: Request): Promise<Response> {
     const user = await this.usersRepository.findOne({
       by: 'id',
       value: userId,
@@ -54,6 +81,7 @@ class GetPointOfSaleDetailsService {
     const pointOfSale = await this.pointsOfSaleRepository.findOne({
       by: 'id',
       value: pointOfSaleId,
+      populate: ['group'],
     });
 
     if (!pointOfSale) throw AppError.pointOfSaleNotFound;
@@ -79,19 +107,124 @@ class GetPointOfSaleDetailsService {
       });
     }
 
-    // ? LISTA MAGUINES POPULADO COM TELEMETRIA E COM FATURAMENTO DO ULTIMA MÊS
-    const machinesInfos: MachineInfo[] = machines.map(machine => {
+    const endDate = new Date(Date.now());
+    let startDate;
+    if (period === Period.DAILY) startDate = subDays(endDate, 1);
+    if (period === Period.WEEKLY) startDate = subWeeks(endDate, 1);
+    if (period === Period.MONTHLY) startDate = subMonths(endDate, 1);
+
+    if (startDate === undefined) throw AppError.unknownError;
+
+    const telemetryLogs = await this.telemetryLogsRepository.find({
+      filters: {
+        machineId: machines.map(machine => machine.id),
+        pointOfSaleId: pointOfSale.id,
+        date: {
+          startDate,
+          endDate,
+        },
+        maintenance: false,
+      },
+    });
+
+    const telemetryLogsIn = telemetryLogs.filter(
+      telemetryLog => telemetryLog.type === 'IN',
+    );
+
+    const telemetryLogsOut = telemetryLogs.filter(
+      telemetryLog => telemetryLog.type === 'OUT',
+    );
+
+    // ? FATURAMENTO
+    const income = telemetryLogsIn.reduce((a, b) => a + b.value, 0);
+
+    // ? PREMIOS ENTREGUES
+    const givenPrizesCount = telemetryLogsOut.reduce((a, b) => a + b.value, 0);
+
+    let chartData: ChartData[] = [];
+
+    // ? CHART DATA PARA O PERIODO DIARIO
+    if (period === Period.DAILY) {
+      const hoursOfInterval = eachHourOfInterval({
+        start: startDate,
+        end: endDate,
+      });
+
+      chartData = hoursOfInterval.map(hour => {
+        const incomeInHour = telemetryLogsIn
+          .filter(telemetry => isSameHour(hour, telemetry.date))
+          .reduce(
+            (accumulator, currentValue) => accumulator + currentValue.value,
+            0,
+          );
+
+        const prizesCountInHour = telemetryLogsOut
+          .filter(telemetry => isSameHour(hour, telemetry.date))
+          .reduce(
+            (accumulator, currentValue) => accumulator + currentValue.value,
+            0,
+          );
+
+        return {
+          date: hour.toISOString(),
+          prizeCount: prizesCountInHour,
+          income: incomeInHour,
+        };
+      });
+    }
+
+    // ? CHART DATA PARA PERIODO SEMANAL E MENSAL
+    if (period === Period.MONTHLY || period === Period.WEEKLY) {
+      const daysOfInterval = eachDayOfInterval({
+        start: startDate,
+        end: endDate,
+      });
+
+      chartData = daysOfInterval.map(day => {
+        const incomeInDay = telemetryLogsIn
+          .filter(telemetry => isSameDay(day, telemetry.date))
+          .reduce(
+            (accumulator, currentValue) => accumulator + currentValue.value,
+            0,
+          );
+
+        const prizesCountInDay = telemetryLogsOut
+          .filter(telemetry => isSameDay(day, telemetry.date))
+          .reduce(
+            (accumulator, currentValue) => accumulator + currentValue.value,
+            0,
+          );
+
+        return {
+          date: day.toISOString(),
+          prizeCount: prizesCountInDay,
+          income: incomeInDay,
+        };
+      });
+    }
+
+    const machinesInfo = machines.map(machine => {
+      logger.info(
+        telemetryLogsIn
+          .filter(telemetryLog => telemetryLog.machineId === machine.id)
+          .reduce((a, b) => a + b.value, 0),
+      );
+
       return {
         machine,
-        income: machine.boxes.reduce((a, b) => a + b.currentMoney, 0),
+        income: telemetryLogsIn
+          .filter(telemetryLog => telemetryLog.machineId === machine.id)
+          .reduce((a, b) => a + b.value, 0),
       };
     });
 
-    // ?
-
     return {
-      machines: machinesInfos,
+      pointOfSale,
+      machinesInfo,
       route,
+      chartData,
+      givenPrizesCount,
+      income,
     };
   }
 }

@@ -36,7 +36,10 @@ class MikroTelemetryLogsRepository implements TelemetryLogsRepository {
     if (maintenance !== undefined) query.maintenance = maintenance;
     if (type) query.type = type;
 
-    const telemetryLogs = await this.repository.find({ ...query });
+    const telemetryLogs = await this.repository.find(
+      { ...query },
+      { orderBy: { date: 'DESC' }, limit: data.limit },
+    );
 
     return telemetryLogs;
   }

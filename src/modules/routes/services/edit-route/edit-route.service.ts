@@ -82,7 +82,7 @@ class EditRouteService {
         throw AppError.authorizationError;
     }
 
-    const pointsOfSale = await this.pointsOfSaleRepository.find({
+    const { pointsOfSale } = await this.pointsOfSaleRepository.find({
       by: 'id',
       value: pointsOfSaleIds,
     });

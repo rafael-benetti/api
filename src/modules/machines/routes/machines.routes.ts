@@ -53,7 +53,18 @@ machinesRouter.get(
   ListMachinesController.handle,
 );
 
-machinesRouter.get('/:machineId', GetMachineDetailsController.handle);
+machinesRouter.get(
+  '/:machineId',
+  celebrate({
+    query: {
+      period: Joi.string().valid('DAILY', 'WEEKLY', 'MONTHLY').default('DAILY'),
+    },
+    params: {
+      machineId: Joi.string().required(),
+    },
+  }),
+  GetMachineDetailsController.handle,
+);
 
 machinesRouter.put(
   '/:machineId',

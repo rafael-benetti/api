@@ -1,8 +1,11 @@
 import { Entity, OneToOne, PrimaryKey, Property } from '@mikro-orm/core';
+import MikroGroup from '@modules/groups/implementations/mikro/models/mikro-group';
 import CreateMachineDto from '@modules/machines/contracts/dtos/create-machine.dto';
 import Box from '@modules/machines/contracts/models/box';
 import Machine from '@modules/machines/contracts/models/machine';
+import MikroPointOfSale from '@modules/points-of-sale/implementations/mikro/models/mikro-point-of-sale';
 import MikroTelemetryBoard from '@modules/telemetry/implementations/mikro/entities/mikro-telemetry-board';
+import MikroUser from '@modules/users/implementations/mikro/models/mikro-user';
 import { v4 } from 'uuid';
 
 @Entity({ collection: 'machines' })
@@ -18,6 +21,9 @@ class MikroMachine implements Machine {
 
   @Property()
   groupId: string;
+
+  @OneToOne({ name: 'groupId' })
+  group: MikroGroup;
 
   @Property()
   telemetryBoardId?: number;
@@ -40,8 +46,14 @@ class MikroMachine implements Machine {
   @Property()
   operatorId?: string;
 
+  @OneToOne({ name: 'operatorId' })
+  operator?: MikroUser;
+
   @Property()
   locationId?: string;
+
+  @OneToOne({ name: 'locationId' })
+  pointOfSale?: MikroPointOfSale;
 
   @Property()
   ownerId: string;
