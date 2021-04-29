@@ -115,9 +115,21 @@ export default class AppError {
     statusCode: 409,
   });
 
+  static thisIsNotLastCollection = new AppError({
+    errorCode: 'YOU_CAN_ONLY_EDIT_LAST_COLLECTION',
+    message: 'You can only edit last collection',
+    statusCode: 409,
+  });
+
   static productNotFound = new AppError({
     errorCode: 'PRODUCT_NOT_FOUND',
     message: "Could not find the 'product'.",
+    statusCode: 404,
+  });
+
+  static collectionNotFound = new AppError({
+    errorCode: 'COLLECTION_NOT_FOUND',
+    message: "Could not find the 'collection'.",
     statusCode: 404,
   });
 

@@ -1,4 +1,3 @@
-import logger from '@config/logger';
 import Period from '@modules/machines/contracts/dtos/period.dto';
 import Machine from '@modules/machines/contracts/models/machine';
 import MachinesRepository from '@modules/machines/contracts/repositories/machines.repository';
@@ -204,12 +203,6 @@ class GetPointOfSaleDetailsService {
     }
 
     const machinesInfo = machines.map(machine => {
-      logger.info(
-        telemetryLogsIn
-          .filter(telemetryLog => telemetryLog.machineId === machine.id)
-          .reduce((a, b) => a + b.value, 0),
-      );
-
       return {
         machine,
         income: telemetryLogsIn

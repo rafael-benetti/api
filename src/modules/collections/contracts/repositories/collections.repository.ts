@@ -11,5 +11,6 @@ export default interface CollectionsRepository {
     collections: Collection[];
     count: number;
   }>;
+  findOne(collectionId: string): Promise<Collection | undefined>;
   save(data: Collection): void;
 }
