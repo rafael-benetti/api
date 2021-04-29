@@ -12,6 +12,8 @@ import MachinesRepository from '@modules/machines/contracts/repositories/machine
 import MikroMachinesRepository from '@modules/machines/implementations/mikro/repositories/mikro-machines.repository';
 import PointsOfSaleRepository from '@modules/points-of-sale/contracts/repositories/points-of-sale.repository';
 import MikroPointsOfSaleRepository from '@modules/points-of-sale/implementations/mikro/repositories/mikro-points-of-sale.repository';
+import ProductLogsRepository from '@modules/products/contracts/repositories/product-logs.repository';
+import MikroProductLogsRepository from '@modules/products/implementations/mikro/repositories/mikro-product-logs.repository';
 import RoutesRepository from '@modules/routes/contracts/repositories/routes.repository';
 import MikroRoutesRepository from '@modules/routes/implementations/mikro/repositories/mikro-routes.repository';
 import TelemetryLogsRepository from '@modules/telemetry-logs/contracts/repositories/telemetry-logs.repository';
@@ -76,4 +78,9 @@ container.registerSingleton<CollectionsRepository>(
 container.registerSingleton<TelemetryLogsRepository>(
   'TelemetryLogsRepository',
   MikroTelemetryLogsRepository,
+);
+
+container.registerSingleton<ProductLogsRepository>(
+  'ProductLogsRepository',
+  MikroProductLogsRepository,
 );
