@@ -25,6 +25,7 @@ interface Response {
   givenPrizes: number;
   playsPerPrize: number;
   productExpenses: number;
+  productGains: number;
   profit: number;
 }
 
@@ -100,6 +101,12 @@ export default class GenerateGroupReportService {
         });
 
         const productExpenses = productLogs
+          .filter(log => log.logType === 'IN')
+          .map(log => log.cost * log.quantity)
+          .reduce((a, b) => a + b, 0);
+
+        const productGains = productLogs
+          .filter(log => log.logType === 'OUT')
           .map(log => log.cost * log.quantity)
           .reduce((a, b) => a + b, 0);
 
@@ -112,7 +119,8 @@ export default class GenerateGroupReportService {
           givenPrizes,
           playsPerPrize,
           productExpenses,
-          profit: income - productExpenses,
+          productGains,
+          profit: income + productGains - productExpenses,
         };
       }),
     );
