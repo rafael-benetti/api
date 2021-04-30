@@ -1,7 +1,9 @@
+import OrmProvider from '@providers/orm-provider/contracts/models/orm-provider';
 import authHandler from '@shared/server/express/middlewares/auth-handler';
 import { celebrate, Joi } from 'celebrate';
 import { Router } from 'express';
 import multer from 'multer';
+import { container } from 'tsyringe';
 import AuthenticateUserController from '../services/authenticate-user/authenticate-user.controller';
 import CreateManagerController from '../services/create-manager/create-manager.controller';
 import CreateOperatorController from '../services/create-operator/create-operator.controller';
@@ -37,6 +39,7 @@ usersRoutes.patch(
   multer({
     storage: multer.memoryStorage(),
   }).single('file'),
+  container.resolve<OrmProvider>('OrmProvider').forkMiddleware,
   celebrate({
     body: {
       name: Joi.string(),

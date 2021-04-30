@@ -147,7 +147,10 @@ class CreateCollectionService {
 
         if (!box) throw AppError.boxNotFound;
 
-        if (boxCollection.prizeCount !== undefined) {
+        if (
+          boxCollection.prizeCount !== undefined &&
+          user.permissions?.fixMachineStock
+        ) {
           box.numberOfPrizes = boxCollection.prizeCount;
         }
 

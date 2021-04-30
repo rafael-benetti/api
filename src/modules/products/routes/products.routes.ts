@@ -4,6 +4,7 @@ import { Router } from 'express';
 import AddToStockController from '../services/add-to-stock/add-to-stock.controller.ts';
 import CreateProductController from '../services/create-product/create-product.controller';
 import DeleteProductController from '../services/delete-product/delete-product.controller';
+import RemoveFromMachineController from '../services/remove-from-machine/remove-from-machine.controller';
 import TransferProductController from '../services/transfer-product/transfer-product.controller';
 
 const productsRoutes = Router();
@@ -66,6 +67,12 @@ productsRoutes.post(
     },
   }),
   TransferProductController.handle,
+);
+
+productsRoutes.patch(
+  '/:productId/remove-from-machine',
+  RemoveFromMachineController.validate,
+  RemoveFromMachineController.handle,
 );
 
 productsRoutes.delete(
