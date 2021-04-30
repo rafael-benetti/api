@@ -46,6 +46,7 @@ machinesRouter.get(
       pointOfSaleId: Joi.string().allow(null),
       serialNumber: Joi.string(),
       isActive: Joi.boolean().default(true),
+      lean: Joi.boolean().default(false),
       limit: Joi.number(),
       offset: Joi.number(),
     },

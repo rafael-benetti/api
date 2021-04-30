@@ -9,6 +9,7 @@ import AppError from '@shared/errors/app-error';
 import { inject, injectable } from 'tsyringe';
 
 interface Request {
+  lean: boolean;
   userId: string;
   categoryId: string;
   groupId: string;
@@ -42,6 +43,7 @@ class ListMachinesService {
   ) {}
 
   public async execute({
+    lean,
     userId,
     categoryId,
     groupId,
@@ -51,7 +53,7 @@ class ListMachinesService {
     isActive,
     limit,
     offset,
-  }: Request): Promise<Result> {
+  }: Request): Promise<Result | { id: string; serialNumber: string }[]> {
     const filters: FindMachinesDto = {};
 
     const user = await this.usersRepository.findOne({
@@ -66,6 +68,19 @@ class ListMachinesService {
     if (user.role === Role.MANAGER) filters.groupIds = user.groupIds;
 
     if (user.role === Role.OPERATOR) filters.operatorId = user.id;
+
+    if (lean) {
+      filters.isActive = true;
+      const result = await this.machinesRepository.find(filters);
+      const leanMachines = result.machines.map(machine => {
+        return {
+          id: machine.id,
+          serialNumber: machine.serialNumber,
+        };
+      });
+
+      return leanMachines;
+    }
 
     if (routeId) {
       filters.routeId = routeId;
