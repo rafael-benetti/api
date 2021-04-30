@@ -19,8 +19,9 @@ class MikroTelemetryLogsRepository implements TelemetryLogsRepository {
   async find(data: FindTelemetryLogsDto): Promise<TelemetryLog[]> {
     const query: Record<string, unknown> = {};
 
-    const { machineId, date, maintenance, type } = data.filters;
+    const { groupId, machineId, date, maintenance, type } = data.filters;
 
+    if (groupId) query.groupId = groupId;
     if (machineId) query.machineId = machineId;
     if (date)
       if (!date.startDate) {

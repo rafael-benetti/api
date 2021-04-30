@@ -21,6 +21,7 @@ interface Request {
   observations: string;
   boxCollections: {
     boxId: string;
+    prizeCount?: number;
     counterCollections: {
       counterId: string;
       mechanicalCount: number;
@@ -145,6 +146,14 @@ class CreateCollectionService {
         const box = machine.boxes.find(box => box.id === boxCollection.boxId);
 
         if (!box) throw AppError.boxNotFound;
+
+        if (
+          boxCollection.prizeCount !== undefined &&
+          user.role !== Role.OWNER &&
+          user.permissions?.fixMachineStock
+        ) {
+          box.numberOfPrizes = boxCollection.prizeCount;
+        }
 
         box.currentMoney = 0;
 

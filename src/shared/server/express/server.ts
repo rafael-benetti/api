@@ -7,8 +7,8 @@ import cors from 'cors';
 import { container } from 'tsyringe';
 import OrmProvider from '@providers/orm-provider/contracts/models/orm-provider';
 import morgan from 'morgan';
-import router from './router';
 import '../../container/index';
+import router from './router';
 import errorHandler from './middlewares/error-handler';
 
 const start = async () => {

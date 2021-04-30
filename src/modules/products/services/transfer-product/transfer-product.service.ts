@@ -1,5 +1,6 @@
 import GroupsRepository from '@modules/groups/contracts/repositories/groups.repository';
 import MachinesRepository from '@modules/machines/contracts/repositories/machines.repository';
+import ProductLogsRepository from '@modules/products/contracts/repositories/product-logs.repository';
 import Role from '@modules/users/contracts/enums/role';
 import Product from '@modules/users/contracts/models/product';
 import UsersRepository from '@modules/users/contracts/repositories/users.repository';
@@ -38,6 +39,9 @@ class TransferProductService {
     @inject('MachinesRepository')
     private machinesRepository: MachinesRepository,
 
+    @inject('ProductLogsRepository')
+    private productLogsRepository: ProductLogsRepository,
+
     @inject('OrmProvider')
     private ormProvider: OrmProvider,
   ) {}
@@ -47,6 +51,7 @@ class TransferProductService {
     productType,
     productId,
     productQuantity,
+    cost,
     from,
     to,
   }: Request): Promise<void> {
@@ -239,6 +244,26 @@ class TransferProductService {
       box.numberOfPrizes += productQuantity;
 
       this.machinesRepository.save(machine);
+    }
+
+    if (from.type === 'GROUP' && to.type === 'GROUP') {
+      this.productLogsRepository.create({
+        cost: cost || 0,
+        groupId: from.id,
+        productName: (fromProduct as Product).label,
+        productType,
+        quantity: productQuantity,
+        logType: 'OUT',
+      });
+
+      this.productLogsRepository.create({
+        cost: cost || 0,
+        groupId: to.id,
+        productName: (fromProduct as Product).label,
+        productType,
+        quantity: productQuantity,
+        logType: 'IN',
+      });
     }
 
     await this.ormProvider.commit();

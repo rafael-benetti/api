@@ -15,6 +15,9 @@ class MikroTelemetryBoard implements TelemetryBoard {
   groupId: string;
 
   @Property()
+  integratedCircuitCardId?: string;
+
+  @Property()
   machineId?: string;
 
   @OneToOne(() => MikroMachine, mikroMachine => mikroMachine.telemetryBoard, {
@@ -37,6 +40,7 @@ class MikroTelemetryBoard implements TelemetryBoard {
     if (data) {
       this.ownerId = data.ownerId;
       this.groupId = data.groupId;
+      this.integratedCircuitCardId = data.integratedCircuitCardId;
       this.connectionStrength = data.connectionStrength;
       this.connectionType = data.connectionType;
       this.lastConnection = data.lastConnection;

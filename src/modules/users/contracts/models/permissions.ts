@@ -24,6 +24,7 @@ interface Permissions {
   createMachines: boolean;
   editMachines: boolean;
   deleteMachines: boolean;
+  fixMachineStock: boolean;
 
   createManagers: boolean;
   listManagers: boolean;

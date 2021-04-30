@@ -26,6 +26,7 @@ const managerPermissions = [
   'createMachines',
   'editMachines',
   'deleteMachines',
+  'fixMachineStock',
   // MANAGERS
   'createManagers',
   'listManagers',
