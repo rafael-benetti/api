@@ -82,6 +82,8 @@ class CreateProductService {
       groupId,
       quantity,
       cost,
+      productType: type,
+      logType: 'IN',
     });
 
     if (type === 'PRIZE') group.stock.prizes.push(product);

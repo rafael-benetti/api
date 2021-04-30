@@ -251,7 +251,18 @@ class TransferProductService {
         cost: cost || 0,
         groupId: from.id,
         productName: (fromProduct as Product).label,
+        productType,
         quantity: productQuantity,
+        logType: 'OUT',
+      });
+
+      this.productLogsRepository.create({
+        cost: cost || 0,
+        groupId: to.id,
+        productName: (fromProduct as Product).label,
+        productType,
+        quantity: productQuantity,
+        logType: 'IN',
       });
     }
 

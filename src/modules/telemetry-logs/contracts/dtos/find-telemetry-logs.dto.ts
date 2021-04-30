@@ -1,5 +1,6 @@
 interface FindTelemetryLogsDto {
   filters: {
+    groupId?: string | string[];
     machineId?: string | string[];
     pointOfSaleId?: string;
     date?: {

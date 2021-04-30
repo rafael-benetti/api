@@ -15,7 +15,13 @@ export default class MikroProductLog implements ProductLog {
   productName: string;
 
   @Property()
+  productType: 'SUPPLY' | 'PRIZE';
+
+  @Property()
   quantity: number;
+
+  @Property()
+  logType: 'IN' | 'OUT';
 
   @Property()
   cost: number;
@@ -28,7 +34,9 @@ export default class MikroProductLog implements ProductLog {
       this.id = v4();
       this.groupId = data.groupId;
       this.productName = data.productName;
+      this.productType = data.productType;
       this.quantity = data.quantity;
+      this.logType = data.logType;
       this.cost = data.cost;
       this.createdAt = new Date();
     }

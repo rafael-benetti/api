@@ -82,7 +82,9 @@ class AddToStockService {
       cost,
       groupId,
       productName: product.label,
+      productType: type,
       quantity,
+      logType: 'IN',
     });
 
     this.groupsRepository.save(group);
