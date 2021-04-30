@@ -1,4 +1,5 @@
 import GroupsRepository from '@modules/groups/contracts/repositories/groups.repository';
+import ProductLogsRepository from '@modules/products/contracts/repositories/product-logs.repository';
 import Role from '@modules/users/contracts/enums/role';
 import Product from '@modules/users/contracts/models/product';
 import UsersRepository from '@modules/users/contracts/repositories/users.repository';
@@ -27,6 +28,9 @@ class CreateProductService {
     @inject('GroupsRepository')
     private groupsRepository: GroupsRepository,
 
+    @inject('ProductLogsRepository')
+    private productLogsRepository: ProductLogsRepository,
+
     @inject('OrmProvider')
     private ormProvider: OrmProvider,
   ) {}
@@ -37,6 +41,7 @@ class CreateProductService {
     label,
     type,
     quantity,
+    cost,
   }: Request): Promise<Product> {
     const user = await this.usersRepository.findOne({
       by: 'id',
@@ -71,6 +76,13 @@ class CreateProductService {
       label,
       quantity,
     };
+
+    this.productLogsRepository.create({
+      productName: label,
+      groupId,
+      quantity,
+      cost,
+    });
 
     if (type === 'PRIZE') group.stock.prizes.push(product);
     else group.stock.supplies.push(product);

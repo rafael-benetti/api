@@ -1,5 +1,5 @@
-import logger from '@config/logger';
 import GroupsRepository from '@modules/groups/contracts/repositories/groups.repository';
+import ProductLogsRepository from '@modules/products/contracts/repositories/product-logs.repository';
 import Role from '@modules/users/contracts/enums/role';
 import UsersRepository from '@modules/users/contracts/repositories/users.repository';
 import OrmProvider from '@providers/orm-provider/contracts/models/orm-provider';
@@ -25,6 +25,9 @@ class AddToStockService {
 
     @inject('GroupsRepository')
     private groupsRepository: GroupsRepository,
+
+    @inject('ProductLogsRepository')
+    private productLogsRepository: ProductLogsRepository,
 
     @inject('OrmProvider')
     private ormProvider: OrmProvider,
@@ -75,8 +78,13 @@ class AddToStockService {
 
     product.quantity += quantity;
 
-    // TODO create log with quantity * cost
-    logger.info(cost * quantity);
+    this.productLogsRepository.create({
+      cost,
+      groupId,
+      productName: product.label,
+      quantity,
+    });
+
     this.groupsRepository.save(group);
 
     await this.ormProvider.commit();
