@@ -149,8 +149,7 @@ class CreateCollectionService {
 
         if (
           boxCollection.prizeCount !== undefined &&
-          user.role !== Role.OWNER &&
-          user.permissions?.fixMachineStock
+          (user.role === Role.OWNER || user.permissions?.fixMachineStock)
         ) {
           box.numberOfPrizes = boxCollection.prizeCount;
         }
