@@ -19,7 +19,7 @@ export default class MikroCollectionsRepository
     return CollectionsMapper.map(collection);
   }
 
-  findOne(collectionId: string): Promise<Collection | undefined> {
+  async findOne(collectionId: string): Promise<Collection | undefined> {
     const collection = await this.repository.findOne({
       id: collectionId,
     });
