@@ -12,6 +12,7 @@ export default abstract class CreateCollectionController {
         .items(
           Joi.object({
             boxId: Joi.string().uuid().required(),
+            prizeCount: Joi.number(),
             counterCollections: Joi.array()
               .items(
                 Joi.object({
@@ -30,7 +31,6 @@ export default abstract class CreateCollectionController {
 
   static handle: RequestHandler = async (request, response) => {
     const { userId, files } = request;
-    console.log(request.body);
 
     const { machineId, observations, boxCollections } = request.body;
 
