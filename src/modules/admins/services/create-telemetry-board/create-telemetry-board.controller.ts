@@ -7,16 +7,18 @@ abstract class CreateTelemetryBoardController {
   static validate = celebrate({
     body: {
       ownerId: Joi.string().uuid().required(),
+      integratedCircuitCardId: Joi.string(),
     },
   });
 
   static handle: RequestHandler = async (req, res) => {
-    const { ownerId } = req.body;
+    const { ownerId, integratedCircuitCardId } = req.body;
 
     const createTelemetryBoard = container.resolve(CreateTelemetryBoardService);
 
     const telemetryBoard = await createTelemetryBoard.execute({
       ownerId,
+      integratedCircuitCardId,
     });
 
     return res.json(telemetryBoard);

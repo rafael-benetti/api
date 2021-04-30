@@ -7,6 +7,8 @@ class TelemetryBoard {
 
   groupId: string;
 
+  integratedCircuitCardId?: string;
+
   machineId?: string;
 
   lastConnection?: Date;
@@ -19,6 +21,7 @@ class TelemetryBoard {
     if (data) {
       this.ownerId = data.ownerId;
       this.groupId = data.groupId;
+      this.integratedCircuitCardId = data.integratedCircuitCardId;
       this.connectionStrength = data.connectionStrength;
       this.connectionType = data.connectionType;
       this.lastConnection = data.lastConnection;
