@@ -62,6 +62,7 @@ usersRoutes.post(
           createMachines: Joi.bool().default(false),
           editMachines: Joi.bool().default(false),
           deleteMachines: Joi.bool().default(false),
+          fixMachineStock: Joi.bool().default(false),
           createProducts: Joi.bool().default(false),
           editProducts: Joi.bool().default(false),
           deleteProducts: Joi.bool().default(false),
@@ -103,6 +104,7 @@ usersRoutes.patch(
           createMachines: Joi.bool().default(false),
           editMachines: Joi.bool().default(false),
           deleteMachines: Joi.bool().default(false),
+          fixMachineStock: Joi.bool().default(false),
           createProducts: Joi.bool().default(false),
           editProducts: Joi.bool().default(false),
           deleteProducts: Joi.bool().default(false),
@@ -158,6 +160,7 @@ usersRoutes.post(
         permissions: Joi.object({
           editMachines: Joi.bool().default(false),
           deleteMachines: Joi.bool().default(false),
+          fixMachineStock: Joi.bool().default(false),
           addRemoteCredit: Joi.bool().default(false),
           toggleMaintenanceMode: Joi.bool().default(false),
           editCollections: Joi.bool().default(false),
@@ -180,6 +183,7 @@ usersRoutes.patch(
         permissions: Joi.object({
           editMachines: Joi.bool().default(false),
           deleteMachines: Joi.bool().default(false),
+          fixMachineStock: Joi.bool().default(false),
           addRemoteCredit: Joi.bool().default(false),
           toggleMaintenanceMode: Joi.bool().default(false),
           editCollections: Joi.bool().default(false),

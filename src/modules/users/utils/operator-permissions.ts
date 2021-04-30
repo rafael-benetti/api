@@ -5,6 +5,7 @@ const operatorPermissions = [
   'deleteMachines',
   'editCollections',
   'deleteCollections',
+  'fixMachineStock',
 ];
 
 export default operatorPermissions;
