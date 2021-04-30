@@ -97,14 +97,14 @@ class EditCollectionService {
     });
 
     if (!machine) throw AppError.machineNotFound;
-    if (!machine.locationId) throw AppError.productInStock;
+    if (!machine.locationId) throw AppError.machineInStock;
 
     const location = await this.pointsOfSaleRepository.findOne({
       by: 'id',
       value: machine.locationId,
     });
 
-    if (!location) throw AppError.productInStock;
+    if (!location) throw AppError.pointOfSaleNotFound;
 
     if (user.role === Role.OPERATOR && machine.operatorId !== user.id)
       throw AppError.authorizationError;
@@ -129,6 +129,7 @@ class EditCollectionService {
       parsedFiles[boxId][counterId].push(file);
     });
 
+    // ? REMOVE FOTOS
     lastCollection.boxCollections.forEach(boxCollections => {
       boxCollections.counterCollections.forEach(boxCollection => {
         for (let i = 0; i < boxCollection.photos.length; i += 1) {
@@ -145,11 +146,10 @@ class EditCollectionService {
 
     let previousCollection;
 
-    if (lastCollection.previousCollectionId) {
+    if (lastCollection.previousCollectionId)
       previousCollection = await this.collectionsRepository.findOne(
         lastCollection.previousCollectionId,
       );
-    }
 
     const telemetryLogs = await this.telemetryLogsRepository.find({
       filters: {
@@ -200,6 +200,25 @@ class EditCollectionService {
         );
       }),
     );
+
+    lastCollection.boxCollections.forEach(lastBoxCollection => {
+      lastBoxCollection.counterCollections.forEach(lastCounterCollection => {
+        boxCollections.forEach(boxCollection => {
+          if (boxCollection.boxId === lastBoxCollection.boxId) {
+            boxCollection.counterCollections.forEach(counterCollection => {
+              if (
+                counterCollection.counterId === lastCounterCollection.counterId
+              ) {
+                counterCollection.photos = [
+                  ...counterCollection.photos,
+                  ...lastCounterCollection.photos,
+                ];
+              }
+            });
+          }
+        });
+      });
+    });
 
     lastCollection.boxCollections = boxCollections;
     lastCollection.observations = observations;

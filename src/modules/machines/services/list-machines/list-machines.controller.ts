@@ -6,6 +6,7 @@ abstract class ListMachinesController {
   static async handle(req: Request, res: Response): Promise<Response> {
     const { userId } = req;
     const {
+      lean,
       categoryId,
       groupId,
       routeId,
@@ -28,6 +29,7 @@ abstract class ListMachinesController {
       isActive: isActive?.toString() === 'true',
       limit: Number(limit) as number,
       offset: Number(offset) as number,
+      lean: lean?.toString() === 'true',
     });
 
     return res.json(machines);

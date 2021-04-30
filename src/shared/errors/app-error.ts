@@ -50,7 +50,7 @@ export default class AppError {
   });
 
   static oldPasswordIsMissing = new AppError({
-    errorCode: 'OLD_PASSWoRD_IS_MISSING',
+    errorCode: 'OLD_PASSWORD_IS_MISSING',
     message: 'You need to inform the old password to set a new password.',
     statusCode: 401,
   });
@@ -121,6 +121,12 @@ export default class AppError {
     statusCode: 409,
   });
 
+  static machineInStock = new AppError({
+    errorCode: 'MACHINE_IN_STOCK',
+    message: 'This machine is still in stock.',
+    statusCode: 409,
+  });
+
   static productNotFound = new AppError({
     errorCode: 'PRODUCT_NOT_FOUND',
     message: "Could not find the 'product'.",
@@ -161,12 +167,6 @@ export default class AppError {
   static groupNotFound = new AppError({
     errorCode: 'GROUP_NOT_FOUND',
     message: "Could not find the 'group'.",
-    statusCode: 404,
-  });
-
-  static sellingPointNotFound = new AppError({
-    errorCode: 'SELLING_POINT_NOT_FOUND',
-    message: "Could not find the 'Selling Point'.",
     statusCode: 404,
   });
 
