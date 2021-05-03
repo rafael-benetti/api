@@ -1,11 +1,10 @@
 import Period from '@modules/machines/contracts/dtos/period.dto';
-import Machine from '@modules/machines/contracts/models/machine';
-import MachinesRepository from '@modules/machines/contracts/repositories/machines.repository';
 import PointOfSale from '@modules/points-of-sale/contracts/models/point-of-sale';
 import PointsOfSaleRepository from '@modules/points-of-sale/contracts/repositories/points-of-sale.repository';
 import Route from '@modules/routes/contracts/models/route';
 import RoutesRepository from '@modules/routes/contracts/repositories/routes.repository';
 import TelemetryLogsRepository from '@modules/telemetry-logs/contracts/repositories/telemetry-logs.repository';
+
 import Role from '@modules/users/contracts/enums/role';
 import UsersRepository from '@modules/users/contracts/repositories/users.repository';
 import AppError from '@shared/errors/app-error';
@@ -18,17 +17,12 @@ import {
   subMonths,
   subWeeks,
 } from 'date-fns';
-import { inject, injectable } from 'tsyringe';
+import { injectable, inject } from 'tsyringe';
 
 interface Request {
-  userId: string;
-  pointOfSaleId: string;
   period: Period;
-}
-
-interface MachineInfo {
-  machine: Machine;
-  income: number;
+  userId: string;
+  routeId: string;
 }
 
 interface ChartData {
@@ -38,36 +32,33 @@ interface ChartData {
 }
 
 interface Response {
-  pointOfSale: PointOfSale;
-  machinesInfo: MachineInfo[];
-  route?: Route;
-  chartData: ChartData[];
+  route: Route;
+  pointsOfSale: PointOfSale[];
   income: number;
   givenPrizesCount: number;
+  chartData1: ChartData[];
+  chartData2: { pointOfSaleId: string; label: string; income: number }[];
 }
 
 @injectable()
-class GetPointOfSaleDetailsService {
+class DetailRouteService {
   constructor(
-    @inject('PointsOfSaleRepository')
-    private pointsOfSaleRepository: PointsOfSaleRepository,
+    @inject('RoutesRepository')
+    private routesRepository: RoutesRepository,
 
     @inject('UsersRepository')
     private usersRepository: UsersRepository,
 
-    @inject('MachinesRepository')
-    private machinesRepository: MachinesRepository,
+    @inject('PointsOfSaleRepository')
+    private pointsOfSaleRepository: PointsOfSaleRepository,
 
     @inject('TelemetryLogsRepository')
     private telemetryLogsRepository: TelemetryLogsRepository,
-
-    @inject('RoutesRepository')
-    private routesRepository: RoutesRepository,
   ) {}
 
   public async execute({
     userId,
-    pointOfSaleId,
+    routeId,
     period,
   }: Request): Promise<Response> {
     const user = await this.usersRepository.findOne({
@@ -77,34 +68,30 @@ class GetPointOfSaleDetailsService {
 
     if (!user) throw AppError.userNotFound;
 
-    const pointOfSale = await this.pointsOfSaleRepository.findOne({
-      by: 'id',
-      value: pointOfSaleId,
-      populate: ['group'],
+    const route = await this.routesRepository.findOne({
+      id: routeId,
     });
 
-    if (!pointOfSale) throw AppError.pointOfSaleNotFound;
+    if (!route) throw AppError.routeNotFound;
 
-    if (user.role === Role.OWNER && user.id !== pointOfSale.ownerId)
+    if (user.role === Role.OPERATOR && route?.operatorId !== user.id)
       throw AppError.authorizationError;
 
-    if (
-      (user.role === Role.MANAGER || user.role === Role.OPERATOR) &&
-      !user.groupIds?.includes(pointOfSale.groupId)
-    )
-      throw AppError.authorizationError;
+    if (user.role === Role.MANAGER) {
+      const checkRoutesGroups = route?.groupIds.some(
+        groupId => !user.groupIds?.includes(groupId),
+      );
 
-    const { machines } = await this.machinesRepository.find({
-      pointOfSaleId,
-      isActive: true,
-    });
-
-    let route;
-    if (pointOfSale.routeId) {
-      route = await this.routesRepository.findOne({
-        id: pointOfSale.routeId,
-      });
+      if (checkRoutesGroups) throw AppError.authorizationError;
     }
+
+    if (user.role === Role.OWNER && user.id !== route.ownerId)
+      throw AppError.authorizationError;
+
+    const { pointsOfSale } = await this.pointsOfSaleRepository.find({
+      by: 'routeId',
+      value: route.id,
+    });
 
     const endDate = new Date(Date.now());
     let startDate;
@@ -116,13 +103,11 @@ class GetPointOfSaleDetailsService {
 
     const telemetryLogs = await this.telemetryLogsRepository.find({
       filters: {
-        machineId: machines.map(machine => machine.id),
-        pointOfSaleId: pointOfSale.id,
+        pointOfSaleId: pointsOfSale.map(pointOfSale => pointOfSale.id),
         date: {
           startDate,
           endDate,
         },
-        maintenance: false,
       },
     });
 
@@ -140,7 +125,7 @@ class GetPointOfSaleDetailsService {
     // ? PREMIOS ENTREGUES
     const givenPrizesCount = telemetryLogsOut.reduce((a, b) => a + b.value, 0);
 
-    let chartData: ChartData[] = [];
+    let chartData1: ChartData[] = [];
 
     // ? CHART DATA PARA O PERIODO DIARIO
     if (period === Period.DAILY) {
@@ -149,7 +134,7 @@ class GetPointOfSaleDetailsService {
         end: endDate,
       });
 
-      chartData = hoursOfInterval.map(hour => {
+      chartData1 = hoursOfInterval.map(hour => {
         const incomeInHour = telemetryLogsIn
           .filter(telemetry => isSameHour(hour, telemetry.date))
           .reduce(
@@ -179,7 +164,7 @@ class GetPointOfSaleDetailsService {
         end: endDate,
       });
 
-      chartData = daysOfInterval.map(day => {
+      chartData1 = daysOfInterval.map(day => {
         const incomeInDay = telemetryLogsIn
           .filter(telemetry => isSameDay(day, telemetry.date))
           .reduce(
@@ -202,23 +187,31 @@ class GetPointOfSaleDetailsService {
       });
     }
 
-    const machinesInfo = machines.map(machine => {
+    const chartData2 = pointsOfSale.map(pointOfSale => {
+      const telemetryLogsOfPointOfSale = telemetryLogsIn.filter(
+        telemetryLogIn => telemetryLogIn.pointOfSaleId === pointOfSale.id,
+      );
+
+      const income = telemetryLogsOfPointOfSale.reduce(
+        (a, b) => a + b.value,
+        0,
+      );
+
       return {
-        machine,
-        income: telemetryLogsIn
-          .filter(telemetryLog => telemetryLog.machineId === machine.id)
-          .reduce((a, b) => a + b.value, 0),
+        pointOfSaleId: pointOfSale.id,
+        label: pointOfSale.label,
+        income,
       };
     });
 
     return {
-      pointOfSale,
-      machinesInfo,
       route,
-      chartData,
-      givenPrizesCount,
+      pointsOfSale,
       income,
+      givenPrizesCount,
+      chartData1,
+      chartData2,
     };
   }
 }
-export default GetPointOfSaleDetailsService;
+export default DetailRouteService;

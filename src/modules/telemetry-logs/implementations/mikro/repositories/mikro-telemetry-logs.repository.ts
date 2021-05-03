@@ -19,7 +19,14 @@ class MikroTelemetryLogsRepository implements TelemetryLogsRepository {
   async find(data: FindTelemetryLogsDto): Promise<TelemetryLog[]> {
     const query: Record<string, unknown> = {};
 
-    const { groupId, machineId, date, maintenance, type } = data.filters;
+    const {
+      groupId,
+      pointOfSaleId,
+      machineId,
+      date,
+      maintenance,
+      type,
+    } = data.filters;
 
     if (groupId) query.groupId = groupId;
     if (machineId) query.machineId = machineId;
@@ -35,11 +42,14 @@ class MikroTelemetryLogsRepository implements TelemetryLogsRepository {
         };
       }
     if (maintenance !== undefined) query.maintenance = maintenance;
+
+    if (pointOfSaleId !== undefined) query.pointOfSaleId = pointOfSaleId;
+
     if (type) query.type = type;
 
     const telemetryLogs = await this.repository.find(
       { ...query },
-      { orderBy: { date: 'DESC' }, limit: data.limit },
+      { orderBy: { date: 'DESC' }, limit: data.limit, offset: data.offset },
     );
 
     return telemetryLogs;

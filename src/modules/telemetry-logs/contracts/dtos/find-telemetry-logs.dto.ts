@@ -2,7 +2,7 @@ interface FindTelemetryLogsDto {
   filters: {
     groupId?: string | string[];
     machineId?: string | string[];
-    pointOfSaleId?: string;
+    pointOfSaleId?: string | string[];
     date?: {
       startDate?: Date;
       endDate: Date;
@@ -11,6 +11,7 @@ interface FindTelemetryLogsDto {
     type?: 'IN' | 'OUT';
   };
   limit?: number;
+  offset?: number;
 }
 
 export default FindTelemetryLogsDto;

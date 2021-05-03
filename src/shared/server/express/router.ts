@@ -8,6 +8,7 @@ import pointsOfSaleRoutes from '@modules/points-of-sale/routes/points-of-sales.r
 import productsRoutes from '@modules/products/routes/products.routes';
 import reportsRoutes from '@modules/reports/routes/reports.routes';
 import routesRoutes from '@modules/routes/routes/routes.routes';
+import telemetryLogsRoutes from '@modules/telemetry-logs/routes/telemetry-logs.router';
 import telemetryRoutes from '@modules/telemetry/routes/telemetry.routes';
 import usersRoutes from '@modules/users/routes/users.routes';
 import { Router } from 'express';
@@ -24,6 +25,7 @@ router.use('/machines', machinesRoutes);
 router.use('/routes', routesRoutes);
 router.use('/counterTypes', counterTypesRoutes);
 router.use('/telemetry-boards', telemetryRoutes);
+router.use('/telemetry-logs', telemetryLogsRoutes);
 router.use('/collections', collectionsRoutes);
 router.use('/reports', reportsRoutes);
 

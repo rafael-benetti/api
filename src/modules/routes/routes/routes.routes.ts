@@ -3,6 +3,7 @@ import { celebrate, Joi } from 'celebrate';
 import { Router } from 'express';
 import CreateRouteController from '../services/create-route/create-route.controller';
 import DeleteRouteController from '../services/delete-route/delete-route.controller';
+import DetailRouteController from '../services/detail-route/detail-route.controller';
 import EditRouteController from '../services/edit-route/edit-route.controller';
 import ListRoutesController from '../services/list-routes/list-routes.controller';
 
@@ -34,6 +35,20 @@ routesRouter.put(
     },
   }),
   EditRouteController.handle,
+);
+
+routesRouter.get(
+  '/:routeId',
+  celebrate({
+    params: {
+      routeId: Joi.string(),
+    },
+    query: {
+      period: Joi.string().valid('DAILY', 'MONTHLY', 'WEEKLY'),
+    },
+  }),
+
+  DetailRouteController.handle,
 );
 
 routesRouter.delete(
