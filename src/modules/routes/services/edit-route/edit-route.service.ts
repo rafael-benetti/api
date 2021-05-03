@@ -173,6 +173,22 @@ class EditRouteService {
         this.machinesRepository.save(machine);
       });
 
+      const pointsOfSaleToEditIds = route.pointsOfSaleIds.filter(
+        pointOfSaleId => !pointsOfSaleIds.includes(pointOfSaleId),
+      );
+
+      const pointsOfSaleToEdit = (
+        await this.pointsOfSaleRepository.find({
+          by: 'id',
+          value: pointsOfSaleToEditIds,
+        })
+      ).pointsOfSale;
+
+      pointsOfSaleToEdit.forEach(p => {
+        p.routeId = undefined;
+        this.pointsOfSaleRepository.save(p);
+      });
+
       route.pointsOfSaleIds = pointsOfSaleIds;
     }
 
