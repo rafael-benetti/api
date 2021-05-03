@@ -7,4 +7,5 @@ export default interface RoutesRepository {
   findOne(data: FindRoutesDto): Promise<Route | undefined>;
   find(data: FindRoutesDto): Promise<Route[]>;
   save(data: Route): void;
+  delete(route: Route): void;
 }

@@ -53,6 +53,11 @@ class MikroRoutesRepository implements RoutesRepository {
   save(data: Route): void {
     this.repository.persist(RouteMapper.toMikroEntity(data));
   }
+
+  delete(route: Route): void {
+    const mikroRoute = RouteMapper.toMikroEntity(route);
+    this.repository.remove(mikroRoute);
+  }
 }
 
 export default MikroRoutesRepository;

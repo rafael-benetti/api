@@ -174,11 +174,20 @@ class EditMachineService {
 
       if (!pointOfSale) throw AppError.pointOfSaleNotFound;
       machine.locationId = locationId;
-    } else if (locationId === null) {
-      machine.locationId = locationId;
-    }
+    } else if (locationId === null) machine.locationId = locationId;
 
-    if (isActive !== undefined) machine.isActive = isActive; // TODO REMOVER O TELEMETRY BOARD
+    // ? ALTERA STATUS DA MAQUINA PARA DESATIVADA(DELETADA),
+    // ? E DESVINCULAR A MACHINE DA TELEMETRY BOARD
+    if (isActive !== undefined) {
+      machine.isActive = isActive;
+      if (machine.telemetryBoardId) {
+        const telemetryBoard = await this.telemetryBoardsRepository.findById(
+          machine.telemetryBoardId,
+        );
+        if (telemetryBoard) telemetryBoard.machineId = undefined;
+        machine.telemetryBoardId = undefined;
+      }
+    }
 
     if (categoryId) {
       const category = await this.categoriesRepository.findOne({
@@ -216,7 +225,7 @@ class EditMachineService {
       machine.boxes = boxesEntities;
     }
 
-    if (telemetryBoardId !== undefined) {
+    if (telemetryBoardId !== undefined && machine.isActive) {
       if (telemetryBoardId === null) {
         if (machine.telemetryBoardId) {
           const telemetry = await this.telemetryBoardsRepository.findById(

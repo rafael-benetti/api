@@ -2,6 +2,7 @@ import authHandler from '@shared/server/express/middlewares/auth-handler';
 import { celebrate, Joi } from 'celebrate';
 import { Router } from 'express';
 import CreateRouteController from '../services/create-route/create-route.controller';
+import DeleteRouteController from '../services/delete-route/delete-route.controller';
 import EditRouteController from '../services/edit-route/edit-route.controller';
 import ListRoutesController from '../services/list-routes/list-routes.controller';
 
@@ -33,6 +34,16 @@ routesRouter.put(
     },
   }),
   EditRouteController.handle,
+);
+
+routesRouter.delete(
+  '/:routeId',
+  celebrate({
+    params: {
+      routeId: Joi.string(),
+    },
+  }),
+  DeleteRouteController.handle,
 );
 
 export default routesRouter;

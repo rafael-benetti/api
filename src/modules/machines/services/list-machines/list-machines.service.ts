@@ -53,7 +53,10 @@ class ListMachinesService {
     isActive,
     limit,
     offset,
-  }: Request): Promise<Result | { id: string; serialNumber: string }[]> {
+  }: Request): Promise<
+    | Result
+    | { id: string; serialNumber: string; locationId: string | undefined }[]
+  > {
     const filters: FindMachinesDto = {};
 
     const user = await this.usersRepository.findOne({
@@ -76,6 +79,7 @@ class ListMachinesService {
         return {
           id: machine.id,
           serialNumber: machine.serialNumber,
+          locationId: machine.locationId,
         };
       });
 

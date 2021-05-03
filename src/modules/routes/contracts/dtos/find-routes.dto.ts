@@ -4,6 +4,7 @@ export default interface FindRoutesDto {
   ownerId?: string;
   label?: string;
   pointsOfSaleId?: string;
+  routeId?: string;
   groupIds?: string[];
   populate?: string[];
 }
