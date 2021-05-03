@@ -25,19 +25,20 @@ export default class MikroProductLogsRepository
     const query: Record<string, unknown> = {};
 
     if (groupId) query.groupId = groupId;
-    if (startDate && endDate)
-      query.date = {
+    if (startDate && endDate) {
+      query.createdAt = {
         $gte: startDate,
         $lte: endDate,
       };
-    if (startDate)
-      query.date = {
+    } else if (startDate) {
+      query.createdAt = {
         $gte: startDate,
       };
-    if (endDate)
-      query.date = {
+    } else if (endDate) {
+      query.createdAt = {
         $lte: endDate,
       };
+    }
 
     const productLogs = await this.repository.find(
       { ...query },
