@@ -13,7 +13,7 @@
     "dev": "DEBUG=api* ts-node-dev -r dotenv/config -r tsconfig-paths/register --transpile-only --inspect --no-notify src/shared/server/express/server.ts",
     "test": "jest --clearCache && jest --passWithNoTests",
     "typeorm": "ts-node-dev -r tsconfig-paths/register ./node_modules/typeorm/cli.js",
-    "migrate": "DEBUG=api* ts-node-dev -r dotenv/config -r tsconfig-paths/register --transpile-only --inspect --no-notify src/migration-script/exec.ts"
+    "migrate": "DEBUG=api* ts-node-dev -r dotenv/config -r tsconfig-paths/register --transpile-only --inspect --no-notify src/migration-script/start.ts"
   },
   "dependencies": {
     "@mikro-orm/core": "^4.5.0",

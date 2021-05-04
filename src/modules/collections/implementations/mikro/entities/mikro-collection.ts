@@ -1,10 +1,4 @@
-import {
-  Entity,
-  OneToMany,
-  OneToOne,
-  PrimaryKey,
-  Property,
-} from '@mikro-orm/core';
+import { Entity, OneToOne, PrimaryKey, Property } from '@mikro-orm/core';
 import CreateCollectionDto from '@modules/collections/contracts/dtos/create-collection.dto';
 import Collection from '@modules/collections/contracts/entities/collection';
 import boxCollection from '@modules/collections/contracts/interfaces/box-collection';
