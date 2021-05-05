@@ -3,11 +3,12 @@ import OrmProvider from '@providers/orm-provider/contracts/models/orm-provider';
 import GroupsRepository from '@modules/groups/contracts/repositories/groups.repository';
 import Redis from 'ioredis';
 import TypeCompaniesRepository from 'migration-script/modules/companies/typeorm/repositories/type-companies.repository';
-import PointsOfSaleRepository from '@modules/points-of-sale/contracts/repositories/points-of-sale.repository';
 import UsersRepository from '@modules/users/contracts/repositories/users.repository';
-import Role from '@modules/users/contracts/enums/role';
 import TypeUsersRepository from 'migration-script/modules/users/typeorm/repostories/type-users-repository';
 import CategoriesRepository from '@modules/categories/contracts/repositories/categories.repository';
+import CounterTypesRepository from '@modules/counter-types/contracts/repositories/couter-types.repository';
+import Counter from '@modules/machines/contracts/models/counter';
+import CounterType from '@modules/counter-types/contracts/models/counter-type';
 import MachineCategoriesRepository from '../typeorm/repositories/type-machine-categories.repository';
 
 @injectable()
@@ -29,6 +30,9 @@ class UserScript {
 
     @inject('UsersRepository')
     private usersRepository: UsersRepository,
+
+    @inject('CounterTypesRepository')
+    private counterTypesRepository: CounterTypesRepository,
 
     @inject('TypeUsersRepository')
     private typeUsersRepository: TypeUsersRepository,
@@ -56,6 +60,26 @@ class UserScript {
       );
 
       typeMachineCategories.forEach(async typeMachineCategory => {
+        const counters: any[] = [];
+        const counterTypes = await this.counterTypesRepository.find({
+          ownerId,
+        });
+
+        if (
+          typeMachineCategory.name === 'Vintage' ||
+          typeMachineCategory.name === 'Tomacat' ||
+          typeMachineCategory.name === 'Magic Bear' ||
+          typeMachineCategory.name === 'Luck Star' ||
+          typeMachineCategory.name === 'Grua Lucky Star' ||
+          typeMachineCategory.name === 'Grua Black' ||
+          typeMachineCategory.name === 'Black' ||
+          typeMachineCategory.name === 'Big Mega Plush' ||
+          typeMachineCategory.name === 'Big Black'
+        ) {
+          for (x in 30) {
+          }
+        }
+
         this.categoriesRepository.create({
           label: typeMachineCategory.name,
           ownerId,

@@ -199,8 +199,8 @@ class DetailRouteService {
         telemetryLogIn => telemetryLogIn.pointOfSaleId === pointOfSale.id,
       );
 
-      const telemetryLogsOfPointOfSaleOut = telemetryLogsIn.filter(
-        telemetryLogIn => telemetryLogIn.pointOfSaleId === pointOfSale.id,
+      const telemetryLogsOfPointOfSaleOut = telemetryLogsOut.filter(
+        telemetryLogOut => telemetryLogOut.pointOfSaleId === pointOfSale.id,
       );
 
       const income = telemetryLogsOfPointOfSaleIn.reduce(
