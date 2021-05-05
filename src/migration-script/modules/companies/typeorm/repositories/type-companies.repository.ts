@@ -17,9 +17,15 @@ class TypeCompaniesRepository {
     return companies;
   }
 
-  public async find(): Promise<TypeCompany[]> {
-    const companies = await this.ormRepository.find();
+  public async find(ownerId?: string): Promise<TypeCompany[]> {
+    if (ownerId) {
+      const companies = await this.ormRepository.find({
+        where: ownerId,
+      });
+      return companies;
+    }
 
+    const companies = await this.ormRepository.find();
     return companies;
   }
 }

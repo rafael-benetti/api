@@ -31,13 +31,20 @@ interface ChartData {
   income: number;
 }
 
+interface ChartData2 {
+  pointOfSaleId: string;
+  label: string;
+  income: number;
+  givenPrizesCount: number;
+}
+
 interface Response {
   route: Route;
   pointsOfSale: PointOfSale[];
   income: number;
   givenPrizesCount: number;
   chartData1: ChartData[];
-  chartData2: { pointOfSaleId: string; label: string; income: number }[];
+  chartData2: ChartData2[];
 }
 
 @injectable()
@@ -188,11 +195,20 @@ class DetailRouteService {
     }
 
     const chartData2 = pointsOfSale.map(pointOfSale => {
-      const telemetryLogsOfPointOfSale = telemetryLogsIn.filter(
+      const telemetryLogsOfPointOfSaleIn = telemetryLogsIn.filter(
         telemetryLogIn => telemetryLogIn.pointOfSaleId === pointOfSale.id,
       );
 
-      const income = telemetryLogsOfPointOfSale.reduce(
+      const telemetryLogsOfPointOfSaleOut = telemetryLogsIn.filter(
+        telemetryLogIn => telemetryLogIn.pointOfSaleId === pointOfSale.id,
+      );
+
+      const income = telemetryLogsOfPointOfSaleIn.reduce(
+        (a, b) => a + b.value,
+        0,
+      );
+
+      const givenPrizesCount = telemetryLogsOfPointOfSaleOut.reduce(
         (a, b) => a + b.value,
         0,
       );
@@ -201,6 +217,7 @@ class DetailRouteService {
         pointOfSaleId: pointOfSale.id,
         label: pointOfSale.label,
         income,
+        givenPrizesCount,
       };
     });
 
