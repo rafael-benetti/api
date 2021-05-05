@@ -1,3 +1,5 @@
+/* eslint-disable no-await-in-loop */
+/* eslint-disable no-restricted-syntax */
 import { inject, injectable } from 'tsyringe';
 import OrmProvider from '@providers/orm-provider/contracts/models/orm-provider';
 import GroupsRepository from '@modules/groups/contracts/repositories/groups.repository';
@@ -8,7 +10,7 @@ import TypeUsersRepository from 'migration-script/modules/users/typeorm/repostor
 import CategoriesRepository from '@modules/categories/contracts/repositories/categories.repository';
 import CounterTypesRepository from '@modules/counter-types/contracts/repositories/couter-types.repository';
 import Counter from '@modules/machines/contracts/models/counter';
-import CounterType from '@modules/counter-types/contracts/models/counter-type';
+import AppError from '@shared/errors/app-error';
 import MachineCategoriesRepository from '../typeorm/repositories/type-machine-categories.repository';
 
 @injectable()
@@ -50,7 +52,7 @@ class UserScript {
       typeUser => typeUser.id === typeUser.ownerId,
     );
 
-    typeOwners.forEach(async typeOwner => {
+    for (const typeOwner of typeOwners) {
       const ownerId = (await this.client.get(
         `@users:${typeOwner.id}`,
       )) as string;
@@ -60,10 +62,21 @@ class UserScript {
       );
 
       typeMachineCategories.forEach(async typeMachineCategory => {
-        const counters: any[] = [];
+        const counters: Counter[] = [];
         const counterTypes = await this.counterTypesRepository.find({
           ownerId,
         });
+
+        const counterTypeIdIn = counterTypes.find(
+          counterType => counterType.label === 'Noteiro',
+        )?.id;
+
+        const counterTypeIdOut = counterTypes.find(
+          counterType => counterType.label === 'Prêmio',
+        )?.id;
+
+        if (!counterTypeIdIn || !counterTypeIdOut)
+          throw AppError.counterTypeNotFound;
 
         if (
           typeMachineCategory.name === 'Vintage' ||
@@ -76,7 +89,129 @@ class UserScript {
           typeMachineCategory.name === 'Big Mega Plush' ||
           typeMachineCategory.name === 'Big Black'
         ) {
-          for (x in 30) {
+          // ? CONTADOR DE ENTRADA
+          counters.push(
+            new Counter({
+              counterTypeId: counterTypeIdIn,
+              hasDigital: false,
+              hasMechanical: false,
+              pin: undefined,
+            }),
+          );
+
+          // ? CONTADOR DE SAIDA
+          counters.push(
+            new Counter({
+              counterTypeId: counterTypeIdOut,
+              hasDigital: false,
+              hasMechanical: false,
+              pin: undefined,
+            }),
+          );
+        }
+
+        if (
+          typeMachineCategory.name === 'Mega Plush' ||
+          typeMachineCategory.name === 'MAQ. DE TIRO'
+        ) {
+          // ? CONTADORES DE ENTRADA
+          for (let i = 0; i < 2; i += 1) {
+            counters.push(
+              new Counter({
+                counterTypeId: counterTypeIdIn,
+                hasDigital: false,
+                hasMechanical: false,
+                pin: undefined,
+              }),
+            );
+          }
+          // ? CONTADOR DE SAIDA
+          counters.push(
+            new Counter({
+              counterTypeId: counterTypeIdOut,
+              hasDigital: false,
+              hasMechanical: false,
+              pin: undefined,
+            }),
+          );
+        }
+
+        if (typeMachineCategory.name === 'Tomacat + Dupla') {
+          // ? CONTADORES DE ENTRADA
+          for (let i = 0; i < 3; i += 1) {
+            counters.push(
+              new Counter({
+                counterTypeId: counterTypeIdIn,
+                hasDigital: false,
+                hasMechanical: false,
+                pin: undefined,
+              }),
+            );
+          }
+
+          // ? CONTADORES DE SAIDA
+          for (let i = 0; i < 3; i += 1) {
+            counters.push(
+              new Counter({
+                counterTypeId: counterTypeIdOut,
+                hasDigital: false,
+                hasMechanical: false,
+                pin: undefined,
+              }),
+            );
+          }
+        }
+
+        if (
+          typeMachineCategory.name === 'Caminhão' ||
+          typeMachineCategory.name === 'Big Truck'
+        ) {
+          // ? CONTADORES DE ENTRADA
+          for (let i = 0; i < 6; i += 1) {
+            counters.push(
+              new Counter({
+                counterTypeId: counterTypeIdIn,
+                hasDigital: false,
+                hasMechanical: false,
+                pin: undefined,
+              }),
+            );
+          }
+
+          // ? CONTADORES DE SAIDA
+          for (let i = 0; i < 6; i += 1) {
+            counters.push(
+              new Counter({
+                counterTypeId: counterTypeIdOut,
+                hasDigital: false,
+                hasMechanical: false,
+                pin: undefined,
+              }),
+            );
+          }
+        }
+
+        if (typeMachineCategory.name === 'Roleta') {
+          // ? CONTADORES DE ENTRADA
+          counters.push(
+            new Counter({
+              counterTypeId: counterTypeIdIn,
+              hasDigital: false,
+              hasMechanical: false,
+              pin: undefined,
+            }),
+          );
+
+          // ? CONTADORES DE SAIDA
+          for (let i = 0; i < 11; i += 1) {
+            counters.push(
+              new Counter({
+                counterTypeId: counterTypeIdOut,
+                hasDigital: false,
+                hasMechanical: false,
+                pin: undefined,
+              }),
+            );
           }
         }
 
@@ -86,7 +221,7 @@ class UserScript {
           boxes: [],
         });
       });
-    });
+    }
 
     await this.ormProvider.commit();
   }

@@ -8,17 +8,32 @@ import './modules/index';
 
 // eslint-disable-next-line import/no-extraneous-dependencies
 import { createConnections } from 'typeorm';
-import logger from '@config/logger';
-import TypeCountersRepository from './modules/counters/typeorm/repositories/type-counters.repository';
+import UsersScript from './modules/users/script/users.script';
+import CompaniesScript from './modules/companies/script/companies.script';
+import SellingPointsScript from './modules/selling-points/scripts/selling.points.script';
 
 const start = async () => {
   createConnections();
   const ormProvider = container.resolve<OrmProvider>('OrmProvider');
   await ormProvider.connect();
 
-  // const userScript = container.resolve(UserScript);
+  const usersScript = container.resolve(UsersScript);
 
-  // await userScript.execute();
+  const companiesScript = container.resolve(CompaniesScript);
+
+  const sellingPointsScript = container.resolve(SellingPointsScript);
+
+  await usersScript.execute();
+
+  await companiesScript.execute();
+
+  await sellingPointsScript.execute();
+
+  await usersScript.setGroupIds();
+
+  await usersScript.setOwnerId();
+
+  await companiesScript.setOwnerId();
 };
 
 start();

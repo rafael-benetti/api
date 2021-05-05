@@ -1,13 +1,17 @@
+/* eslint-disable no-await-in-loop */
+/* eslint-disable no-restricted-syntax */
 import Role from '@modules/users/contracts/enums/role';
 import HashProvider from '@providers/hash-provider/contracts/models/hash-provider';
 import { inject, injectable } from 'tsyringe';
 import UsersRepository from '@modules/users/contracts/repositories/users.repository';
 import OrmProvider from '@providers/orm-provider/contracts/models/orm-provider';
 import Redis from 'ioredis';
+import GroupsRepository from '@modules/groups/contracts/repositories/groups.repository';
+import AppError from '@shared/errors/app-error';
 import TypeUsersRepository from '../typeorm/repostories/type-users-repository';
 
 @injectable()
-class UserScript {
+class UsersScript {
   private client = new Redis();
 
   constructor(
@@ -16,6 +20,9 @@ class UserScript {
 
     @inject('UsersRepository')
     private usersRepository: UsersRepository,
+
+    @inject('GroupsRepository')
+    private groupsRepository: GroupsRepository,
 
     @inject('OrmProvider')
     private ormProvider: OrmProvider,
@@ -27,7 +34,7 @@ class UserScript {
   async execute(): Promise<void> {
     const typeUsers = await this.typeUsersRepository.find();
 
-    typeUsers.forEach(async typeUser => {
+    for (const typeUser of typeUsers) {
       let role = Role.OPERATOR;
       let permissions;
 
@@ -180,56 +187,63 @@ class UserScript {
         phoneNumber: typeUser.phone,
         permissions,
         role,
-        ownerId: typeUser.ownerId.toString(),
+        ownerId: role !== Role.OWNER ? typeUser.ownerId.toString() : undefined,
         groupIds:
           role !== Role.OWNER
             ? typeUser.companies?.map(company => company.id.toString())
             : undefined,
       });
 
-      this.usersRepository.create(user);
-
       await this.client.set(`@users:${typeUser.id}`, user.id);
-    });
+    }
 
     await this.ormProvider.commit();
+    this.ormProvider.clear();
   }
 
   async setGroupIds(): Promise<void> {
-    this.ormProvider.clear();
     const users = await this.usersRepository.find({ filters: {} });
 
-    users.forEach(async user => {
+    for (const user of users) {
       if (user.role !== Role.OWNER) {
         const newGroupIds: string[] = [];
-        user.groupIds?.forEach(async groupId => {
+        if (!user.groupIds) throw AppError.groupNotFound;
+        for (const groupId of user.groupIds) {
           newGroupIds.push(
             (await this.client.get(`@groups:${groupId}`)) as string,
           );
-        });
+        }
 
         user.groupIds = newGroupIds;
         this.usersRepository.save(user);
       }
-    });
+    }
 
     await this.ormProvider.commit();
+    this.ormProvider.clear();
   }
 
   async setOwnerId(): Promise<void> {
+    this.ormProvider.clear();
+
     const users = await this.usersRepository.find({
       filters: {},
     });
 
-    users.forEach(async user => {
+    for (const user of users) {
       if (user.role !== Role.OWNER) {
         const ownerId = (await this.client.get(
           `@users:${user.ownerId}`,
         )) as string;
         user.ownerId = ownerId;
+
+        this.usersRepository.save(user);
       }
-    });
+    }
+
+    await this.ormProvider.commit();
+    this.ormProvider.clear();
   }
 }
 
-export default UserScript;
+export default UsersScript;

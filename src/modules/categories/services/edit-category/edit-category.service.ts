@@ -1,4 +1,3 @@
-import logger from '@config/logger';
 import Category from '@modules/categories/contracts/models/category';
 import CategoriesRepository from '@modules/categories/contracts/repositories/categories.repository';
 import CounterTypesRepository from '@modules/counter-types/contracts/repositories/couter-types.repository';
@@ -89,8 +88,6 @@ class EditCategoryService {
       const counterTypes = await this.counterTypesRepository.find({
         id: counterTypeIds,
       });
-
-      logger.info(counterTypeIds.length, counterTypes.length);
 
       if (counterTypeIds.length !== counterTypes.length)
         throw AppError.authorizationError;

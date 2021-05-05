@@ -1,4 +1,3 @@
-import logger from '@config/logger';
 import MachinesRepository from '@modules/machines/contracts/repositories/machines.repository';
 import RoutesRepository from '@modules/routes/contracts/repositories/routes.repository';
 import Role from '@modules/users/contracts/enums/role';
@@ -124,8 +123,6 @@ class EditOperatorService {
               ?.includes(group),
         );
       }
-
-      logger.info(uncommonGroups);
 
       operator.groupIds = [...groupIds, ...(uncommonGroups || [])];
     }

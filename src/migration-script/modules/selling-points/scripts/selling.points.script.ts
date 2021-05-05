@@ -1,3 +1,5 @@
+/* eslint-disable no-await-in-loop */
+/* eslint-disable no-restricted-syntax */
 import { inject, injectable } from 'tsyringe';
 import OrmProvider from '@providers/orm-provider/contracts/models/orm-provider';
 import GroupsRepository from '@modules/groups/contracts/repositories/groups.repository';
@@ -6,10 +8,11 @@ import TypeCompaniesRepository from 'migration-script/modules/companies/typeorm/
 import PointsOfSaleRepository from '@modules/points-of-sale/contracts/repositories/points-of-sale.repository';
 import AppError from '@shared/errors/app-error';
 import Address from '@modules/points-of-sale/contracts/models/address';
+import logger from '@config/logger';
 import TypeSellingPointsRepository from '../typeorm/repositories/selling-points.repostory';
 
 @injectable()
-class UserScript {
+class SellingPointsScript {
   private client = new Redis();
 
   constructor(
@@ -33,7 +36,7 @@ class UserScript {
     this.ormProvider.clear();
     const typeSellingPoints = await this.typeSellingPointsRepository.find();
 
-    typeSellingPoints.forEach(async typeSellingPoint => {
+    for (const typeSellingPoint of typeSellingPoints) {
       const groupId = (await this.client.get(
         `@groups:${typeSellingPoint.companyId}`,
       )) as string;
@@ -45,6 +48,8 @@ class UserScript {
 
       if (!group) throw AppError.groupNotFound;
 
+      logger.info(group.ownerId);
+
       const ownerId = (await this.client.get(
         `@users:${group.ownerId}`,
       )) as string;
@@ -53,7 +58,9 @@ class UserScript {
         city: typeSellingPoint.address.city,
         extraInfo: typeSellingPoint.address.note,
         neighborhood: typeSellingPoint.address.neighborhood,
-        number: typeSellingPoint.address.number.toString(),
+        number: typeSellingPoint.address.number
+          ? typeSellingPoint.address.number.toString()
+          : '',
         state: typeSellingPoint.address.state,
         street: typeSellingPoint.address.street,
         zipCode: typeSellingPoint.address.zipCode,
@@ -70,9 +77,9 @@ class UserScript {
         ownerId,
         address,
       });
-    });
+    }
     await this.ormProvider.commit();
   }
 }
 
-export default UserScript;
+export default SellingPointsScript;

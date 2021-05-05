@@ -1,3 +1,5 @@
+/* eslint-disable no-await-in-loop */
+/* eslint-disable no-restricted-syntax */
 import { inject, injectable } from 'tsyringe';
 import OrmProvider from '@providers/orm-provider/contracts/models/orm-provider';
 import Redis from 'ioredis';
@@ -39,7 +41,7 @@ class UserScript {
     this.ormProvider.clear();
     const machines = await this.typeMachinesRepository.find();
 
-    machines.forEach(async typeMachine => {
+    for (const typeMachine of machines) {
       const operatorId = (await this.client.get(
         `@users:${typeMachine.operatorId}`,
       )) as string | undefined;
@@ -136,7 +138,7 @@ class UserScript {
       });
 
       await this.client.set(`@machines:${typeMachine.id}`, `${machine.id}`);
-    });
+    }
 
     await this.ormProvider.commit();
   }

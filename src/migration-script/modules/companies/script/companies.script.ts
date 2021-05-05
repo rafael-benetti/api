@@ -1,12 +1,13 @@
+/* eslint-disable no-await-in-loop */
+/* eslint-disable no-restricted-syntax */
 import { inject, injectable } from 'tsyringe';
 import OrmProvider from '@providers/orm-provider/contracts/models/orm-provider';
 import GroupsRepository from '@modules/groups/contracts/repositories/groups.repository';
-import Group from '@modules/groups/contracts/models/group';
 import Redis from 'ioredis';
 import TypeCompaniesRepository from '../typeorm/repositories/type-companies.repository';
 
 @injectable()
-class UserScript {
+class CompaniesScript {
   private client = new Redis();
 
   constructor(
@@ -21,44 +22,44 @@ class UserScript {
   ) {}
 
   async execute(): Promise<void> {
-    this.ormProvider.clear();
     const companies = await this.typeCompaniesRepository.find();
 
-    companies.forEach(async typeCompany => {
+    for (const typeCompany of companies) {
       // ANCHOR: CHECAR SE REALMENTE É ISSO
       const isPersonalArray = ['Pessoal', '1.01 BLACK ENTERTAINMENT'];
 
-      const ownerId = (await this.client.get(
-        `@users:${typeCompany.ownerId}`,
-      )) as string;
-
-      const group = new Group({
-        isPersonal: isPersonalArray.includes(typeCompany.name),
+      const group = this.groupsRepository.create({
         label: typeCompany.name,
-        ownerId,
+        isPersonal: isPersonalArray.includes(typeCompany.name),
+        ownerId: typeCompany.ownerId.toString(),
       });
 
       await this.client.set(`@groups:${typeCompany.id}`, `${group.id}`);
-
-      this.groupsRepository.create(group);
-    });
+    }
 
     await this.ormProvider.commit();
+    this.ormProvider.clear();
   }
 
   async setOwnerId(): Promise<void> {
+    this.ormProvider.clear();
+
     const groups = await this.groupsRepository.find({
       filters: {},
     });
 
-    groups.forEach(async group => {
+    for (const group of groups) {
       const ownerId = (await this.client.get(
         `@users:${group.ownerId}`,
       )) as string;
 
       group.ownerId = ownerId;
-    });
+
+      this.groupsRepository.save(group);
+    }
+
+    await this.ormProvider.commit();
   }
 }
 
-export default UserScript;
+export default CompaniesScript;
