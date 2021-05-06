@@ -10,9 +10,21 @@ class TypeMachinesRepository {
   }
 
   public async find(): Promise<TypeMachine[]> {
-    const machines = await this.ormRepository.find();
+    const machines = await this.ormRepository.find({
+      relations: ['counters'],
+    });
 
     return machines;
+  }
+
+  public async findOne(telemetryId: number): Promise<TypeMachine | undefined> {
+    const typeMachine = await this.ormRepository.findOne({
+      where: {
+        telemetryId,
+      },
+    });
+
+    return typeMachine;
   }
 }
 

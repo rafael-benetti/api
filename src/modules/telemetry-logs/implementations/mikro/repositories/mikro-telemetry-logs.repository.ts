@@ -1,9 +1,11 @@
+import CreateTelemetryLogDto from '@modules/telemetry-logs/contracts/dtos/create-telemetry-log.dto';
 import FindTelemetryLogsDto from '@modules/telemetry-logs/contracts/dtos/find-telemetry-logs.dto';
 import TelemetryLog from '@modules/telemetry-logs/contracts/entities/telemetry-log';
 import TelemetryLogsRepository from '@modules/telemetry-logs/contracts/repositories/telemetry-logs.repository';
 import MikroOrmProvider from '@providers/orm-provider/implementations/mikro/mikro-orm-provider';
 import { inject, injectable } from 'tsyringe';
 import MikroTelemetryLog from '../entities/mikro-telemetry-log';
+import TelemetryLogMapper from '../mappers/telemetry-log-mapper';
 
 @injectable()
 class MikroTelemetryLogsRepository implements TelemetryLogsRepository {
@@ -15,6 +17,12 @@ class MikroTelemetryLogsRepository implements TelemetryLogsRepository {
     @inject('OrmProvider')
     private ormProvider: MikroOrmProvider,
   ) {}
+
+  create(data: CreateTelemetryLogDto): TelemetryLog {
+    const telemetryLog = new MikroTelemetryLog(data);
+    this.repository.persist(telemetryLog);
+    return TelemetryLogMapper.toApi(telemetryLog);
+  }
 
   async find(data: FindTelemetryLogsDto): Promise<TelemetryLog[]> {
     const query: Record<string, unknown> = {};

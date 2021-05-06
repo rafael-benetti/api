@@ -8,7 +8,6 @@ import TypeCompaniesRepository from 'migration-script/modules/companies/typeorm/
 import PointsOfSaleRepository from '@modules/points-of-sale/contracts/repositories/points-of-sale.repository';
 import AppError from '@shared/errors/app-error';
 import Address from '@modules/points-of-sale/contracts/models/address';
-import logger from '@config/logger';
 import TypeSellingPointsRepository from '../typeorm/repositories/selling-points.repostory';
 
 @injectable()
@@ -48,8 +47,6 @@ class SellingPointsScript {
 
       if (!group) throw AppError.groupNotFound;
 
-      logger.info(group.ownerId);
-
       const ownerId = (await this.client.get(
         `@users:${group.ownerId}`,
       )) as string;
@@ -66,7 +63,7 @@ class SellingPointsScript {
         zipCode: typeSellingPoint.address.zipCode,
       };
 
-      this.pointsOfSaleRepository.create({
+      const sellingPoint = this.pointsOfSaleRepository.create({
         label: typeSellingPoint.name,
         contactName: typeSellingPoint.responsible,
         primaryPhoneNumber: typeSellingPoint.phone1,
@@ -77,6 +74,11 @@ class SellingPointsScript {
         ownerId,
         address,
       });
+
+      await this.client.set(
+        `@points:${typeSellingPoint.id}`,
+        `${sellingPoint.id}`,
+      );
     }
     await this.ormProvider.commit();
   }

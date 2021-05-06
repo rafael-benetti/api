@@ -3,8 +3,6 @@ import CreateTelemetryBoardDto from '../dtos/create-telemetry-board.dto';
 class TelemetryBoard {
   id: number;
 
-  ownerId: string;
-
   groupId: string;
 
   integratedCircuitCardId?: string;
@@ -16,6 +14,8 @@ class TelemetryBoard {
   connectionStrength?: string;
 
   connectionType?: string;
+
+  ownerId: string;
 
   constructor(data?: CreateTelemetryBoardDto) {
     if (data) {

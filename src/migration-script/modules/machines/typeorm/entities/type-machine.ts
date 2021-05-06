@@ -5,7 +5,6 @@
 // import SellingPoint from '@modules/sellingPoints/infra/typeorm/entities/SellingPoint';
 // import TypeormNumberTransformer from '@shared/utils/TypeormNumberTransformer';
 import TypeCounter from 'migration-script/modules/counters/typeorm/entities/type-counters';
-import TypeMachineCategory from 'migration-script/modules/machines-categories/typeorm/entities/type-machine-category';
 import TypeSellingPoint from 'migration-script/modules/selling-points/typeorm/entities/type-selling-point';
 import {
   Column,
@@ -18,7 +17,7 @@ import {
 } from 'typeorm';
 // import MachineCategory from './MachineCategory';
 
-@Entity('machines')
+@Entity('machine')
 class TypeMachine {
   @PrimaryGeneratedColumn('increment')
   id: number;
@@ -40,7 +39,7 @@ class TypeMachine {
   operatorId: number;
 
   @Column({ name: 'telemetry_id' })
-  telemetryBoardId: number;
+  telemetryId: number;
 
   @ManyToOne(() => TypeSellingPoint, sellingPoint => sellingPoint.machines)
   @JoinColumn({ name: 'selling_point_id' })
@@ -64,7 +63,7 @@ class TypeMachine {
   @Column({ name: 'company_id' })
   companyId: number;
 
-  @Column({ name: 'machine_category_id' })
+  @Column({ name: 'category_id' })
   machineCategoryId: number;
 
   // @ManyToOne(() => Company, company => company.machines)
@@ -76,12 +75,12 @@ class TypeMachine {
   })
   counters: TypeCounter[];
 
-  @ManyToOne(
-    () => TypeMachineCategory,
-    machineCategory => machineCategory.machines,
-  )
-  @JoinColumn({ name: 'machine_category_id' })
-  machineCategory: TypeMachineCategory;
+  // @ManyToOne(
+  //   () => TypeMachineCategory,
+  //   machineCategory => machineCategory.machines,
+  // )
+  // @JoinColumn({ name: 'machine_category_id' })
+  // machineCategory: TypeMachineCategory;
 
   // @OneToMany(() => MachineCollect, machineCollect => machineCollect.machine)
   // machineCollection: MachineCollect[];

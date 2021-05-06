@@ -1,9 +1,7 @@
-class TelemetryLog {
-  id: string;
-
+export default interface CreateTelemetryLogDto {
   telemetryBoardId: string;
 
-  machineId?: string;
+  machineId: string;
 
   pointOfSaleId?: string;
 
@@ -21,5 +19,3 @@ class TelemetryLog {
 
   maintenance: boolean;
 }
-
-export default TelemetryLog;
