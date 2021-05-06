@@ -6,6 +6,7 @@ import RoutesRepository from '@modules/routes/contracts/repositories/routes.repo
 import TelemetryLogsRepository from '@modules/telemetry-logs/contracts/repositories/telemetry-logs.repository';
 
 import Role from '@modules/users/contracts/enums/role';
+import User from '@modules/users/contracts/models/user';
 import UsersRepository from '@modules/users/contracts/repositories/users.repository';
 import AppError from '@shared/errors/app-error';
 import {
@@ -39,6 +40,7 @@ interface ChartData2 {
 }
 
 interface Response {
+  operator: User | undefined;
   route: Route;
   pointsOfSale: PointOfSale[];
   income: number;
@@ -99,6 +101,14 @@ class DetailRouteService {
       by: 'routeId',
       value: route.id,
     });
+    let operator;
+
+    if (route.operatorId) {
+      operator = await this.usersRepository.findOne({
+        by: 'id',
+        value: route.operatorId,
+      });
+    }
 
     const endDate = new Date(Date.now());
     let startDate;
@@ -222,6 +232,7 @@ class DetailRouteService {
     });
 
     return {
+      operator,
       route,
       pointsOfSale,
       income,
