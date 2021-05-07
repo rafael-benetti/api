@@ -232,6 +232,7 @@ class DetailRouteService {
     });
 
     return {
+      // TODO TIRAR A SENHA DO CABLOCO
       operator,
       route,
       pointsOfSale,

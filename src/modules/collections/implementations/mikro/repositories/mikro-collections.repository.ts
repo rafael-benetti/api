@@ -64,8 +64,6 @@ export default class MikroCollectionsRepository
           'route',
         ],
         fields: [
-          'machine',
-          'machine.serialNumber',
           'previousCollection',
           'previousCollection.boxCollections',
           'previousCollection.date',
