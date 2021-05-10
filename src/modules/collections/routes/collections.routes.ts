@@ -28,7 +28,7 @@ collectionsRoutes.post(
 );
 
 collectionsRoutes.put(
-  '/:collecitonId',
+  '/:collectionId',
   multer({
     storage: multer.memoryStorage(),
     limits: {
