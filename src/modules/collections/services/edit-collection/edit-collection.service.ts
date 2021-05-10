@@ -14,7 +14,7 @@ import { inject, injectable } from 'tsyringe';
 interface Request {
   userId: string;
   collectionId: string;
-  photosToDelete: string[];
+  photosToDelete?: string[];
   machineId: string;
   files?: any[];
   observations: string;
@@ -109,7 +109,10 @@ class EditCollectionService {
     if (user.role === Role.OPERATOR && machine.operatorId !== user.id)
       throw AppError.authorizationError;
 
-    if (!user.groupIds?.includes(lastCollection.groupId))
+    if (
+      !user.groupIds?.includes(lastCollection.groupId) &&
+      user.role !== Role.OWNER
+    )
       throw AppError.authorizationError;
 
     const parsedFiles: {
@@ -125,24 +128,25 @@ class EditCollectionService {
 
       if (!parsedFiles[boxId]) parsedFiles[boxId] = {};
       if (!parsedFiles[boxId][counterId]) parsedFiles[boxId][counterId] = [];
-
       parsedFiles[boxId][counterId].push(file);
     });
 
     // ? REMOVE FOTOS
-    lastCollection.boxCollections.forEach(boxCollections => {
-      boxCollections.counterCollections.forEach(boxCollection => {
-        for (let i = 0; i < boxCollection.photos.length; i += 1) {
-          const obj = boxCollection.photos[i];
+    if (photosToDelete && photosToDelete.length > 0) {
+      lastCollection.boxCollections.forEach(boxCollections => {
+        boxCollections.counterCollections.forEach(counterCollection => {
+          for (let i = 0; i < counterCollection.photos?.length; i += 1) {
+            const obj = counterCollection.photos[i];
 
-          if (photosToDelete.indexOf(obj.key) !== -1) {
-            boxCollection.photos.splice(i, 1);
-            this.storageProvider.deleteFile(obj.key);
-            i -= 1;
+            if (photosToDelete.indexOf(obj.key) !== -1) {
+              counterCollection.photos.splice(i, 1);
+              this.storageProvider.deleteFile(obj.key);
+              i -= 1;
+            }
           }
-        }
+        });
       });
-    });
+    }
 
     let previousCollection;
 
@@ -200,28 +204,35 @@ class EditCollectionService {
         );
       }),
     );
-
-    lastCollection.boxCollections.forEach(lastBoxCollection => {
-      lastBoxCollection.counterCollections.forEach(lastCounterCollection => {
-        boxCollections.forEach(boxCollection => {
-          if (boxCollection.boxId === lastBoxCollection.boxId) {
-            boxCollection.counterCollections.forEach(counterCollection => {
-              if (
-                counterCollection.counterId === lastCounterCollection.counterId
-              ) {
-                counterCollection.photos = [
-                  ...counterCollection.photos,
-                  ...lastCounterCollection.photos,
-                ];
-              }
-            });
-          }
+    if (files && files.length > 0) {
+      lastCollection.boxCollections.forEach(lastBoxCollection => {
+        lastBoxCollection.counterCollections.forEach(lastCounterCollection => {
+          boxCollections.forEach(boxCollection => {
+            if (boxCollection.boxId === lastBoxCollection.boxId) {
+              boxCollection.counterCollections.forEach(counterCollection => {
+                if (
+                  counterCollection.counterId ===
+                  lastCounterCollection.counterId
+                ) {
+                  if (lastCounterCollection.photos) {
+                    counterCollection.photos = [
+                      ...(counterCollection.photos ?? []),
+                      ...lastCounterCollection.photos,
+                    ];
+                  }
+                }
+              });
+            }
+          });
         });
       });
-    });
+    }
 
     lastCollection.boxCollections = boxCollections;
     lastCollection.observations = observations;
+    lastCollection.boxCollections.forEach(c =>
+      c.counterCollections.forEach(cc => console.log(cc?.photos)),
+    );
 
     this.collectionsRepository.save(lastCollection);
     this.machinesRepository.save(machine);
