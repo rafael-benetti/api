@@ -6,6 +6,7 @@ import EditCollectionService from './edit-collection.service';
 export default abstract class EditCollectionController {
   static validate = celebrate({
     body: {
+      photosToDelete: Joi.array().items(Joi.string()),
       machineId: Joi.string().uuid().required(),
       observations: Joi.string().required(),
       boxCollections: Joi.array().items(

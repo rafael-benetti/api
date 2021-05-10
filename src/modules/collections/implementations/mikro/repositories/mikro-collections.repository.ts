@@ -32,10 +32,12 @@ export default class MikroCollectionsRepository
       {
         machineId,
       },
-      undefined,
-      { date: 'DESC' },
+      {
+        orderBy: {
+          date: 'DESC',
+        },
+      },
     );
-
     return collection ? CollectionsMapper.map(collection) : undefined;
   }
 
