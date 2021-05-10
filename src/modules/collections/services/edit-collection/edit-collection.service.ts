@@ -10,6 +10,7 @@ import StorageProvider from '@providers/storage-provider/contracts/models/storag
 import OrmProvider from '@providers/orm-provider/contracts/models/orm-provider';
 import AppError from '@shared/errors/app-error';
 import { inject, injectable } from 'tsyringe';
+import logger from '@config/logger';
 
 interface Request {
   userId: string;
@@ -173,8 +174,6 @@ class EditCollectionService {
 
         if (!box) throw AppError.boxNotFound;
 
-        box.currentMoney = 0;
-
         await Promise.all(
           boxCollection.counterCollections.map(async counterCollection => {
             const counter = box.counters.find(
@@ -204,35 +203,36 @@ class EditCollectionService {
         );
       }),
     );
-    if (files && files.length > 0) {
-      lastCollection.boxCollections.forEach(lastBoxCollection => {
-        lastBoxCollection.counterCollections.forEach(lastCounterCollection => {
-          boxCollections.forEach(boxCollection => {
-            if (boxCollection.boxId === lastBoxCollection.boxId) {
-              boxCollection.counterCollections.forEach(counterCollection => {
-                if (
-                  counterCollection.counterId ===
-                  lastCounterCollection.counterId
-                ) {
-                  if (lastCounterCollection.photos) {
-                    counterCollection.photos = [
-                      ...(counterCollection.photos ?? []),
-                      ...lastCounterCollection.photos,
-                    ];
-                  }
-                }
-              });
-            }
-          });
+
+    lastCollection.boxCollections.forEach(lastBoxCollection => {
+      lastBoxCollection.counterCollections.forEach(lastCounterCollection => {
+        boxCollections.forEach(boxCollection => {
+          if (boxCollection.boxId === lastBoxCollection.boxId) {
+            boxCollection.counterCollections.forEach(counterCollection => {
+              if (
+                counterCollection.counterId === lastCounterCollection.counterId
+              ) {
+                logger.info(
+                  'counterCollection.photoscounterCollection.photoscounterCollection.photoscounterCollection.photoscounterCollection.photos',
+                );
+                logger.info(lastCounterCollection.photos);
+
+                counterCollection.photos = [
+                  ...(counterCollection.photos ?? []),
+                  ...(lastCounterCollection.photos ?? []),
+                ];
+              }
+            });
+          }
         });
       });
-    }
+    });
 
     lastCollection.boxCollections = boxCollections;
     lastCollection.observations = observations;
-    lastCollection.boxCollections.forEach(c =>
+    boxCollections.forEach(c =>
       c.counterCollections.forEach(cc =>
-        console.log(cc.counterId + cc?.photos),
+        console.log(`cc.counterId${cc?.photos?.length}`),
       ),
     );
 
