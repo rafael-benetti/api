@@ -9,7 +9,7 @@ const redis_1 = __importDefault(require("../../../../config/redis"));
 const session_provider_1 = __importDefault(require("../../contracts/models/session.provider"));
 class RedisSessionProvider {
     constructor() {
-        this.client = new ioredis_1.default();
+        this.client = new ioredis_1.default({ host: 'redis' });
         this.timeToLive = redis_1.default.timeToLive;
     }
     async createToken(userId) {
