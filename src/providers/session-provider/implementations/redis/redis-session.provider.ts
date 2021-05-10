@@ -4,7 +4,7 @@ import redisConfig from '@config/redis';
 import SessionProvider from '@providers/session-provider/contracts/models/session.provider';
 
 class RedisSessionProvider implements SessionProvider {
-  private client = new Redis({ host: 'redis' });
+  private client = new Redis();
 
   private timeToLive = redisConfig.timeToLive;
 
