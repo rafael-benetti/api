@@ -10,6 +10,7 @@ import StorageProvider from '@providers/storage-provider/contracts/models/storag
 import OrmProvider from '@providers/orm-provider/contracts/models/orm-provider';
 import AppError from '@shared/errors/app-error';
 import { inject, injectable } from 'tsyringe';
+import logger from '@config/logger';
 
 interface Request {
   userId: string;
