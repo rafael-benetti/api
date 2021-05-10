@@ -9,6 +9,7 @@ import AppError from '@shared/errors/app-error';
 import { injectable, inject } from 'tsyringe';
 import MailProvider from '@providers/mail-provider/contracts/models/mail.provider';
 import signUpEmailTemplate from '@providers/mail-provider/templates/sign-up-email-template';
+import Type from '@modules/counter-types/contracts/enums/type';
 
 interface Request {
   adminId: string;
@@ -87,31 +88,31 @@ class CreateOwnerService {
 
     this.counterTypesRepository.create({
       label: 'Moedeiro',
-      type: 'IN',
+      type: Type.IN,
       ownerId: user.id,
     });
 
     this.counterTypesRepository.create({
       label: 'Noteiro',
-      type: 'IN',
+      type: Type.IN,
       ownerId: user.id,
     });
 
     this.counterTypesRepository.create({
       label: 'Cartão',
-      type: 'IN',
+      type: Type.IN,
       ownerId: user.id,
     });
 
     this.counterTypesRepository.create({
       label: 'Crédito Remoto',
-      type: 'IN',
+      type: Type.IN,
       ownerId: user.id,
     });
 
     this.counterTypesRepository.create({
       label: 'Prêmio',
-      type: 'OUT',
+      type: Type.OUT,
       ownerId: user.id,
     });
 

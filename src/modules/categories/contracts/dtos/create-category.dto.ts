@@ -1,4 +1,4 @@
-import Box from '../models/box';
+import Box from '@modules/machines/contracts/models/box';
 
 export default interface CreateCategoryDto {
   label: string;

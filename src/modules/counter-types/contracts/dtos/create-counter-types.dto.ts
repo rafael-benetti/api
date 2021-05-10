@@ -1,7 +1,7 @@
-import CounterType from '@modules/machines/contracts/enums/counter-type';
+import Type from '../enums/type';
 
 export default interface CreateCounterTypeDto {
   label: string;
-  type: CounterType;
+  type: Type;
   ownerId: string;
 }

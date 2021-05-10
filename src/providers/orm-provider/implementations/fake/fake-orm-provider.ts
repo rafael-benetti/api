@@ -1,10 +1,13 @@
-import logger from '@config/logger';
 import OrmProvider from '@providers/orm-provider/contracts/models/orm-provider';
 import { RequestHandler } from 'express';
 
 class FakeOrmProvider implements OrmProvider {
-  async connect(): Promise<void> {
-    logger.info('🔌 - App connected to the database');
+  connect(): Promise<void> {
+    throw new Error('Method not implemented.');
+  }
+
+  clear(): Promise<void> {
+    throw new Error('Method not implemented.');
   }
 
   async commit(): Promise<void> {

@@ -183,7 +183,7 @@ class GetMachineDetailsService {
         if (counterType === 'OUT') {
           const counterLogs = telemetryLogsOut.filter(telemetryLog => {
             return (
-              telemetryLog.pin.toString() === counter.pin?.replace('Pino ', '')
+              telemetryLog.pin?.toString() === counter.pin?.replace('Pino ', '')
             );
           });
           givenPrizesCount += counterLogs.reduce(

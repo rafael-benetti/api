@@ -11,8 +11,10 @@
   },
   "scripts": {
     "dev": "DEBUG=api* ts-node-dev -r dotenv/config -r tsconfig-paths/register --transpile-only --inspect --no-notify src/shared/server/express/server.ts",
+    "start": "DEBUG=api* node -r dotenv/config build/shared/server/express/server.js",
     "test": "jest --clearCache && jest --passWithNoTests",
     "typeorm": "ts-node-dev -r tsconfig-paths/register ./node_modules/typeorm/cli.js",
+    "build": "ttsc",
     "migrate": "DEBUG=api* ts-node-dev -r dotenv/config -r tsconfig-paths/register --transpile-only --inspect --no-notify src/migration-script/start.ts"
   },
   "dependencies": {
