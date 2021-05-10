@@ -38,6 +38,7 @@ collectionsRoutes.put(
       fileSize: 1024 * 1024,
     },
   }).any(),
+  container.resolve<OrmProvider>('OrmProvider').forkMiddleware,
   (req, res, next) => {
     if (typeof req.body.boxCollections === 'string')
       req.body.boxCollections = JSON.parse(req.body.boxCollections);

@@ -10,7 +10,6 @@ import StorageProvider from '@providers/storage-provider/contracts/models/storag
 import OrmProvider from '@providers/orm-provider/contracts/models/orm-provider';
 import AppError from '@shared/errors/app-error';
 import { inject, injectable } from 'tsyringe';
-import logger from '@config/logger';
 
 interface Request {
   userId: string;
@@ -232,12 +231,15 @@ class EditCollectionService {
     lastCollection.boxCollections = boxCollections;
     lastCollection.observations = observations;
     lastCollection.boxCollections.forEach(c =>
-      c.counterCollections.forEach(cc => console.log(cc?.photos)),
+      c.counterCollections.forEach(cc =>
+        console.log(cc.counterId + cc?.photos),
+      ),
     );
 
-    this.collectionsRepository.save(lastCollection);
     this.machinesRepository.save(machine);
+    await this.ormProvider.commit();
 
+    this.collectionsRepository.save(lastCollection);
     await this.ormProvider.commit();
 
     Object.assign(lastCollection, {
