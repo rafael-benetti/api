@@ -1,4 +1,5 @@
 import { celebrate, Joi } from 'celebrate';
+import { fil } from 'date-fns/locale';
 import { Response, Request } from 'express';
 import { container } from 'tsyringe';
 import EditCollectionService from './edit-collection.service';
@@ -26,7 +27,12 @@ export default abstract class EditCollectionController {
 
   static async handle(req: Request, res: Response): Promise<Response> {
     const { userId, files } = req;
-    const { machineId, observations, boxCollections } = req.body;
+    const {
+      machineId,
+      observations,
+      boxCollections,
+      photosToDelete,
+    } = req.body;
     const { collectionId } = req.params;
 
     const editCollectionService = container.resolve(EditCollectionService);
@@ -36,7 +42,8 @@ export default abstract class EditCollectionController {
       collectionId,
       machineId,
       observations,
-      photosToDelete: files as never,
+      files: files as never,
+      photosToDelete,
       userId,
     });
 
