@@ -45,7 +45,7 @@ export default class AppError {
 
   static thisMachineIsOffline = new AppError({
     errorCode: 'THIS_MACHINE_IS_OFFLINE',
-    message: "You can't collect machines that are offline",
+    message: "You can't make collectios in machines that are offline",
     statusCode: 401,
   });
 
