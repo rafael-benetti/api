@@ -52,7 +52,7 @@ class MikroMachinesRepository implements MachinesRepository {
     if (telemetryStatus) {
       if (telemetryStatus === 'ONLINE') {
         telemetryStatusQuery.lastConnection = {
-          $gte: addMinutes(new Date(), 10),
+          $gte: addMinutes(new Date(), -10),
         };
       }
 
