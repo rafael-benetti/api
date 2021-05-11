@@ -4,6 +4,7 @@ import FindMachinesDto from '@modules/machines/contracts/dtos/find-machines.dto'
 import Machine from '@modules/machines/contracts/models/machine';
 import MachinesRepository from '@modules/machines/contracts/repositories/machines.repository';
 import MikroOrmProvider from '@providers/orm-provider/implementations/mikro/mikro-orm-provider';
+import { addMinutes } from 'date-fns';
 import { container } from 'tsyringe';
 import MachineMapper from '../mapper/machine.mapper';
 import MikroMachine from '../models/mikro-machine';
@@ -42,10 +43,44 @@ class MikroMachinesRepository implements MachinesRepository {
     serialNumber,
     isActive,
     telemetryBoardId,
+    telemetryStatus,
     limit,
     offset,
     populate,
   }: FindMachinesDto): Promise<{ machines: Machine[]; count: number }> {
+    const telemetryStatusQuery: Record<string, unknown> = {};
+    if (telemetryStatus) {
+      if (telemetryStatus === 'ONLINE') {
+        telemetryStatusQuery.telemetryBoard = {
+          lastConnection: {
+            $gte: addMinutes(new Date(), 10),
+          },
+        };
+      }
+
+      if (telemetryStatus === 'OFFLINE') {
+        telemetryStatusQuery.telemetryBoard = {
+          lastConnection: {
+            $lt: addMinutes(new Date(), -10),
+          },
+        };
+      }
+
+      if (telemetryStatus === 'VIRGIN') {
+        telemetryStatusQuery.telemetryBoard = {
+          lastConnection: {
+            $exists: false,
+          },
+        };
+      }
+
+      if (telemetryStatus === 'NO_TELEMETRY') {
+        telemetryStatusQuery.telemetryBoard = {
+          $exists: false,
+        };
+      }
+    }
+
     const [result, count] = await this.repository.findAndCount(
       {
         ...(id && { id }),
@@ -61,6 +96,7 @@ class MikroMachinesRepository implements MachinesRepository {
           serialNumber: new RegExp(serialNumber, 'i'),
         }),
         ...(isActive !== undefined && { isActive }),
+        ...telemetryStatusQuery,
       },
       {
         limit,

@@ -49,6 +49,12 @@ machinesRouter.get(
       serialNumber: Joi.string(),
       isActive: Joi.boolean().default(true),
       lean: Joi.boolean().default(false),
+      telemetryStatus: Joi.string().valid(
+        'ONLINE',
+        'OFFLINE',
+        'VIRGIN',
+        'NO_TELEMETRY',
+      ),
       limit: Joi.number(),
       offset: Joi.number(),
     },
