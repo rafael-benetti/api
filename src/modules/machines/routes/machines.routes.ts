@@ -3,6 +3,7 @@ import { celebrate, Joi } from 'celebrate';
 import { Router } from 'express';
 import CreateMachineController from '../services/create-machine/create-machine.controller';
 import EditMachineController from '../services/edit-machine/edit-machine.controller';
+import FixMachineStockController from '../services/fix-machine-stock/fix-machine-stock.controller';
 import GetMachineDetailsController from '../services/get-machine-details/get-machine-details.controller';
 import ListMachinesController from '../services/list-machines/list-machines.controller';
 
@@ -65,6 +66,12 @@ machinesRouter.get(
     },
   }),
   GetMachineDetailsController.handle,
+);
+
+machinesRouter.patch(
+  '/:machineId/fix-stock',
+  FixMachineStockController.validate,
+  FixMachineStockController.handle,
 );
 
 machinesRouter.put(
