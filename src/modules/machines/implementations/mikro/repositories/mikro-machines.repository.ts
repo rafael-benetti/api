@@ -64,7 +64,7 @@ class MikroMachinesRepository implements MachinesRepository {
 
       if (telemetryStatus === 'VIRGIN') {
         telemetryStatusQuery.telemetryBoardId = {
-          $ne: true,
+          $ne: null,
         };
         telemetryStatusQuery.lastConnection = null;
       }
