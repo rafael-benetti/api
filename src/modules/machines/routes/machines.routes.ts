@@ -16,6 +16,7 @@ machinesRouter.post(
     body: {
       serialNumber: Joi.string().required(),
       categoryId: Joi.string().required(),
+      typeOfPrizeId: Joi.string(),
       groupId: Joi.string().required(),
       gameValue: Joi.number().positive().required(),
       locationId: Joi.string().allow(null),
@@ -73,6 +74,7 @@ machinesRouter.put(
     body: {
       serialNumber: Joi.string(),
       categoryId: Joi.string(),
+      typeOfPrizeId: Joi.string(),
       gameValue: Joi.number().positive(),
       locationId: Joi.string().allow(null),
       operatorId: Joi.string().allow(null),

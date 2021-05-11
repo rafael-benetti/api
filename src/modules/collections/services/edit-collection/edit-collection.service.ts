@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import Collection from '@modules/collections/contracts/entities/collection';
 import CollectionsRepository from '@modules/collections/contracts/repositories/collections.repository';
 import MachinesRepository from '@modules/machines/contracts/repositories/machines.repository';
@@ -230,11 +231,6 @@ class EditCollectionService {
 
     lastCollection.boxCollections = boxCollections;
     lastCollection.observations = observations;
-    boxCollections.forEach(c =>
-      c.counterCollections.forEach(cc =>
-        console.log(`cc.counterId${cc?.photos?.length}`),
-      ),
-    );
 
     this.machinesRepository.save(machine);
     await this.ormProvider.commit();

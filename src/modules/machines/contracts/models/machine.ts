@@ -1,3 +1,4 @@
+import Product from '@modules/users/contracts/models/product';
 import Box from './box';
 
 class Machine {
@@ -20,6 +21,8 @@ class Machine {
   operatorId?: string;
 
   locationId?: string;
+
+  typeOfPrize?: Product;
 
   ownerId: string;
 

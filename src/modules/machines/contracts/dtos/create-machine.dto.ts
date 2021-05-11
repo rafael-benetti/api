@@ -1,3 +1,4 @@
+import Product from '@modules/users/contracts/models/product';
 import Box from '../models/box';
 
 export default interface CreateMachineDto {
@@ -20,6 +21,8 @@ export default interface CreateMachineDto {
   locationId?: string;
 
   ownerId: string;
+
+  typeOfPrize?: Product;
 
   isActive: boolean;
 }
