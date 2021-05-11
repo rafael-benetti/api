@@ -28,6 +28,7 @@ interface Request {
   telemetryBoardId: number;
   maintenance: boolean;
   typeOfPrizeId: string;
+  minimumPrizeCount: number;
 }
 
 @injectable()
@@ -75,6 +76,7 @@ class EditMachineService {
     telemetryBoardId,
     maintenance,
     typeOfPrizeId,
+    minimumPrizeCount,
   }: Request): Promise<Machine> {
     const user = await this.usersRepository.findOne({
       by: 'id',
@@ -168,25 +170,26 @@ class EditMachineService {
       machine.groupId = groupId;
     }
 
-    if (typeOfPrizeId) {
-      let typeOfPrize = user.stock?.prizes.find(
-        prize => prize.id === typeOfPrizeId,
-      );
+    if (typeOfPrizeId !== undefined && typeOfPrizeId !== null) {
+      let prize = user.stock?.prizes?.find(prize => prize.id === typeOfPrizeId);
 
-      if (!typeOfPrize) {
+      if (!prize) {
         const group = await this.groupsRepository.findOne({
           by: 'id',
           value: machine.groupId,
         });
 
-        typeOfPrize = group?.stock.prizes.find(
-          prize => prize.id === typeOfPrizeId,
-        );
+        prize = group?.stock.prizes.find(prize => prize.id === typeOfPrizeId);
       }
 
-      if (!typeOfPrize) throw AppError.productNotFound;
+      if (!prize) throw AppError.productNotFound;
 
-      machine.typeOfPrize = typeOfPrize;
+      machine.typeOfPrize = {
+        id: prize.id,
+        label: prize.label,
+      };
+    } else if (typeOfPrizeId === null) {
+      machine.typeOfPrize = undefined;
     }
 
     if (locationId !== undefined && locationId !== null) {
@@ -297,6 +300,12 @@ class EditMachineService {
     }
 
     if (maintenance !== undefined) machine.maintenance = maintenance;
+
+    if (minimumPrizeCount !== undefined && minimumPrizeCount !== null) {
+      machine.minimumPrizeCount = minimumPrizeCount;
+    } else if (minimumPrizeCount === null) {
+      machine.minimumPrizeCount = undefined;
+    }
 
     this.machinesRepository.save(machine);
 
