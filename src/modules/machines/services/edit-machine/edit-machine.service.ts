@@ -210,6 +210,7 @@ class EditMachineService {
         );
         if (telemetryBoard) telemetryBoard.machineId = undefined;
         machine.telemetryBoardId = undefined;
+        machine.lastConnection = undefined;
       }
     }
 
@@ -261,6 +262,7 @@ class EditMachineService {
           }
         }
 
+        machine.lastConnection = undefined;
         delete machine.telemetryBoardId;
       } else if (telemetryBoardId !== machine.telemetryBoardId) {
         const telemetryBoard = await this.telemetryBoardsRepository.findById(
@@ -278,6 +280,7 @@ class EditMachineService {
         if (user.role === Role.OWNER && telemetryBoard.ownerId !== user.id)
           throw AppError.authorizationError;
 
+        machine.lastConnection = undefined;
         if (machine.telemetryBoardId) {
           const oldTelemetry = await this.telemetryBoardsRepository.findById(
             machine.telemetryBoardId,

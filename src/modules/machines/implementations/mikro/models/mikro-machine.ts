@@ -73,6 +73,9 @@ class MikroMachine implements Machine {
   @Property()
   typeOfPrize?: { id: string; label: string };
 
+  @Property()
+  lastConnection?: Date;
+
   constructor(data?: CreateMachineDto) {
     if (data) {
       this.id = v4();

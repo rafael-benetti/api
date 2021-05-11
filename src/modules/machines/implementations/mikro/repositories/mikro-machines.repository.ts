@@ -48,38 +48,35 @@ class MikroMachinesRepository implements MachinesRepository {
     offset,
     populate,
   }: FindMachinesDto): Promise<{ machines: Machine[]; count: number }> {
-    // const telemetryStatusQuery: Record<string, unknown> = {};
-    // if (telemetryStatus) {
-    //   if (telemetryStatus === 'ONLINE') {
-    //     telemetryStatusQuery.telemetryBoard = {
-    //       lastConnection: {
-    //         $gte: addMinutes(new Date(), 10),
-    //       },
-    //     };
-    //   }
+    const telemetryStatusQuery: Record<string, unknown> = {};
+    if (telemetryStatus) {
+      if (telemetryStatus === 'ONLINE') {
+        telemetryStatusQuery.lastConnection = {
+          $gte: addMinutes(new Date(), 10),
+        };
+      }
 
-    //   if (telemetryStatus === 'OFFLINE') {
-    //     telemetryStatusQuery.telemetryBoard = {
-    //       lastConnection: {
-    //         $lt: addMinutes(new Date(), -10),
-    //       },
-    //     };
-    //   }
+      if (telemetryStatus === 'OFFLINE') {
+        telemetryStatusQuery.lastConnection = {
+          $lt: addMinutes(new Date(), -10),
+        };
+      }
 
-    //   if (telemetryStatus === 'VIRGIN') {
-    //     telemetryStatusQuery.telemetryBoard = {
-    //       lastConnection: {
-    //         $exists: false,
-    //       },
-    //     };
-    //   }
+      if (telemetryStatus === 'VIRGIN') {
+        telemetryStatusQuery.telemetryBoardId = {
+          $exists: true,
+        };
+        telemetryStatusQuery.lastConnection = {
+          $exists: false,
+        };
+      }
 
-    //   if (telemetryStatus === 'NO_TELEMETRY') {
-    //     telemetryStatusQuery.telemetryBoardId = {
-    //       $exists: false,
-    //     };
-    //   }
-    // }
+      if (telemetryStatus === 'NO_TELEMETRY') {
+        telemetryStatusQuery.telemetryBoardId = {
+          $exists: false,
+        };
+      }
+    }
 
     const [result, count] = await this.repository.findAndCount(
       {
@@ -96,11 +93,7 @@ class MikroMachinesRepository implements MachinesRepository {
           serialNumber: new RegExp(serialNumber, 'i'),
         }),
         ...(isActive !== undefined && { isActive }),
-        telemetryBoard: {
-          lastConnection: {
-            $gt: addMinutes(new Date(), 10),
-          },
-        },
+        ...telemetryStatusQuery,
       },
       {
         limit,

@@ -30,6 +30,8 @@ class Machine {
   isActive: boolean;
 
   maintenance: boolean;
+
+  lastConnection?: Date;
 }
 
 export default Machine;
