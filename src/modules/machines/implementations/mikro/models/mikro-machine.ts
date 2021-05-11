@@ -67,6 +67,12 @@ class MikroMachine implements Machine {
   @Property()
   maintenance: boolean;
 
+  @Property()
+  minimumPrizeCount?: number;
+
+  @Property()
+  typeOfPrize?: { id: string; label: string };
+
   constructor(data?: CreateMachineDto) {
     if (data) {
       this.id = v4();
@@ -82,6 +88,8 @@ class MikroMachine implements Machine {
       this.isActive = data.isActive;
       this.telemetryBoardId = data.telemetryBoardId;
       this.maintenance = false;
+      this.typeOfPrize = data.typeOfPrize;
+      this.minimumPrizeCount = data.minimumPrizeCount;
     }
   }
 }

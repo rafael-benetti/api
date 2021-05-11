@@ -1,4 +1,3 @@
-import Product from '@modules/users/contracts/models/product';
 import Box from './box';
 
 class Machine {
@@ -22,7 +21,9 @@ class Machine {
 
   locationId?: string;
 
-  typeOfPrize?: Product;
+  typeOfPrize?: { id: string; label: string };
+
+  minimumPrizeCount?: number;
 
   ownerId: string;
 

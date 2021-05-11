@@ -24,6 +24,7 @@ interface Request {
   operatorId: string;
   locationId: string;
   typeOfPrizeId: string;
+  minimumPrizeCount: number;
 }
 
 @injectable()
@@ -65,6 +66,7 @@ class CreateMachineService {
     serialNumber,
     telemetryBoardId,
     typeOfPrizeId,
+    minimumPrizeCount,
   }: Request): Promise<Machine> {
     const user = await this.usersRepository.findOne({
       by: 'id',
@@ -150,24 +152,23 @@ class CreateMachineService {
         throw AppError.authorizationError;
     }
 
-    let typeOfPrize;
+    let typeOfPrize: { id: string; label: string } | undefined;
     if (typeOfPrizeId) {
-      typeOfPrize = user.stock?.prizes.find(
+      const group = await this.groupsRepository.findOne({
+        by: 'id',
+        value: groupId,
+      });
+
+      const prize = group?.stock.prizes.find(
         prize => prize.id === typeOfPrizeId,
       );
 
-      if (!typeOfPrize) {
-        const group = await this.groupsRepository.findOne({
-          by: 'id',
-          value: groupId,
-        });
+      if (!prize) throw AppError.productNotFound;
 
-        typeOfPrize = group?.stock.prizes.find(
-          prize => prize.id === typeOfPrizeId,
-        );
-      }
-
-      if (!typeOfPrize) throw AppError.productNotFound;
+      typeOfPrize = {
+        id: prize.id,
+        label: prize.label,
+      };
     }
 
     const machine = this.machinesRepository.create({
@@ -183,6 +184,7 @@ class CreateMachineService {
       isActive: true,
       telemetryBoardId,
       typeOfPrize,
+      minimumPrizeCount,
     });
 
     if (telemetryBoardId) {
