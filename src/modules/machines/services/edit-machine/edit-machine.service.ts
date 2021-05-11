@@ -171,16 +171,14 @@ class EditMachineService {
     }
 
     if (typeOfPrizeId !== undefined && typeOfPrizeId !== null) {
-      let prize = user.stock?.prizes?.find(prize => prize.id === typeOfPrizeId);
+      const group = await this.groupsRepository.findOne({
+        by: 'id',
+        value: machine.groupId,
+      });
 
-      if (!prize) {
-        const group = await this.groupsRepository.findOne({
-          by: 'id',
-          value: machine.groupId,
-        });
-
-        prize = group?.stock.prizes.find(prize => prize.id === typeOfPrizeId);
-      }
+      const prize = group?.stock.prizes.find(
+        prize => prize.id === typeOfPrizeId,
+      );
 
       if (!prize) throw AppError.productNotFound;
 

@@ -154,16 +154,14 @@ class CreateMachineService {
 
     let typeOfPrize: { id: string; label: string } | undefined;
     if (typeOfPrizeId) {
-      let prize = user.stock?.prizes?.find(prize => prize.id === typeOfPrizeId);
+      const group = await this.groupsRepository.findOne({
+        by: 'id',
+        value: groupId,
+      });
 
-      if (!prize) {
-        const group = await this.groupsRepository.findOne({
-          by: 'id',
-          value: groupId,
-        });
-
-        prize = group?.stock.prizes.find(prize => prize.id === typeOfPrizeId);
-      }
+      const prize = group?.stock.prizes.find(
+        prize => prize.id === typeOfPrizeId,
+      );
 
       if (!prize) throw AppError.productNotFound;
 
