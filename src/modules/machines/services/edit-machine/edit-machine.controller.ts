@@ -17,6 +17,7 @@ abstract class EditMachineController {
       isActive,
       telemetryBoardId,
       maintenance,
+      typeOfPrizeId,
     } = req.body;
 
     const editMachineService = container.resolve(EditMachineService);
@@ -34,6 +35,7 @@ abstract class EditMachineController {
       isActive,
       telemetryBoardId,
       maintenance,
+      typeOfPrizeId,
     });
 
     return res.json(machine);

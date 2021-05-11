@@ -27,6 +27,7 @@ interface Request {
   isActive: boolean;
   telemetryBoardId: number;
   maintenance: boolean;
+  typeOfPrizeId: string;
 }
 
 @injectable()
@@ -73,6 +74,7 @@ class EditMachineService {
     isActive,
     telemetryBoardId,
     maintenance,
+    typeOfPrizeId,
   }: Request): Promise<Machine> {
     const user = await this.usersRepository.findOne({
       by: 'id',
@@ -164,6 +166,27 @@ class EditMachineService {
           throw AppError.authorizationError;
       }
       machine.groupId = groupId;
+    }
+
+    if (typeOfPrizeId) {
+      let typeOfPrize = user.stock?.prizes.find(
+        prize => prize.id === typeOfPrizeId,
+      );
+
+      if (!typeOfPrize) {
+        const group = await this.groupsRepository.findOne({
+          by: 'id',
+          value: machine.groupId,
+        });
+
+        typeOfPrize = group?.stock.prizes.find(
+          prize => prize.id === typeOfPrizeId,
+        );
+      }
+
+      if (!typeOfPrize) throw AppError.productNotFound;
+
+      machine.typeOfPrize = typeOfPrize;
     }
 
     if (locationId !== undefined && locationId !== null) {
