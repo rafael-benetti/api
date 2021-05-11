@@ -43,6 +43,12 @@ export default class AppError {
     statusCode: 401,
   });
 
+  static thisMachineIsOffline = new AppError({
+    errorCode: 'THIS_MACHINE_IS_OFFLINE',
+    message: "You can't collect machines that are offline",
+    statusCode: 401,
+  });
+
   static invalidToken = new AppError({
     errorCode: 'INVALID_TOKEN',
     message: 'Your auth token is invalid.',

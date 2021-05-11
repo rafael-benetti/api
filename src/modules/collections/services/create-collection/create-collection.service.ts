@@ -13,6 +13,7 @@ import StorageProvider from '@providers/storage-provider/contracts/models/storag
 import AppError from '@shared/errors/app-error';
 import getGroupUniverse from '@shared/utils/get-group-universe';
 import isInGroupUniverse from '@shared/utils/is-in-group-universe';
+import { isBefore, subMilliseconds, subMinutes } from 'date-fns';
 import { inject, injectable } from 'tsyringe';
 
 interface Request {
@@ -99,6 +100,14 @@ class CreateCollectionService {
     });
 
     if (!machine) throw AppError.machineNotFound;
+
+    if (!machine.telemetryBoardId) throw AppError.telemetryBoardNotFound;
+
+    if (!machine.lastConnection) throw AppError.thisMachineIsOffline;
+
+    if (isBefore(machine.lastConnection, subMinutes(new Date(Date.now()), 10)))
+      throw AppError.thisMachineIsOffline;
+
     if (!machine.locationId) throw AppError.productInStock;
 
     const location = await this.pointsOfSaleRepository.findOne({
