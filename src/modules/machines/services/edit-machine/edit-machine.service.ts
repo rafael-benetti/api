@@ -13,6 +13,7 @@ import PointsOfSaleRepository from '@modules/points-of-sale/contracts/repositori
 import CounterTypesRepository from '@modules/counter-types/contracts/repositories/couter-types.repository';
 import RoutesRepository from '@modules/routes/contracts/repositories/routes.repository';
 import TelemetryBoardsRepository from '@modules/telemetry/contracts/repositories/telemetry-boards.repository';
+import logger from '@config/logger';
 
 interface Request {
   userId: string;
@@ -228,12 +229,15 @@ class EditMachineService {
 
     if (boxes) {
       const boxesEntities = boxes.map(box => {
+        logger.info(
+          machine.boxes.find(boxx => boxx.id === box.id)?.currentMoney,
+        );
         const counters = box.counters.map(counter => new Counter(counter));
+
         return new Box({
           id: box.id,
           counters,
-          currentMoney: machine.boxes.find(boxx => boxx.id === box.id)
-            ?.currentMoney,
+          currentMoney: 2,
         });
       });
 
