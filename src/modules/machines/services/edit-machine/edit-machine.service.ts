@@ -229,15 +229,18 @@ class EditMachineService {
 
     if (boxes) {
       const boxesEntities = boxes.map(box => {
+        const counters = box.counters.map(counter => new Counter(counter));
         logger.info(
           machine.boxes.find(boxx => boxx.id === box.id)?.currentMoney,
         );
-        const counters = box.counters.map(counter => new Counter(counter));
-
+        machine.boxes.forEach(boxx =>
+          logger.info(boxx.currentMoney + boxx.currentMoney),
+        );
         return new Box({
           id: box.id,
           counters,
-          currentMoney: 2,
+          currentMoney: machine.boxes.find(boxx => boxx.id === box.id)
+            ?.currentMoney,
         });
       });
 
