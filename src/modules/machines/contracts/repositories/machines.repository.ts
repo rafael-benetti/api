@@ -7,5 +7,6 @@ export default interface MachinesRepository {
   create(data: CreateMachineDto): Machine;
   findOne(data: FindMachineDto): Promise<Machine | undefined>;
   find(data: FindMachinesDto): Promise<{ machines: Machine[]; count: number }>;
+  count(data: FindMachinesDto): Promise<number>;
   save(data: Machine): void;
 }

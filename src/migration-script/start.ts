@@ -19,7 +19,7 @@ import MachineCategoriesScript from './modules/machines-categories/scripts/machi
 import MachinesScript from './modules/machines/scripts/machines.script';
 
 const start = async () => {
-  createConnections();
+  // createConnections();
   const ormProvider = container.resolve<OrmProvider>('OrmProvider');
   await ormProvider.connect();
 

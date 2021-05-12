@@ -76,6 +76,9 @@ class MikroMachine implements Machine {
   @Property()
   lastConnection?: Date;
 
+  @Property()
+  lastCollection?: Date;
+
   constructor(data?: CreateMachineDto) {
     if (data) {
       this.id = v4();

@@ -1,0 +1,7 @@
+//  Máquinas offline
+//  Máquinas online
+// TODO Máquinas com estoque em vermelho/amarelo (clica e abre máquinas filtrada) 
+//  Máquina com mais tempo sem comunicar
+//  Máquina com mais tempo sem coleta
+// TODO Gráfico pizza com formas de pgto mais usados
+// TODO Gráfico faturamento

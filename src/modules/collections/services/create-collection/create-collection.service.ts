@@ -206,6 +206,8 @@ class CreateCollectionService {
       boxCollections,
     });
 
+    machine.lastCollection = collection.date;
+
     this.collectionsRepository.save(collection);
     this.machinesRepository.save(machine);
 

@@ -265,7 +265,9 @@ class GetMachineDetailsService {
 
     // ? HISTORICO DE EVENTOS
     const transactionHistory = await this.telemetryLogsRepository.find({
-      filters: {},
+      filters: {
+        machineId,
+      },
       limit: 5,
     });
 

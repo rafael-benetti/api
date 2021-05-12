@@ -10,6 +10,8 @@ export default interface FindMachinesDto {
   pointOfSaleId?: string | string[];
   serialNumber?: string;
   isActive?: boolean;
+  orderByLastCollection?: boolean;
+  orderByLastConnection?: boolean;
   limit?: number;
   offset?: number;
   populate?: string[];

@@ -120,7 +120,7 @@ class DetailRouteService {
 
     const telemetryLogs = await this.telemetryLogsRepository.find({
       filters: {
-        pointOfSaleId: pointsOfSale.map(pointOfSale => pointOfSale.id),
+        routeId,
         date: {
           startDate,
           endDate,

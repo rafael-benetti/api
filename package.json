@@ -20,8 +20,10 @@
   "dependencies": {
     "@mikro-orm/core": "^4.5.0",
     "@mikro-orm/mongodb": "^4.4.4",
+    "@types/bluebird": "^3.5.34",
     "aws-sdk": "^2.843.0",
     "bcrypt": "^5.0.0",
+    "bluebird": "^3.7.2",
     "celebrate": "^13.0.4",
     "cors": "^2.8.5",
     "date-fns": "^2.16.1",

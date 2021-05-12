@@ -32,6 +32,8 @@ class Machine {
   maintenance: boolean;
 
   lastConnection?: Date;
+
+  lastCollection?: Date;
 }
 
 export default Machine;

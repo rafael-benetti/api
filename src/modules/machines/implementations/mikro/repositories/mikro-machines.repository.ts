@@ -47,8 +47,25 @@ class MikroMachinesRepository implements MachinesRepository {
     limit,
     offset,
     populate,
+    orderByLastCollection,
+    orderByLastConnection,
   }: FindMachinesDto): Promise<{ machines: Machine[]; count: number }> {
     const telemetryStatusQuery: Record<string, unknown> = {};
+    const lastCollectionQuery: Record<string, unknown> = {};
+    const lastConnectionQuery: Record<string, unknown> = {};
+
+    if (orderByLastConnection) {
+      lastConnectionQuery.lastConnection = {
+        $exists: true,
+      };
+    }
+
+    if (orderByLastCollection) {
+      lastCollectionQuery.lastCollection = {
+        $exists: true,
+      };
+    }
+
     if (telemetryStatus) {
       if (telemetryStatus === 'ONLINE') {
         telemetryStatusQuery.lastConnection = {
@@ -90,8 +107,20 @@ class MikroMachinesRepository implements MachinesRepository {
         }),
         ...(isActive !== undefined && { isActive }),
         ...telemetryStatusQuery,
+        ...lastCollectionQuery,
+        ...lastConnectionQuery,
       },
       {
+        ...(orderByLastCollection && {
+          orderBy: {
+            lastCollection: 'ASC',
+          },
+        }),
+        ...(orderByLastConnection && {
+          orderBy: {
+            lastConnection: 'ASC',
+          },
+        }),
         limit,
         offset,
         populate,
@@ -101,6 +130,47 @@ class MikroMachinesRepository implements MachinesRepository {
     const machines = result.map(machine => MachineMapper.toEntity(machine));
 
     return { machines, count };
+  }
+
+  async count({
+    ownerId,
+    telemetryStatus,
+    groupIds,
+  }: FindMachinesDto): Promise<number> {
+    const telemetryStatusQuery: Record<string, unknown> = {};
+
+    if (telemetryStatus) {
+      if (telemetryStatus === 'ONLINE') {
+        telemetryStatusQuery.lastConnection = {
+          $gte: addMinutes(new Date(), -10),
+        };
+      }
+
+      if (telemetryStatus === 'OFFLINE') {
+        telemetryStatusQuery.lastConnection = {
+          $lt: addMinutes(new Date(), -10),
+        };
+      }
+
+      if (telemetryStatus === 'VIRGIN') {
+        telemetryStatusQuery.telemetryBoardId = {
+          $ne: true,
+        };
+        telemetryStatusQuery.lastConnection = null;
+      }
+
+      if (telemetryStatus === 'NO_TELEMETRY') {
+        telemetryStatusQuery.telemetryBoardId = null;
+      }
+    }
+
+    const count = await this.repository.count({
+      ...(ownerId && { ownerId }),
+      ...(groupIds && { groupId: groupIds }),
+      ...telemetryStatusQuery,
+    });
+
+    return count;
   }
 
   save(data: Machine): void {
