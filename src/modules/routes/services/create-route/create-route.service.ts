@@ -8,6 +8,7 @@ import AppError from '@shared/errors/app-error';
 import { inject, injectable } from 'tsyringe';
 import OrmProvider from '@providers/orm-provider/contracts/models/orm-provider';
 import PointsOfSaleRepository from '@modules/points-of-sale/contracts/repositories/points-of-sale.repository';
+import logger from '@config/logger';
 
 interface Request {
   userId: string;
@@ -44,7 +45,7 @@ class CreateRouteService {
     pointsOfSaleIds,
     operatorId,
   }: Request): Promise<Route> {
-    // Verificação de usuario existente
+    // ? Verificação de usuario existente
     const user = await this.usersRepository.findOne({
       by: 'id',
       value: userId,
@@ -52,7 +53,7 @@ class CreateRouteService {
 
     if (!user) throw AppError.userNotFound;
 
-    // Verificação de roles com autorização
+    // ? Verificação de roles com autorização
     if (user.role !== Role.MANAGER && user.role !== Role.OWNER)
       throw AppError.authorizationError;
 
@@ -71,9 +72,13 @@ class CreateRouteService {
     if (user.role === Role.MANAGER) {
       if (!user.permissions?.createRoutes) throw AppError.authorizationError;
       if (!user.groupIds) throw AppError.unknownError;
+      logger.info(groupIds);
+      logger.info(user.groupIds);
 
-      if (user.groupIds.some(groupId => !groupIds.includes(groupId)))
+      if (groupIds.some(groupId => !user.groupIds?.includes(groupId)))
         throw AppError.authorizationError;
+
+      logger.info('aaa');
     }
 
     if (user.role === Role.OWNER) {
