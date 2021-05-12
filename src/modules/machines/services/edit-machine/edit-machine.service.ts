@@ -232,7 +232,8 @@ class EditMachineService {
         return new Box({
           id: box.id,
           counters,
-          currentMoney: box.currentMoney,
+          currentMoney: machine.boxes.find(boxx => boxx.id === box.id)
+            ?.currentMoney,
         });
       });
 
