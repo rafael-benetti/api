@@ -29,6 +29,7 @@ interface Request {
 interface MachineInfo {
   machine: Machine;
   income: number;
+  givenPrizes: number;
 }
 
 interface ChartData {
@@ -206,6 +207,9 @@ class GetPointOfSaleDetailsService {
       return {
         machine,
         income: telemetryLogsIn
+          .filter(telemetryLog => telemetryLog.machineId === machine.id)
+          .reduce((a, b) => a + b.value, 0),
+        givenPrizes: telemetryLogsOut
           .filter(telemetryLog => telemetryLog.machineId === machine.id)
           .reduce((a, b) => a + b.value, 0),
       };

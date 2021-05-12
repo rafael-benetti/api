@@ -233,9 +233,7 @@ class EditMachineService {
         logger.info(
           machine.boxes.find(boxx => boxx.id === box.id)?.currentMoney,
         );
-        machine.boxes.forEach(boxx =>
-          logger.info(boxx.currentMoney + boxx.currentMoney),
-        );
+        machine.boxes.forEach(boxx => logger.info(boxx.id + boxx.currentMoney));
         return new Box({
           id: box.id,
           counters,
