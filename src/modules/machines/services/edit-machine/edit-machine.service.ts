@@ -227,15 +227,12 @@ class EditMachineService {
       machine.categoryLabel = category.label;
     }
 
+    logger.info(boxes);
+
     if (boxes) {
       const boxesEntities = boxes.map(box => {
         const counters = box.counters.map(counter => new Counter(counter));
-        logger.info(
-          machine.boxes.find(boxx => boxx.id === box.id)?.currentMoney,
-        );
-        machine.boxes.forEach(boxx =>
-          logger.info(boxx.currentMoney + boxx.currentMoney),
-        );
+        logger.info(boxes.forEach(boxx => boxx.id));
         return new Box({
           id: box.id,
           counters,
