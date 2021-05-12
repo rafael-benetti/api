@@ -72,13 +72,8 @@ class CreateRouteService {
     if (user.role === Role.MANAGER) {
       if (!user.permissions?.createRoutes) throw AppError.authorizationError;
       if (!user.groupIds) throw AppError.unknownError;
-      logger.info(groupIds);
-      logger.info(user.groupIds);
-
       if (groupIds.some(groupId => !user.groupIds?.includes(groupId)))
         throw AppError.authorizationError;
-
-      logger.info('aaa');
     }
 
     if (user.role === Role.OWNER) {
