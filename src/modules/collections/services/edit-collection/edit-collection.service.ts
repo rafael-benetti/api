@@ -80,7 +80,7 @@ class EditCollectionService {
     )
       throw AppError.authorizationError;
 
-    if (user.role === Role.MANAGER || user.role === Role.OPERATOR) {
+    if (user.role === Role.OPERATOR) {
       if (!user.permissions?.editCollections) throw AppError.authorizationError;
     }
 
