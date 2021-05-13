@@ -14,6 +14,7 @@ export default abstract class EditCollectionController {
           boxId: Joi.string().uuid().required(),
           counterCollections: Joi.array().items(
             Joi.object({
+              counterTypeLabel: Joi.string().required(),
               counterId: Joi.string().required(),
               mechanicalCount: Joi.number(),
               digitalCount: Joi.number(),
