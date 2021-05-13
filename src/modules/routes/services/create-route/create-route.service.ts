@@ -8,7 +8,6 @@ import AppError from '@shared/errors/app-error';
 import { inject, injectable } from 'tsyringe';
 import OrmProvider from '@providers/orm-provider/contracts/models/orm-provider';
 import PointsOfSaleRepository from '@modules/points-of-sale/contracts/repositories/points-of-sale.repository';
-import logger from '@config/logger';
 
 interface Request {
   userId: string;

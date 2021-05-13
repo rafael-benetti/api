@@ -23,6 +23,7 @@ interface Request {
   boxCollections: {
     boxId: string;
     counterCollections: {
+      counterTypeLabel: string;
       counterId: string;
       mechanicalCount: number;
       digitalCount: number;

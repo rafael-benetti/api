@@ -25,6 +25,7 @@ interface Request {
     prizeCount?: number;
     counterCollections: {
       counterId: string;
+      counterTypeLabel: string;
       mechanicalCount: number;
       digitalCount: number;
       userCount: number;
