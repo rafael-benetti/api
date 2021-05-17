@@ -13,7 +13,6 @@ import PointsOfSaleRepository from '@modules/points-of-sale/contracts/repositori
 import CounterTypesRepository from '@modules/counter-types/contracts/repositories/couter-types.repository';
 import RoutesRepository from '@modules/routes/contracts/repositories/routes.repository';
 import TelemetryBoardsRepository from '@modules/telemetry/contracts/repositories/telemetry-boards.repository';
-import logger from '@config/logger';
 
 interface Request {
   userId: string;
@@ -106,6 +105,35 @@ class EditMachineService {
 
     if (user.role === Role.OWNER)
       if (user.id !== machine.ownerId) throw AppError.authorizationError;
+    if (groupId && groupId !== machine.groupId) {
+      if (machine.locationId) throw AppError.machineHasLocation;
+      if (user.role === Role.OWNER) {
+        const groups = await this.groupsRepository.find({
+          filters: {
+            ownerId: user.id,
+          },
+        });
+
+        const groupIds = groups.map(group => group.id);
+        if (!groupIds.includes(groupId)) throw AppError.authorizationError;
+      }
+
+      if (user.role === Role.MANAGER) {
+        if (!user.permissions?.createMachines)
+          throw AppError.authorizationError;
+        if (!user.groupIds?.includes(groupId))
+          throw AppError.authorizationError;
+      }
+      machine.groupId = groupId;
+
+      machine.operatorId = undefined;
+      machine.locationId = undefined;
+      machine.telemetryBoardId = undefined;
+      machine.typeOfPrize = undefined;
+      machine.minimumPrizeCount = undefined;
+
+      return machine;
+    }
 
     if (serialNumber && serialNumber !== machine.serialNumber) {
       const checkMachineExists = await this.machinesRepository.findOne({
@@ -149,28 +177,6 @@ class EditMachineService {
 
     if (gameValue) machine.gameValue = gameValue;
 
-    if (groupId && groupId !== machine.groupId) {
-      if (machine.locationId) throw AppError.machineHasLocation;
-      if (user.role === Role.OWNER) {
-        const groups = await this.groupsRepository.find({
-          filters: {
-            ownerId: user.id,
-          },
-        });
-
-        const groupIds = groups.map(group => group.id);
-        if (!groupIds.includes(groupId)) throw AppError.authorizationError;
-      }
-
-      if (user.role === Role.MANAGER) {
-        if (!user.permissions?.createMachines)
-          throw AppError.authorizationError;
-        if (!user.groupIds?.includes(groupId))
-          throw AppError.authorizationError;
-      }
-      machine.groupId = groupId;
-    }
-
     if (typeOfPrizeId !== undefined && typeOfPrizeId !== null) {
       const group = await this.groupsRepository.findOne({
         by: 'id',
@@ -198,6 +204,7 @@ class EditMachineService {
       });
 
       if (!pointOfSale) throw AppError.pointOfSaleNotFound;
+
       machine.locationId = locationId;
     } else if (locationId === null) machine.locationId = locationId;
 
@@ -226,8 +233,6 @@ class EditMachineService {
       machine.categoryId = category.id;
       machine.categoryLabel = category.label;
     }
-
-    logger.info(boxes);
 
     if (boxes) {
       const boxesEntities = boxes.map(box => {
@@ -261,12 +266,12 @@ class EditMachineService {
     if (telemetryBoardId !== undefined && machine.isActive) {
       if (telemetryBoardId === null) {
         if (machine.telemetryBoardId) {
-          const telemetry = await this.telemetryBoardsRepository.findById(
+          const telemetryBoard = await this.telemetryBoardsRepository.findById(
             machine.telemetryBoardId,
           );
-          if (telemetry) {
-            delete telemetry?.machineId;
-            this.telemetryBoardsRepository.save(telemetry);
+          if (telemetryBoard) {
+            delete telemetryBoard?.machineId;
+            this.telemetryBoardsRepository.save(telemetryBoard);
           }
         }
 
@@ -303,6 +308,8 @@ class EditMachineService {
         machine.telemetryBoardId = telemetryBoardId;
 
         telemetryBoard.machineId = machine.id;
+
+        telemetryBoard.groupId = machine.groupId;
 
         this.telemetryBoardsRepository.save(telemetryBoard);
       }

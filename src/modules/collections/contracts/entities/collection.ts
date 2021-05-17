@@ -1,6 +1,7 @@
 import { v4 } from 'uuid';
 import CreateCollectionDto from '../dtos/create-collection.dto';
 import BoxCollection from '../interfaces/box-collection';
+import Geolocation from '../dtos/geolocation.dto';
 
 export default class Collection {
   id: string;
@@ -20,6 +21,12 @@ export default class Collection {
   observations: string;
 
   date: Date;
+
+  startTime: Date;
+
+  startLocation?: Geolocation;
+
+  endLocation?: Geolocation;
 
   boxCollections: BoxCollection[];
 

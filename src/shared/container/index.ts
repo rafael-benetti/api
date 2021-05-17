@@ -10,6 +10,8 @@ import GroupsRepository from '@modules/groups/contracts/repositories/groups.repo
 import MikroGroupsRepository from '@modules/groups/implementations/mikro/repositories/mikro-groups.repository';
 import MachinesRepository from '@modules/machines/contracts/repositories/machines.repository';
 import MikroMachinesRepository from '@modules/machines/implementations/mikro/repositories/mikro-machines.repository';
+import NotificationsRepository from '@modules/notifications/contracts/repositories/notifications.repostory';
+import MikroNotificationsRepository from '@modules/notifications/implementations/mikro/repositories/mikro-notifications.repository';
 import PointsOfSaleRepository from '@modules/points-of-sale/contracts/repositories/points-of-sale.repository';
 import MikroPointsOfSaleRepository from '@modules/points-of-sale/implementations/mikro/repositories/mikro-points-of-sale.repository';
 import ProductLogsRepository from '@modules/products/contracts/repositories/product-logs.repository';
@@ -83,4 +85,9 @@ container.registerSingleton<TelemetryLogsRepository>(
 container.registerSingleton<ProductLogsRepository>(
   'ProductLogsRepository',
   MikroProductLogsRepository,
+);
+
+container.registerSingleton<NotificationsRepository>(
+  'NotificationsRepository',
+  MikroNotificationsRepository,
 );

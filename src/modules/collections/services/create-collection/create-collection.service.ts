@@ -15,11 +15,15 @@ import getGroupUniverse from '@shared/utils/get-group-universe';
 import isInGroupUniverse from '@shared/utils/is-in-group-universe';
 import { isBefore, subMinutes } from 'date-fns';
 import { inject, injectable } from 'tsyringe';
+import Geolocation from '../../contracts/dtos/geolocation.dto';
 
 interface Request {
   userId: string;
   machineId: string;
   observations: string;
+  startTime: Date;
+  startLocation?: Geolocation;
+  endLocation?: Geolocation;
   boxCollections: {
     boxId: string;
     prizeCount?: number;
@@ -70,6 +74,9 @@ class CreateCollectionService {
     observations,
     boxCollections,
     files,
+    startTime,
+    endLocation,
+    startLocation,
   }: Request): Promise<Collection> {
     const parsedFiles: {
       [key: string]: {
@@ -205,6 +212,9 @@ class CreateCollectionService {
       routeId: route?.id,
       observations,
       boxCollections,
+      startTime,
+      endLocation,
+      startLocation,
     });
 
     machine.lastCollection = collection.date;

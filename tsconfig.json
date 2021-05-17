@@ -1,6 +1,6 @@
 {
   "include": [
-    "src"
+    "src",
   ],
   "exclude": [
     //"./src/migration-script",
@@ -20,6 +20,7 @@
     "emitDecoratorMetadata": true,
     "skipLibCheck": true,
     "forceConsistentCasingInFileNames": true,
+    "resolveJsonModule": true,
     "baseUrl": "./src",
     "paths": {
       "@shared/*": [

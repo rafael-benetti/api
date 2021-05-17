@@ -3,3 +3,4 @@ import './mail-provider';
 import './orm-provider';
 import './session-provider';
 import './storage-provider';
+import './notification-provider';

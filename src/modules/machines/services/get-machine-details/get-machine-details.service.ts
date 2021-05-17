@@ -7,7 +7,6 @@ import TelemetryLog from '@modules/telemetry-logs/contracts/entities/telemetry-l
 import TelemetryLogsRepository from '@modules/telemetry-logs/contracts/repositories/telemetry-logs.repository';
 import Role from '@modules/users/contracts/enums/role';
 import UsersRepository from '@modules/users/contracts/repositories/users.repository';
-import OrmProvider from '@providers/orm-provider/contracts/models/orm-provider';
 import AppError from '@shared/errors/app-error';
 import {
   eachDayOfInterval,
@@ -67,9 +66,6 @@ class GetMachineDetailsService {
 
     @inject('CounterTypesRepository')
     private counterTypesRepository: CounterTypesRepository,
-
-    @inject('OrmProvider')
-    private ormProvider: OrmProvider,
   ) {}
 
   public async execute({
@@ -112,6 +108,7 @@ class GetMachineDetailsService {
       filters: {
         machineId,
         maintenance: false,
+        groupId: machine.groupId,
         date: {
           startDate: lastCollection,
           endDate: new Date(Date.now()),

@@ -8,6 +8,7 @@ import MikroCollection from '@modules/collections/implementations/mikro/entities
 import MikroCounterType from '@modules/counter-types/implementations/mikro/models/mikro-counter-type';
 import MikroGroup from '@modules/groups/implementations/mikro/models/mikro-group';
 import MikroMachine from '@modules/machines/implementations/mikro/models/mikro-machine';
+import MikroNotification from '@modules/notifications/implementations/mikro/entities/mikro-notification';
 import MikroPointOfSale from '@modules/points-of-sale/implementations/mikro/models/mikro-point-of-sale';
 import MikroProductLog from '@modules/products/implementations/mikro/entities/mikro-product-log';
 import MikroRoute from '@modules/routes/implementations/mikro/models/mikro-route';
@@ -39,6 +40,7 @@ class MikroOrmProvider implements OrmProvider {
         MikroCollection,
         MikroTelemetryLog,
         MikroProductLog,
+        MikroNotification,
       ],
       implicitTransactions: true,
       debug: true,

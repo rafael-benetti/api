@@ -49,6 +49,12 @@ export default class AppError {
     statusCode: 401,
   });
 
+  static thisMachineHasTelemetryBoard = new AppError({
+    errorCode: 'THIS_MACHINE_HAS_TELEMETRY_BOARD',
+    message: "You can't transfer machines that have telemetry board",
+    statusCode: 401,
+  });
+
   static invalidToken = new AppError({
     errorCode: 'INVALID_TOKEN',
     message: 'Your auth token is invalid.',

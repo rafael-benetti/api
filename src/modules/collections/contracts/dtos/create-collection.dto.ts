@@ -1,4 +1,5 @@
 import BoxCollection from '../interfaces/box-collection';
+import Geolocation from './geolocation.dto';
 
 export default interface CreateCollectionDto {
   previousCollectionId?: string;
@@ -9,4 +10,7 @@ export default interface CreateCollectionDto {
   routeId?: string;
   observations: string;
   boxCollections: BoxCollection[];
+  startTime: Date;
+  startLocation?: Geolocation;
+  endLocation?: Geolocation;
 }
