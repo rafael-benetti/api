@@ -67,6 +67,7 @@ export default class MikroCollectionsRepository
         ],
         fields: [
           'machine',
+          'machine.serialNumber',
           'previousCollection',
           'previousCollection.boxCollections',
           'previousCollection.date',

@@ -1,4 +1,5 @@
 import { v4 } from 'uuid';
+import Machine from '@modules/machines/contracts/models/machine';
 import CreateCollectionDto from '../dtos/create-collection.dto';
 import BoxCollection from '../interfaces/box-collection';
 import Geolocation from '../dtos/geolocation.dto';
@@ -9,6 +10,8 @@ export default class Collection {
   previousCollectionId?: string;
 
   machineId: string;
+
+  machine?: Machine;
 
   groupId: string;
 

@@ -46,19 +46,24 @@ export default class GetCollectionsService {
 
     const groupIds = await getGroupUniverse(user);
 
-    const machineIds = (
-      await this.machinesRepository.find({
-        serialNumber: machineSerialNumber,
-        groupIds,
-        fields: ['id'],
-      })
-    ).machines.map(machine => machine.id);
+    const { machines } = await this.machinesRepository.find({
+      serialNumber: machineSerialNumber,
+      groupIds,
+    });
+
+    const machineIds = machines.map(machine => machine.id);
 
     const { collections, count } = await this.collectionsRepository.find({
       groupIds,
       machineId: machineIds,
       limit,
       offset,
+    });
+
+    collections.forEach(collection => {
+      collection.machine = machines.find(
+        machine => machine.id === collection.machineId,
+      );
     });
 
     return {
