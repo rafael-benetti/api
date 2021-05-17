@@ -7,6 +7,7 @@ import Role from '@modules/users/contracts/enums/role';
 import UsersRepository from '@modules/users/contracts/repositories/users.repository';
 import AppError from '@shared/errors/app-error';
 import { subMonths } from 'date-fns';
+import { Promise } from 'bluebird';
 import { inject, injectable } from 'tsyringe';
 
 interface Request {
@@ -16,6 +17,14 @@ interface Request {
 interface Response {
   machinesSortedByLastCollection: Machine[];
   machinesSortedByLastConnection: Machine[];
+  machinesSortedByStock: {
+    id: string;
+    serialNumber: string;
+    total: number;
+    minimumPrizeCount: number;
+  }[];
+  machinesNeverConnected: number;
+  machinesWithoutTelemetryBoard: number;
   offlineMachines: number;
   onlineMachines: number;
 }
@@ -70,10 +79,17 @@ export default class DashboardInfoService {
     const machinesSortedByLastConnection = (
       await this.machinesRepository.find({
         orderByLastConnection: true,
+        groupIds,
         limit: 5,
         offset: 0,
       })
     ).machines;
+
+    const machinesSortedByStock = await this.machinesRepository.machineSortedByStock(
+      {
+        groupIds,
+      },
+    );
 
     const offlineMachines = await this.machinesRepository.count({
       groupIds,
@@ -85,6 +101,18 @@ export default class DashboardInfoService {
       groupIds,
       operatorId: isOperator ? user.id : undefined,
       telemetryStatus: 'ONLINE',
+    });
+
+    const machinesNeverConnected = await this.machinesRepository.count({
+      groupIds,
+      operatorId: isOperator ? user.id : undefined,
+      telemetryStatus: 'VIRGIN',
+    });
+
+    const machinesWithoutTelemetryBoard = await this.machinesRepository.count({
+      groupIds,
+      operatorId: isOperator ? user.id : undefined,
+      telemetryStatus: 'NO_TELEMETRY',
     });
 
     const endDate = new Date(Date.now());
@@ -118,7 +146,7 @@ export default class DashboardInfoService {
           },
           groupId: groupIds,
           maintenance: false,
-          type: 'IN',
+          type: 'OUT',
         },
       });
 
@@ -126,32 +154,18 @@ export default class DashboardInfoService {
     };
 
     const [telemetryLogsIn, telemetryLogsOut] = await Promise.all([
-      telemetryLogsInPromise,
-      telemetryLogsOutPromise,
+      telemetryLogsInPromise(),
+      telemetryLogsOutPromise(),
     ]);
-
-    const a = await this.telemetryLogsRepository.find({
-      filters: {
-        date: {
-          startDate,
-          endDate,
-        },
-        groupId: groupIds,
-        maintenance: false,
-        type: 'IN',
-      },
-    });
-
-    logger.info(telemetryLogsIn);
-    logger.info(telemetryLogsOut);
-
-    logger.info(a.length);
 
     return {
       machinesSortedByLastCollection,
       machinesSortedByLastConnection,
       offlineMachines,
       onlineMachines,
+      machinesNeverConnected,
+      machinesWithoutTelemetryBoard,
+      machinesSortedByStock,
     };
   }
 }

@@ -1,3 +1,4 @@
+import logger from '@config/logger';
 import CreateMachineDto from '@modules/machines/contracts/dtos/create-machine.dto';
 import FindMachineDto from '@modules/machines/contracts/dtos/find-machine.dto';
 import FindMachinesDto from '@modules/machines/contracts/dtos/find-machines.dto';
@@ -5,6 +6,7 @@ import Machine from '@modules/machines/contracts/models/machine';
 import MachinesRepository from '@modules/machines/contracts/repositories/machines.repository';
 import MikroOrmProvider from '@providers/orm-provider/implementations/mikro/mikro-orm-provider';
 import { addMinutes } from 'date-fns';
+import { logging } from 'googleapis/build/src/apis/logging';
 import { container } from 'tsyringe';
 import MachineMapper from '../mapper/machine.mapper';
 import MikroMachine from '../models/mikro-machine';
@@ -132,6 +134,56 @@ class MikroMachinesRepository implements MachinesRepository {
     const machines = result.map(machine => MachineMapper.toEntity(machine));
 
     return { machines, count };
+  }
+
+  async machineSortedByStock({
+    groupIds,
+  }: FindMachinesDto): Promise<
+    {
+      id: string;
+      serialNumber: string;
+      total: number;
+      minimumPrizeCount: number;
+    }[]
+  > {
+    const machines = await this.repository.aggregate([
+      {
+        $project: {
+          total: {
+            $sum: '$boxes.numberOfPrizes',
+          },
+          serialNumber: '$serialNumber',
+          minimumPrizeCount: '$minimumPrizeCount',
+          lastConnection: '$lastConnection',
+          groupId: '$groupId',
+        },
+      },
+      {
+        $match: {
+          lastConnection: {
+            $exists: true,
+            $ne: null,
+          },
+        },
+      },
+      {
+        $sort: {
+          total: 1,
+        },
+      },
+      {
+        $match: {
+          groupId: {
+            $in: groupIds,
+          },
+        },
+      },
+      {
+        $limit: 5,
+      },
+    ]);
+
+    return machines;
   }
 
   async count({

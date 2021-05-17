@@ -58,7 +58,6 @@ export default class MikroCollectionsRepository
         },
         offset: data.offset,
         populate: [
-          'machine',
           'previousCollection',
           'user',
           'group',
@@ -66,8 +65,6 @@ export default class MikroCollectionsRepository
           'route',
         ],
         fields: [
-          'machine',
-          'machine.serialNumber',
           'previousCollection',
           'previousCollection.boxCollections',
           'previousCollection.date',
