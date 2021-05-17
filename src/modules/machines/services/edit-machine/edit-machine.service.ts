@@ -29,6 +29,8 @@ interface Request {
   maintenance: boolean;
   typeOfPrizeId: string;
   minimumPrizeCount: number;
+  incomePerMonthGoal: number;
+  incomePerPrizeGoal: number;
 }
 
 @injectable()
@@ -77,6 +79,8 @@ class EditMachineService {
     maintenance,
     typeOfPrizeId,
     minimumPrizeCount,
+    incomePerMonthGoal,
+    incomePerPrizeGoal,
   }: Request): Promise<Machine> {
     const user = await this.usersRepository.findOne({
       by: 'id',
@@ -316,6 +320,12 @@ class EditMachineService {
     }
 
     if (maintenance !== undefined) machine.maintenance = maintenance;
+
+    if (incomePerMonthGoal !== undefined)
+      machine.incomePerMonthGoal = incomePerMonthGoal;
+
+    if (incomePerPrizeGoal !== undefined)
+      machine.incomePerPrizeGoal = incomePerPrizeGoal;
 
     if (minimumPrizeCount !== undefined && minimumPrizeCount !== null) {
       machine.minimumPrizeCount = minimumPrizeCount;

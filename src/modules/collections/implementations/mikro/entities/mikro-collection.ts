@@ -71,6 +71,12 @@ export default class MikroCollection implements Collection {
   @Property()
   endLocation?: Geolocation;
 
+  @Property()
+  assessData?: {
+    date: Date;
+    reviewedBy: string;
+  };
+
   constructor(data?: CreateCollectionDto) {
     if (data) {
       this.id = v4();
@@ -86,6 +92,7 @@ export default class MikroCollection implements Collection {
       this.startLocation = data.startLocation;
       this.endLocation = data.endLocation;
       this.startTime = data.startTime;
+      this.assessData = data.assessData;
     }
   }
 }

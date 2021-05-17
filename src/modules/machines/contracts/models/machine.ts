@@ -34,6 +34,10 @@ class Machine {
   lastConnection?: Date;
 
   lastCollection?: Date;
+
+  incomePerPrizeGoal?: number;
+
+  incomePerMonthGoal?: number;
 }
 
 export default Machine;

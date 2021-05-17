@@ -16,6 +16,8 @@ abstract class CreateMachineController {
       telemetryBoardId,
       typeOfPrizeId,
       minimumPrizeCount,
+      incomePerMonthGoal,
+      incomePerPrizeGoal,
     } = req.body;
 
     const createMachineService = container.resolve(CreateMachineService);
@@ -32,6 +34,8 @@ abstract class CreateMachineController {
       telemetryBoardId,
       typeOfPrizeId,
       minimumPrizeCount,
+      incomePerMonthGoal,
+      incomePerPrizeGoal,
     });
 
     return res.json(machine);

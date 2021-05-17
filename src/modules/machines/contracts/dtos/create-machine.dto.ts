@@ -26,4 +26,8 @@ export default interface CreateMachineDto {
   minimumPrizeCount?: number;
 
   isActive: boolean;
+
+  incomePerPrizeGoal?: number;
+
+  incomePerMonthGoal?: number;
 }

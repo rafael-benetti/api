@@ -25,6 +25,8 @@ interface Request {
   locationId: string;
   typeOfPrizeId: string;
   minimumPrizeCount: number;
+  incomePerPrizeGoal?: number;
+  incomePerMonthGoal?: number;
 }
 
 @injectable()
@@ -67,6 +69,8 @@ class CreateMachineService {
     telemetryBoardId,
     typeOfPrizeId,
     minimumPrizeCount,
+    incomePerMonthGoal,
+    incomePerPrizeGoal,
   }: Request): Promise<Machine> {
     const user = await this.usersRepository.findOne({
       by: 'id',
@@ -185,6 +189,8 @@ class CreateMachineService {
       telemetryBoardId,
       typeOfPrize,
       minimumPrizeCount,
+      incomePerMonthGoal,
+      incomePerPrizeGoal,
     });
 
     if (telemetryBoardId) {

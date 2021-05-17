@@ -24,6 +24,8 @@ machinesRouter.post(
       locationId: Joi.string().allow(null),
       operatorId: Joi.string().allow(null),
       telemetryBoardId: Joi.number().allow(null),
+      incomePerMonthGoal: Joi.number().allow(null),
+      incomePerPrizeGoal: Joi.number().allow(null),
       boxes: Joi.array().items(
         Joi.object({
           counters: Joi.array().items({
@@ -97,6 +99,8 @@ machinesRouter.put(
       isActive: Joi.boolean(),
       telemetryBoardId: Joi.number().allow(null),
       maintenance: Joi.boolean(),
+      incomePerMonthGoal: Joi.number().allow(null),
+      incomePerPrizeGoal: Joi.number().allow(null),
       boxes: Joi.array().items({
         id: Joi.string(),
         counters: Joi.array().items({

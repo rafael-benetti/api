@@ -17,6 +17,12 @@ export default class AppError {
     statusCode: 409,
   });
 
+  static collectionAlreadyReviewed = new AppError({
+    errorCode: 'COLLECTION_ALREADY_REVIEWED',
+    message: 'This collections already been reviewed .',
+    statusCode: 409,
+  });
+
   static machineHasLocation = new AppError({
     errorCode: 'MACHINE_HAS_POINT_OF_SALE',
     message:

@@ -19,6 +19,8 @@ abstract class EditMachineController {
       maintenance,
       typeOfPrizeId,
       minimumPrizeCount,
+      incomePerMonthGoal,
+      incomePerPrizeGoal,
     } = req.body;
 
     const editMachineService = container.resolve(EditMachineService);
@@ -38,6 +40,8 @@ abstract class EditMachineController {
       maintenance,
       typeOfPrizeId,
       minimumPrizeCount,
+      incomePerMonthGoal,
+      incomePerPrizeGoal,
     });
 
     return res.json(machine);

@@ -8,14 +8,14 @@ export default abstract class CreateCollectionController {
     body: {
       machineId: Joi.string().uuid().required(),
       observations: Joi.string().required(),
-      startTime: Joi.date().required(),
+      startTime: Joi.date(),
       startLocation: Joi.object({
         latitude: Joi.number(),
         longitude: Joi.number(),
       }),
       endLocation: Joi.object({
-        latitude: Joi.number().required(),
-        longitude: Joi.number().required(),
+        latitude: Joi.number(),
+        longitude: Joi.number(),
       }),
       boxCollections: Joi.array()
         .items(

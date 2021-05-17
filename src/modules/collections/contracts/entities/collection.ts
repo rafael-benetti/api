@@ -30,6 +30,11 @@ export default class Collection {
 
   boxCollections: BoxCollection[];
 
+  assessData?: {
+    date: Date;
+    reviewedBy: string;
+  };
+
   constructor(data?: CreateCollectionDto) {
     if (data) {
       this.id = v4();
@@ -42,6 +47,7 @@ export default class Collection {
       this.observations = data.observations;
       this.date = new Date();
       this.boxCollections = data.boxCollections;
+      this.assessData = data.assessData;
     }
   }
 }
