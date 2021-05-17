@@ -13,7 +13,7 @@ export default interface CreateCollectionDto {
   startTime: Date;
   startLocation?: Geolocation;
   endLocation?: Geolocation;
-  assessData?: {
+  reviewedData?: {
     date: Date;
     reviewedBy: string;
   };

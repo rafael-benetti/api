@@ -15,4 +15,5 @@ export default interface FindMachinesDto {
   limit?: number;
   offset?: number;
   populate?: string[];
+  fields?: string[];
 }

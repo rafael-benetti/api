@@ -3,6 +3,7 @@ import categoriesRoutes from '@modules/categories/routes/categories.routes';
 import collectionsRoutes from '@modules/collections/routes/collections.routes';
 import counterTypesRoutes from '@modules/counter-types/routes/counter-types.routes';
 import groupsRoutes from '@modules/groups/routes/groups.routes';
+import machineLogsRouter from '@modules/machine-logs/routes/machine-logs.router';
 import machinesRoutes from '@modules/machines/routes/machines.routes';
 import notificationsRouter from '@modules/notifications/routes/notifications.router';
 import pointsOfSaleRoutes from '@modules/points-of-sale/routes/points-of-sales.routes';
@@ -30,5 +31,6 @@ router.use('/telemetry-logs', telemetryLogsRoutes);
 router.use('/collections', collectionsRoutes);
 router.use('/reports', reportsRoutes);
 router.use('/notifications', notificationsRouter);
+router.use('/machine-logs', machineLogsRouter);
 
 export default router;

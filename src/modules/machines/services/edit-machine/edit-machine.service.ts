@@ -109,8 +109,10 @@ class EditMachineService {
 
     if (user.role === Role.OWNER)
       if (user.id !== machine.ownerId) throw AppError.authorizationError;
+
     if (groupId && groupId !== machine.groupId) {
       if (machine.locationId) throw AppError.machineHasLocation;
+
       if (user.role === Role.OWNER) {
         const groups = await this.groupsRepository.find({
           filters: {
@@ -128,6 +130,7 @@ class EditMachineService {
         if (!user.groupIds?.includes(groupId))
           throw AppError.authorizationError;
       }
+
       machine.groupId = groupId;
 
       machine.operatorId = undefined;
@@ -135,6 +138,10 @@ class EditMachineService {
       machine.telemetryBoardId = undefined;
       machine.typeOfPrize = undefined;
       machine.minimumPrizeCount = undefined;
+
+      this.machinesRepository.save(machine);
+
+      await this.ormProvider.commit();
 
       return machine;
     }

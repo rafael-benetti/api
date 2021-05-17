@@ -72,7 +72,7 @@ export default class MikroCollection implements Collection {
   endLocation?: Geolocation;
 
   @Property()
-  assessData?: {
+  reviewedData?: {
     date: Date;
     reviewedBy: string;
   };
@@ -92,7 +92,7 @@ export default class MikroCollection implements Collection {
       this.startLocation = data.startLocation;
       this.endLocation = data.endLocation;
       this.startTime = data.startTime;
-      this.assessData = data.assessData;
+      this.reviewedData = data.reviewedData;
     }
   }
 }

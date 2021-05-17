@@ -49,6 +49,7 @@ class MikroMachinesRepository implements MachinesRepository {
     populate,
     orderByLastCollection,
     orderByLastConnection,
+    fields,
   }: FindMachinesDto): Promise<{ machines: Machine[]; count: number }> {
     const telemetryStatusQuery: Record<string, unknown> = {};
     const lastCollectionQuery: Record<string, unknown> = {};
@@ -123,6 +124,7 @@ class MikroMachinesRepository implements MachinesRepository {
         }),
         limit,
         offset,
+        fields,
         populate,
       },
     );

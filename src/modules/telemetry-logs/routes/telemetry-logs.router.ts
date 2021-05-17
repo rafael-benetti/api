@@ -12,6 +12,9 @@ telemetryLogsRouter.get(
   celebrate({
     query: {
       machineId: Joi.string().required(),
+      startDate: Joi.date(),
+      endDate: Joi.date(),
+      type: Joi.string().valid('IN', 'OUT'),
       limit: Joi.number(),
       offset: Joi.number(),
     },

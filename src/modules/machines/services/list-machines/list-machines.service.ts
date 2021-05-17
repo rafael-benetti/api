@@ -78,14 +78,8 @@ class ListMachinesService {
 
     if (lean) {
       filters.isActive = true;
-      const result = await this.machinesRepository.find(filters);
-      const leanMachines = result.machines.map(machine => {
-        return {
-          id: machine.id,
-          serialNumber: machine.serialNumber,
-          locationId: machine.locationId,
-        };
-      });
+      filters.fields = ['id', 'serialNumber', 'locationId'];
+      const leanMachines = await this.machinesRepository.find(filters);
 
       return leanMachines;
     }

@@ -8,12 +8,13 @@ abstract class FixMachineStockController {
     body: {
       boxId: Joi.string().required(),
       quantity: Joi.number().integer().required(),
+      observation: Joi.string().required(),
     },
   });
 
   static handle: RequestHandler = async (request, response) => {
     const { userId } = request;
-    const { boxId, quantity } = request.body;
+    const { boxId, quantity, observation } = request.body;
     const { machineId } = request.params;
 
     const fixMachineStock = container.resolve(FixMachineStockService);
@@ -23,6 +24,7 @@ abstract class FixMachineStockController {
       machineId,
       boxId,
       quantity,
+      observation,
     });
 
     return response.json(machine);

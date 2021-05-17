@@ -6,6 +6,7 @@ import { container } from 'tsyringe';
 import CreateCollectionController from '../services/create-collection/create-collection.controller';
 import EditCollectionController from '../services/edit-collection/edit-collection.controller';
 import GetCollectionsController from '../services/get-collections/get-collections.controller';
+import ReviewCollectionController from '../services/review-collection/review-collection.controller';
 
 const collectionsRoutes = Router();
 
@@ -50,6 +51,12 @@ collectionsRoutes.put(
   container.resolve<OrmProvider>('OrmProvider').forkMiddleware,
   EditCollectionController.validate,
   EditCollectionController.handle,
+);
+
+collectionsRoutes.put(
+  '/review/:collectionId',
+  ReviewCollectionController.validate,
+  ReviewCollectionController.handle,
 );
 
 collectionsRoutes.get(

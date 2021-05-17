@@ -1,3 +1,5 @@
+import MachineLogType from '@modules/machine-logs/contracts/enums/machine-log-type';
+import MachineLogsRepository from '@modules/machine-logs/contracts/repositories/machine-logs.repository';
 import Machine from '@modules/machines/contracts/models/machine';
 import MachinesRepository from '@modules/machines/contracts/repositories/machines.repository';
 import UsersRepository from '@modules/users/contracts/repositories/users.repository';
@@ -12,6 +14,7 @@ interface Request {
   machineId: string;
   boxId: string;
   quantity: number;
+  observation: string;
 }
 
 @injectable()
@@ -23,6 +26,9 @@ class FixMachineStockService {
     @inject('MachinesRepository')
     private machinesRepository: MachinesRepository,
 
+    @inject('MachineLogsRepository')
+    private machineLogsRepository: MachineLogsRepository,
+
     @inject('OrmProvider')
     private ormProvider: OrmProvider,
   ) {}
@@ -32,6 +38,7 @@ class FixMachineStockService {
     machineId,
     boxId,
     quantity,
+    observation,
   }: Request): Promise<Machine> {
     const user = await this.usersRepository.findOne({
       by: 'id',
@@ -64,6 +71,15 @@ class FixMachineStockService {
     box.numberOfPrizes = quantity;
 
     this.machinesRepository.save(machine);
+
+    this.machineLogsRepository.create({
+      createdAt: new Date(),
+      createdBy: user.id,
+      machineId: machine.id,
+      groupId: machine.groupId,
+      observation,
+      type: MachineLogType.FIX_STOCK,
+    });
     await this.ormProvider.commit();
 
     return machine;

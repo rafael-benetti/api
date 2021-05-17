@@ -12,7 +12,7 @@ interface Request {
 }
 
 @injectable()
-class AssessCollectionService {
+class ReviewCollectionService {
   constructor(
     @inject('UsersRepository')
     private usersRepository: UsersRepository,
@@ -39,7 +39,7 @@ class AssessCollectionService {
 
     if (!collection) throw AppError.collectionNotFound;
 
-    if (collection.assessData) throw AppError.collectionAlreadyReviewed;
+    if (collection.reviewedData?.date) throw AppError.collectionAlreadyReviewed;
 
     if (user.role !== Role.MANAGER && user.role !== Role.OWNER)
       throw AppError.authorizationError;
@@ -61,11 +61,15 @@ class AssessCollectionService {
       if (!user.groupIds?.includes(collection.groupId))
         throw AppError.authorizationError;
 
-    collection.assessData = {
+    collection.reviewedData = {
       date: new Date(),
       reviewedBy: user.id,
     };
+
+    this.collectionsRepository.save(collection);
+
+    await this.ormProvider.commit();
   }
 }
 
-export default AssessCollectionService;
+export default ReviewCollectionService;

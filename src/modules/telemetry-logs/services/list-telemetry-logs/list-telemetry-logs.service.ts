@@ -9,6 +9,9 @@ import { inject, injectable } from 'tsyringe';
 interface Request {
   userId: string;
   machineId: string;
+  type: 'IN' | 'OUT';
+  startDate: Date;
+  endDate: Date;
   limit: number;
   offset: number;
 }
@@ -29,6 +32,9 @@ class ListTelemetryLogsService {
   public async execute({
     userId,
     machineId,
+    type,
+    startDate,
+    endDate,
     limit,
     offset,
   }: Request): Promise<TelemetryLog[]> {
@@ -59,6 +65,11 @@ class ListTelemetryLogsService {
     const telemetryLogs = await this.telemetryLogsRepository.find({
       filters: {
         machineId,
+        type,
+        date: {
+          startDate,
+          endDate,
+        },
       },
       limit,
       offset,

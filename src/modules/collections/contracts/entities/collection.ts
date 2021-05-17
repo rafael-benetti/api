@@ -30,7 +30,7 @@ export default class Collection {
 
   boxCollections: BoxCollection[];
 
-  assessData?: {
+  reviewedData?: {
     date: Date;
     reviewedBy: string;
   };
@@ -47,7 +47,7 @@ export default class Collection {
       this.observations = data.observations;
       this.date = new Date();
       this.boxCollections = data.boxCollections;
-      this.assessData = data.assessData;
+      this.reviewedData = data.reviewedData;
     }
   }
 }

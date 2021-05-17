@@ -65,64 +65,6 @@ class MikroTelemetryLogsRepository implements TelemetryLogsRepository {
       },
     );
 
-    // const telemetryLogs = await this.repository.count();
-    //
-    // console.log(telemetryLogs);
-    //
-    // const baga: (() => Promise<number>)[] = [];
-    //
-    // const promiseCount =
-    //  Math.trunc(telemetryLogs / 10000) + (telemetryLogs % 10000 ? 1 : 0);
-    //
-    // console.log(promiseCount);
-
-    // for (let i = 0; i < promiseCount; i += 1) {
-    //  baga.push(
-    //    async (): Promise<number> => {
-    //      console.log(i);
-    //      const logs = await this.repository.find(
-    //        {},
-    //        {
-    //          limit: 10000,
-    //          offset: i * 10000,
-    //        },
-    //      );
-    //
-    //      return logs
-    //        .map(log => (log.value as unknown) as string)
-    //        .reduce(
-    //          (a, b) =>
-    //            Number.parseFloat((a as unknown) as string) +
-    //            Number.parseFloat((b as unknown) as string),
-    //          0,
-    //        );
-    //    },
-    //  );
-    // }
-    //
-    // const coasduunt = await Bluebird.map(baga, bogo => bogo());
-    //
-    // const faturamento = coasduunt.reduce((a, b) => a + b, 0);
-    //
-    // console.log(faturamento);
-
-    // const telemetryLogs = await this.ormProvider.entityManager
-    //   .getDriver()
-    //   .getConnection()
-    //   .find(
-    //     'telemetry-logs',
-    //     {
-    //       date: {
-    //         $lt: new Date(),
-    //         $gt: subDays(new Date(), 45),
-    //       },
-    //     },
-    //     undefined,
-    //     undefined,
-    //     undefined,
-    //     ['value', 'pin'],
-    //   );
-
     return telemetryLogs;
   }
 }
