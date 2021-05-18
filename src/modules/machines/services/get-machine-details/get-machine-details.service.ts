@@ -121,14 +121,14 @@ class GetMachineDetailsService {
     });
 
     if (!startDate && !endDate && period) {
-      const endDate = new Date(Date.now());
+      endDate = new Date(Date.now());
       if (period === Period.DAILY) startDate = subDays(endDate, 1);
       if (period === Period.WEEKLY) startDate = subWeeks(endDate, 1);
       if (period === Period.MONTHLY) startDate = subMonths(endDate, 1);
     }
 
-    if (startDate === undefined) throw AppError.unknownError;
-    if (endDate === undefined) throw AppError.unknownError;
+    if (startDate) throw AppError.unknownError;
+    if (endDate) throw AppError.unknownError;
 
     const telemetryLogsOfPeriod = await this.telemetryLogsRepository.find({
       filters: {
