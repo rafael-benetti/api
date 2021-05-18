@@ -8,7 +8,7 @@ abstract class FixMachineStockController {
     body: {
       boxId: Joi.string().required(),
       quantity: Joi.number().integer().required(),
-      observation: Joi.string().required(),
+      observations: Joi.string().required(),
     },
   });
 

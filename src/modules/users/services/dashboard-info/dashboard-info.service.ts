@@ -278,6 +278,8 @@ export default class DashboardInfoService {
       });
     }
 
+    const chartDate2 = universalFinancial.forEach(item => {});
+
     return {
       machinesSortedByLastCollection,
       machinesSortedByLastConnection,
