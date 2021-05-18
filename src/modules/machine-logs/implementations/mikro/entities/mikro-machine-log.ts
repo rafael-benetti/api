@@ -4,7 +4,7 @@ import MachineLog from '@modules/machine-logs/contracts/entities/machine-log';
 import MachineLogType from '@modules/machine-logs/contracts/enums/machine-log-type';
 import { v4 } from 'uuid';
 
-@Entity({ collection: 'machine-log' })
+@Entity({ collection: 'machine-logs' })
 class MikroMachineLog implements MachineLog {
   @PrimaryKey()
   id: string;

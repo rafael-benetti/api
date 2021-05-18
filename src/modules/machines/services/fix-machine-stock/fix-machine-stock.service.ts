@@ -14,7 +14,7 @@ interface Request {
   machineId: string;
   boxId: string;
   quantity: number;
-  observation: string;
+  observations: string;
 }
 
 @injectable()
@@ -38,7 +38,7 @@ class FixMachineStockService {
     machineId,
     boxId,
     quantity,
-    observation,
+    observations,
   }: Request): Promise<Machine> {
     const user = await this.usersRepository.findOne({
       by: 'id',
@@ -77,7 +77,7 @@ class FixMachineStockService {
       createdBy: user.id,
       machineId: machine.id,
       groupId: machine.groupId,
-      observation,
+      observations,
       type: MachineLogType.FIX_STOCK,
     });
     await this.ormProvider.commit();
