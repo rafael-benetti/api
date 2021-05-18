@@ -157,13 +157,24 @@ class MikroMachinesRepository implements MachinesRepository {
           lastConnection: '$lastConnection',
           groupId: '$groupId',
           priority: {
-            $sub: ['$total', '$minimumPrizeCount'],
+            $subtract: [
+              { $sum: '$boxes.numberOfPrizes' },
+              '$minimumPrizeCount',
+            ],
           },
         },
       },
       {
         $match: {
           lastConnection: {
+            $exists: true,
+            $ne: null,
+          },
+        },
+      },
+      {
+        $match: {
+          minimumPrizeCount: {
             $exists: true,
             $ne: null,
           },
