@@ -235,15 +235,15 @@ export default class DashboardInfoService {
       });
     }
 
-    if (period && period !== Period.DAILY) {
-      const universalFinancial = await this.universalFinancialRepository.find({
-        groupId: groupIds,
-        date: {
-          end: endDate,
-          start: startDate,
-        },
-      });
+    const universalFinancial = await this.universalFinancialRepository.find({
+      groupId: groupIds,
+      date: {
+        end: endDate,
+        start: startDate,
+      },
+    });
 
+    if (period && period !== Period.DAILY) {
       const daysOfInterval = eachDayOfInterval({
         start: startDate,
         end: endDate,

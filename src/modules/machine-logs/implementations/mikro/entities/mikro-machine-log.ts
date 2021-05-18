@@ -16,7 +16,7 @@ class MikroMachineLog implements MachineLog {
   groupId: string;
 
   @Property()
-  observation: string;
+  observations: string;
 
   @Property()
   type: MachineLogType;
@@ -32,7 +32,7 @@ class MikroMachineLog implements MachineLog {
       this.id = v4();
       this.createdAt = data.createdAt;
       this.createdBy = data.createdBy;
-      this.observation = data.observation;
+      this.observations = data.observations;
       this.type = data.type;
       this.machineId = data.machineId;
       this.groupId = data.groupId;

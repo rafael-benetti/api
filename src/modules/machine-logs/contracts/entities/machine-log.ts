@@ -7,7 +7,7 @@ export default class MachineLog {
 
   groupId: string;
 
-  observation: string;
+  observations: string;
 
   type: MachineLogType;
 

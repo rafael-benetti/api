@@ -5,7 +5,7 @@ export default interface CreateMachineLogDto {
 
   groupId: string;
 
-  observation: string;
+  observations: string;
 
   type: MachineLogType;
 
