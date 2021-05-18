@@ -22,6 +22,8 @@ import TelemetryLogsRepository from '@modules/telemetry-logs/contracts/repositor
 import MikroTelemetryLogsRepository from '@modules/telemetry-logs/implementations/mikro/repositories/mikro-telemetry-logs.repository';
 import TelemetryBoardsRepository from '@modules/telemetry/contracts/repositories/telemetry-boards.repository';
 import MikroTelemetryBoardsRepository from '@modules/telemetry/implementations/mikro/repositories/mikro-telemetry-boards.repository';
+import UniversalFinancialRepository from '@modules/universal-financial/contracts/repositories/universal-financial.repository';
+import MikroUniversalFinancialRepository from '@modules/universal-financial/implementations/mikro/repositories/mikro-universal-financial.repository';
 import UsersRepository from '@modules/users/contracts/repositories/users.repository';
 import MikroUsersRepository from '@modules/users/implementations/mikro/repositories/mikro-users.repository';
 import { container } from 'tsyringe';
@@ -90,4 +92,9 @@ container.registerSingleton<ProductLogsRepository>(
 container.registerSingleton<NotificationsRepository>(
   'NotificationsRepository',
   MikroNotificationsRepository,
+);
+
+container.registerSingleton<UniversalFinancialRepository>(
+  'UniversalFinancialRepository',
+  MikroUniversalFinancialRepository,
 );

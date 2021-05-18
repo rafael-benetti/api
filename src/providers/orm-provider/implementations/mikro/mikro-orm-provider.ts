@@ -16,6 +16,7 @@ import MikroRoute from '@modules/routes/implementations/mikro/models/mikro-route
 import MikroTelemetryLog from '@modules/telemetry-logs/implementations/mikro/entities/mikro-telemetry-log';
 
 import MikroTelemetryBoard from '@modules/telemetry/implementations/mikro/entities/mikro-telemetry-board';
+import MikroUniversalFinancial from '@modules/universal-financial/implementations/mikro/entities/mikro-universal-financial';
 import MikroUser from '@modules/users/implementations/mikro/models/mikro-user';
 import OrmProvider from '@providers/orm-provider/contracts/models/orm-provider';
 import { RequestHandler } from 'express';
@@ -43,6 +44,7 @@ class MikroOrmProvider implements OrmProvider {
         MikroProductLog,
         MikroNotification,
         MikroMachineLog,
+        MikroUniversalFinancial,
       ],
       implicitTransactions: true,
       debug: true,

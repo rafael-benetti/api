@@ -7,6 +7,7 @@ import UsersRepository from '@modules/users/contracts/repositories/users.reposit
 import AppError from '@shared/errors/app-error';
 import {
   eachDayOfInterval,
+  isSameDay,
   isSameHour,
   subDays,
   subMonths,
@@ -15,6 +16,7 @@ import {
 import { Promise } from 'bluebird';
 import { inject, injectable } from 'tsyringe';
 import Period from '@modules/machines/contracts/dtos/period.dto';
+import UniversalFinancialRepository from '@modules/universal-financial/contracts/repositories/universal-financial.repository';
 
 interface Request {
   userId: string;
@@ -61,6 +63,9 @@ export default class DashboardInfoService {
 
     @inject('TelemetryLogsRepository')
     private telemetryLogsRepository: TelemetryLogsRepository,
+
+    @inject('UniversalFinancialRepository')
+    private universalFinancialRepository: UniversalFinancialRepository,
   ) {}
 
   async execute({
@@ -231,6 +236,46 @@ export default class DashboardInfoService {
     }
 
     if (period && period !== Period.DAILY) {
+      const universalFinancial = await this.universalFinancialRepository.find({
+        groupId: groupIds,
+        date: {
+          end: endDate,
+          start: startDate,
+        },
+      });
+
+      const daysOfInterval = eachDayOfInterval({
+        start: startDate,
+        end: endDate,
+      });
+
+      chartData1 = daysOfInterval.map(day => {
+        const incomeInDay = universalFinancial
+          .filter(item => isSameDay(day, item.date))
+          .reduce(
+            (accumulator, currentValue) =>
+              accumulator +
+              (currentValue.cashIncome +
+                currentValue.coinIncome +
+                currentValue.creditCardIncome +
+                currentValue.others),
+            0,
+          );
+
+        const prizesCountInDay = universalFinancial
+          .filter(item => isSameDay(day, item.date))
+          .reduce(
+            (accumulator, currentValue) =>
+              accumulator + currentValue.givenPrizes,
+            0,
+          );
+
+        return {
+          date: day.toISOString(),
+          prizeCount: prizesCountInDay,
+          income: incomeInDay,
+        };
+      });
     }
 
     return {

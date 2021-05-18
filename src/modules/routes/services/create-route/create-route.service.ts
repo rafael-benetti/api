@@ -64,6 +64,9 @@ class CreateRouteService {
     if (pointsOfSale.length !== pointsOfSaleIds.length)
       throw AppError.pointOfSaleNotFound;
 
+    if (pointsOfSale.some(pointOfSale => pointOfSale.routeId !== undefined))
+      throw AppError.pointOfSaleBelongsToARoute;
+
     const groupIds = [
       ...new Set(pointsOfSale.map(pointOfSale => pointOfSale.groupId)),
     ];
@@ -110,9 +113,6 @@ class CreateRouteService {
       if (groupIds.some(groupId => !operator?.groupIds?.includes(groupId)))
         throw AppError.authorizationError;
     }
-
-    if (pointsOfSale.some(pointOfSale => pointOfSale.routeId !== undefined))
-      throw AppError.pointOfSaleBelongsToARoute;
 
     const route = this.routesRepository.create({
       groupIds,

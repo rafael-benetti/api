@@ -1,4 +1,4 @@
-export default class UniversalFinancial {
+export default interface CreateUniversalFinalcialDto {
   id: string;
 
   date: Date;
