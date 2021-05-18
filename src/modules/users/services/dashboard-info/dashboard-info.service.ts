@@ -31,6 +31,13 @@ interface ChartData1 {
   income: number;
 }
 
+interface ChartData2 {
+  cashIncome: number;
+  coinIncome: number;
+  creditCardIncome: number;
+  others: number;
+}
+
 interface Response {
   machinesSortedByLastCollection: Machine[];
   machinesSortedByLastConnection: Machine[];
@@ -45,6 +52,7 @@ interface Response {
   offlineMachines: number;
   onlineMachines: number;
   chartData1: ChartData1[];
+  chartData2: ChartData2;
   givenPrizesCount: number;
   income: number;
 }
@@ -237,10 +245,6 @@ export default class DashboardInfoService {
 
     const universalFinancial = await this.universalFinancialRepository.find({
       groupId: groupIds,
-      date: {
-        end: endDate,
-        start: startDate,
-      },
     });
 
     if (period && period !== Period.DAILY) {
@@ -278,7 +282,16 @@ export default class DashboardInfoService {
       });
     }
 
-    const chartDate2 = universalFinancial.forEach(item => {});
+    let cashIncome = 0;
+    let coinIncome = 0;
+    let creditCardIncome = 0;
+    let others = 0;
+    universalFinancial.forEach(item => {
+      cashIncome += item.cashIncome;
+      coinIncome += item.coinIncome;
+      creditCardIncome += item.creditCardIncome;
+      others += item.others;
+    });
 
     return {
       machinesSortedByLastCollection,
@@ -289,6 +302,12 @@ export default class DashboardInfoService {
       machinesWithoutTelemetryBoard,
       machinesSortedByStock,
       chartData1,
+      chartData2: {
+        cashIncome,
+        coinIncome,
+        creditCardIncome,
+        others,
+      },
       income,
       givenPrizesCount,
     };
