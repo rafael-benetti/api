@@ -44,6 +44,7 @@ interface Response {
   machine: Machine;
   lastConnection?: Date;
   lastCollection?: Date;
+  collectedBy?: string;
   income: number;
   givenPrizes: number;
   chartData: ChartData[];
@@ -104,9 +105,22 @@ class GetMachineDetailsService {
       throw AppError.authorizationError;
 
     // ? ULTIMA COLETA
-    const lastCollection = (
-      await this.collectionsRepository.findLastCollection(machineId)
-    )?.date;
+    const lastCollectionData = await this.collectionsRepository.findLastCollection(
+      machineId,
+    );
+
+    let lastCollection;
+    let collectedBy;
+
+    if (lastCollectionData) {
+      lastCollection = lastCollectionData?.date;
+      collectedBy = (
+        await this.usersRepository.findOne({
+          by: 'id',
+          value: lastCollectionData?.userId,
+        })
+      )?.name;
+    }
 
     const telemetryLogs = await this.telemetryLogsRepository.find({
       filters: {
@@ -283,6 +297,7 @@ class GetMachineDetailsService {
       givenPrizes,
       chartData,
       transactionHistory,
+      collectedBy,
     };
   }
 }
