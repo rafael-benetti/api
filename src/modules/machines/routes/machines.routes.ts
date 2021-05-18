@@ -104,7 +104,7 @@ machinesRouter.put(
       boxes: Joi.array().items({
         id: Joi.string(),
         counters: Joi.array().items({
-          id: Joi.string().required(),
+          id: Joi.string(),
           counterTypeId: Joi.string().required(),
           hasMechanical: Joi.boolean().required(),
           hasDigital: Joi.boolean().required(),
