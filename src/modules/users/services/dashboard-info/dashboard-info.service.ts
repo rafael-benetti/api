@@ -247,7 +247,20 @@ export default class DashboardInfoService {
       groupId: groupIds,
     });
 
-    if (period && period !== Period.DAILY) {
+    if (period !== Period.DAILY) {
+      // ? FATURAMENTO
+      income = universalFinancial.reduce(
+        (a, b) =>
+          a + (b.cashIncome + b.coinIncome + b.creditCardIncome + b.others),
+        0,
+      );
+
+      // ? PREMIOS ENTREGUES
+      givenPrizesCount = universalFinancial.reduce(
+        (a, b) => a + b.givenPrizes,
+        0,
+      );
+
       const daysOfInterval = eachDayOfInterval({
         start: startDate,
         end: endDate,
@@ -286,6 +299,7 @@ export default class DashboardInfoService {
     let coinIncome = 0;
     let creditCardIncome = 0;
     let others = 0;
+
     universalFinancial.forEach(item => {
       cashIncome += item.cashIncome;
       coinIncome += item.coinIncome;

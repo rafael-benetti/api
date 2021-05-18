@@ -2,7 +2,7 @@ import { Entity, PrimaryKey, Property } from '@mikro-orm/core';
 import CreateUniversalFinalcialDto from '@modules/universal-financial/contracts/dtos/create-universal-financial.dto';
 import UniversalFinancial from '@modules/universal-financial/contracts/entities/universal-financial';
 
-@Entity()
+@Entity({ collection: 'universal-financial' })
 class MikroUniversalFinancial implements UniversalFinancial {
   @PrimaryKey()
   id: string;
