@@ -1,4 +1,3 @@
-import logger from '@config/logger';
 import UniversalFinancial from '@modules/universal-financial/contracts/entities/universal-financial';
 import UniversalFinancialRepository from '@modules/universal-financial/contracts/repositories/universal-financial.repository';
 import MikroOrmProvider from '@providers/orm-provider/implementations/mikro/mikro-orm-provider';

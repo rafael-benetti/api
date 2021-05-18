@@ -109,6 +109,14 @@ export default class DashboardInfoService {
         groupIds,
         limit: 5,
         offset: 0,
+        fields: [
+          'id',
+          'serialNumber',
+          'lastCollection',
+          'pointOfSaleId',
+          'pointOfSale',
+        ],
+        populate: ['pointOfSale'],
       })
     ).machines;
 
@@ -118,6 +126,14 @@ export default class DashboardInfoService {
         groupIds,
         limit: 5,
         offset: 0,
+        fields: [
+          'id',
+          'serialNumber',
+          'lastConnection',
+          'pointOfSaleId',
+          'pointOfSale',
+        ],
+        populate: ['pointOfSale'],
       })
     ).machines;
 
