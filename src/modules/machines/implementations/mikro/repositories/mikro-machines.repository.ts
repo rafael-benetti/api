@@ -156,6 +156,9 @@ class MikroMachinesRepository implements MachinesRepository {
           minimumPrizeCount: '$minimumPrizeCount',
           lastConnection: '$lastConnection',
           groupId: '$groupId',
+          priority: {
+            $sub: ['$total', '$minimumPrizeCount'],
+          },
         },
       },
       {
@@ -168,7 +171,7 @@ class MikroMachinesRepository implements MachinesRepository {
       },
       {
         $sort: {
-          total: 1,
+          priority: 1,
         },
       },
       {
