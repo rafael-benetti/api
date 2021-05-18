@@ -127,8 +127,8 @@ class GetMachineDetailsService {
       if (period === Period.MONTHLY) startDate = subMonths(endDate, 1);
     }
 
-    if (startDate) throw AppError.unknownError;
-    if (endDate) throw AppError.unknownError;
+    if (!startDate) throw AppError.unknownError;
+    if (!endDate) throw AppError.unknownError;
 
     const telemetryLogsOfPeriod = await this.telemetryLogsRepository.find({
       filters: {

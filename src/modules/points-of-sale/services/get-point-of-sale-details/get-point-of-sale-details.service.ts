@@ -118,8 +118,8 @@ class GetPointOfSaleDetailsService {
       if (period === Period.MONTHLY) startDate = subMonths(endDate, 1);
     }
 
-    if (startDate === undefined) throw AppError.unknownError;
-    if (endDate === undefined) throw AppError.unknownError;
+    if (!startDate) throw AppError.unknownError;
+    if (!endDate) throw AppError.unknownError;
 
     const telemetryLogs = await this.telemetryLogsRepository.find({
       filters: {
