@@ -14,7 +14,7 @@ abstract class FixMachineStockController {
 
   static handle: RequestHandler = async (request, response) => {
     const { userId } = request;
-    const { boxId, quantity, observation } = request.body;
+    const { boxId, quantity, observations } = request.body;
     const { machineId } = request.params;
 
     const fixMachineStock = container.resolve(FixMachineStockService);
@@ -24,7 +24,7 @@ abstract class FixMachineStockController {
       machineId,
       boxId,
       quantity,
-      observation,
+      observations,
     });
 
     return response.json(machine);
