@@ -37,6 +37,12 @@ export default class AppError {
     statusCode: 400,
   });
 
+  static pointOfSaleBelongsToARoute = new AppError({
+    errorCode: 'POINT_OF_SALE_BELONGS_TO_A_ROUTE',
+    message: 'You cannot put one point of sale that belongs to a route.',
+    statusCode: 400,
+  });
+
   static serialNumberAlreadyUsed = new AppError({
     errorCode: 'SERIAL_NUMBER_ALREADY_USED',
     message: 'This serial number is unavailable.',

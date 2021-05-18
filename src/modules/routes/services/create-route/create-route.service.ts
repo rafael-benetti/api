@@ -111,6 +111,9 @@ class CreateRouteService {
         throw AppError.authorizationError;
     }
 
+    if (pointsOfSale.some(pointOfSale => pointOfSale.routeId !== undefined))
+      throw AppError.pointOfSaleBelongsToARoute;
+
     const route = this.routesRepository.create({
       groupIds,
       label,

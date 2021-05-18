@@ -145,8 +145,8 @@ export default class DashboardInfoService {
       if (period === Period.MONTHLY) startDate = subMonths(endDate, 1);
     }
 
-    if (startDate === undefined) throw AppError.unknownError;
-    if (endDate === undefined) throw AppError.unknownError;
+    if (!startDate) throw AppError.unknownError;
+    if (!endDate) throw AppError.unknownError;
 
     let chartData1: ChartData1[] = [];
     let income: number = 0;
