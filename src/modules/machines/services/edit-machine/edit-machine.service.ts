@@ -111,8 +111,6 @@ class EditMachineService {
       if (user.id !== machine.ownerId) throw AppError.authorizationError;
 
     if (groupId && groupId !== machine.groupId) {
-      if (machine.locationId) throw AppError.machineHasLocation;
-
       if (user.role === Role.OWNER) {
         const groups = await this.groupsRepository.find({
           filters: {

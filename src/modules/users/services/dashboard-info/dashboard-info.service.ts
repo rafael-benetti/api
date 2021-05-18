@@ -1,4 +1,3 @@
-import logger from '@config/logger';
 import GroupsRepository from '@modules/groups/contracts/repositories/groups.repository';
 import Machine from '@modules/machines/contracts/models/machine';
 import MachinesRepository from '@modules/machines/contracts/repositories/machines.repository';
@@ -6,12 +5,28 @@ import TelemetryLogsRepository from '@modules/telemetry-logs/contracts/repositor
 import Role from '@modules/users/contracts/enums/role';
 import UsersRepository from '@modules/users/contracts/repositories/users.repository';
 import AppError from '@shared/errors/app-error';
-import { subMonths } from 'date-fns';
+import {
+  eachDayOfInterval,
+  isSameHour,
+  subDays,
+  subMonths,
+  subWeeks,
+} from 'date-fns';
 import { Promise } from 'bluebird';
 import { inject, injectable } from 'tsyringe';
+import Period from '@modules/machines/contracts/dtos/period.dto';
 
 interface Request {
   userId: string;
+  startDate: Date;
+  endDate: Date;
+  period: Period;
+}
+
+interface ChartData1 {
+  date: string;
+  prizeCount: number;
+  income: number;
 }
 
 interface Response {
@@ -27,6 +42,9 @@ interface Response {
   machinesWithoutTelemetryBoard: number;
   offlineMachines: number;
   onlineMachines: number;
+  chartData1: ChartData1[];
+  givenPrizesCount: number;
+  income: number;
 }
 
 @injectable()
@@ -45,7 +63,12 @@ export default class DashboardInfoService {
     private telemetryLogsRepository: TelemetryLogsRepository,
   ) {}
 
-  async execute({ userId }: Request): Promise<Response> {
+  async execute({
+    userId,
+    period,
+    startDate,
+    endDate,
+  }: Request): Promise<Response> {
     const user = await this.usersRepository.findOne({
       by: 'id',
       value: userId,
@@ -115,48 +138,100 @@ export default class DashboardInfoService {
       telemetryStatus: 'NO_TELEMETRY',
     });
 
-    const endDate = new Date(Date.now());
-    const startDate = subMonths(endDate, 1);
-    // if (period === Period.DAILY) startDate = subDays(endDate, 1);
-    // if (period === Period.WEEKLY) startDate = subWeeks(endDate, 1);
-    // if (period === Period.MONTHLY) startDate = subMonths(endDate, 1);
+    if (!startDate && !endDate && period) {
+      const endDate = new Date(Date.now());
+      if (period === Period.DAILY) startDate = subDays(endDate, 1);
+      if (period === Period.WEEKLY) startDate = subWeeks(endDate, 1);
+      if (period === Period.MONTHLY) startDate = subMonths(endDate, 1);
+    }
 
-    const telemetryLogsInPromise = async () => {
-      const response = await this.telemetryLogsRepository.find({
-        filters: {
-          date: {
-            startDate,
-            endDate,
+    if (startDate === undefined) throw AppError.unknownError;
+    if (endDate === undefined) throw AppError.unknownError;
+
+    let chartData1: ChartData1[] = [];
+    let income: number = 0;
+    let givenPrizesCount: number = 0;
+
+    if (
+      (period && period === Period.DAILY) ||
+      eachDayOfInterval({
+        start: startDate,
+        end: endDate,
+      }).length <= 1 // TODO: DAR UMA CONFERIDA SE 24 O INTERVALO É 2 OU 1
+    ) {
+      const telemetryLogsInPromise = async () => {
+        const response = await this.telemetryLogsRepository.find({
+          filters: {
+            date: {
+              startDate,
+              endDate,
+            },
+            groupId: groupIds,
+            maintenance: false,
+            type: 'IN',
           },
-          groupId: groupIds,
-          maintenance: false,
-          type: 'IN',
-        },
+        });
+
+        return response;
+      };
+
+      const telemetryLogsOutPromise = async () => {
+        const response = await this.telemetryLogsRepository.find({
+          filters: {
+            date: {
+              startDate,
+              endDate,
+            },
+            groupId: groupIds,
+            maintenance: false,
+            type: 'OUT',
+          },
+        });
+
+        return response;
+      };
+
+      const [telemetryLogsIn, telemetryLogsOut] = await Promise.all([
+        await telemetryLogsInPromise(),
+        await telemetryLogsOutPromise(),
+      ]);
+
+      const hoursOfInterval = eachDayOfInterval({
+        start: startDate,
+        end: endDate,
       });
 
-      return response;
-    };
+      // ? FATURAMENTO
+      income = telemetryLogsIn.reduce((a, b) => a + b.value, 0);
 
-    const telemetryLogsOutPromise = async () => {
-      const response = await this.telemetryLogsRepository.find({
-        filters: {
-          date: {
-            startDate,
-            endDate,
-          },
-          groupId: groupIds,
-          maintenance: false,
-          type: 'OUT',
-        },
+      // ? PREMIOS ENTREGUES
+      givenPrizesCount = telemetryLogsOut.reduce((a, b) => a + b.value, 0);
+
+      chartData1 = hoursOfInterval.map(hour => {
+        const incomeInHour = telemetryLogsIn
+          .filter(telemetry => isSameHour(hour, telemetry.date))
+          .reduce(
+            (accumulator, currentValue) => accumulator + currentValue.value,
+            0,
+          );
+
+        const prizesCountInHour = telemetryLogsOut
+          .filter(telemetry => isSameHour(hour, telemetry.date))
+          .reduce(
+            (accumulator, currentValue) => accumulator + currentValue.value,
+            0,
+          );
+
+        return {
+          date: hour.toISOString(),
+          prizeCount: prizesCountInHour,
+          income: incomeInHour,
+        };
       });
+    }
 
-      return response;
-    };
-
-    const [telemetryLogsIn, telemetryLogsOut] = await Promise.all([
-      telemetryLogsInPromise(),
-      telemetryLogsOutPromise(),
-    ]);
+    if (period && period !== Period.DAILY) {
+    }
 
     return {
       machinesSortedByLastCollection,
@@ -166,6 +241,9 @@ export default class DashboardInfoService {
       machinesNeverConnected,
       machinesWithoutTelemetryBoard,
       machinesSortedByStock,
+      chartData1,
+      income,
+      givenPrizesCount,
     };
   }
 }

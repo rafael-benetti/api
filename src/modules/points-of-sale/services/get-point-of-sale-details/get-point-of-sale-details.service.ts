@@ -24,6 +24,8 @@ interface Request {
   userId: string;
   pointOfSaleId: string;
   period: Period;
+  startDate: Date;
+  endDate: Date;
 }
 
 interface MachineInfo {
@@ -70,6 +72,8 @@ class GetPointOfSaleDetailsService {
     userId,
     pointOfSaleId,
     period,
+    startDate,
+    endDate,
   }: Request): Promise<Response> {
     const user = await this.usersRepository.findOne({
       by: 'id',
@@ -107,13 +111,15 @@ class GetPointOfSaleDetailsService {
       });
     }
 
-    const endDate = new Date(Date.now());
-    let startDate;
-    if (period === Period.DAILY) startDate = subDays(endDate, 1);
-    if (period === Period.WEEKLY) startDate = subWeeks(endDate, 1);
-    if (period === Period.MONTHLY) startDate = subMonths(endDate, 1);
+    if (!startDate && !endDate && period) {
+      const endDate = new Date(Date.now());
+      if (period === Period.DAILY) startDate = subDays(endDate, 1);
+      if (period === Period.WEEKLY) startDate = subWeeks(endDate, 1);
+      if (period === Period.MONTHLY) startDate = subMonths(endDate, 1);
+    }
 
     if (startDate === undefined) throw AppError.unknownError;
+    if (endDate === undefined) throw AppError.unknownError;
 
     const telemetryLogs = await this.telemetryLogsRepository.find({
       filters: {
