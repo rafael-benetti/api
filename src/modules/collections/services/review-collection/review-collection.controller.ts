@@ -21,7 +21,7 @@ abstract class ReviewCollectionController {
       userId,
     });
 
-    return res.json().status(204);
+    return res.status(204).json();
   }
 }
 
