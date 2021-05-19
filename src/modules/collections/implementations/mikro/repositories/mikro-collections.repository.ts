@@ -76,6 +76,7 @@ export default class MikroCollectionsRepository
           'user.name',
           'pointOfSale',
           'pointOfSale.label',
+          'reviewedData',
         ],
       },
     );
