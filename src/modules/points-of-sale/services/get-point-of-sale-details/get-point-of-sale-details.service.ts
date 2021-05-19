@@ -111,7 +111,7 @@ class GetPointOfSaleDetailsService {
       });
     }
 
-    if (!startDate && !endDate && period) {
+    if (period) {
       endDate = new Date(Date.now());
       if (period === Period.DAILY) startDate = subDays(endDate, 1);
       if (period === Period.WEEKLY) startDate = subWeeks(endDate, 1);

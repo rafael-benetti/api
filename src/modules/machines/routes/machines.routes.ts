@@ -70,6 +70,8 @@ machinesRouter.get(
   celebrate({
     query: {
       period: Joi.string().valid('DAILY', 'WEEKLY', 'MONTHLY').default('DAILY'),
+      startDate: Joi.date(),
+      endDate: Joi.date(),
     },
     params: {
       machineId: Joi.string().required(),

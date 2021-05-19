@@ -63,6 +63,8 @@ pointsOfSaleRoutes.get(
   celebrate({
     query: {
       period: Joi.string().valid('DAILY', 'WEEKLY', 'MONTHLY').default('DAILY'),
+      startDate: Joi.date(),
+      endDate: Joi.date(),
     },
     params: {
       pointOfSaleId: Joi.string().required(),

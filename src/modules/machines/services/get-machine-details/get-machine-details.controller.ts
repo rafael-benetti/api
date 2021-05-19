@@ -7,7 +7,7 @@ abstract class GetMachineDetailsController {
   static async handle(req: Request, res: Response): Promise<Response> {
     const { userId } = req;
     const { machineId } = req.params;
-    const { period } = req.query;
+    const { period, startDate, endDate } = req.query;
 
     const getMachineDetailsService = container.resolve(
       GetMachineDetailsService,
@@ -17,6 +17,8 @@ abstract class GetMachineDetailsController {
       machineId,
       userId,
       period: period as Period,
+      startDate: new Date(startDate as string),
+      endDate: new Date(endDate as string),
     });
 
     return res.json(response);
