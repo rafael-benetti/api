@@ -138,6 +138,7 @@ class MikroMachinesRepository implements MachinesRepository {
 
   async machineSortedByStock({
     groupIds,
+    operatorId,
   }: FindMachinesDto): Promise<
     {
       id: string;
@@ -152,6 +153,7 @@ class MikroMachinesRepository implements MachinesRepository {
           total: {
             $sum: '$boxes.numberOfPrizes',
           },
+          id: '$_id',
           serialNumber: '$serialNumber',
           minimumPrizeCount: '$minimumPrizeCount',
           lastConnection: '$lastConnection',
@@ -186,11 +188,20 @@ class MikroMachinesRepository implements MachinesRepository {
         },
       },
       {
-        $match: {
-          groupId: {
-            $in: groupIds,
+        ...(groupIds && {
+          $match: {
+            groupId: {
+              $in: groupIds,
+            },
           },
-        },
+        }),
+      },
+      {
+        ...(operatorId && {
+          $match: {
+            operatorId,
+          },
+        }),
       },
       {
         $limit: 5,
