@@ -1,5 +1,6 @@
 import CreateTelemetryLogDto from '@modules/telemetry-logs/contracts/dtos/create-telemetry-log.dto';
 import FindTelemetryLogsDto from '@modules/telemetry-logs/contracts/dtos/find-telemetry-logs.dto';
+import GetIncomePerMachineResponseDto from '@modules/telemetry-logs/contracts/dtos/get-income-per-machine-response.dto';
 import GetIncomePerMachineDto from '@modules/telemetry-logs/contracts/dtos/get-income-per-machine.dto';
 import TelemetryLog from '@modules/telemetry-logs/contracts/entities/telemetry-log';
 import TelemetryLogsRepository from '@modules/telemetry-logs/contracts/repositories/telemetry-logs.repository';
@@ -73,9 +74,7 @@ class MikroTelemetryLogsRepository implements TelemetryLogsRepository {
     groupIds,
     startDate,
     endDate,
-  }: GetIncomePerMachineDto): Promise<
-    { _id: string; income: number; count: number }[]
-  > {
+  }: GetIncomePerMachineDto): Promise<GetIncomePerMachineResponseDto[]> {
     const incomePerMachine = await this.repository.aggregate([
       {
         $match: {
@@ -95,7 +94,20 @@ class MikroTelemetryLogsRepository implements TelemetryLogsRepository {
           income: {
             $sum: '$value',
           },
+          numberOfPlays: {
+            $sum: '$numberOfPlays',
+          },
           count: { $sum: 1 },
+        },
+      },
+      {
+        $project: {
+          _id: 0,
+          id: '$_id',
+          income: 1,
+          count: 1,
+          numberOfPlays: 1,
+          type: 1,
         },
       },
     ]);

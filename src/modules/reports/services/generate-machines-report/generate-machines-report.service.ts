@@ -8,6 +8,7 @@ import { Promise } from 'bluebird';
 import AppError from '@shared/errors/app-error';
 import Group from '@modules/groups/contracts/models/group';
 import Role from '@modules/users/contracts/enums/role';
+import logger from '@config/logger';
 
 interface Request {
   userId: string;
@@ -93,6 +94,11 @@ class GenerateMachinesReportService {
 
       groupIds = groups.map(group => group.id);
     }
+
+    const machines = await this.machinesRepository.find({
+      groupIds,
+      fields: ['pointOfSale'],
+    });
 
     const incomePerMachine = await this.telemetryLogsRepository.getIncomePerMachine(
       { groupIds, endDate, startDate },
