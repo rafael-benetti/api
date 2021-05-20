@@ -1,6 +1,6 @@
-import logger from '@config/logger';
 import CreateTelemetryLogDto from '@modules/telemetry-logs/contracts/dtos/create-telemetry-log.dto';
 import FindTelemetryLogsDto from '@modules/telemetry-logs/contracts/dtos/find-telemetry-logs.dto';
+import GetIncomePerMachineDto from '@modules/telemetry-logs/contracts/dtos/get-income-per-machine.dto';
 import TelemetryLog from '@modules/telemetry-logs/contracts/entities/telemetry-log';
 import TelemetryLogsRepository from '@modules/telemetry-logs/contracts/repositories/telemetry-logs.repository';
 import MikroOrmProvider from '@providers/orm-provider/implementations/mikro/mikro-orm-provider';
@@ -69,8 +69,26 @@ class MikroTelemetryLogsRepository implements TelemetryLogsRepository {
     return telemetryLogs;
   }
 
-  async getIncomePerMachine(groupIds: string[]): Promise<void> {
-    const telemetryLogs = await this.repository.aggregate([
+  async getIncomePerMachine({
+    groupIds,
+    startDate,
+    endDate,
+  }: GetIncomePerMachineDto): Promise<
+    { _id: string; income: number; count: number }[]
+  > {
+    const incomePerMachine = await this.repository.aggregate([
+      {
+        $match: {
+          groupId: {
+            $in: groupIds,
+          },
+          date: {
+            $gte: startDate,
+            $lt: endDate,
+          },
+          type: 'IN',
+        },
+      },
       {
         $group: {
           _id: '$machineId',
@@ -82,7 +100,7 @@ class MikroTelemetryLogsRepository implements TelemetryLogsRepository {
       },
     ]);
 
-    logger.info(telemetryLogs);
+    return incomePerMachine;
   }
 }
 

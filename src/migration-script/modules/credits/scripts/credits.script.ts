@@ -27,7 +27,7 @@ class CreditsScript {
   ) {}
 
   async execute(): Promise<void> {
-    await this.telemetryLogsRepository.getIncomePerMachine();
+    await this.telemetryLogsRepository.getIncomePerMachine({ groupIds: [] });
 
     // this.ormProvider.clear();
     // const credits = await this.typeCreditsRepository.find();

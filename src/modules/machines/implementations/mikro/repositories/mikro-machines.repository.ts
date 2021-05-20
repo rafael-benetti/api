@@ -149,24 +149,6 @@ class MikroMachinesRepository implements MachinesRepository {
   > {
     const machines = await this.repository.aggregate([
       {
-        $project: {
-          id: '$_id',
-          serialNumber: '$serialNumber',
-          minimumPrizeCount: '$minimumPrizeCount',
-          lastConnection: '$lastConnection',
-          groupId: '$groupId',
-          priority: {
-            $subtract: [
-              { $sum: '$boxes.numberOfPrizes' },
-              '$minimumPrizeCount',
-            ],
-          },
-          total: {
-            $sum: '$boxes.numberOfPrizes',
-          },
-        },
-      },
-      {
         $match: {
           lastConnection: {
             $exists: true,
@@ -187,6 +169,7 @@ class MikroMachinesRepository implements MachinesRepository {
           priority: 1,
         },
       },
+
       {
         ...(groupIds && {
           $match: {
@@ -199,6 +182,24 @@ class MikroMachinesRepository implements MachinesRepository {
       {
         $match: {
           ...(operatorId && { operatorId }),
+        },
+      },
+      {
+        $project: {
+          id: '$_id',
+          serialNumber: '$serialNumber',
+          minimumPrizeCount: '$minimumPrizeCount',
+          lastConnection: '$lastConnection',
+          groupId: '$groupId',
+          priority: {
+            $subtract: [
+              { $sum: '$boxes.numberOfPrizes' },
+              '$minimumPrizeCount',
+            ],
+          },
+          total: {
+            $sum: '$boxes.numberOfPrizes',
+          },
         },
       },
       {

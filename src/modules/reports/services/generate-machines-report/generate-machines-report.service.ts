@@ -8,13 +8,18 @@ import { Promise } from 'bluebird';
 import AppError from '@shared/errors/app-error';
 import Group from '@modules/groups/contracts/models/group';
 import Role from '@modules/users/contracts/enums/role';
-import logger from '@config/logger';
 
 interface Request {
   userId: string;
   groupId: string;
   startDate: Date;
   endDate: Date;
+}
+
+interface Response {
+  _id: string;
+  income: number;
+  count: number;
 }
 
 @injectable()
@@ -41,7 +46,7 @@ class GenerateMachinesReportService {
     groupId,
     startDate,
     endDate,
-  }: Request): Promise<void> {
+  }: Request): Promise<Response[]> {
     const user = await this.usersRepository.findOne({
       by: 'id',
       value: userId,
@@ -89,7 +94,11 @@ class GenerateMachinesReportService {
       groupIds = groups.map(group => group.id);
     }
 
-    await this.telemetryLogsRepository.getIncomePerMachine(groupIds);
+    const incomePerMachine = await this.telemetryLogsRepository.getIncomePerMachine(
+      { groupIds, endDate, startDate },
+    );
+
+    return incomePerMachine;
   }
 }
 

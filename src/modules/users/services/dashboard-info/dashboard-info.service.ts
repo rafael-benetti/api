@@ -18,6 +18,7 @@ import { inject, injectable } from 'tsyringe';
 import Period from '@modules/machines/contracts/dtos/period.dto';
 import UniversalFinancialRepository from '@modules/universal-financial/contracts/repositories/universal-financial.repository';
 import UniversalFinancial from '@modules/universal-financial/contracts/entities/universal-financial';
+import logger from '@config/logger';
 
 interface Request {
   userId: string;
@@ -98,10 +99,12 @@ export default class DashboardInfoService {
       groupIds = (
         await this.groupsRepository.find({
           filters: {
-            ownerId: user.ownerId,
+            ownerId: user.id,
           },
         })
       ).map(group => group.id);
+
+    logger.info(groupIds);
 
     const machinesSortedByLastCollection = (
       await this.machinesRepository.find({
