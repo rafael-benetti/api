@@ -49,6 +49,7 @@ class MikroGroupsRepository implements GroupsRepository {
         limit: data.limit,
         offset: data.offset,
         populate: data.populate,
+        ...(data.fields && { fields: data.fields }),
       },
     );
 

@@ -20,6 +20,8 @@ class TelemetryLog {
   type: 'IN' | 'OUT';
 
   maintenance: boolean;
+
+  numberOfPlays: number;
 }
 
 export default TelemetryLog;

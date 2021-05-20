@@ -18,8 +18,8 @@ pointsOfSaleRoutes.post(
         groupId: Joi.string().required(),
         label: Joi.string().required(),
         contactName: Joi.string().required(),
-        primaryPhoneNumber: Joi.string().required(),
-        secondaryPhoneNumber: Joi.string(),
+        primaryPhoneNumber: Joi.string().min(14).max(15).required(),
+        secondaryPhoneNumber: Joi.string().min(14).max(15),
         rent: Joi.number().greater(-1),
         isPercentage: Joi.bool(),
         address: Joi.object({
@@ -44,8 +44,8 @@ pointsOfSaleRoutes.patch(
     body: {
       label: Joi.string(),
       contactName: Joi.string(),
-      primaryPhoneNumber: Joi.string(),
-      secondaryPhoneNumber: Joi.string(),
+      primaryPhoneNumber: Joi.string().min(14).max(15),
+      secondaryPhoneNumber: Joi.string().min(14).max(15),
       rent: Joi.number().greater(-1),
       isPercentage: Joi.bool(),
       address: Joi.object({

@@ -4,6 +4,7 @@ interface FindGroupsDto {
     ownerId?: string;
     isPersonal?: boolean;
   };
+  fields?: string[];
   limit?: number;
   offset?: number;
   populate?: string[];

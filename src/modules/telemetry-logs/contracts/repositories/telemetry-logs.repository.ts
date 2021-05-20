@@ -5,6 +5,7 @@ import TelemetryLog from '../entities/telemetry-log';
 interface TelemetryLogsRepository {
   create(data: CreateTelemetryLogDto): TelemetryLog;
   find(data: FindTelemetryLogsDto): Promise<TelemetryLog[]>;
+  getIncomePerMachine(groupIds?: string[]): Promise<void>;
 }
 
 export default TelemetryLogsRepository;

@@ -1,3 +1,4 @@
+import logger from '@config/logger';
 import CreateTelemetryLogDto from '@modules/telemetry-logs/contracts/dtos/create-telemetry-log.dto';
 import FindTelemetryLogsDto from '@modules/telemetry-logs/contracts/dtos/find-telemetry-logs.dto';
 import TelemetryLog from '@modules/telemetry-logs/contracts/entities/telemetry-log';
@@ -66,6 +67,22 @@ class MikroTelemetryLogsRepository implements TelemetryLogsRepository {
     );
 
     return telemetryLogs;
+  }
+
+  async getIncomePerMachine(groupIds: string[]): Promise<void> {
+    const telemetryLogs = await this.repository.aggregate([
+      {
+        $group: {
+          _id: '$machineId',
+          income: {
+            $sum: '$value',
+          },
+          count: { $sum: 1 },
+        },
+      },
+    ]);
+
+    logger.info(telemetryLogs);
   }
 }
 

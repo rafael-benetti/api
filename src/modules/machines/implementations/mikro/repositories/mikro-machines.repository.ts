@@ -150,9 +150,6 @@ class MikroMachinesRepository implements MachinesRepository {
     const machines = await this.repository.aggregate([
       {
         $project: {
-          total: {
-            $sum: '$boxes.numberOfPrizes',
-          },
           id: '$_id',
           serialNumber: '$serialNumber',
           minimumPrizeCount: '$minimumPrizeCount',
@@ -163,6 +160,9 @@ class MikroMachinesRepository implements MachinesRepository {
               { $sum: '$boxes.numberOfPrizes' },
               '$minimumPrizeCount',
             ],
+          },
+          total: {
+            $sum: '$boxes.numberOfPrizes',
           },
         },
       },
@@ -197,11 +197,9 @@ class MikroMachinesRepository implements MachinesRepository {
         }),
       },
       {
-        ...(operatorId && {
-          $match: {
-            operatorId,
-          },
-        }),
+        $match: {
+          ...(operatorId && { operatorId }),
+        },
       },
       {
         $limit: 5,

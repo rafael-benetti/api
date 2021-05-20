@@ -6,7 +6,6 @@ import Redis from 'ioredis';
 import TelemetryLogsRepository from '@modules/telemetry-logs/contracts/repositories/telemetry-logs.repository';
 import TypeMachinesRepository from 'migration-script/modules/machines/typeorm/repositories/type-machines.repository';
 import logger from '@config/logger';
-import { subDays } from 'date-fns';
 import TypeCreditsRepository from '../typeorm/repositories/type-credits.repository';
 
 @injectable()
@@ -14,27 +13,21 @@ class CreditsScript {
   private client = new Redis();
 
   constructor(
-    // @inject('TypeCreditsRepository')
-    // private typeCreditsRepository: TypeCreditsRepository,
+    @inject('TypeCreditsRepository')
+    private typeCreditsRepository: TypeCreditsRepository,
 
     @inject('TelemetryLogsRepository')
     private telemetryLogsRepository: TelemetryLogsRepository,
 
-    // @inject('TypeMachinesRepository')
-    // private typeMachinesRepository: TypeMachinesRepository,
+    @inject('TypeMachinesRepository')
+    private typeMachinesRepository: TypeMachinesRepository,
 
     @inject('OrmProvider')
     private ormProvider: OrmProvider,
   ) {}
 
   async execute(): Promise<void> {
-    const a = await this.telemetryLogsRepository.find({
-      filters: {
-        type: 'IN',
-      },
-    });
-
-    logger.info(a.length);
+    await this.telemetryLogsRepository.getIncomePerMachine();
 
     // this.ormProvider.clear();
     // const credits = await this.typeCreditsRepository.find();
@@ -69,23 +62,24 @@ class CreditsScript {
     //      pin: credit.pin ? credit.pin.toString() : undefined,
     //      telemetryBoardId,
     //      type: 'IN',
-    //      value: credit.value,
+    //      value: Number(credit.value),
     //      pointOfSaleId,
     //      routeId: undefined,
-    //    groupId,
-    //  });
-    //  count += 1;
-    //  if (count % 30000 === 0) {
-    //    await this.ormProvider.commit();
-    //    this.ormProvider.clear();
-    //    logger.info(count);
+    //      groupId,
+    //      numberOfPlays: credit.value / credit.gameValue,
+    //    });
+    //    count += 1;
+    //    if (count % 30000 === 0) {
+    //      await this.ormProvider.commit();
+    //      this.ormProvider.clear();
+    //      logger.info(count);
+    //    }
     //  }
-    //   }
     // } catch (error) {
-    //   logger.error(error);
+    //  logger.error(error);
+    //
+    //  await this.ormProvider.commit();
     // }
-
-    // await this.ormProvider.commit();
   }
 }
 

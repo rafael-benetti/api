@@ -18,4 +18,6 @@ export default interface CreateTelemetryLogDto {
   type: 'IN' | 'OUT';
 
   maintenance: boolean;
+
+  numberOfPlays: number;
 }

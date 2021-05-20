@@ -7,8 +7,8 @@ import '../providers/index';
 import './modules/index';
 
 // eslint-disable-next-line import/no-extraneous-dependencies
-import { createConnections } from 'typeorm';
 import logger from '@config/logger';
+import { createConnections } from 'typeorm';
 import UsersScript from './modules/users/script/users.script';
 import CompaniesScript from './modules/companies/script/companies.script';
 import SellingPointsScript from './modules/selling-points/scripts/selling.points.script';
@@ -41,37 +41,28 @@ const start = async () => {
 
   // await usersScript.execute();
   // logger.info('usersScript.execute()');
-
   // await companiesScript.execute();
   // logger.info('companiesScript.execute()');
-
   // await machinesScript.createCountersTypes();
   // logger.info('machinesScript.createCountersTypes()');
-
   // await machineCategoriesScript.execute();
   // logger.info('machineCategoriesScript.execute()');
-
   // await usersScript.setOwnerId();
   // logger.info('usersScript.setOwnerId');
-
   // await sellingPointsScript.execute();
   // logger.info('sellingPointsScript.execute()');
-
   // await usersScript.setGroupIds();
   // logger.info('usersScript.setGroupIds()');
-
   // await companiesScript.setOwnerId();
   // logger.info('companiesScript.setOwnerId()');
-
   // await telemetryScript.execute();
   // logger.info('telemetryScript.execute()');
 
   await creditsScript.execute();
   logger.info('creditsScript.execute()');
-  //
+
   // await giftsScript.execute();
   // logger.info('giftsScript.execute()');
-
   // await machinesScript.execute();
   // logger.info('machinesScript.execute()');
 };
