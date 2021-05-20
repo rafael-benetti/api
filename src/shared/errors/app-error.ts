@@ -17,6 +17,12 @@ export default class AppError {
     statusCode: 409,
   });
 
+  static collectionAlreadyReviewed = new AppError({
+    errorCode: 'COLLECTION_ALREADY_REVIEWED',
+    message: 'This collections already been reviewed .',
+    statusCode: 409,
+  });
+
   static machineHasLocation = new AppError({
     errorCode: 'MACHINE_HAS_POINT_OF_SALE',
     message:
@@ -31,6 +37,12 @@ export default class AppError {
     statusCode: 400,
   });
 
+  static pointOfSaleBelongsToARoute = new AppError({
+    errorCode: 'POINT_OF_SALE_BELONGS_TO_A_ROUTE',
+    message: 'You cannot put one point of sale that belongs to a route.',
+    statusCode: 400,
+  });
+
   static serialNumberAlreadyUsed = new AppError({
     errorCode: 'SERIAL_NUMBER_ALREADY_USED',
     message: 'This serial number is unavailable.',
@@ -40,6 +52,18 @@ export default class AppError {
   static tokenIsMissing = new AppError({
     errorCode: 'TOKEN_IS_MISSING',
     message: 'Your request does not have an auth token.',
+    statusCode: 401,
+  });
+
+  static thisMachineIsOffline = new AppError({
+    errorCode: 'THIS_MACHINE_IS_OFFLINE',
+    message: "You can't make collectios in machines that are offline",
+    statusCode: 401,
+  });
+
+  static thisMachineHasTelemetryBoard = new AppError({
+    errorCode: 'THIS_MACHINE_HAS_TELEMETRY_BOARD',
+    message: "You can't transfer machines that have telemetry board",
     statusCode: 401,
   });
 

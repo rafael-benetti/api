@@ -44,7 +44,7 @@ class CreateRouteService {
     pointsOfSaleIds,
     operatorId,
   }: Request): Promise<Route> {
-    // Verificação de usuario existente
+    // ? Verificação de usuario existente
     const user = await this.usersRepository.findOne({
       by: 'id',
       value: userId,
@@ -52,7 +52,7 @@ class CreateRouteService {
 
     if (!user) throw AppError.userNotFound;
 
-    // Verificação de roles com autorização
+    // ? Verificação de roles com autorização
     if (user.role !== Role.MANAGER && user.role !== Role.OWNER)
       throw AppError.authorizationError;
 
@@ -64,6 +64,9 @@ class CreateRouteService {
     if (pointsOfSale.length !== pointsOfSaleIds.length)
       throw AppError.pointOfSaleNotFound;
 
+    if (pointsOfSale.some(pointOfSale => pointOfSale.routeId !== undefined))
+      throw AppError.pointOfSaleBelongsToARoute;
+
     const groupIds = [
       ...new Set(pointsOfSale.map(pointOfSale => pointOfSale.groupId)),
     ];
@@ -71,8 +74,7 @@ class CreateRouteService {
     if (user.role === Role.MANAGER) {
       if (!user.permissions?.createRoutes) throw AppError.authorizationError;
       if (!user.groupIds) throw AppError.unknownError;
-
-      if (user.groupIds.some(groupId => !groupIds.includes(groupId)))
+      if (groupIds.some(groupId => !user.groupIds?.includes(groupId)))
         throw AppError.authorizationError;
     }
 

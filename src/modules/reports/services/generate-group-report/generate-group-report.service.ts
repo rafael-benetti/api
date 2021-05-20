@@ -100,8 +100,6 @@ export default class GenerateGroupReportService {
           },
         });
 
-        console.log(productLogs);
-
         const productExpenses = productLogs
           .filter(log => log.logType === 'IN')
           .map(log => log.cost * log.quantity)

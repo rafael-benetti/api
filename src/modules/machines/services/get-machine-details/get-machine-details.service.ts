@@ -7,7 +7,6 @@ import TelemetryLog from '@modules/telemetry-logs/contracts/entities/telemetry-l
 import TelemetryLogsRepository from '@modules/telemetry-logs/contracts/repositories/telemetry-logs.repository';
 import Role from '@modules/users/contracts/enums/role';
 import UsersRepository from '@modules/users/contracts/repositories/users.repository';
-import OrmProvider from '@providers/orm-provider/contracts/models/orm-provider';
 import AppError from '@shared/errors/app-error';
 import {
   eachDayOfInterval,
@@ -24,6 +23,8 @@ interface Request {
   userId: string;
   machineId: string;
   period: Period;
+  startDate: Date;
+  endDate: Date;
 }
 
 interface ChartData {
@@ -43,6 +44,7 @@ interface Response {
   machine: Machine;
   lastConnection?: Date;
   lastCollection?: Date;
+  collectedBy?: string;
   income: number;
   givenPrizes: number;
   chartData: ChartData[];
@@ -67,15 +69,14 @@ class GetMachineDetailsService {
 
     @inject('CounterTypesRepository')
     private counterTypesRepository: CounterTypesRepository,
-
-    @inject('OrmProvider')
-    private ormProvider: OrmProvider,
   ) {}
 
   public async execute({
     userId,
     machineId,
     period,
+    startDate,
+    endDate,
   }: Request): Promise<Response> {
     const user = await this.usersRepository.findOne({
       by: 'id',
@@ -104,14 +105,28 @@ class GetMachineDetailsService {
       throw AppError.authorizationError;
 
     // ? ULTIMA COLETA
-    const lastCollection = (
-      await this.collectionsRepository.findLastCollection(machineId)
-    )?.date;
+    const lastCollectionData = await this.collectionsRepository.findLastCollection(
+      machineId,
+    );
+
+    let lastCollection;
+    let collectedBy;
+
+    if (lastCollectionData) {
+      lastCollection = lastCollectionData?.date;
+      collectedBy = (
+        await this.usersRepository.findOne({
+          by: 'id',
+          value: lastCollectionData?.userId,
+        })
+      )?.name;
+    }
 
     const telemetryLogs = await this.telemetryLogsRepository.find({
       filters: {
         machineId,
         maintenance: false,
+        groupId: machine.groupId,
         date: {
           startDate: lastCollection,
           endDate: new Date(Date.now()),
@@ -119,13 +134,15 @@ class GetMachineDetailsService {
       },
     });
 
-    const endDate = new Date(Date.now());
-    let startDate;
-    if (period === Period.DAILY) startDate = subDays(endDate, 1);
-    if (period === Period.WEEKLY) startDate = subWeeks(endDate, 1);
-    if (period === Period.MONTHLY) startDate = subMonths(endDate, 1);
+    if (period) {
+      endDate = new Date(Date.now());
+      if (period === Period.DAILY) startDate = subDays(endDate, 1);
+      if (period === Period.WEEKLY) startDate = subWeeks(endDate, 1);
+      if (period === Period.MONTHLY) startDate = subMonths(endDate, 1);
+    }
 
-    if (startDate === undefined) throw AppError.unknownError;
+    if (!startDate) throw AppError.unknownError;
+    if (!endDate) throw AppError.unknownError;
 
     const telemetryLogsOfPeriod = await this.telemetryLogsRepository.find({
       filters: {
@@ -265,7 +282,9 @@ class GetMachineDetailsService {
 
     // ? HISTORICO DE EVENTOS
     const transactionHistory = await this.telemetryLogsRepository.find({
-      filters: {},
+      filters: {
+        machineId,
+      },
       limit: 5,
     });
 
@@ -278,6 +297,7 @@ class GetMachineDetailsService {
       givenPrizes,
       chartData,
       transactionHistory,
+      collectedBy,
     };
   }
 }

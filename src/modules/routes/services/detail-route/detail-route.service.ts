@@ -24,6 +24,8 @@ interface Request {
   period: Period;
   userId: string;
   routeId: string;
+  startDate: Date;
+  endDate: Date;
 }
 
 interface ChartData {
@@ -69,6 +71,8 @@ class DetailRouteService {
     userId,
     routeId,
     period,
+    endDate,
+    startDate,
   }: Request): Promise<Response> {
     const user = await this.usersRepository.findOne({
       by: 'id',
@@ -110,17 +114,19 @@ class DetailRouteService {
       });
     }
 
-    const endDate = new Date(Date.now());
-    let startDate;
-    if (period === Period.DAILY) startDate = subDays(endDate, 1);
-    if (period === Period.WEEKLY) startDate = subWeeks(endDate, 1);
-    if (period === Period.MONTHLY) startDate = subMonths(endDate, 1);
+    if (period) {
+      endDate = new Date(Date.now());
+      if (period === Period.DAILY) startDate = subDays(endDate, 1);
+      if (period === Period.WEEKLY) startDate = subWeeks(endDate, 1);
+      if (period === Period.MONTHLY) startDate = subMonths(endDate, 1);
+    }
 
-    if (startDate === undefined) throw AppError.unknownError;
+    if (!startDate) throw AppError.unknownError;
+    if (!endDate) throw AppError.unknownError;
 
     const telemetryLogs = await this.telemetryLogsRepository.find({
       filters: {
-        pointOfSaleId: pointsOfSale.map(pointOfSale => pointOfSale.id),
+        routeId,
         date: {
           startDate,
           endDate,

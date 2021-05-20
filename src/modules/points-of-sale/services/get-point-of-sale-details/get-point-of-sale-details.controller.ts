@@ -7,7 +7,7 @@ abstract class GetPointOfSaleDetailsController {
   static async handle(req: Request, res: Response): Promise<Response> {
     const { userId } = req;
     const { pointOfSaleId } = req.params;
-    const { period } = req.query;
+    const { period, startDate, endDate } = req.query;
 
     const getPointOfSaleDetailsService = container.resolve(
       GetPointOfSaleDetailsService,
@@ -17,6 +17,8 @@ abstract class GetPointOfSaleDetailsController {
       pointOfSaleId,
       userId,
       period: period as Period,
+      startDate: new Date(startDate as string),
+      endDate: new Date(endDate as string),
     });
 
     return res.json(response);

@@ -8,6 +8,15 @@ export default abstract class CreateCollectionController {
     body: {
       machineId: Joi.string().uuid().required(),
       observations: Joi.string().required(),
+      startTime: Joi.date(),
+      startLocation: Joi.object({
+        latitude: Joi.number(),
+        longitude: Joi.number(),
+      }),
+      endLocation: Joi.object({
+        latitude: Joi.number(),
+        longitude: Joi.number(),
+      }),
       boxCollections: Joi.array()
         .items(
           Joi.object({
@@ -17,6 +26,7 @@ export default abstract class CreateCollectionController {
               .items(
                 Joi.object({
                   counterId: Joi.string().required(),
+                  counterTypeLabel: Joi.string().required(),
                   mechanicalCount: Joi.number(),
                   digitalCount: Joi.number(),
                   userCount: Joi.number(),
@@ -32,7 +42,14 @@ export default abstract class CreateCollectionController {
   static handle: RequestHandler = async (request, response) => {
     const { userId, files } = request;
 
-    const { machineId, observations, boxCollections } = request.body;
+    const {
+      machineId,
+      observations,
+      boxCollections,
+      startTime,
+      startLocation,
+      endLocation,
+    } = request.body;
 
     const createCollection = container.resolve(CreateCollectionService);
 
@@ -42,6 +59,9 @@ export default abstract class CreateCollectionController {
       observations,
       boxCollections,
       files: files as never,
+      startTime,
+      endLocation,
+      startLocation,
     });
 
     return response.status(201).json(collection);

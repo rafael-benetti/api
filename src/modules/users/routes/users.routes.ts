@@ -7,6 +7,7 @@ import { container } from 'tsyringe';
 import AuthenticateUserController from '../services/authenticate-user/authenticate-user.controller';
 import CreateManagerController from '../services/create-manager/create-manager.controller';
 import CreateOperatorController from '../services/create-operator/create-operator.controller';
+import DashboardInfoController from '../services/dashboard-info/dashboard-info.controller';
 import EditManagerController from '../services/edit-manager/edit-manager.controller';
 import EditOperatorController from '../services/edit-operator/edit-operator.controller';
 import GetUserProfileController from '../services/get-user-profile/get-user-profile.controller';
@@ -212,5 +213,7 @@ usersRoutes.get(
   }),
   ListOperatorsController.handle,
 );
+
+usersRoutes.get('/dashboard', DashboardInfoController.handle);
 
 export default usersRoutes;

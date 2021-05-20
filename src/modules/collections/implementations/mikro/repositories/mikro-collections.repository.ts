@@ -32,10 +32,12 @@ export default class MikroCollectionsRepository
       {
         machineId,
       },
-      undefined,
-      { date: 'DESC' },
+      {
+        orderBy: {
+          date: 'DESC',
+        },
+      },
     );
-
     return collection ? CollectionsMapper.map(collection) : undefined;
   }
 
@@ -56,7 +58,6 @@ export default class MikroCollectionsRepository
         },
         offset: data.offset,
         populate: [
-          'machine',
           'previousCollection',
           'user',
           'group',
@@ -64,7 +65,7 @@ export default class MikroCollectionsRepository
           'route',
         ],
         fields: [
-          'machine',
+          'machineId',
           'previousCollection',
           'previousCollection.boxCollections',
           'previousCollection.date',
@@ -75,6 +76,7 @@ export default class MikroCollectionsRepository
           'user.name',
           'pointOfSale',
           'pointOfSale.label',
+          'reviewedData',
         ],
       },
     );

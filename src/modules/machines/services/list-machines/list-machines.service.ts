@@ -17,6 +17,7 @@ interface Request {
   pointOfSaleId: string;
   serialNumber: string;
   isActive: boolean;
+  telemetryStatus?: 'ONLINE' | 'OFFLINE' | 'VIRGIN' | 'NO_TELEMETRY';
   offset: number;
   limit: number;
 }
@@ -50,6 +51,7 @@ class ListMachinesService {
     routeId,
     pointOfSaleId,
     serialNumber,
+    telemetryStatus,
     isActive,
     limit,
     offset,
@@ -72,16 +74,12 @@ class ListMachinesService {
 
     if (user.role === Role.OPERATOR) filters.operatorId = user.id;
 
+    if (telemetryStatus) filters.telemetryStatus = telemetryStatus;
+
     if (lean) {
       filters.isActive = true;
-      const result = await this.machinesRepository.find(filters);
-      const leanMachines = result.machines.map(machine => {
-        return {
-          id: machine.id,
-          serialNumber: machine.serialNumber,
-          locationId: machine.locationId,
-        };
-      });
+      filters.fields = ['id', 'serialNumber', 'locationId'];
+      const leanMachines = await this.machinesRepository.find(filters);
 
       return leanMachines;
     }

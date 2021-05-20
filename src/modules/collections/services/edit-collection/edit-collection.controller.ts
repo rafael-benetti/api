@@ -1,5 +1,4 @@
 import { celebrate, Joi } from 'celebrate';
-import { fil } from 'date-fns/locale';
 import { Response, Request } from 'express';
 import { container } from 'tsyringe';
 import EditCollectionService from './edit-collection.service';
@@ -7,6 +6,7 @@ import EditCollectionService from './edit-collection.service';
 export default abstract class EditCollectionController {
   static validate = celebrate({
     body: {
+      photosToDelete: Joi.array().items(Joi.string()),
       machineId: Joi.string().uuid().required(),
       observations: Joi.string().required(),
       boxCollections: Joi.array().items(
@@ -14,6 +14,7 @@ export default abstract class EditCollectionController {
           boxId: Joi.string().uuid().required(),
           counterCollections: Joi.array().items(
             Joi.object({
+              counterTypeLabel: Joi.string().required(),
               counterId: Joi.string().required(),
               mechanicalCount: Joi.number(),
               digitalCount: Joi.number(),

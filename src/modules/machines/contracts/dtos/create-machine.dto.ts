@@ -21,5 +21,13 @@ export default interface CreateMachineDto {
 
   ownerId: string;
 
+  typeOfPrize?: { id: string; label: string };
+
+  minimumPrizeCount?: number;
+
   isActive: boolean;
+
+  incomePerPrizeGoal?: number;
+
+  incomePerMonthGoal?: number;
 }

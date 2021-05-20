@@ -1,6 +1,8 @@
 import { v4 } from 'uuid';
+import Machine from '@modules/machines/contracts/models/machine';
 import CreateCollectionDto from '../dtos/create-collection.dto';
 import BoxCollection from '../interfaces/box-collection';
+import Geolocation from '../dtos/geolocation.dto';
 
 export default class Collection {
   id: string;
@@ -8,6 +10,8 @@ export default class Collection {
   previousCollectionId?: string;
 
   machineId: string;
+
+  machine?: Machine;
 
   groupId: string;
 
@@ -21,7 +25,18 @@ export default class Collection {
 
   date: Date;
 
+  startTime: Date;
+
+  startLocation?: Geolocation;
+
+  endLocation?: Geolocation;
+
   boxCollections: BoxCollection[];
+
+  reviewedData?: {
+    date: Date;
+    reviewedBy: string;
+  };
 
   constructor(data?: CreateCollectionDto) {
     if (data) {
@@ -35,6 +50,7 @@ export default class Collection {
       this.observations = data.observations;
       this.date = new Date();
       this.boxCollections = data.boxCollections;
+      this.reviewedData = data.reviewedData;
     }
   }
 }

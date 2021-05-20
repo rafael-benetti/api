@@ -17,6 +17,7 @@ class Box {
       this.numberOfPrizes = 0;
       this.currentMoney = 0;
       this.counters = data.counters;
+      this.currentMoney = data.currentMoney ? data.currentMoney : 0;
     }
   }
 }

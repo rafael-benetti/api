@@ -21,11 +21,23 @@ class Machine {
 
   locationId?: string;
 
+  typeOfPrize?: { id: string; label: string };
+
+  minimumPrizeCount?: number;
+
   ownerId: string;
 
   isActive: boolean;
 
   maintenance: boolean;
+
+  lastConnection?: Date;
+
+  lastCollection?: Date;
+
+  incomePerPrizeGoal?: number;
+
+  incomePerMonthGoal?: number;
 }
 
 export default Machine;

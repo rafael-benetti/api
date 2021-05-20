@@ -1,9 +1,9 @@
 {
   "include": [
-    "src"
+    "src",
   ],
   "exclude": [
-    "./src/migration-script",
+    //"./src/migration-script",
   ],
   "ts-node": {
     "files": true
@@ -20,6 +20,7 @@
     "emitDecoratorMetadata": true,
     "skipLibCheck": true,
     "forceConsistentCasingInFileNames": true,
+    "resolveJsonModule": true,
     "baseUrl": "./src",
     "paths": {
       "@shared/*": [

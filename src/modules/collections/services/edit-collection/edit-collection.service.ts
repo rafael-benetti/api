@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import Collection from '@modules/collections/contracts/entities/collection';
 import CollectionsRepository from '@modules/collections/contracts/repositories/collections.repository';
 import MachinesRepository from '@modules/machines/contracts/repositories/machines.repository';
@@ -10,17 +11,19 @@ import StorageProvider from '@providers/storage-provider/contracts/models/storag
 import OrmProvider from '@providers/orm-provider/contracts/models/orm-provider';
 import AppError from '@shared/errors/app-error';
 import { inject, injectable } from 'tsyringe';
+import logger from '@config/logger';
 
 interface Request {
   userId: string;
   collectionId: string;
-  photosToDelete: string[];
+  photosToDelete?: string[];
   machineId: string;
   files?: any[];
   observations: string;
   boxCollections: {
     boxId: string;
     counterCollections: {
+      counterTypeLabel: string;
       counterId: string;
       mechanicalCount: number;
       digitalCount: number;
@@ -78,7 +81,7 @@ class EditCollectionService {
     )
       throw AppError.authorizationError;
 
-    if (user.role === Role.MANAGER || user.role === Role.OPERATOR) {
+    if (user.role === Role.OPERATOR) {
       if (!user.permissions?.editCollections) throw AppError.authorizationError;
     }
 
@@ -109,7 +112,10 @@ class EditCollectionService {
     if (user.role === Role.OPERATOR && machine.operatorId !== user.id)
       throw AppError.authorizationError;
 
-    if (!user.groupIds?.includes(lastCollection.groupId))
+    if (
+      !user.groupIds?.includes(lastCollection.groupId) &&
+      user.role !== Role.OWNER
+    )
       throw AppError.authorizationError;
 
     const parsedFiles: {
@@ -125,24 +131,25 @@ class EditCollectionService {
 
       if (!parsedFiles[boxId]) parsedFiles[boxId] = {};
       if (!parsedFiles[boxId][counterId]) parsedFiles[boxId][counterId] = [];
-
       parsedFiles[boxId][counterId].push(file);
     });
 
     // ? REMOVE FOTOS
-    lastCollection.boxCollections.forEach(boxCollections => {
-      boxCollections.counterCollections.forEach(boxCollection => {
-        for (let i = 0; i < boxCollection.photos.length; i += 1) {
-          const obj = boxCollection.photos[i];
+    if (photosToDelete && photosToDelete.length > 0) {
+      lastCollection.boxCollections.forEach(boxCollections => {
+        boxCollections.counterCollections.forEach(counterCollection => {
+          for (let i = 0; i < counterCollection.photos?.length; i += 1) {
+            const obj = counterCollection.photos[i];
 
-          if (photosToDelete.indexOf(obj.key) !== -1) {
-            boxCollection.photos.splice(i, 1);
-            this.storageProvider.deleteFile(obj.key);
-            i -= 1;
+            if (photosToDelete.indexOf(obj.key) !== -1) {
+              counterCollection.photos.splice(i, 1);
+              this.storageProvider.deleteFile(obj.key);
+              i -= 1;
+            }
           }
-        }
+        });
       });
-    });
+    }
 
     let previousCollection;
 
@@ -168,8 +175,6 @@ class EditCollectionService {
         const box = machine.boxes.find(box => box.id === boxCollection.boxId);
 
         if (!box) throw AppError.boxNotFound;
-
-        box.currentMoney = 0;
 
         await Promise.all(
           boxCollection.counterCollections.map(async counterCollection => {
@@ -209,9 +214,14 @@ class EditCollectionService {
               if (
                 counterCollection.counterId === lastCounterCollection.counterId
               ) {
+                logger.info(
+                  'counterCollection.photoscounterCollection.photoscounterCollection.photoscounterCollection.photoscounterCollection.photos',
+                );
+                logger.info(lastCounterCollection.photos);
+
                 counterCollection.photos = [
-                  ...counterCollection.photos,
-                  ...lastCounterCollection.photos,
+                  ...(counterCollection.photos ?? []),
+                  ...(lastCounterCollection.photos ?? []),
                 ];
               }
             });
@@ -223,9 +233,10 @@ class EditCollectionService {
     lastCollection.boxCollections = boxCollections;
     lastCollection.observations = observations;
 
-    this.collectionsRepository.save(lastCollection);
     this.machinesRepository.save(machine);
+    await this.ormProvider.commit();
 
+    this.collectionsRepository.save(lastCollection);
     await this.ormProvider.commit();
 
     Object.assign(lastCollection, {

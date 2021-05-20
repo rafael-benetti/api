@@ -7,8 +7,8 @@ import '../providers/index';
 import './modules/index';
 
 // eslint-disable-next-line import/no-extraneous-dependencies
-import { createConnections } from 'typeorm';
 import logger from '@config/logger';
+import { createConnections } from 'typeorm';
 import UsersScript from './modules/users/script/users.script';
 import CompaniesScript from './modules/companies/script/companies.script';
 import SellingPointsScript from './modules/selling-points/scripts/selling.points.script';
@@ -19,7 +19,7 @@ import MachineCategoriesScript from './modules/machines-categories/scripts/machi
 import MachinesScript from './modules/machines/scripts/machines.script';
 
 const start = async () => {
-  createConnections();
+  // createConnections();
   const ormProvider = container.resolve<OrmProvider>('OrmProvider');
   await ormProvider.connect();
 
@@ -68,7 +68,7 @@ const start = async () => {
 
   await creditsScript.execute();
   logger.info('creditsScript.execute()');
-  //
+
   // await giftsScript.execute();
   // logger.info('giftsScript.execute()');
 

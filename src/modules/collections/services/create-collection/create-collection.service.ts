@@ -13,17 +13,23 @@ import StorageProvider from '@providers/storage-provider/contracts/models/storag
 import AppError from '@shared/errors/app-error';
 import getGroupUniverse from '@shared/utils/get-group-universe';
 import isInGroupUniverse from '@shared/utils/is-in-group-universe';
+import { isBefore, subMinutes } from 'date-fns';
 import { inject, injectable } from 'tsyringe';
+import Geolocation from '../../contracts/dtos/geolocation.dto';
 
 interface Request {
   userId: string;
   machineId: string;
   observations: string;
+  startTime: Date;
+  startLocation?: Geolocation;
+  endLocation?: Geolocation;
   boxCollections: {
     boxId: string;
     prizeCount?: number;
     counterCollections: {
       counterId: string;
+      counterTypeLabel: string;
       mechanicalCount: number;
       digitalCount: number;
       userCount: number;
@@ -68,6 +74,9 @@ class CreateCollectionService {
     observations,
     boxCollections,
     files,
+    startTime,
+    endLocation,
+    startLocation,
   }: Request): Promise<Collection> {
     const parsedFiles: {
       [key: string]: {
@@ -99,6 +108,14 @@ class CreateCollectionService {
     });
 
     if (!machine) throw AppError.machineNotFound;
+
+    if (!machine.telemetryBoardId) throw AppError.telemetryBoardNotFound;
+
+    if (!machine.lastConnection) throw AppError.thisMachineIsOffline;
+
+    if (isBefore(machine.lastConnection, subMinutes(new Date(Date.now()), 10)))
+      throw AppError.thisMachineIsOffline;
+
     if (!machine.locationId) throw AppError.productInStock;
 
     const location = await this.pointsOfSaleRepository.findOne({
@@ -195,7 +212,12 @@ class CreateCollectionService {
       routeId: route?.id,
       observations,
       boxCollections,
+      startTime,
+      endLocation,
+      startLocation,
     });
+
+    machine.lastCollection = collection.date;
 
     this.collectionsRepository.save(collection);
     this.machinesRepository.save(machine);

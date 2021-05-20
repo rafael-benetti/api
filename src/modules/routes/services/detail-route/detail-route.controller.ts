@@ -7,7 +7,7 @@ export default abstract class DetailRouteController {
   static async handle(req: Request, res: Response): Promise<Response> {
     const { userId } = req;
     const { routeId } = req.params;
-    const { period } = req.query;
+    const { period, startDate, endDate } = req.query;
 
     const detailRouteService = container.resolve(DetailRouteService);
 
@@ -15,6 +15,8 @@ export default abstract class DetailRouteController {
       routeId,
       userId,
       period: period as Period,
+      startDate: new Date(startDate as string),
+      endDate: new Date(endDate as string),
     });
 
     return res.json(response);

@@ -24,11 +24,14 @@ interface Request {
   userId: string;
   pointOfSaleId: string;
   period: Period;
+  startDate: Date;
+  endDate: Date;
 }
 
 interface MachineInfo {
   machine: Machine;
   income: number;
+  givenPrizes: number;
 }
 
 interface ChartData {
@@ -69,6 +72,8 @@ class GetPointOfSaleDetailsService {
     userId,
     pointOfSaleId,
     period,
+    startDate,
+    endDate,
   }: Request): Promise<Response> {
     const user = await this.usersRepository.findOne({
       by: 'id',
@@ -106,13 +111,15 @@ class GetPointOfSaleDetailsService {
       });
     }
 
-    const endDate = new Date(Date.now());
-    let startDate;
-    if (period === Period.DAILY) startDate = subDays(endDate, 1);
-    if (period === Period.WEEKLY) startDate = subWeeks(endDate, 1);
-    if (period === Period.MONTHLY) startDate = subMonths(endDate, 1);
+    if (period) {
+      endDate = new Date(Date.now());
+      if (period === Period.DAILY) startDate = subDays(endDate, 1);
+      if (period === Period.WEEKLY) startDate = subWeeks(endDate, 1);
+      if (period === Period.MONTHLY) startDate = subMonths(endDate, 1);
+    }
 
-    if (startDate === undefined) throw AppError.unknownError;
+    if (!startDate) throw AppError.unknownError;
+    if (!endDate) throw AppError.unknownError;
 
     const telemetryLogs = await this.telemetryLogsRepository.find({
       filters: {
@@ -206,6 +213,9 @@ class GetPointOfSaleDetailsService {
       return {
         machine,
         income: telemetryLogsIn
+          .filter(telemetryLog => telemetryLog.machineId === machine.id)
+          .reduce((a, b) => a + b.value, 0),
+        givenPrizes: telemetryLogsOut
           .filter(telemetryLog => telemetryLog.machineId === machine.id)
           .reduce((a, b) => a + b.value, 0),
       };

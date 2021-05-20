@@ -14,6 +14,6 @@ export default abstract class DeleteRouteController {
       userId,
     });
 
-    return res.json().status(204);
+    return res.status(204).json();
   }
 }

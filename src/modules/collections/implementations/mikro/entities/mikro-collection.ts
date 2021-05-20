@@ -8,6 +8,7 @@ import MikroPointOfSale from '@modules/points-of-sale/implementations/mikro/mode
 import MikroRoute from '@modules/routes/implementations/mikro/models/mikro-route';
 import MikroUser from '@modules/users/implementations/mikro/models/mikro-user';
 import { v4 } from 'uuid';
+import Geolocation from '../../../contracts/dtos/geolocation.dto';
 
 @Entity({ collection: 'collections' })
 export default class MikroCollection implements Collection {
@@ -61,6 +62,21 @@ export default class MikroCollection implements Collection {
   @Property()
   boxCollections: boxCollection[];
 
+  @Property()
+  startTime: Date;
+
+  @Property()
+  startLocation?: Geolocation;
+
+  @Property()
+  endLocation?: Geolocation;
+
+  @Property()
+  reviewedData?: {
+    date: Date;
+    reviewedBy: string;
+  };
+
   constructor(data?: CreateCollectionDto) {
     if (data) {
       this.id = v4();
@@ -73,6 +89,10 @@ export default class MikroCollection implements Collection {
       this.observations = data.observations;
       this.date = new Date();
       this.boxCollections = data.boxCollections;
+      this.startLocation = data.startLocation;
+      this.endLocation = data.endLocation;
+      this.startTime = data.startTime;
+      this.reviewedData = data.reviewedData;
     }
   }
 }

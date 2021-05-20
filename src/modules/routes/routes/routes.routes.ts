@@ -45,6 +45,8 @@ routesRouter.get(
     },
     query: {
       period: Joi.string().valid('DAILY', 'MONTHLY', 'WEEKLY'),
+      startDate: Joi.date(),
+      endDate: Joi.date(),
     },
   }),
 

@@ -16,5 +16,7 @@ declare namespace NodeJS {
     MAIL_SECURE: boolean;
     MAIL_USER: string;
     MAIL_PASSWORD: string;
+
+    FCM_SERVER_KEY: string;
   }
 }

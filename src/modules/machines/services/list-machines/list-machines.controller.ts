@@ -13,9 +13,11 @@ abstract class ListMachinesController {
       pointOfSaleId,
       serialNumber,
       isActive,
+      telemetryStatus,
       limit,
       offset,
-    } = req.query;
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    } = req.query as Record<string, any>;
 
     const listMachinesService = container.resolve(ListMachinesService);
 
@@ -27,6 +29,7 @@ abstract class ListMachinesController {
       routeId: routeId as string,
       serialNumber: serialNumber as string,
       isActive: isActive?.toString() === 'true',
+      telemetryStatus,
       limit: Number(limit) as number,
       offset: Number(offset) as number,
       lean: lean?.toString() === 'true',

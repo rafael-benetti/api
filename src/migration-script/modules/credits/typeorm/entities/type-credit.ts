@@ -18,6 +18,9 @@ class TypeCredit {
   @Column({ name: 'money' })
   value: number;
 
+  @Column({ name: 'game_value' })
+  gameValue: number;
+
   @Column()
   date: Date;
 

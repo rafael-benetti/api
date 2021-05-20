@@ -6,10 +6,14 @@ export default interface FindMachinesDto {
   categoryId?: string;
   routeId?: string;
   telemetryBoardId?: number;
+  telemetryStatus?: 'ONLINE' | 'OFFLINE' | 'VIRGIN' | 'NO_TELEMETRY';
   pointOfSaleId?: string | string[];
   serialNumber?: string;
   isActive?: boolean;
+  orderByLastCollection?: boolean;
+  orderByLastConnection?: boolean;
   limit?: number;
   offset?: number;
   populate?: string[];
+  fields?: string[];
 }

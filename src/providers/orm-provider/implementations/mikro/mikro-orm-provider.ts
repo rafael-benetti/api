@@ -7,13 +7,16 @@ import MikroCategory from '@modules/categories/implementations/mikro/model/mikro
 import MikroCollection from '@modules/collections/implementations/mikro/entities/mikro-collection';
 import MikroCounterType from '@modules/counter-types/implementations/mikro/models/mikro-counter-type';
 import MikroGroup from '@modules/groups/implementations/mikro/models/mikro-group';
+import MikroMachineLog from '@modules/machine-logs/implementations/mikro/entities/mikro-machine-log';
 import MikroMachine from '@modules/machines/implementations/mikro/models/mikro-machine';
+import MikroNotification from '@modules/notifications/implementations/mikro/entities/mikro-notification';
 import MikroPointOfSale from '@modules/points-of-sale/implementations/mikro/models/mikro-point-of-sale';
 import MikroProductLog from '@modules/products/implementations/mikro/entities/mikro-product-log';
 import MikroRoute from '@modules/routes/implementations/mikro/models/mikro-route';
 import MikroTelemetryLog from '@modules/telemetry-logs/implementations/mikro/entities/mikro-telemetry-log';
 
 import MikroTelemetryBoard from '@modules/telemetry/implementations/mikro/entities/mikro-telemetry-board';
+import MikroUniversalFinancial from '@modules/universal-financial/implementations/mikro/entities/mikro-universal-financial';
 import MikroUser from '@modules/users/implementations/mikro/models/mikro-user';
 import OrmProvider from '@providers/orm-provider/contracts/models/orm-provider';
 import { RequestHandler } from 'express';
@@ -39,6 +42,9 @@ class MikroOrmProvider implements OrmProvider {
         MikroCollection,
         MikroTelemetryLog,
         MikroProductLog,
+        MikroNotification,
+        MikroMachineLog,
+        MikroUniversalFinancial,
       ],
       implicitTransactions: true,
       debug: true,

@@ -4,6 +4,7 @@ import FindMachinesDto from '@modules/machines/contracts/dtos/find-machines.dto'
 import Machine from '@modules/machines/contracts/models/machine';
 import MachinesRepository from '@modules/machines/contracts/repositories/machines.repository';
 import MikroOrmProvider from '@providers/orm-provider/implementations/mikro/mikro-orm-provider';
+import { addMinutes } from 'date-fns';
 import { container } from 'tsyringe';
 import MachineMapper from '../mapper/machine.mapper';
 import MikroMachine from '../models/mikro-machine';
@@ -42,10 +43,57 @@ class MikroMachinesRepository implements MachinesRepository {
     serialNumber,
     isActive,
     telemetryBoardId,
+    telemetryStatus,
     limit,
     offset,
     populate,
+    orderByLastCollection,
+    orderByLastConnection,
+    fields,
   }: FindMachinesDto): Promise<{ machines: Machine[]; count: number }> {
+    const telemetryStatusQuery: Record<string, unknown> = {};
+    const lastCollectionQuery: Record<string, unknown> = {};
+    const lastConnectionQuery: Record<string, unknown> = {};
+
+    if (orderByLastConnection) {
+      telemetryStatusQuery.lastConnection = {
+        $exists: true,
+        $ne: null,
+      };
+    }
+
+    if (orderByLastCollection) {
+      lastCollectionQuery.lastCollection = {
+        $exists: true,
+        $ne: null,
+      };
+    }
+
+    if (telemetryStatus) {
+      if (telemetryStatus === 'ONLINE') {
+        telemetryStatusQuery.lastConnection = {
+          $gte: addMinutes(new Date(), -10),
+        };
+      }
+
+      if (telemetryStatus === 'OFFLINE') {
+        telemetryStatusQuery.lastConnection = {
+          $lt: addMinutes(new Date(), -10),
+        };
+      }
+
+      if (telemetryStatus === 'VIRGIN') {
+        telemetryStatusQuery.telemetryBoardId = {
+          $ne: null,
+        };
+        telemetryStatusQuery.lastConnection = null;
+      }
+
+      if (telemetryStatus === 'NO_TELEMETRY') {
+        telemetryStatusQuery.telemetryBoardId = null;
+      }
+    }
+
     const [result, count] = await this.repository.findAndCount(
       {
         ...(id && { id }),
@@ -61,10 +109,24 @@ class MikroMachinesRepository implements MachinesRepository {
           serialNumber: new RegExp(serialNumber, 'i'),
         }),
         ...(isActive !== undefined && { isActive }),
+        ...telemetryStatusQuery,
+        ...lastCollectionQuery,
+        ...lastConnectionQuery,
       },
       {
+        ...(orderByLastCollection && {
+          orderBy: {
+            lastCollection: 'ASC',
+          },
+        }),
+        ...(orderByLastConnection && {
+          orderBy: {
+            lastConnection: 'ASC',
+          },
+        }),
         limit,
         offset,
+        fields,
         populate,
       },
     );
@@ -72,6 +134,121 @@ class MikroMachinesRepository implements MachinesRepository {
     const machines = result.map(machine => MachineMapper.toEntity(machine));
 
     return { machines, count };
+  }
+
+  async machineSortedByStock({
+    groupIds,
+    operatorId,
+  }: FindMachinesDto): Promise<
+    {
+      id: string;
+      serialNumber: string;
+      total: number;
+      minimumPrizeCount: number;
+    }[]
+  > {
+    const machines = await this.repository.aggregate([
+      {
+        $match: {
+          lastConnection: {
+            $exists: true,
+            $ne: null,
+          },
+        },
+      },
+      {
+        $match: {
+          minimumPrizeCount: {
+            $exists: true,
+            $ne: null,
+          },
+        },
+      },
+      {
+        $sort: {
+          priority: 1,
+        },
+      },
+
+      {
+        ...(groupIds && {
+          $match: {
+            groupId: {
+              $in: groupIds,
+            },
+          },
+        }),
+      },
+      {
+        $match: {
+          ...(operatorId && { operatorId }),
+        },
+      },
+      {
+        $project: {
+          id: '$_id',
+          serialNumber: '$serialNumber',
+          minimumPrizeCount: '$minimumPrizeCount',
+          lastConnection: '$lastConnection',
+          groupId: '$groupId',
+          priority: {
+            $subtract: [
+              { $sum: '$boxes.numberOfPrizes' },
+              '$minimumPrizeCount',
+            ],
+          },
+          total: {
+            $sum: '$boxes.numberOfPrizes',
+          },
+        },
+      },
+      {
+        $limit: 5,
+      },
+    ]);
+
+    return machines;
+  }
+
+  async count({
+    ownerId,
+    telemetryStatus,
+    groupIds,
+  }: FindMachinesDto): Promise<number> {
+    const telemetryStatusQuery: Record<string, unknown> = {};
+
+    if (telemetryStatus) {
+      if (telemetryStatus === 'ONLINE') {
+        telemetryStatusQuery.lastConnection = {
+          $gte: addMinutes(new Date(), -10),
+        };
+      }
+
+      if (telemetryStatus === 'OFFLINE') {
+        telemetryStatusQuery.lastConnection = {
+          $lt: addMinutes(new Date(), -10),
+        };
+      }
+
+      if (telemetryStatus === 'VIRGIN') {
+        telemetryStatusQuery.telemetryBoardId = {
+          $ne: true,
+        };
+        telemetryStatusQuery.lastConnection = null;
+      }
+
+      if (telemetryStatus === 'NO_TELEMETRY') {
+        telemetryStatusQuery.telemetryBoardId = null;
+      }
+    }
+
+    const count = await this.repository.count({
+      ...(ownerId && { ownerId }),
+      ...(groupIds && { groupId: groupIds }),
+      ...telemetryStatusQuery,
+    });
+
+    return count;
   }
 
   save(data: Machine): void {
