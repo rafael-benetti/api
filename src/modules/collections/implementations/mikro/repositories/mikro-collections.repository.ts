@@ -19,10 +19,25 @@ export default class MikroCollectionsRepository
     return CollectionsMapper.map(collection);
   }
 
-  async findOne(collectionId: string): Promise<Collection | undefined> {
-    const collection = await this.repository.findOne({
-      id: collectionId,
-    });
+  async findOne({
+    collectionId,
+    fields,
+  }: FindCollectionsDto): Promise<Collection | undefined> {
+    const collection = await this.repository.findOne(
+      {
+        id: collectionId,
+      },
+      {
+        populate: [
+          'previousCollection',
+          'user',
+          'group',
+          'pointOfSale',
+          'route',
+        ],
+        fields,
+      },
+    );
 
     return collection ? CollectionsMapper.map(collection) : undefined;
   }
@@ -57,27 +72,8 @@ export default class MikroCollectionsRepository
           date: 'DESC',
         },
         offset: data.offset,
-        populate: [
-          'previousCollection',
-          'user',
-          'group',
-          'pointOfSale',
-          'route',
-        ],
-        fields: [
-          'machineId',
-          'previousCollection',
-          'previousCollection.boxCollections',
-          'previousCollection.date',
-          'observations',
-          'date',
-          'boxCollections',
-          'user',
-          'user.name',
-          'pointOfSale',
-          'pointOfSale.label',
-          'reviewedData',
-        ],
+        populate: ['user', 'group', 'pointOfSale'],
+        fields: data.fields,
       },
     );
 

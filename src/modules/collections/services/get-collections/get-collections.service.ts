@@ -49,6 +49,7 @@ export default class GetCollectionsService {
     const { machines } = await this.machinesRepository.find({
       serialNumber: machineSerialNumber,
       groupIds,
+      fields: ['id', 'machine', 'serialNumber'],
     });
 
     const machineIds = machines.map(machine => machine.id);
@@ -56,6 +57,14 @@ export default class GetCollectionsService {
     const { collections, count } = await this.collectionsRepository.find({
       groupIds,
       machineId: machineIds,
+      fields: [
+        'date',
+        'user',
+        'user.name',
+        'pointOfSale',
+        'pointOfSale.label',
+        'machineId',
+      ],
       limit,
       offset,
     });

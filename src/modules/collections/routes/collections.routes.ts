@@ -5,6 +5,7 @@ import multer from 'multer';
 import { container } from 'tsyringe';
 import CreateCollectionController from '../services/create-collection/create-collection.controller';
 import EditCollectionController from '../services/edit-collection/edit-collection.controller';
+import GetCollectionController from '../services/get-collection/get-collection.controller';
 import GetCollectionsController from '../services/get-collections/get-collections.controller';
 import ReviewCollectionController from '../services/review-collection/review-collection.controller';
 
@@ -63,6 +64,12 @@ collectionsRoutes.get(
   '/',
   GetCollectionsController.validate,
   GetCollectionsController.handle,
+);
+
+collectionsRoutes.get(
+  '/:collectionId',
+  GetCollectionController.validate,
+  GetCollectionController.handle,
 );
 
 export default collectionsRoutes;
