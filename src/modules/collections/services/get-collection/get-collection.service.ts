@@ -33,25 +33,7 @@ export default class GetCollectionService {
 
     const groupIds = await getGroupUniverse(user);
 
-    const collection = await this.collectionsRepository.findOne({
-      collectionId,
-      fields: [
-        'machine',
-        'machine.serialNumber',
-        'previousCollection',
-        'previousCollection.boxCollections',
-        'previousCollection.date',
-        'observations',
-        'date',
-        'boxCollections',
-        'user',
-        'user.name',
-        'group',
-        'pointOfSale',
-        'pointOfSale.label',
-        'reviewedData',
-      ],
-    });
+    const collection = await this.collectionsRepository.findOne(collectionId);
 
     if (!collection) throw AppError.collectionNotFound;
 

@@ -56,20 +56,6 @@ export default class GetCollectionsService {
     const { collections, count } = await this.collectionsRepository.find({
       groupIds,
       machineId: machineIds,
-      fields: [
-        'machineId',
-        'previousCollection',
-        'previousCollection.boxCollections',
-        'previousCollection.date',
-        'observations',
-        'date',
-        'boxCollections',
-        'user',
-        'user.name',
-        'pointOfSale',
-        'pointOfSale.label',
-        'reviewedData',
-      ],
       limit,
       offset,
     });
