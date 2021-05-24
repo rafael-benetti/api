@@ -117,9 +117,8 @@ class GeneratePointsOfSaleReportService {
 
     const groupsReports = groups.map(async group => {
       const { pointsOfSale } = await this.pointsOfSaleRepository.find({
-        filters: {
-          groupId: group.id,
-        },
+        by: 'groupId',
+        value: group.id,
         fields: ['id', 'label', 'address'],
       });
 
