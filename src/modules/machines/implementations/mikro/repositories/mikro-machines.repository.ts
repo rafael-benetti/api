@@ -169,7 +169,6 @@ class MikroMachinesRepository implements MachinesRepository {
           priority: 1,
         },
       },
-
       {
         ...(groupIds && {
           $match: {
@@ -208,6 +207,34 @@ class MikroMachinesRepository implements MachinesRepository {
     ]);
 
     return machines;
+  }
+
+  async incomePerPointOfSale({ groupIds }: FindMachinesDto): Promise<{}> {
+    const pointsOfSale = await this.repository.aggregate([
+      {
+        $macth: {
+          groupIds,
+        },
+      },
+      {
+        $project: {
+          id: '$_id',
+          serialNumber: '$serialNumber',
+          minimumPrizeCount: '$minimumPrizeCount',
+          lastConnection: '$lastConnection',
+          groupId: '$groupId',
+          priority: {
+            $subtract: [
+              { $sum: '$boxes.numberOfPrizes' },
+              '$minimumPrizeCount',
+            ],
+          },
+          total: {
+            $sum: '$boxes.numberOfPrizes',
+          },
+        },
+      },
+    ]);
   }
 
   async count({

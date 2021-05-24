@@ -265,6 +265,7 @@ export default class DashboardInfoService {
             };
           });
       }
+
     let universalFinancial: UniversalFinancial[] = [];
     if (!isOperator)
       universalFinancial = await this.universalFinancialRepository.find({

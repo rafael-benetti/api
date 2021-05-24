@@ -2,10 +2,20 @@ import GroupsRepository from '@modules/groups/contracts/repositories/groups.repo
 import Period from '@modules/machines/contracts/dtos/period.dto';
 import Machine from '@modules/machines/contracts/models/machine';
 import MachinesRepository from '@modules/machines/contracts/repositories/machines.repository';
+import TelemetryLogsRepository from '@modules/telemetry-logs/contracts/repositories/telemetry-logs.repository';
+import UniversalFinancial from '@modules/universal-financial/contracts/entities/universal-financial';
+import UniversalFinancialRepository from '@modules/universal-financial/contracts/repositories/universal-financial.repository';
 import Role from '@modules/users/contracts/enums/role';
 import UsersRepository from '@modules/users/contracts/repositories/users.repository';
 import AppError from '@shared/errors/app-error';
-import TypeUsersRepository from 'migration-script/modules/users/typeorm/repostories/type-users-repository';
+import {
+  eachDayOfInterval,
+  isSameDay,
+  isSameHour,
+  subDays,
+  subMonths,
+  subWeeks,
+} from 'date-fns';
 import { inject, injectable } from 'tsyringe';
 
 interface Request {
@@ -15,10 +25,24 @@ interface Request {
   endDate: Date;
   period: Period;
 }
+interface ChartData1 {
+  date: string;
+  prizeCount: number;
+  income: number;
+}
+
+interface ChartData2 {
+  cashIncome: number;
+  coinIncome: number;
+  creditCardIncome: number;
+  others: number;
+}
 
 interface Response {
   machinesSortedByLastCollection: Machine[];
   machinesSortedByLastConnection: Machine[];
+  chartData1?: ChartData1[];
+  chartData2?: ChartData2;
   machinesSortedByStock: {
     id: string;
     serialNumber: string;
@@ -29,8 +53,6 @@ interface Response {
   machinesWithoutTelemetryBoard: number;
   offlineMachines: number;
   onlineMachines: number;
-  chartData1?: ChartData1[];
-  chartData2?: ChartData2;
   givenPrizesCount?: number;
   income?: number;
 }
@@ -46,13 +68,20 @@ export default class DetailGroupService {
 
     @inject('MachinesRepository')
     private machinesRepository: MachinesRepository,
+
+    @inject('TelemetryLogsRepository')
+    private telemetryLogsRepository: TelemetryLogsRepository,
+
+    @inject('UniversalFinancialRepository')
+    private universalFinancialRepository: UniversalFinancialRepository,
   ) {}
 
   async execute({
     userId,
+    groupId,
     startDate,
     endDate,
-    groupId,
+    period,
   }: Request): Promise<Response> {
     const user = await this.usersRepository.findOne({
       by: 'id',
@@ -69,12 +98,17 @@ export default class DetailGroupService {
           },
         })
       ).map(group => group.id);
+
+      if (!groupIds.includes(groupId)) throw AppError.authorizationError;
     }
+
+    if (user.role === Role.MANAGER)
+      if (!user.groupIds?.includes(groupId)) throw AppError.authorizationError;
 
     const machinesSortedByLastCollection = (
       await this.machinesRepository.find({
         orderByLastCollection: true,
-        groupIds: groupId,
+        groupIds: [groupId],
         limit: 5,
         offset: 0,
         fields: [
@@ -92,8 +126,7 @@ export default class DetailGroupService {
     const machinesSortedByLastConnection = (
       await this.machinesRepository.find({
         orderByLastConnection: true,
-        operatorId: isOperator ? user.id : undefined,
-        groupIds: isOperator ? undefined : groupIds,
+        groupIds: [groupId],
         limit: 5,
         offset: 0,
         fields: [
@@ -110,32 +143,27 @@ export default class DetailGroupService {
 
     const machinesSortedByStock = await this.machinesRepository.machineSortedByStock(
       {
-        groupIds: isOperator ? undefined : groupIds,
-        operatorId: isOperator ? user.id : undefined,
+        groupIds: [groupId],
       },
     );
 
     const offlineMachines = await this.machinesRepository.count({
-      groupIds: isOperator ? undefined : groupIds,
-      operatorId: isOperator ? user.id : undefined,
+      groupIds: [groupId],
       telemetryStatus: 'OFFLINE',
     });
 
     const onlineMachines = await this.machinesRepository.count({
-      groupIds: isOperator ? undefined : groupIds,
-      operatorId: isOperator ? user.id : undefined,
+      groupIds: [groupId],
       telemetryStatus: 'ONLINE',
     });
 
     const machinesNeverConnected = await this.machinesRepository.count({
-      groupIds: isOperator ? undefined : groupIds,
-      operatorId: isOperator ? user.id : undefined,
+      groupIds: [groupId],
       telemetryStatus: 'VIRGIN',
     });
 
     const machinesWithoutTelemetryBoard = await this.machinesRepository.count({
-      groupIds: isOperator ? undefined : groupIds,
-      operatorId: isOperator ? user.id : undefined,
+      groupIds: [groupId],
       telemetryStatus: 'NO_TELEMETRY',
     });
 
@@ -148,5 +176,173 @@ export default class DetailGroupService {
 
     if (!startDate) throw AppError.unknownError;
     if (!endDate) throw AppError.unknownError;
+
+    let chartData1: ChartData1[] = [];
+    let income: number = 0;
+    let givenPrizesCount: number = 0;
+
+    if (
+      (period && period === Period.DAILY) ||
+      eachDayOfInterval({
+        start: startDate,
+        end: endDate,
+      }).length <= 1 // TODO: DAR UMA CONFERIDA SE 24 O INTERVALO É 2 OU 1
+    ) {
+      const telemetryLogsInPromise = async () => {
+        const response = await this.telemetryLogsRepository.find({
+          filters: {
+            date: {
+              startDate,
+              endDate,
+            },
+            groupId: [groupId],
+            maintenance: false,
+            type: 'IN',
+          },
+        });
+
+        return response;
+      };
+
+      const telemetryLogsOutPromise = async () => {
+        const response = await this.telemetryLogsRepository.find({
+          filters: {
+            date: {
+              startDate,
+              endDate,
+            },
+            groupId: [groupId],
+            maintenance: false,
+            type: 'OUT',
+          },
+        });
+
+        return response;
+      };
+
+      const [telemetryLogsIn, telemetryLogsOut] = await Promise.all([
+        await telemetryLogsInPromise(),
+        await telemetryLogsOutPromise(),
+      ]);
+
+      const hoursOfInterval = eachDayOfInterval({
+        start: startDate,
+        end: endDate,
+      });
+
+      // ? FATURAMENTO
+      income = telemetryLogsIn.reduce((a, b) => a + b.value, 0);
+
+      // ? PREMIOS ENTREGUES
+      givenPrizesCount = telemetryLogsOut.reduce((a, b) => a + b.value, 0);
+
+      chartData1 = hoursOfInterval.map(hour => {
+        const incomeInHour = telemetryLogsIn
+          .filter(telemetry => isSameHour(hour, telemetry.date))
+          .reduce(
+            (accumulator, currentValue) => accumulator + currentValue.value,
+            0,
+          );
+
+        const prizesCountInHour = telemetryLogsOut
+          .filter(telemetry => isSameHour(hour, telemetry.date))
+          .reduce(
+            (accumulator, currentValue) => accumulator + currentValue.value,
+            0,
+          );
+
+        return {
+          date: hour.toISOString(),
+          prizeCount: prizesCountInHour,
+          income: incomeInHour,
+        };
+      });
+    }
+
+    let universalFinancial: UniversalFinancial[] = [];
+    universalFinancial = await this.universalFinancialRepository.find({
+      groupId: [groupId],
+    });
+
+    if (period !== Period.DAILY) {
+      // ? FATURAMENTO
+      income = universalFinancial.reduce(
+        (a, b) =>
+          a + (b.cashIncome + b.coinIncome + b.creditCardIncome + b.others),
+        0,
+      );
+
+      // ? PREMIOS ENTREGUES
+      givenPrizesCount = universalFinancial.reduce(
+        (a, b) => a + b.givenPrizes,
+        0,
+      );
+
+      const daysOfInterval = eachDayOfInterval({
+        start: startDate,
+        end: endDate,
+      });
+
+      chartData1 = daysOfInterval.map(day => {
+        const incomeInDay = universalFinancial
+          .filter(item => isSameDay(day, item.date))
+          .reduce(
+            (accumulator, currentValue) =>
+              accumulator +
+              (currentValue.cashIncome +
+                currentValue.coinIncome +
+                currentValue.creditCardIncome +
+                currentValue.others),
+            0,
+          );
+
+        const prizesCountInDay = universalFinancial
+          .filter(item => isSameDay(day, item.date))
+          .reduce(
+            (accumulator, currentValue) =>
+              accumulator + currentValue.givenPrizes,
+            0,
+          );
+
+        return {
+          date: day.toISOString(),
+          prizeCount: prizesCountInDay,
+          income: incomeInDay,
+        };
+      });
+    }
+
+    let cashIncome = 0;
+    let coinIncome = 0;
+    let creditCardIncome = 0;
+    let others = 0;
+
+    universalFinancial.forEach(item => {
+      cashIncome += item.cashIncome;
+      coinIncome += item.coinIncome;
+      creditCardIncome += item.creditCardIncome;
+      others += item.others;
+    });
+
+    const chartData2 = {
+      cashIncome,
+      coinIncome,
+      creditCardIncome,
+      others,
+    };
+
+    return {
+      machinesNeverConnected,
+      machinesSortedByLastCollection,
+      machinesSortedByLastConnection,
+      machinesSortedByStock,
+      machinesWithoutTelemetryBoard,
+      offlineMachines,
+      onlineMachines,
+      givenPrizesCount,
+      income,
+      chartData1,
+      chartData2,
+    };
   }
 }

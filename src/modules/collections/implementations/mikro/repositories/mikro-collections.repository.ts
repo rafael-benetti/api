@@ -31,6 +31,7 @@ export default class MikroCollectionsRepository
           'group',
           'pointOfSale',
           'route',
+          'machine',
         ],
       },
     );
@@ -74,6 +75,7 @@ export default class MikroCollectionsRepository
           'group',
           'pointOfSale',
           'route',
+          'machine',
         ],
       },
     );
