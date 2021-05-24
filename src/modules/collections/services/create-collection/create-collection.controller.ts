@@ -16,7 +16,7 @@ export default abstract class CreateCollectionController {
       endLocation: Joi.object({
         latitude: Joi.number(),
         longitude: Joi.number(),
-      }),
+      }), // TODO: SE EXISTIR START LOCATION PRECISA TER END LOCATION
       boxCollections: Joi.array()
         .items(
           Joi.object({

@@ -26,6 +26,12 @@ collectionsRoutes.post(
     if (typeof req.body.boxCollections === 'string')
       req.body.boxCollections = JSON.parse(req.body.boxCollections);
 
+    if (typeof req.body.startTime === 'string')
+      req.body.startTime = JSON.parse(req.body.startTime);
+
+    if (typeof req.body.endTime === 'string')
+      req.body.endTime = JSON.parse(req.body.endTime);
+
     return next();
   },
   CreateCollectionController.validate,
