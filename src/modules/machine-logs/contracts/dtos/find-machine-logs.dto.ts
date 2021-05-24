@@ -5,7 +5,7 @@ export default interface FindMachineLogsDto {
   groupId: string;
   startDate?: Date;
   endDate?: Date;
-  type: MachineLogType;
+  type?: MachineLogType;
   limit?: number;
   offset?: number;
 }

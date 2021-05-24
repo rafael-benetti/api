@@ -24,15 +24,9 @@ class MikroNotificationsRepository implements NotificationsRepository {
     return NotificationMapper.toApi(mikroNotification);
   }
 
-  async find({
-    userId,
-    limit,
-    offset,
-  }: FindNotificationsDto): Promise<Notification[]> {
+  async find({ limit, offset }: FindNotificationsDto): Promise<Notification[]> {
     const notifications = await this.repository.find(
-      {
-        receivers: userId,
-      },
+      {}, // TODO: CONFIGURAR
       {
         limit,
         offset,

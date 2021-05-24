@@ -4,6 +4,4 @@ export default class Notification {
   title: string;
 
   message: string;
-
-  receivers: string[];
 }

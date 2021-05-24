@@ -13,14 +13,11 @@ class MikroNotification implements Notification {
   @Property()
   message: string;
 
-  @Property()
-  receivers: string[];
-
   constructor(data?: CreateNotificationDto) {
     if (data) {
       this.title = data.title;
-      this.message = data.message;
-      this.receivers = data.receivers;
+      this.message = data.title;
+      this.title = data.title;
     }
   }
 }

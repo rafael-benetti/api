@@ -33,10 +33,9 @@ let MikroNotificationsRepository = class MikroNotificationsRepository {
         this.repository.persist(mikroNotification);
         return notification_mapper_1.default.toApi(mikroNotification);
     }
-    async find({ userId, limit, offset, }) {
-        const notifications = await this.repository.find({
-            receivers: userId,
-        }, {
+    async find({ limit, offset }) {
+        const notifications = await this.repository.find({}, // TODO: CONFIGURAR
+        {
             limit,
             offset,
         });
