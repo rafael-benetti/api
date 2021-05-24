@@ -45,6 +45,12 @@ class FCMProvider implements NotificationProvider {
     };
   }
 
+  sendToDevices(
+    messagePayload: MessagePayload,
+  ): Promise<{ data: string; status: number }> {
+    throw new Error('Method not implemented.');
+  }
+
   getAccessToken(): Promise<string | null | undefined> {
     return new Promise((resolve, reject) => {
       const client = new google.auth.JWT(

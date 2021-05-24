@@ -30,6 +30,8 @@ class User {
 
   ownerId?: string;
 
+  deviceToken?: string;
+
   constructor(data?: CreateUserDto) {
     if (data) {
       this.id = v4();
@@ -44,6 +46,7 @@ class User {
       this.phoneNumber = data.phoneNumber;
       this.isActive = data.isActive;
       this.ownerId = data.ownerId;
+      this.deviceToken = data.deviceToken;
     }
   }
 }

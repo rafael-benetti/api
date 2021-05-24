@@ -4,11 +4,11 @@ import OrmProvider from '@providers/orm-provider/contracts/models/orm-provider';
 import { inject, injectable } from 'tsyringe';
 
 interface Request {
-  machineId: string;
+  machineId?: string;
+  operatorId?: string;
+  groupId: string;
   title: string;
   body: string;
-  topic: string;
-  type: string;
 }
 
 @injectable()
@@ -24,9 +24,14 @@ export default class CreateNotificationService {
     private notificationsRepository: NotificationsRepository,
   ) {}
 
-  async execute({ body, title, topic, type }: Request): Promise<void> {
+  async execute({
+    body,
+    title,
+    groupId,
+    machineId,
+    operatorId,
+  }: Request): Promise<void> {
     const firebaseMessageInfo = await this.notificationProvider.sendToTopic({
-      topic,
       title,
       body,
     });
@@ -34,9 +39,9 @@ export default class CreateNotificationService {
     this.notificationsRepository.create({
       body,
       title,
-      topic,
-      type,
-      firebaseMessageInfo,
+      groupId,
+      receivers,
+      machineId,
     });
 
     await this.ormProvider.commit();

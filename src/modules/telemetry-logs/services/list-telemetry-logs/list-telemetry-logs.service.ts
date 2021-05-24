@@ -9,7 +9,7 @@ import { inject, injectable } from 'tsyringe';
 interface Request {
   userId: string;
   machineId: string;
-  type: 'IN' | 'OUT';
+  type?: 'IN' | 'OUT';
   startDate: Date;
   endDate: Date;
   limit: number;

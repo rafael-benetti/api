@@ -10,6 +10,7 @@ import { inject, injectable } from 'tsyringe';
 interface Request {
   userId: string;
   name?: string;
+  deviceToken?: string;
   password?: {
     old: string;
     new: string;
@@ -40,6 +41,7 @@ class UpdateUserProfileService {
     password,
     file,
     phoneNumber,
+    deviceToken,
   }: Request): Promise<User> {
     const user = await this.usersRepository.findOne({
       by: 'id',
@@ -62,6 +64,8 @@ class UpdateUserProfileService {
 
       user.photo = await this.storageProvider.uploadFile(file);
     }
+
+    if (deviceToken) user.deviceToken = deviceToken;
 
     if (phoneNumber) user.phoneNumber = phoneNumber;
 

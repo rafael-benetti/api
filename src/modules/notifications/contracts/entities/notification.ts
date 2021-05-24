@@ -3,5 +3,11 @@ export default class Notification {
 
   title: string;
 
-  message: string;
+  body: string;
+
+  receivers: string[];
+
+  machineId?: string;
+
+  groupId: string;
 }

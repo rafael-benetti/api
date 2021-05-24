@@ -15,8 +15,6 @@ abstract class CreateNotificationController {
       body,
       machineId,
       title,
-      topic,
-      type,
     });
 
     return res.status(204).json();

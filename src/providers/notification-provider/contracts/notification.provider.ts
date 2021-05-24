@@ -4,6 +4,10 @@ interface NotificationProvider {
   sendToTopic(
     messagePayload: MessagePayload,
   ): Promise<{ data: string; status: number }>;
+
+  sendToDevices(
+    messagePayload: MessagePayload,
+  ): Promise<{ data: string; status: number }>;
 }
 
 export default NotificationProvider;

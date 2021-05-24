@@ -15,6 +15,7 @@ interface CreateUserDto {
   phoneNumber?: string;
   ownerId?: string;
   isActive?: boolean;
+  deviceToken?: string;
 }
 
 export default CreateUserDto;
