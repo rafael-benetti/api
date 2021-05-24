@@ -26,11 +26,11 @@ collectionsRoutes.post(
     if (typeof req.body.boxCollections === 'string')
       req.body.boxCollections = JSON.parse(req.body.boxCollections);
 
-    if (typeof req.body.startTime === 'string')
-      req.body.startTime = JSON.parse(req.body.startTime);
+    if (typeof req.body.startLocation === 'string')
+      req.body.startLocation = JSON.parse(req.body.startLocation);
 
-    if (typeof req.body.endTime === 'string')
-      req.body.endTime = JSON.parse(req.body.endTime);
+    if (typeof req.body.endLocation === 'string')
+      req.body.endLocation = JSON.parse(req.body.endLocation);
 
     return next();
   },
