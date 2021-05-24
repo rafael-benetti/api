@@ -47,7 +47,38 @@ class FCMProvider implements NotificationProvider {
 
   sendToDevices(
     messagePayload: MessagePayload,
-  ): Promise<{ data: string; status: number }> {}
+  ): Promise<{ data: string; status: number }> {
+    const accessToken = await this.getAccessToken();
+
+    if (!accessToken) throw AppError.unknownError;
+
+    const url =
+      'https://fcm.googleapis.com/v1/projects/notifications-4e0e2/messages:send';
+
+    const headers = {
+      Authorization: `Bearer ${accessToken}`,
+      'Content-type': 'application/json',
+    };
+
+    const response = await this.client.post(
+      url,
+      {
+        message: {
+          topic: messagePayload.topic,
+          notification: {
+            title: messagePayload.title,
+            body: messagePayload.body,
+          },
+        },
+      },
+      { headers },
+    );
+
+    return {
+      data: response.data,
+      status: response.status,
+    };
+  }
 
   getAccessToken(): Promise<string | null | undefined> {
     return new Promise((resolve, reject) => {
