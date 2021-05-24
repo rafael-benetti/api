@@ -214,6 +214,10 @@ usersRoutes.get(
   ListOperatorsController.handle,
 );
 
-usersRoutes.get('/dashboard', DashboardInfoController.handle);
+usersRoutes.get(
+  '/dashboard',
+  DashboardInfoController.validate,
+  DashboardInfoController.handle,
+);
 
 export default usersRoutes;

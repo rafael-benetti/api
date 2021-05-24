@@ -1,10 +1,10 @@
 import Period from '@modules/machines/contracts/dtos/period.dto';
 import { celebrate, Joi } from 'celebrate';
-import { Response, Request } from 'express';
+import { Request, Response } from 'express';
 import { container } from 'tsyringe';
-import DashboardInfoService from './dashboard-info.service';
+import DetailGroupService from './detail-group.service';
 
-export default abstract class DashboardInfoController {
+abstract class DetailGroupController {
   static validate = celebrate({
     query: {
       startDate: Joi.date(),
@@ -16,17 +16,22 @@ export default abstract class DashboardInfoController {
   static async handle(req: Request, res: Response): Promise<Response> {
     const { userId } = req;
 
+    const { groupId } = req.params;
+
     const { startDate, endDate, period } = req.query;
 
-    const dashboardInfoService = container.resolve(DashboardInfoService);
+    const detailGroupService = container.resolve(DetailGroupService);
 
-    const response = await dashboardInfoService.execute({
+    const groupDetail = await detailGroupService.execute({
       userId,
+      groupId,
       period: period as Period,
       endDate: new Date(endDate as string),
       startDate: new Date(startDate as string),
     });
 
-    return res.json(response);
+    return res.json(groupDetail);
   }
 }
+
+export default DetailGroupController;

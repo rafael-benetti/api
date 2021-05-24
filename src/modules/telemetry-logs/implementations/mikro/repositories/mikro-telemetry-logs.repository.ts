@@ -2,6 +2,7 @@ import CreateTelemetryLogDto from '@modules/telemetry-logs/contracts/dtos/create
 import FindTelemetryLogsDto from '@modules/telemetry-logs/contracts/dtos/find-telemetry-logs.dto';
 import GetIncomePerMachineResponseDto from '@modules/telemetry-logs/contracts/dtos/get-income-per-machine-response.dto';
 import GetIncomePerMachineDto from '@modules/telemetry-logs/contracts/dtos/get-income-per-machine.dto';
+import GetIncomePerPointOfSaleDto from '@modules/telemetry-logs/contracts/dtos/get-income-per-point-of-sale.dto';
 import TelemetryLog from '@modules/telemetry-logs/contracts/entities/telemetry-log';
 import TelemetryLogsRepository from '@modules/telemetry-logs/contracts/repositories/telemetry-logs.repository';
 import MikroOrmProvider from '@providers/orm-provider/implementations/mikro/mikro-orm-provider';
@@ -113,6 +114,51 @@ class MikroTelemetryLogsRepository implements TelemetryLogsRepository {
     ]);
 
     return incomePerMachine;
+  }
+
+  async incomePerPointOfSale({
+    groupIds,
+    startDate,
+    endDate,
+  }: GetIncomePerPointOfSaleDto): Promise<[{ income: number; id: string }]> {
+    const pointsOfSale = await this.repository.aggregate([
+      {
+        $match: {
+          groupId: {
+            $in: groupIds,
+          },
+          date: {
+            $gte: startDate,
+            $lt: endDate,
+          },
+          type: 'IN',
+        },
+      },
+      {
+        $group: {
+          _id: '$pointOfSaleId',
+          income: {
+            $sum: '$value',
+          },
+          numberOfPlays: {
+            $sum: '$numberOfPlays',
+          },
+          count: { $sum: 1 },
+        },
+      },
+      {
+        $project: {
+          _id: 0,
+          id: '$_id',
+          income: 1,
+          count: 1,
+          numberOfPlays: 1,
+          type: 1,
+        },
+      },
+    ]);
+
+    return pointsOfSale as [{ income: number; id: string }];
   }
 }
 

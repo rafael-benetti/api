@@ -1,5 +1,6 @@
 export default interface FindCollectionsDto {
-  groupIds: string[];
+  collectionId?: string;
+  groupIds?: string[];
   machineId?: string | string[];
   limit?: number;
   offset?: number;

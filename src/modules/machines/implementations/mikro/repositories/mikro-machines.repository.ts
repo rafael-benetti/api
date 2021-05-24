@@ -169,7 +169,6 @@ class MikroMachinesRepository implements MachinesRepository {
           priority: 1,
         },
       },
-
       {
         ...(groupIds && {
           $match: {

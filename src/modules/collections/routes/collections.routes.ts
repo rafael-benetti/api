@@ -5,6 +5,7 @@ import multer from 'multer';
 import { container } from 'tsyringe';
 import CreateCollectionController from '../services/create-collection/create-collection.controller';
 import EditCollectionController from '../services/edit-collection/edit-collection.controller';
+import GetCollectionController from '../services/get-collection/get-collection.controller';
 import GetCollectionsController from '../services/get-collections/get-collections.controller';
 import ReviewCollectionController from '../services/review-collection/review-collection.controller';
 
@@ -24,6 +25,12 @@ collectionsRoutes.post(
   (req, res, next) => {
     if (typeof req.body.boxCollections === 'string')
       req.body.boxCollections = JSON.parse(req.body.boxCollections);
+
+    if (typeof req.body.startLocation === 'string')
+      req.body.startLocation = JSON.parse(req.body.startLocation);
+
+    if (typeof req.body.endLocation === 'string')
+      req.body.endLocation = JSON.parse(req.body.endLocation);
 
     return next();
   },
@@ -63,6 +70,12 @@ collectionsRoutes.get(
   '/',
   GetCollectionsController.validate,
   GetCollectionsController.handle,
+);
+
+collectionsRoutes.get(
+  '/:collectionId',
+  GetCollectionController.validate,
+  GetCollectionController.handle,
 );
 
 export default collectionsRoutes;
