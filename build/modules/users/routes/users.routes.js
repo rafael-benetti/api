@@ -12,6 +12,7 @@ const tsyringe_1 = require("tsyringe");
 const authenticate_user_controller_1 = __importDefault(require("../services/authenticate-user/authenticate-user.controller"));
 const create_manager_controller_1 = __importDefault(require("../services/create-manager/create-manager.controller"));
 const create_operator_controller_1 = __importDefault(require("../services/create-operator/create-operator.controller"));
+const dashboard_info_controller_1 = __importDefault(require("../services/dashboard-info/dashboard-info.controller"));
 const edit_manager_controller_1 = __importDefault(require("../services/edit-manager/edit-manager.controller"));
 const edit_operator_controller_1 = __importDefault(require("../services/edit-operator/edit-operator.controller"));
 const get_user_profile_controller_1 = __importDefault(require("../services/get-user-profile/get-user-profile.controller"));
@@ -157,4 +158,5 @@ usersRoutes.get('/operators', celebrate_1.celebrate({
         offset: celebrate_1.Joi.number().min(0).integer(),
     },
 }), list_operators_controller_1.default.handle);
+usersRoutes.get('/dashboard', dashboard_info_controller_1.default.validate, dashboard_info_controller_1.default.handle);
 exports.default = usersRoutes;

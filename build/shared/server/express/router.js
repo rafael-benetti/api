@@ -8,7 +8,9 @@ const categories_routes_1 = __importDefault(require("../../../modules/categories
 const collections_routes_1 = __importDefault(require("../../../modules/collections/routes/collections.routes"));
 const counter_types_routes_1 = __importDefault(require("../../../modules/counter-types/routes/counter-types.routes"));
 const groups_routes_1 = __importDefault(require("../../../modules/groups/routes/groups.routes"));
+const machine_logs_router_1 = __importDefault(require("../../../modules/machine-logs/routes/machine-logs.router"));
 const machines_routes_1 = __importDefault(require("../../../modules/machines/routes/machines.routes"));
+const notifications_router_1 = __importDefault(require("../../../modules/notifications/routes/notifications.router"));
 const points_of_sales_routes_1 = __importDefault(require("../../../modules/points-of-sale/routes/points-of-sales.routes"));
 const products_routes_1 = __importDefault(require("../../../modules/products/routes/products.routes"));
 const reports_routes_1 = __importDefault(require("../../../modules/reports/routes/reports.routes"));
@@ -31,4 +33,6 @@ router.use('/telemetry-boards', telemetry_routes_1.default);
 router.use('/telemetry-logs', telemetry_logs_router_1.default);
 router.use('/collections', collections_routes_1.default);
 router.use('/reports', reports_routes_1.default);
+router.use('/notifications', notifications_router_1.default);
+router.use('/machine-logs', machine_logs_router_1.default);
 exports.default = router;

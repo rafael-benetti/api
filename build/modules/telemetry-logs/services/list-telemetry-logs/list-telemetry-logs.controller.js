@@ -8,11 +8,14 @@ const list_telemetry_logs_service_1 = __importDefault(require("./list-telemetry-
 class ListTelemetryLogsController {
     static async handle(req, res) {
         const { userId } = req;
-        const { machineId, limit, offset } = req.query;
+        const { machineId, startDate, endDate, type, limit, offset } = req.query;
         const listTelemetryLogsService = tsyringe_1.container.resolve(list_telemetry_logs_service_1.default);
         const telemetryLogs = await listTelemetryLogsService.execute({
             userId,
             machineId: machineId,
+            startDate: new Date(startDate),
+            endDate: new Date(endDate),
+            type: type,
             limit: Number(limit),
             offset: Number(offset),
         });

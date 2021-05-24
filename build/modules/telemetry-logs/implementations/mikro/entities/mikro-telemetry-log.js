@@ -30,6 +30,7 @@ let MikroTelemetryLog = class MikroTelemetryLog {
             this.telemetryBoardId = data.telemetryBoardId;
             this.type = data.type;
             this.value = data.value;
+            this.numberOfPlays = data.numberOfPlays;
         }
     }
 };
@@ -77,6 +78,10 @@ __decorate([
     core_1.Property(),
     __metadata("design:type", Boolean)
 ], MikroTelemetryLog.prototype, "maintenance", void 0);
+__decorate([
+    core_1.Property(),
+    __metadata("design:type", Number)
+], MikroTelemetryLog.prototype, "numberOfPlays", void 0);
 MikroTelemetryLog = __decorate([
     core_1.Entity({ collection: 'telemetry-logs' }),
     __metadata("design:paramtypes", [Object])

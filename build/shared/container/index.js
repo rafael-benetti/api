@@ -13,8 +13,12 @@ const couter_types_repository_1 = __importDefault(require("../../modules/counter
 const mikro_counter_types_repository_1 = __importDefault(require("../../modules/counter-types/implementations/mikro/repositories/mikro-counter-types.repository"));
 const groups_repository_1 = __importDefault(require("../../modules/groups/contracts/repositories/groups.repository"));
 const mikro_groups_repository_1 = __importDefault(require("../../modules/groups/implementations/mikro/repositories/mikro-groups.repository"));
+const machine_logs_repository_1 = __importDefault(require("../../modules/machine-logs/contracts/repositories/machine-logs.repository"));
+const mikro_machine_logs_repository_1 = __importDefault(require("../../modules/machine-logs/implementations/mikro/repositories/mikro-machine-logs.repository"));
 const machines_repository_1 = __importDefault(require("../../modules/machines/contracts/repositories/machines.repository"));
 const mikro_machines_repository_1 = __importDefault(require("../../modules/machines/implementations/mikro/repositories/mikro-machines.repository"));
+const notifications_repostory_1 = __importDefault(require("../../modules/notifications/contracts/repositories/notifications.repostory"));
+const mikro_notifications_repository_1 = __importDefault(require("../../modules/notifications/implementations/mikro/repositories/mikro-notifications.repository"));
 const points_of_sale_repository_1 = __importDefault(require("../../modules/points-of-sale/contracts/repositories/points-of-sale.repository"));
 const mikro_points_of_sale_repository_1 = __importDefault(require("../../modules/points-of-sale/implementations/mikro/repositories/mikro-points-of-sale.repository"));
 const product_logs_repository_1 = __importDefault(require("../../modules/products/contracts/repositories/product-logs.repository"));
@@ -25,6 +29,8 @@ const telemetry_logs_repository_1 = __importDefault(require("../../modules/telem
 const mikro_telemetry_logs_repository_1 = __importDefault(require("../../modules/telemetry-logs/implementations/mikro/repositories/mikro-telemetry-logs.repository"));
 const telemetry_boards_repository_1 = __importDefault(require("../../modules/telemetry/contracts/repositories/telemetry-boards.repository"));
 const mikro_telemetry_boards_repository_1 = __importDefault(require("../../modules/telemetry/implementations/mikro/repositories/mikro-telemetry-boards.repository"));
+const universal_financial_repository_1 = __importDefault(require("../../modules/universal-financial/contracts/repositories/universal-financial.repository"));
+const mikro_universal_financial_repository_1 = __importDefault(require("../../modules/universal-financial/implementations/mikro/repositories/mikro-universal-financial.repository"));
 const users_repository_1 = __importDefault(require("../../modules/users/contracts/repositories/users.repository"));
 const mikro_users_repository_1 = __importDefault(require("../../modules/users/implementations/mikro/repositories/mikro-users.repository"));
 const tsyringe_1 = require("tsyringe");
@@ -41,3 +47,6 @@ tsyringe_1.container.registerSingleton('TelemetryBoardsRepository', mikro_teleme
 tsyringe_1.container.registerSingleton('CollectionsRepository', mikro_collections_repository_1.default);
 tsyringe_1.container.registerSingleton('TelemetryLogsRepository', mikro_telemetry_logs_repository_1.default);
 tsyringe_1.container.registerSingleton('ProductLogsRepository', mikro_product_logs_repository_1.default);
+tsyringe_1.container.registerSingleton('NotificationsRepository', mikro_notifications_repository_1.default);
+tsyringe_1.container.registerSingleton('UniversalFinancialRepository', mikro_universal_financial_repository_1.default);
+tsyringe_1.container.registerSingleton('MachineLogsRepository', mikro_machine_logs_repository_1.default);

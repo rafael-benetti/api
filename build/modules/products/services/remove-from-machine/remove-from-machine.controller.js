@@ -11,7 +11,6 @@ class RemoveFromMachineController {
 exports.default = RemoveFromMachineController;
 RemoveFromMachineController.validate = celebrate_1.celebrate({
     body: {
-        productId: celebrate_1.Joi.string().uuid().required(),
         machineId: celebrate_1.Joi.string().uuid().required(),
         boxId: celebrate_1.Joi.string().uuid().required(),
         quantity: celebrate_1.Joi.number().required(),
@@ -20,7 +19,8 @@ RemoveFromMachineController.validate = celebrate_1.celebrate({
 });
 RemoveFromMachineController.handle = async (request, response) => {
     const { userId } = request;
-    const { productId, machineId, boxId, quantity, toGroup } = request.body;
+    const { machineId, boxId, quantity, toGroup } = request.body;
+    const { productId } = request.params;
     const removeFromMachine = tsyringe_1.container.resolve(remove_from_machine_service_1.default);
     await removeFromMachine.execute({
         userId,

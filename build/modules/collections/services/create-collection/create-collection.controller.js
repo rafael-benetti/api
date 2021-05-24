@@ -13,6 +13,15 @@ CreateCollectionController.validate = celebrate_1.celebrate({
     body: {
         machineId: celebrate_1.Joi.string().uuid().required(),
         observations: celebrate_1.Joi.string().required(),
+        startTime: celebrate_1.Joi.date(),
+        startLocation: celebrate_1.Joi.object({
+            latitude: celebrate_1.Joi.number(),
+            longitude: celebrate_1.Joi.number(),
+        }),
+        endLocation: celebrate_1.Joi.object({
+            latitude: celebrate_1.Joi.number(),
+            longitude: celebrate_1.Joi.number(),
+        }),
         boxCollections: celebrate_1.Joi.array()
             .items(celebrate_1.Joi.object({
             boxId: celebrate_1.Joi.string().uuid().required(),
@@ -20,6 +29,7 @@ CreateCollectionController.validate = celebrate_1.celebrate({
             counterCollections: celebrate_1.Joi.array()
                 .items(celebrate_1.Joi.object({
                 counterId: celebrate_1.Joi.string().required(),
+                counterTypeLabel: celebrate_1.Joi.string().required(),
                 mechanicalCount: celebrate_1.Joi.number(),
                 digitalCount: celebrate_1.Joi.number(),
                 userCount: celebrate_1.Joi.number(),
@@ -31,7 +41,7 @@ CreateCollectionController.validate = celebrate_1.celebrate({
 });
 CreateCollectionController.handle = async (request, response) => {
     const { userId, files } = request;
-    const { machineId, observations, boxCollections } = request.body;
+    const { machineId, observations, boxCollections, startTime, startLocation, endLocation, } = request.body;
     const createCollection = tsyringe_1.container.resolve(create_collection_service_1.default);
     const collection = await createCollection.execute({
         userId,
@@ -39,6 +49,9 @@ CreateCollectionController.handle = async (request, response) => {
         observations,
         boxCollections,
         files: files,
+        startTime,
+        endLocation,
+        startLocation,
     });
     return response.status(201).json(collection);
 };

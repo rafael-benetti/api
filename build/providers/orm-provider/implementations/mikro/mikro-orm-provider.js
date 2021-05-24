@@ -11,12 +11,15 @@ const mikro_category_1 = __importDefault(require("../../../../modules/categories
 const mikro_collection_1 = __importDefault(require("../../../../modules/collections/implementations/mikro/entities/mikro-collection"));
 const mikro_counter_type_1 = __importDefault(require("../../../../modules/counter-types/implementations/mikro/models/mikro-counter-type"));
 const mikro_group_1 = __importDefault(require("../../../../modules/groups/implementations/mikro/models/mikro-group"));
+const mikro_machine_log_1 = __importDefault(require("../../../../modules/machine-logs/implementations/mikro/entities/mikro-machine-log"));
 const mikro_machine_1 = __importDefault(require("../../../../modules/machines/implementations/mikro/models/mikro-machine"));
+const mikro_notification_1 = __importDefault(require("../../../../modules/notifications/implementations/mikro/entities/mikro-notification"));
 const mikro_point_of_sale_1 = __importDefault(require("../../../../modules/points-of-sale/implementations/mikro/models/mikro-point-of-sale"));
 const mikro_product_log_1 = __importDefault(require("../../../../modules/products/implementations/mikro/entities/mikro-product-log"));
 const mikro_route_1 = __importDefault(require("../../../../modules/routes/implementations/mikro/models/mikro-route"));
 const mikro_telemetry_log_1 = __importDefault(require("../../../../modules/telemetry-logs/implementations/mikro/entities/mikro-telemetry-log"));
 const mikro_telemetry_board_1 = __importDefault(require("../../../../modules/telemetry/implementations/mikro/entities/mikro-telemetry-board"));
+const mikro_universal_financial_1 = __importDefault(require("../../../../modules/universal-financial/implementations/mikro/entities/mikro-universal-financial"));
 const mikro_user_1 = __importDefault(require("../../../../modules/users/implementations/mikro/models/mikro-user"));
 const orm_provider_1 = __importDefault(require("../../contracts/models/orm-provider"));
 class MikroOrmProvider {
@@ -43,6 +46,9 @@ class MikroOrmProvider {
                 mikro_collection_1.default,
                 mikro_telemetry_log_1.default,
                 mikro_product_log_1.default,
+                mikro_notification_1.default,
+                mikro_machine_log_1.default,
+                mikro_universal_financial_1.default,
             ],
             implicitTransactions: true,
             debug: true,

@@ -3,6 +3,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
+const logger_1 = __importDefault(require("../../../../../config/logger"));
 const create_group_dto_1 = __importDefault(require("../../../contracts/dtos/create-group.dto"));
 const find_group_dto_1 = __importDefault(require("../../../contracts/dtos/find-group.dto"));
 const find_groups_dto_1 = __importDefault(require("../../../contracts/dtos/find-groups.dto"));
@@ -38,12 +39,14 @@ class MikroGroupsRepository {
             query.isPersonal = isPersonal;
         if (ids)
             query.id = ids;
+        logger_1.default.info(data);
         const groups = await this.repository.find({
             ...query,
         }, {
             limit: data.limit,
             offset: data.offset,
             populate: data.populate,
+            ...(data.fields && { fields: data.fields }),
         });
         return groups.map(group => group_mapper_1.default.toApi(group));
     }

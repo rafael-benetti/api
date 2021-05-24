@@ -4,8 +4,10 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 const uuid_1 = require("uuid");
+const machine_1 = __importDefault(require("../../../machines/contracts/models/machine"));
 const create_collection_dto_1 = __importDefault(require("../dtos/create-collection.dto"));
 const box_collection_1 = __importDefault(require("../interfaces/box-collection"));
+const geolocation_dto_1 = __importDefault(require("../dtos/geolocation.dto"));
 class Collection {
     constructor(data) {
         if (data) {
@@ -19,6 +21,7 @@ class Collection {
             this.observations = data.observations;
             this.date = new Date();
             this.boxCollections = data.boxCollections;
+            this.reviewedData = data.reviewedData;
         }
     }
 }

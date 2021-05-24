@@ -34,6 +34,8 @@ routesRouter.get('/:routeId', celebrate_1.celebrate({
     },
     query: {
         period: celebrate_1.Joi.string().valid('DAILY', 'MONTHLY', 'WEEKLY'),
+        startDate: celebrate_1.Joi.date(),
+        endDate: celebrate_1.Joi.date(),
     },
 }), detail_route_controller_1.default.handle);
 routesRouter.delete('/:routeId', celebrate_1.celebrate({

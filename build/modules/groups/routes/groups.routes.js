@@ -7,6 +7,7 @@ const auth_handler_1 = __importDefault(require("../../../shared/server/express/m
 const celebrate_1 = require("celebrate");
 const express_1 = require("express");
 const create_group_controller_1 = __importDefault(require("../services/create-group/create-group.controller"));
+const detail_group_controller_1 = __importDefault(require("../services/detail-group/detail-group.controller"));
 const edit_group_controller_1 = __importDefault(require("../services/edit-group/edit-group.controller"));
 const list_groups_controller_1 = __importDefault(require("../services/list-groups/list-groups.controller"));
 const groupsRoutes = express_1.Router();
@@ -27,4 +28,5 @@ groupsRoutes.get('/', celebrate_1.celebrate({
         offset: celebrate_1.Joi.number().min(0).integer(),
     },
 }, { abortEarly: false }), list_groups_controller_1.default.handle);
+groupsRoutes.get('/:groupId', detail_group_controller_1.default.validate, detail_group_controller_1.default.handle);
 exports.default = groupsRoutes;

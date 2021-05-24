@@ -36,7 +36,7 @@ let GetPointOfSaleDetailsService = class GetPointOfSaleDetailsService {
         this.telemetryLogsRepository = telemetryLogsRepository;
         this.routesRepository = routesRepository;
     }
-    async execute({ userId, pointOfSaleId, period, }) {
+    async execute({ userId, pointOfSaleId, period, startDate, endDate, }) {
         const user = await this.usersRepository.findOne({
             by: 'id',
             value: userId,
@@ -65,15 +65,18 @@ let GetPointOfSaleDetailsService = class GetPointOfSaleDetailsService {
                 id: pointOfSale.routeId,
             });
         }
-        const endDate = new Date(Date.now());
-        let startDate;
-        if (period === period_dto_1.default.DAILY)
-            startDate = date_fns_1.subDays(endDate, 1);
-        if (period === period_dto_1.default.WEEKLY)
-            startDate = date_fns_1.subWeeks(endDate, 1);
-        if (period === period_dto_1.default.MONTHLY)
-            startDate = date_fns_1.subMonths(endDate, 1);
-        if (startDate === undefined)
+        if (period) {
+            endDate = new Date(Date.now());
+            if (period === period_dto_1.default.DAILY)
+                startDate = date_fns_1.subDays(endDate, 1);
+            if (period === period_dto_1.default.WEEKLY)
+                startDate = date_fns_1.subWeeks(endDate, 1);
+            if (period === period_dto_1.default.MONTHLY)
+                startDate = date_fns_1.subMonths(endDate, 1);
+        }
+        if (!startDate)
+            throw app_error_1.default.unknownError;
+        if (!endDate)
             throw app_error_1.default.unknownError;
         const telemetryLogs = await this.telemetryLogsRepository.find({
             filters: {
@@ -137,6 +140,9 @@ let GetPointOfSaleDetailsService = class GetPointOfSaleDetailsService {
             return {
                 machine,
                 income: telemetryLogsIn
+                    .filter(telemetryLog => telemetryLog.machineId === machine.id)
+                    .reduce((a, b) => a + b.value, 0),
+                givenPrizes: telemetryLogsOut
                     .filter(telemetryLog => telemetryLog.machineId === machine.id)
                     .reduce((a, b) => a + b.value, 0),
             };

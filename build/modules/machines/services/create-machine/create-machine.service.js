@@ -40,7 +40,7 @@ let CreateMachineService = class CreateMachineService {
         this.groupsRepository = groupsRepository;
         this.telemetryBoardsRepository = telemetryBoardsRepository;
     }
-    async execute({ userId, categoryId, boxes, gameValue, groupId, locationId, operatorId, serialNumber, telemetryBoardId, }) {
+    async execute({ userId, categoryId, boxes, gameValue, groupId, locationId, operatorId, serialNumber, telemetryBoardId, typeOfPrizeId, minimumPrizeCount, incomePerMonthGoal, incomePerPrizeGoal, }) {
         const user = await this.usersRepository.findOne({
             by: 'id',
             value: userId,
@@ -108,6 +108,20 @@ let CreateMachineService = class CreateMachineService {
             if (!operator?.groupIds?.includes(groupId))
                 throw app_error_1.default.authorizationError;
         }
+        let typeOfPrize;
+        if (typeOfPrizeId) {
+            const group = await this.groupsRepository.findOne({
+                by: 'id',
+                value: groupId,
+            });
+            const prize = group?.stock.prizes.find(prize => prize.id === typeOfPrizeId);
+            if (!prize)
+                throw app_error_1.default.productNotFound;
+            typeOfPrize = {
+                id: prize.id,
+                label: prize.label,
+            };
+        }
         const machine = this.machinesRepository.create({
             boxes: boxesEntities,
             categoryId: category.id,
@@ -120,6 +134,10 @@ let CreateMachineService = class CreateMachineService {
             categoryLabel: category.label,
             isActive: true,
             telemetryBoardId,
+            typeOfPrize,
+            minimumPrizeCount,
+            incomePerMonthGoal,
+            incomePerPrizeGoal,
         });
         if (telemetryBoardId) {
             const telemetryBoard = await this.telemetryBoardsRepository.findById(telemetryBoardId);

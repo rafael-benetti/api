@@ -5,3 +5,4 @@ require("./mail-provider/index");
 require("./orm-provider/index");
 require("./session-provider/index");
 require("./storage-provider/index");
+require("./notification-provider/index");

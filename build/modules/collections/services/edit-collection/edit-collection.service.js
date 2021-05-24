@@ -15,6 +15,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
+/* eslint-disable @typescript-eslint/no-explicit-any */
 const collection_1 = __importDefault(require("../../contracts/entities/collection"));
 const collections_repository_1 = __importDefault(require("../../contracts/repositories/collections.repository"));
 const machines_repository_1 = __importDefault(require("../../../machines/contracts/repositories/machines.repository"));
@@ -27,6 +28,7 @@ const storage_provider_1 = __importDefault(require("../../../../providers/storag
 const orm_provider_1 = __importDefault(require("../../../../providers/orm-provider/contracts/models/orm-provider"));
 const app_error_1 = __importDefault(require("../../../../shared/errors/app-error"));
 const tsyringe_1 = require("tsyringe");
+const logger_1 = __importDefault(require("../../../../config/logger"));
 let EditCollectionService = class EditCollectionService {
     constructor(collectionsRepository, usersRepository, telemetryLogsRepository, machinesRepository, pointsOfSaleRepository, ormProvider, storageProvider) {
         this.collectionsRepository = collectionsRepository;
@@ -48,7 +50,7 @@ let EditCollectionService = class EditCollectionService {
             user.role !== role_1.default.OWNER &&
             user.role !== role_1.default.OPERATOR)
             throw app_error_1.default.authorizationError;
-        if (user.role === role_1.default.MANAGER || user.role === role_1.default.OPERATOR) {
+        if (user.role === role_1.default.OPERATOR) {
             if (!user.permissions?.editCollections)
                 throw app_error_1.default.authorizationError;
         }
@@ -73,7 +75,8 @@ let EditCollectionService = class EditCollectionService {
             throw app_error_1.default.pointOfSaleNotFound;
         if (user.role === role_1.default.OPERATOR && machine.operatorId !== user.id)
             throw app_error_1.default.authorizationError;
-        if (!user.groupIds?.includes(lastCollection.groupId))
+        if (!user.groupIds?.includes(lastCollection.groupId) &&
+            user.role !== role_1.default.OWNER)
             throw app_error_1.default.authorizationError;
         const parsedFiles = {};
         files?.forEach(file => {
@@ -87,18 +90,20 @@ let EditCollectionService = class EditCollectionService {
             parsedFiles[boxId][counterId].push(file);
         });
         // ? REMOVE FOTOS
-        lastCollection.boxCollections.forEach(boxCollections => {
-            boxCollections.counterCollections.forEach(boxCollection => {
-                for (let i = 0; i < boxCollection.photos.length; i += 1) {
-                    const obj = boxCollection.photos[i];
-                    if (photosToDelete.indexOf(obj.key) !== -1) {
-                        boxCollection.photos.splice(i, 1);
-                        this.storageProvider.deleteFile(obj.key);
-                        i -= 1;
+        if (photosToDelete && photosToDelete.length > 0) {
+            lastCollection.boxCollections.forEach(boxCollections => {
+                boxCollections.counterCollections.forEach(counterCollection => {
+                    for (let i = 0; i < counterCollection.photos?.length; i += 1) {
+                        const obj = counterCollection.photos[i];
+                        if (photosToDelete.indexOf(obj.key) !== -1) {
+                            counterCollection.photos.splice(i, 1);
+                            this.storageProvider.deleteFile(obj.key);
+                            i -= 1;
+                        }
                     }
-                }
+                });
             });
-        });
+        }
         let previousCollection;
         if (lastCollection.previousCollectionId)
             previousCollection = await this.collectionsRepository.findOne(lastCollection.previousCollectionId);
@@ -117,7 +122,6 @@ let EditCollectionService = class EditCollectionService {
             const box = machine.boxes.find(box => box.id === boxCollection.boxId);
             if (!box)
                 throw app_error_1.default.boxNotFound;
-            box.currentMoney = 0;
             await Promise.all(boxCollection.counterCollections.map(async (counterCollection) => {
                 const counter = box.counters.find(counter => counter.id === counterCollection.counterId);
                 if (!counter)
@@ -142,9 +146,11 @@ let EditCollectionService = class EditCollectionService {
                     if (boxCollection.boxId === lastBoxCollection.boxId) {
                         boxCollection.counterCollections.forEach(counterCollection => {
                             if (counterCollection.counterId === lastCounterCollection.counterId) {
+                                logger_1.default.info('counterCollection.photoscounterCollection.photoscounterCollection.photoscounterCollection.photoscounterCollection.photos');
+                                logger_1.default.info(lastCounterCollection.photos);
                                 counterCollection.photos = [
-                                    ...counterCollection.photos,
-                                    ...lastCounterCollection.photos,
+                                    ...(counterCollection.photos ?? []),
+                                    ...(lastCounterCollection.photos ?? []),
                                 ];
                             }
                         });
@@ -154,8 +160,9 @@ let EditCollectionService = class EditCollectionService {
         });
         lastCollection.boxCollections = boxCollections;
         lastCollection.observations = observations;
-        this.collectionsRepository.save(lastCollection);
         this.machinesRepository.save(machine);
+        await this.ormProvider.commit();
+        this.collectionsRepository.save(lastCollection);
         await this.ormProvider.commit();
         Object.assign(lastCollection, {
             machine,

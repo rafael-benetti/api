@@ -17,8 +17,8 @@ pointsOfSaleRoutes.post('/', celebrate_1.celebrate({
         groupId: celebrate_1.Joi.string().required(),
         label: celebrate_1.Joi.string().required(),
         contactName: celebrate_1.Joi.string().required(),
-        primaryPhoneNumber: celebrate_1.Joi.string().required(),
-        secondaryPhoneNumber: celebrate_1.Joi.string(),
+        primaryPhoneNumber: celebrate_1.Joi.string().min(14).max(15).required(),
+        secondaryPhoneNumber: celebrate_1.Joi.string().min(14).max(15),
         rent: celebrate_1.Joi.number().greater(-1),
         isPercentage: celebrate_1.Joi.bool(),
         address: celebrate_1.Joi.object({
@@ -36,8 +36,8 @@ pointsOfSaleRoutes.patch('/:pointOfSaleId', celebrate_1.celebrate({
     body: {
         label: celebrate_1.Joi.string(),
         contactName: celebrate_1.Joi.string(),
-        primaryPhoneNumber: celebrate_1.Joi.string(),
-        secondaryPhoneNumber: celebrate_1.Joi.string(),
+        primaryPhoneNumber: celebrate_1.Joi.string().min(14).max(15),
+        secondaryPhoneNumber: celebrate_1.Joi.string().min(14).max(15),
         rent: celebrate_1.Joi.number().greater(-1),
         isPercentage: celebrate_1.Joi.bool(),
         address: celebrate_1.Joi.object({
@@ -49,6 +49,8 @@ pointsOfSaleRoutes.get('/', list_points_of_sale_controller_1.default.handle);
 pointsOfSaleRoutes.get('/:pointOfSaleId', celebrate_1.celebrate({
     query: {
         period: celebrate_1.Joi.string().valid('DAILY', 'WEEKLY', 'MONTHLY').default('DAILY'),
+        startDate: celebrate_1.Joi.date(),
+        endDate: celebrate_1.Joi.date(),
     },
     params: {
         pointOfSaleId: celebrate_1.Joi.string().required(),

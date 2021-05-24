@@ -22,6 +22,7 @@ const mikro_point_of_sale_1 = __importDefault(require("../../../../points-of-sal
 const mikro_route_1 = __importDefault(require("../../../../routes/implementations/mikro/models/mikro-route"));
 const mikro_user_1 = __importDefault(require("../../../../users/implementations/mikro/models/mikro-user"));
 const uuid_1 = require("uuid");
+const geolocation_dto_1 = __importDefault(require("../../../contracts/dtos/geolocation.dto"));
 let MikroCollection = class MikroCollection {
     constructor(data) {
         if (data) {
@@ -35,6 +36,10 @@ let MikroCollection = class MikroCollection {
             this.observations = data.observations;
             this.date = new Date();
             this.boxCollections = data.boxCollections;
+            this.startLocation = data.startLocation;
+            this.endLocation = data.endLocation;
+            this.startTime = data.startTime;
+            this.reviewedData = data.reviewedData;
         }
     }
 };
@@ -102,6 +107,22 @@ __decorate([
     core_1.Property(),
     __metadata("design:type", Array)
 ], MikroCollection.prototype, "boxCollections", void 0);
+__decorate([
+    core_1.Property(),
+    __metadata("design:type", Date)
+], MikroCollection.prototype, "startTime", void 0);
+__decorate([
+    core_1.Property(),
+    __metadata("design:type", Object)
+], MikroCollection.prototype, "startLocation", void 0);
+__decorate([
+    core_1.Property(),
+    __metadata("design:type", Object)
+], MikroCollection.prototype, "endLocation", void 0);
+__decorate([
+    core_1.Property(),
+    __metadata("design:type", Object)
+], MikroCollection.prototype, "reviewedData", void 0);
 MikroCollection = __decorate([
     core_1.Entity({ collection: 'collections' }),
     __metadata("design:paramtypes", [Object])

@@ -9,7 +9,7 @@ class EditMachineController {
     static async handle(req, res) {
         const { userId } = req;
         const { machineId } = req.params;
-        const { boxes, categoryId, gameValue, groupId, locationId, operatorId, serialNumber, isActive, telemetryBoardId, maintenance, } = req.body;
+        const { boxes, categoryId, gameValue, groupId, locationId, operatorId, serialNumber, isActive, telemetryBoardId, maintenance, typeOfPrizeId, minimumPrizeCount, incomePerMonthGoal, incomePerPrizeGoal, } = req.body;
         const editMachineService = tsyringe_1.container.resolve(edit_machine_service_1.default);
         const machine = await editMachineService.execute({
             boxes,
@@ -24,6 +24,10 @@ class EditMachineController {
             isActive,
             telemetryBoardId,
             maintenance,
+            typeOfPrizeId,
+            minimumPrizeCount,
+            incomePerMonthGoal,
+            incomePerPrizeGoal,
         });
         return res.json(machine);
     }

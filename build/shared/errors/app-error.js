@@ -18,6 +18,11 @@ AppError.emailAlreadyUsed = new AppError({
     message: 'This email is unavailable.',
     statusCode: 409,
 });
+AppError.collectionAlreadyReviewed = new AppError({
+    errorCode: 'COLLECTION_ALREADY_REVIEWED',
+    message: 'This collections already been reviewed .',
+    statusCode: 409,
+});
 AppError.machineHasLocation = new AppError({
     errorCode: 'MACHINE_HAS_POINT_OF_SALE',
     message: 'You cannot change the group of a machine which has a point of sale.',
@@ -28,6 +33,11 @@ AppError.machineBelongsToARoute = new AppError({
     message: 'You cannot change the operator of a machine that belongs to a route.',
     statusCode: 400,
 });
+AppError.pointOfSaleBelongsToARoute = new AppError({
+    errorCode: 'POINT_OF_SALE_BELONGS_TO_A_ROUTE',
+    message: 'You cannot put one point of sale that belongs to a route.',
+    statusCode: 400,
+});
 AppError.serialNumberAlreadyUsed = new AppError({
     errorCode: 'SERIAL_NUMBER_ALREADY_USED',
     message: 'This serial number is unavailable.',
@@ -36,6 +46,16 @@ AppError.serialNumberAlreadyUsed = new AppError({
 AppError.tokenIsMissing = new AppError({
     errorCode: 'TOKEN_IS_MISSING',
     message: 'Your request does not have an auth token.',
+    statusCode: 401,
+});
+AppError.thisMachineIsOffline = new AppError({
+    errorCode: 'THIS_MACHINE_IS_OFFLINE',
+    message: "You can't make collectios in machines that are offline",
+    statusCode: 401,
+});
+AppError.thisMachineHasTelemetryBoard = new AppError({
+    errorCode: 'THIS_MACHINE_HAS_TELEMETRY_BOARD',
+    message: "You can't transfer machines that have telemetry board",
     statusCode: 401,
 });
 AppError.invalidToken = new AppError({

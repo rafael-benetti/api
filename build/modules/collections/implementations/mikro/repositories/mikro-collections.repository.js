@@ -24,13 +24,26 @@ class MikroCollectionsRepository {
     async findOne(collectionId) {
         const collection = await this.repository.findOne({
             id: collectionId,
+        }, {
+            populate: [
+                'previousCollection',
+                'user',
+                'group',
+                'pointOfSale',
+                'route',
+                'machine',
+            ],
         });
         return collection ? collections_mapper_1.default.map(collection) : undefined;
     }
     async findLastCollection(machineId) {
         const collection = await this.repository.findOne({
             machineId,
-        }, undefined, { date: 'DESC' });
+        }, {
+            orderBy: {
+                date: 'DESC',
+            },
+        });
         return collection ? collections_mapper_1.default.map(collection) : undefined;
     }
     async find(data) {
@@ -46,25 +59,12 @@ class MikroCollectionsRepository {
             },
             offset: data.offset,
             populate: [
-                'machine',
                 'previousCollection',
                 'user',
                 'group',
                 'pointOfSale',
                 'route',
-            ],
-            fields: [
                 'machine',
-                'previousCollection',
-                'previousCollection.boxCollections',
-                'previousCollection.date',
-                'observations',
-                'date',
-                'boxCollections',
-                'user',
-                'user.name',
-                'pointOfSale',
-                'pointOfSale.label',
             ],
         });
         return {

@@ -14,7 +14,7 @@ class DeleteRouteController {
             routeId,
             userId,
         });
-        return res.json().status(204);
+        return res.status(204).json();
     }
 }
 exports.default = DeleteRouteController;

@@ -24,20 +24,18 @@ const telemetry_log_1 = __importDefault(require("../../../telemetry-logs/contrac
 const telemetry_logs_repository_1 = __importDefault(require("../../../telemetry-logs/contracts/repositories/telemetry-logs.repository"));
 const role_1 = __importDefault(require("../../../users/contracts/enums/role"));
 const users_repository_1 = __importDefault(require("../../../users/contracts/repositories/users.repository"));
-const orm_provider_1 = __importDefault(require("../../../../providers/orm-provider/contracts/models/orm-provider"));
 const app_error_1 = __importDefault(require("../../../../shared/errors/app-error"));
 const date_fns_1 = require("date-fns");
 const tsyringe_1 = require("tsyringe");
 let GetMachineDetailsService = class GetMachineDetailsService {
-    constructor(usersRepository, machinesRepository, telemetryLogsRepository, collectionsRepository, counterTypesRepository, ormProvider) {
+    constructor(usersRepository, machinesRepository, telemetryLogsRepository, collectionsRepository, counterTypesRepository) {
         this.usersRepository = usersRepository;
         this.machinesRepository = machinesRepository;
         this.telemetryLogsRepository = telemetryLogsRepository;
         this.collectionsRepository = collectionsRepository;
         this.counterTypesRepository = counterTypesRepository;
-        this.ormProvider = ormProvider;
     }
-    async execute({ userId, machineId, period, }) {
+    async execute({ userId, machineId, period, startDate, endDate, }) {
         const user = await this.usersRepository.findOne({
             by: 'id',
             value: userId,
@@ -59,26 +57,39 @@ let GetMachineDetailsService = class GetMachineDetailsService {
         if (user.role === role_1.default.MANAGER && !user.groupIds?.includes(machine.groupId))
             throw app_error_1.default.authorizationError;
         // ? ULTIMA COLETA
-        const lastCollection = (await this.collectionsRepository.findLastCollection(machineId))?.date;
+        const lastCollectionData = await this.collectionsRepository.findLastCollection(machineId);
+        let lastCollection;
+        let collectedBy;
+        if (lastCollectionData) {
+            lastCollection = lastCollectionData?.date;
+            collectedBy = (await this.usersRepository.findOne({
+                by: 'id',
+                value: lastCollectionData?.userId,
+            }))?.name;
+        }
         const telemetryLogs = await this.telemetryLogsRepository.find({
             filters: {
                 machineId,
                 maintenance: false,
+                groupId: machine.groupId,
                 date: {
                     startDate: lastCollection,
                     endDate: new Date(Date.now()),
                 },
             },
         });
-        const endDate = new Date(Date.now());
-        let startDate;
-        if (period === period_dto_1.default.DAILY)
-            startDate = date_fns_1.subDays(endDate, 1);
-        if (period === period_dto_1.default.WEEKLY)
-            startDate = date_fns_1.subWeeks(endDate, 1);
-        if (period === period_dto_1.default.MONTHLY)
-            startDate = date_fns_1.subMonths(endDate, 1);
-        if (startDate === undefined)
+        if (period) {
+            endDate = new Date(Date.now());
+            if (period === period_dto_1.default.DAILY)
+                startDate = date_fns_1.subDays(endDate, 1);
+            if (period === period_dto_1.default.WEEKLY)
+                startDate = date_fns_1.subWeeks(endDate, 1);
+            if (period === period_dto_1.default.MONTHLY)
+                startDate = date_fns_1.subMonths(endDate, 1);
+        }
+        if (!startDate)
+            throw app_error_1.default.unknownError;
+        if (!endDate)
             throw app_error_1.default.unknownError;
         const telemetryLogsOfPeriod = await this.telemetryLogsRepository.find({
             filters: {
@@ -167,7 +178,9 @@ let GetMachineDetailsService = class GetMachineDetailsService {
         }
         // ? HISTORICO DE EVENTOS
         const transactionHistory = await this.telemetryLogsRepository.find({
-            filters: {},
+            filters: {
+                machineId,
+            },
             limit: 5,
         });
         return {
@@ -179,6 +192,7 @@ let GetMachineDetailsService = class GetMachineDetailsService {
             givenPrizes,
             chartData,
             transactionHistory,
+            collectedBy,
         };
     }
 };
@@ -189,7 +203,6 @@ GetMachineDetailsService = __decorate([
     __param(2, tsyringe_1.inject('TelemetryLogsRepository')),
     __param(3, tsyringe_1.inject('CollectionsRepository')),
     __param(4, tsyringe_1.inject('CounterTypesRepository')),
-    __param(5, tsyringe_1.inject('OrmProvider')),
-    __metadata("design:paramtypes", [Object, Object, Object, Object, Object, Object])
+    __metadata("design:paramtypes", [Object, Object, Object, Object, Object])
 ], GetMachineDetailsService);
 exports.default = GetMachineDetailsService;

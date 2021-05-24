@@ -37,6 +37,10 @@ let MikroMachine = class MikroMachine {
             this.isActive = data.isActive;
             this.telemetryBoardId = data.telemetryBoardId;
             this.maintenance = false;
+            this.typeOfPrize = data.typeOfPrize;
+            this.minimumPrizeCount = data.minimumPrizeCount;
+            this.incomePerMonthGoal = data.incomePerMonthGoal;
+            this.incomePerPrizeGoal = data.incomePerPrizeGoal;
         }
     }
 };
@@ -110,6 +114,30 @@ __decorate([
     core_1.Property(),
     __metadata("design:type", Boolean)
 ], MikroMachine.prototype, "maintenance", void 0);
+__decorate([
+    core_1.Property(),
+    __metadata("design:type", Number)
+], MikroMachine.prototype, "minimumPrizeCount", void 0);
+__decorate([
+    core_1.Property(),
+    __metadata("design:type", Object)
+], MikroMachine.prototype, "typeOfPrize", void 0);
+__decorate([
+    core_1.Property(),
+    __metadata("design:type", Date)
+], MikroMachine.prototype, "lastConnection", void 0);
+__decorate([
+    core_1.Property(),
+    __metadata("design:type", Date)
+], MikroMachine.prototype, "lastCollection", void 0);
+__decorate([
+    core_1.Property(),
+    __metadata("design:type", Number)
+], MikroMachine.prototype, "incomePerPrizeGoal", void 0);
+__decorate([
+    core_1.Property(),
+    __metadata("design:type", Number)
+], MikroMachine.prototype, "incomePerMonthGoal", void 0);
 MikroMachine = __decorate([
     core_1.Entity({ collection: 'machines' }),
     __metadata("design:paramtypes", [Object])

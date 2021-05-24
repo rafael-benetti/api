@@ -28,7 +28,7 @@ let ListTelemetryLogsService = class ListTelemetryLogsService {
         this.machinesRepository = machinesRepository;
         this.usersRepository = usersRepository;
     }
-    async execute({ userId, machineId, limit, offset, }) {
+    async execute({ userId, machineId, type, startDate, endDate, limit, offset, }) {
         const user = await this.usersRepository.findOne({
             by: 'id',
             value: userId,
@@ -51,6 +51,11 @@ let ListTelemetryLogsService = class ListTelemetryLogsService {
         const telemetryLogs = await this.telemetryLogsRepository.find({
             filters: {
                 machineId,
+                type,
+                date: {
+                    startDate,
+                    endDate,
+                },
             },
             limit,
             offset,

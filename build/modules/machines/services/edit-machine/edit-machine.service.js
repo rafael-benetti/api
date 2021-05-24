@@ -42,7 +42,7 @@ let EditMachineService = class EditMachineService {
         this.routesRepository = routesRepository;
         this.telemetryBoardsRepository = telemetryBoardsRepository;
     }
-    async execute({ boxes, categoryId, gameValue, groupId, locationId, machineId, operatorId, serialNumber, userId, isActive, telemetryBoardId, maintenance, }) {
+    async execute({ boxes, categoryId, gameValue, groupId, locationId, machineId, operatorId, serialNumber, userId, isActive, telemetryBoardId, maintenance, typeOfPrizeId, minimumPrizeCount, incomePerMonthGoal, incomePerPrizeGoal, }) {
         const user = await this.usersRepository.findOne({
             by: 'id',
             value: userId,
@@ -66,6 +66,33 @@ let EditMachineService = class EditMachineService {
         if (user.role === role_1.default.OWNER)
             if (user.id !== machine.ownerId)
                 throw app_error_1.default.authorizationError;
+        if (groupId && groupId !== machine.groupId) {
+            if (user.role === role_1.default.OWNER) {
+                const groups = await this.groupsRepository.find({
+                    filters: {
+                        ownerId: user.id,
+                    },
+                });
+                const groupIds = groups.map(group => group.id);
+                if (!groupIds.includes(groupId))
+                    throw app_error_1.default.authorizationError;
+            }
+            if (user.role === role_1.default.MANAGER) {
+                if (!user.permissions?.createMachines)
+                    throw app_error_1.default.authorizationError;
+                if (!user.groupIds?.includes(groupId))
+                    throw app_error_1.default.authorizationError;
+            }
+            machine.groupId = groupId;
+            machine.operatorId = undefined;
+            machine.locationId = undefined;
+            machine.telemetryBoardId = undefined;
+            machine.typeOfPrize = undefined;
+            machine.minimumPrizeCount = undefined;
+            this.machinesRepository.save(machine);
+            await this.ormProvider.commit();
+            return machine;
+        }
         if (serialNumber && serialNumber !== machine.serialNumber) {
             const checkMachineExists = await this.machinesRepository.findOne({
                 by: 'serialNumber',
@@ -101,26 +128,21 @@ let EditMachineService = class EditMachineService {
         }
         if (gameValue)
             machine.gameValue = gameValue;
-        if (groupId && groupId !== machine.groupId) {
-            if (machine.locationId)
-                throw app_error_1.default.machineHasLocation;
-            if (user.role === role_1.default.OWNER) {
-                const groups = await this.groupsRepository.find({
-                    filters: {
-                        ownerId: user.id,
-                    },
-                });
-                const groupIds = groups.map(group => group.id);
-                if (!groupIds.includes(groupId))
-                    throw app_error_1.default.authorizationError;
-            }
-            if (user.role === role_1.default.MANAGER) {
-                if (!user.permissions?.createMachines)
-                    throw app_error_1.default.authorizationError;
-                if (!user.groupIds?.includes(groupId))
-                    throw app_error_1.default.authorizationError;
-            }
-            machine.groupId = groupId;
+        if (typeOfPrizeId !== undefined && typeOfPrizeId !== null) {
+            const group = await this.groupsRepository.findOne({
+                by: 'id',
+                value: machine.groupId,
+            });
+            const prize = group?.stock.prizes.find(prize => prize.id === typeOfPrizeId);
+            if (!prize)
+                throw app_error_1.default.productNotFound;
+            machine.typeOfPrize = {
+                id: prize.id,
+                label: prize.label,
+            };
+        }
+        else if (typeOfPrizeId === null) {
+            machine.typeOfPrize = undefined;
         }
         if (locationId !== undefined && locationId !== null) {
             const pointOfSale = await this.pointsOfSaleRepository.findOne({
@@ -142,6 +164,7 @@ let EditMachineService = class EditMachineService {
                 if (telemetryBoard)
                     telemetryBoard.machineId = undefined;
                 machine.telemetryBoardId = undefined;
+                machine.lastConnection = undefined;
             }
         }
         if (categoryId) {
@@ -157,7 +180,12 @@ let EditMachineService = class EditMachineService {
         if (boxes) {
             const boxesEntities = boxes.map(box => {
                 const counters = box.counters.map(counter => new counter_1.default(counter));
-                return new box_1.default({ id: box.id, counters });
+                return new box_1.default({
+                    id: box.id,
+                    counters,
+                    currentMoney: machine.boxes.find(boxx => boxx.id === box.id)
+                        ?.currentMoney,
+                });
             });
             const counterTypeIds = [
                 ...new Set(boxesEntities.flatMap(boxe => boxe.counters.map(counter => counter.counterTypeId))),
@@ -172,12 +200,13 @@ let EditMachineService = class EditMachineService {
         if (telemetryBoardId !== undefined && machine.isActive) {
             if (telemetryBoardId === null) {
                 if (machine.telemetryBoardId) {
-                    const telemetry = await this.telemetryBoardsRepository.findById(machine.telemetryBoardId);
-                    if (telemetry) {
-                        delete telemetry?.machineId;
-                        this.telemetryBoardsRepository.save(telemetry);
+                    const telemetryBoard = await this.telemetryBoardsRepository.findById(machine.telemetryBoardId);
+                    if (telemetryBoard) {
+                        delete telemetryBoard?.machineId;
+                        this.telemetryBoardsRepository.save(telemetryBoard);
                     }
                 }
+                machine.lastConnection = undefined;
                 delete machine.telemetryBoardId;
             }
             else if (telemetryBoardId !== machine.telemetryBoardId) {
@@ -189,6 +218,7 @@ let EditMachineService = class EditMachineService {
                     throw app_error_1.default.authorizationError;
                 if (user.role === role_1.default.OWNER && telemetryBoard.ownerId !== user.id)
                     throw app_error_1.default.authorizationError;
+                machine.lastConnection = undefined;
                 if (machine.telemetryBoardId) {
                     const oldTelemetry = await this.telemetryBoardsRepository.findById(machine.telemetryBoardId);
                     if (oldTelemetry) {
@@ -198,11 +228,22 @@ let EditMachineService = class EditMachineService {
                 }
                 machine.telemetryBoardId = telemetryBoardId;
                 telemetryBoard.machineId = machine.id;
+                telemetryBoard.groupId = machine.groupId;
                 this.telemetryBoardsRepository.save(telemetryBoard);
             }
         }
         if (maintenance !== undefined)
             machine.maintenance = maintenance;
+        if (incomePerMonthGoal !== undefined)
+            machine.incomePerMonthGoal = incomePerMonthGoal;
+        if (incomePerPrizeGoal !== undefined)
+            machine.incomePerPrizeGoal = incomePerPrizeGoal;
+        if (minimumPrizeCount !== undefined && minimumPrizeCount !== null) {
+            machine.minimumPrizeCount = minimumPrizeCount;
+        }
+        else if (minimumPrizeCount === null) {
+            machine.minimumPrizeCount = undefined;
+        }
         this.machinesRepository.save(machine);
         await this.ormProvider.commit();
         return machine;

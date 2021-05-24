@@ -30,7 +30,9 @@ const storage_provider_1 = __importDefault(require("../../../../providers/storag
 const app_error_1 = __importDefault(require("../../../../shared/errors/app-error"));
 const get_group_universe_1 = __importDefault(require("../../../../shared/utils/get-group-universe"));
 const is_in_group_universe_1 = __importDefault(require("../../../../shared/utils/is-in-group-universe"));
+const date_fns_1 = require("date-fns");
 const tsyringe_1 = require("tsyringe");
+const geolocation_dto_1 = __importDefault(require("../../contracts/dtos/geolocation.dto"));
 let CreateCollectionService = class CreateCollectionService {
     constructor(usersRepository, machinesRepository, routesRepository, storageProvider, telemetryLogsRepository, pointsOfSaleRepository, collectionsRepository, ormProvider) {
         this.usersRepository = usersRepository;
@@ -42,7 +44,7 @@ let CreateCollectionService = class CreateCollectionService {
         this.collectionsRepository = collectionsRepository;
         this.ormProvider = ormProvider;
     }
-    async execute({ userId, machineId, observations, boxCollections, files, }) {
+    async execute({ userId, machineId, observations, boxCollections, files, startTime, endLocation, startLocation, }) {
         const parsedFiles = {};
         files?.forEach(file => {
             const [boxId, counterId] = file.fieldname.split(':');
@@ -66,6 +68,12 @@ let CreateCollectionService = class CreateCollectionService {
         });
         if (!machine)
             throw app_error_1.default.machineNotFound;
+        if (!machine.telemetryBoardId)
+            throw app_error_1.default.telemetryBoardNotFound;
+        if (!machine.lastConnection)
+            throw app_error_1.default.thisMachineIsOffline;
+        if (date_fns_1.isBefore(machine.lastConnection, date_fns_1.subMinutes(new Date(Date.now()), 10)))
+            throw app_error_1.default.thisMachineIsOffline;
         if (!machine.locationId)
             throw app_error_1.default.productInStock;
         const location = await this.pointsOfSaleRepository.findOne({
@@ -134,7 +142,11 @@ let CreateCollectionService = class CreateCollectionService {
             routeId: route?.id,
             observations,
             boxCollections,
+            startTime,
+            endLocation,
+            startLocation,
         });
+        machine.lastCollection = collection.date;
         this.collectionsRepository.save(collection);
         this.machinesRepository.save(machine);
         await this.ormProvider.commit();

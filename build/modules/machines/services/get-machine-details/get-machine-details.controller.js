@@ -10,12 +10,14 @@ class GetMachineDetailsController {
     static async handle(req, res) {
         const { userId } = req;
         const { machineId } = req.params;
-        const { period } = req.query;
+        const { period, startDate, endDate } = req.query;
         const getMachineDetailsService = tsyringe_1.container.resolve(get_machine_details_service_1.default);
         const response = await getMachineDetailsService.execute({
             machineId,
             userId,
             period: period,
+            startDate: new Date(startDate),
+            endDate: new Date(endDate),
         });
         return res.json(response);
     }

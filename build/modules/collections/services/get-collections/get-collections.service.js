@@ -17,16 +17,18 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 Object.defineProperty(exports, "__esModule", { value: true });
 const collection_1 = __importDefault(require("../../contracts/entities/collection"));
 const collections_repository_1 = __importDefault(require("../../contracts/repositories/collections.repository"));
+const machines_repository_1 = __importDefault(require("../../../machines/contracts/repositories/machines.repository"));
 const users_repository_1 = __importDefault(require("../../../users/contracts/repositories/users.repository"));
 const app_error_1 = __importDefault(require("../../../../shared/errors/app-error"));
 const get_group_universe_1 = __importDefault(require("../../../../shared/utils/get-group-universe"));
 const tsyringe_1 = require("tsyringe");
 let GetCollectionsService = class GetCollectionsService {
-    constructor(usersRepository, collectionsRepository) {
+    constructor(usersRepository, collectionsRepository, machinesRepository) {
         this.usersRepository = usersRepository;
         this.collectionsRepository = collectionsRepository;
+        this.machinesRepository = machinesRepository;
     }
-    async execute({ userId, machineId, limit, offset, }) {
+    async execute({ userId, machineSerialNumber, limit, offset, }) {
         const user = await this.usersRepository.findOne({
             by: 'id',
             value: userId,
@@ -34,11 +36,19 @@ let GetCollectionsService = class GetCollectionsService {
         if (!user)
             throw app_error_1.default.userNotFound;
         const groupIds = await get_group_universe_1.default(user);
+        const { machines } = await this.machinesRepository.find({
+            serialNumber: machineSerialNumber,
+            groupIds,
+        });
+        const machineIds = machines.map(machine => machine.id);
         const { collections, count } = await this.collectionsRepository.find({
             groupIds,
-            machineId,
+            machineId: machineIds,
             limit,
             offset,
+        });
+        collections.forEach(collection => {
+            collection.machine = machines.find(machine => machine.id === collection.machineId);
         });
         return {
             collections,
@@ -50,6 +60,7 @@ GetCollectionsService = __decorate([
     tsyringe_1.injectable(),
     __param(0, tsyringe_1.inject('UsersRepository')),
     __param(1, tsyringe_1.inject('CollectionsRepository')),
-    __metadata("design:paramtypes", [Object, Object])
+    __param(2, tsyringe_1.inject('MachinesRepository')),
+    __metadata("design:paramtypes", [Object, Object, Object])
 ], GetCollectionsService);
 exports.default = GetCollectionsService;

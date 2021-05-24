@@ -17,6 +17,9 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 Object.defineProperty(exports, "__esModule", { value: true });
 const create_telemetry_log_dto_1 = __importDefault(require("../../../contracts/dtos/create-telemetry-log.dto"));
 const find_telemetry_logs_dto_1 = __importDefault(require("../../../contracts/dtos/find-telemetry-logs.dto"));
+const get_income_per_machine_response_dto_1 = __importDefault(require("../../../contracts/dtos/get-income-per-machine-response.dto"));
+const get_income_per_machine_dto_1 = __importDefault(require("../../../contracts/dtos/get-income-per-machine.dto"));
+const get_income_per_point_of_sale_dto_1 = __importDefault(require("../../../contracts/dtos/get-income-per-point-of-sale.dto"));
 const telemetry_log_1 = __importDefault(require("../../../contracts/entities/telemetry-log"));
 const telemetry_logs_repository_1 = __importDefault(require("../../../contracts/repositories/telemetry-logs.repository"));
 const mikro_orm_provider_1 = __importDefault(require("../../../../../providers/orm-provider/implementations/mikro/mikro-orm-provider"));
@@ -58,8 +61,90 @@ let MikroTelemetryLogsRepository = class MikroTelemetryLogsRepository {
             query.pointOfSaleId = pointOfSaleId;
         if (type)
             query.type = type;
-        const telemetryLogs = await this.repository.find({ ...query }, { orderBy: { date: 'DESC' }, limit: data.limit, offset: data.offset });
+        const telemetryLogs = await this.repository.find({ ...query }, {
+            orderBy: { date: 'DESC' },
+            limit: data.limit,
+            offset: data.offset,
+        });
         return telemetryLogs;
+    }
+    async getIncomePerMachine({ groupIds, startDate, endDate, }) {
+        const incomePerMachine = await this.repository.aggregate([
+            {
+                $match: {
+                    groupId: {
+                        $in: groupIds,
+                    },
+                    date: {
+                        $gte: startDate,
+                        $lt: endDate,
+                    },
+                    type: 'IN',
+                },
+            },
+            {
+                $group: {
+                    _id: '$machineId',
+                    income: {
+                        $sum: '$value',
+                    },
+                    numberOfPlays: {
+                        $sum: '$numberOfPlays',
+                    },
+                    count: { $sum: 1 },
+                },
+            },
+            {
+                $project: {
+                    _id: 0,
+                    id: '$_id',
+                    income: 1,
+                    count: 1,
+                    numberOfPlays: 1,
+                    type: 1,
+                },
+            },
+        ]);
+        return incomePerMachine;
+    }
+    async incomePerPointOfSale({ groupIds, startDate, endDate, }) {
+        const pointsOfSale = await this.repository.aggregate([
+            {
+                $match: {
+                    groupId: {
+                        $in: groupIds,
+                    },
+                    date: {
+                        $gte: startDate,
+                        $lt: endDate,
+                    },
+                    type: 'IN',
+                },
+            },
+            {
+                $group: {
+                    _id: '$pointOfSaleId',
+                    income: {
+                        $sum: '$value',
+                    },
+                    numberOfPlays: {
+                        $sum: '$numberOfPlays',
+                    },
+                    count: { $sum: 1 },
+                },
+            },
+            {
+                $project: {
+                    _id: 0,
+                    id: '$_id',
+                    income: 1,
+                    count: 1,
+                    numberOfPlays: 1,
+                    type: 1,
+                },
+            },
+        ]);
+        return pointsOfSale;
     }
 };
 MikroTelemetryLogsRepository = __decorate([

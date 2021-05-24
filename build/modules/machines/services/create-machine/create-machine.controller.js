@@ -8,7 +8,7 @@ const create_machine_service_1 = __importDefault(require("./create-machine.servi
 class CreateMachineController {
     static async handle(req, res) {
         const { userId } = req;
-        const { boxes, categoryId, gameValue, groupId, locationId, operatorId, serialNumber, telemetryBoardId, } = req.body;
+        const { boxes, categoryId, gameValue, groupId, locationId, operatorId, serialNumber, telemetryBoardId, typeOfPrizeId, minimumPrizeCount, incomePerMonthGoal, incomePerPrizeGoal, } = req.body;
         const createMachineService = tsyringe_1.container.resolve(create_machine_service_1.default);
         const machine = await createMachineService.execute({
             boxes,
@@ -20,6 +20,10 @@ class CreateMachineController {
             serialNumber,
             userId,
             telemetryBoardId,
+            typeOfPrizeId,
+            minimumPrizeCount,
+            incomePerMonthGoal,
+            incomePerPrizeGoal,
         });
         return res.json(machine);
     }

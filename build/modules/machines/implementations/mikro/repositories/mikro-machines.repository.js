@@ -9,6 +9,7 @@ const find_machines_dto_1 = __importDefault(require("../../../contracts/dtos/fin
 const machine_1 = __importDefault(require("../../../contracts/models/machine"));
 const machines_repository_1 = __importDefault(require("../../../contracts/repositories/machines.repository"));
 const mikro_orm_provider_1 = __importDefault(require("../../../../../providers/orm-provider/implementations/mikro/mikro-orm-provider"));
+const date_fns_1 = require("date-fns");
 const tsyringe_1 = require("tsyringe");
 const machine_mapper_1 = __importDefault(require("../mapper/machine.mapper"));
 const mikro_machine_1 = __importDefault(require("../models/mikro-machine"));
@@ -31,7 +32,43 @@ class MikroMachinesRepository {
         });
         return machine ? machine_mapper_1.default.toEntity(machine) : undefined;
     }
-    async find({ id, ownerId, groupIds, operatorId, categoryId, pointOfSaleId, serialNumber, isActive, telemetryBoardId, limit, offset, populate, }) {
+    async find({ id, ownerId, groupIds, operatorId, categoryId, pointOfSaleId, serialNumber, isActive, telemetryBoardId, telemetryStatus, limit, offset, populate, orderByLastCollection, orderByLastConnection, fields, }) {
+        const telemetryStatusQuery = {};
+        const lastCollectionQuery = {};
+        const lastConnectionQuery = {};
+        if (orderByLastConnection) {
+            telemetryStatusQuery.lastConnection = {
+                $exists: true,
+                $ne: null,
+            };
+        }
+        if (orderByLastCollection) {
+            lastCollectionQuery.lastCollection = {
+                $exists: true,
+                $ne: null,
+            };
+        }
+        if (telemetryStatus) {
+            if (telemetryStatus === 'ONLINE') {
+                telemetryStatusQuery.lastConnection = {
+                    $gte: date_fns_1.addMinutes(new Date(), -10),
+                };
+            }
+            if (telemetryStatus === 'OFFLINE') {
+                telemetryStatusQuery.lastConnection = {
+                    $lt: date_fns_1.addMinutes(new Date(), -10),
+                };
+            }
+            if (telemetryStatus === 'VIRGIN') {
+                telemetryStatusQuery.telemetryBoardId = {
+                    $ne: null,
+                };
+                telemetryStatusQuery.lastConnection = null;
+            }
+            if (telemetryStatus === 'NO_TELEMETRY') {
+                telemetryStatusQuery.telemetryBoardId = null;
+            }
+        }
         const [result, count] = await this.repository.findAndCount({
             ...(id && { id }),
             ...(operatorId && { operatorId }),
@@ -46,13 +83,118 @@ class MikroMachinesRepository {
                 serialNumber: new RegExp(serialNumber, 'i'),
             }),
             ...(isActive !== undefined && { isActive }),
+            ...telemetryStatusQuery,
+            ...lastCollectionQuery,
+            ...lastConnectionQuery,
         }, {
+            ...(orderByLastCollection && {
+                orderBy: {
+                    lastCollection: 'ASC',
+                },
+            }),
+            ...(orderByLastConnection && {
+                orderBy: {
+                    lastConnection: 'ASC',
+                },
+            }),
             limit,
             offset,
+            fields,
             populate,
         });
         const machines = result.map(machine => machine_mapper_1.default.toEntity(machine));
         return { machines, count };
+    }
+    async machineSortedByStock({ groupIds, operatorId, }) {
+        const machines = await this.repository.aggregate([
+            {
+                $match: {
+                    lastConnection: {
+                        $exists: true,
+                        $ne: null,
+                    },
+                },
+            },
+            {
+                $match: {
+                    minimumPrizeCount: {
+                        $exists: true,
+                        $ne: null,
+                    },
+                },
+            },
+            {
+                $sort: {
+                    priority: 1,
+                },
+            },
+            {
+                ...(groupIds && {
+                    $match: {
+                        groupId: {
+                            $in: groupIds,
+                        },
+                    },
+                }),
+            },
+            {
+                $match: {
+                    ...(operatorId && { operatorId }),
+                },
+            },
+            {
+                $project: {
+                    id: '$_id',
+                    serialNumber: '$serialNumber',
+                    minimumPrizeCount: '$minimumPrizeCount',
+                    lastConnection: '$lastConnection',
+                    groupId: '$groupId',
+                    priority: {
+                        $subtract: [
+                            { $sum: '$boxes.numberOfPrizes' },
+                            '$minimumPrizeCount',
+                        ],
+                    },
+                    total: {
+                        $sum: '$boxes.numberOfPrizes',
+                    },
+                },
+            },
+            {
+                $limit: 5,
+            },
+        ]);
+        return machines;
+    }
+    async count({ ownerId, telemetryStatus, groupIds, }) {
+        const telemetryStatusQuery = {};
+        if (telemetryStatus) {
+            if (telemetryStatus === 'ONLINE') {
+                telemetryStatusQuery.lastConnection = {
+                    $gte: date_fns_1.addMinutes(new Date(), -10),
+                };
+            }
+            if (telemetryStatus === 'OFFLINE') {
+                telemetryStatusQuery.lastConnection = {
+                    $lt: date_fns_1.addMinutes(new Date(), -10),
+                };
+            }
+            if (telemetryStatus === 'VIRGIN') {
+                telemetryStatusQuery.telemetryBoardId = {
+                    $ne: true,
+                };
+                telemetryStatusQuery.lastConnection = null;
+            }
+            if (telemetryStatus === 'NO_TELEMETRY') {
+                telemetryStatusQuery.telemetryBoardId = null;
+            }
+        }
+        const count = await this.repository.count({
+            ...(ownerId && { ownerId }),
+            ...(groupIds && { groupId: groupIds }),
+            ...telemetryStatusQuery,
+        });
+        return count;
     }
     save(data) {
         this.repository.persist(machine_mapper_1.default.toMikroEntity(data));

@@ -31,7 +31,7 @@ let ListMachinesService = class ListMachinesService {
         this.groupsRepository = groupsRepository;
         this.routesRepository = routesRepository;
     }
-    async execute({ lean, userId, categoryId, groupId, routeId, pointOfSaleId, serialNumber, isActive, limit, offset, }) {
+    async execute({ lean, userId, categoryId, groupId, routeId, pointOfSaleId, serialNumber, telemetryStatus, isActive, limit, offset, }) {
         const filters = {};
         const user = await this.usersRepository.findOne({
             by: 'id',
@@ -45,16 +45,12 @@ let ListMachinesService = class ListMachinesService {
             filters.groupIds = user.groupIds;
         if (user.role === role_1.default.OPERATOR)
             filters.operatorId = user.id;
+        if (telemetryStatus)
+            filters.telemetryStatus = telemetryStatus;
         if (lean) {
             filters.isActive = true;
-            const result = await this.machinesRepository.find(filters);
-            const leanMachines = result.machines.map(machine => {
-                return {
-                    id: machine.id,
-                    serialNumber: machine.serialNumber,
-                    locationId: machine.locationId,
-                };
-            });
+            filters.fields = ['id', 'serialNumber', 'locationId'];
+            const leanMachines = await this.machinesRepository.find(filters);
             return leanMachines;
         }
         if (routeId) {

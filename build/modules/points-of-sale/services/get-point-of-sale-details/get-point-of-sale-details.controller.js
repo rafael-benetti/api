@@ -10,12 +10,14 @@ class GetPointOfSaleDetailsController {
     static async handle(req, res) {
         const { userId } = req;
         const { pointOfSaleId } = req.params;
-        const { period } = req.query;
+        const { period, startDate, endDate } = req.query;
         const getPointOfSaleDetailsService = tsyringe_1.container.resolve(get_point_of_sale_details_service_1.default);
         const response = await getPointOfSaleDetailsService.execute({
             pointOfSaleId,
             userId,
             period: period,
+            startDate: new Date(startDate),
+            endDate: new Date(endDate),
         });
         return res.json(response);
     }

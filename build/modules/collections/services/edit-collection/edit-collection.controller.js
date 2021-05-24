@@ -27,11 +27,13 @@ class EditCollectionController {
 exports.default = EditCollectionController;
 EditCollectionController.validate = celebrate_1.celebrate({
     body: {
+        photosToDelete: celebrate_1.Joi.array().items(celebrate_1.Joi.string()),
         machineId: celebrate_1.Joi.string().uuid().required(),
         observations: celebrate_1.Joi.string().required(),
         boxCollections: celebrate_1.Joi.array().items(celebrate_1.Joi.object({
             boxId: celebrate_1.Joi.string().uuid().required(),
             counterCollections: celebrate_1.Joi.array().items(celebrate_1.Joi.object({
+                counterTypeLabel: celebrate_1.Joi.string().required(),
                 counterId: celebrate_1.Joi.string().required(),
                 mechanicalCount: celebrate_1.Joi.number(),
                 digitalCount: celebrate_1.Joi.number(),

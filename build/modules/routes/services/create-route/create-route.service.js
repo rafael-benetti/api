@@ -35,14 +35,14 @@ let CreateRouteService = class CreateRouteService {
         this.ormProvider = ormProvider;
     }
     async execute({ userId, label, pointsOfSaleIds, operatorId, }) {
-        // Verificação de usuario existente
+        // ? Verificação de usuario existente
         const user = await this.usersRepository.findOne({
             by: 'id',
             value: userId,
         });
         if (!user)
             throw app_error_1.default.userNotFound;
-        // Verificação de roles com autorização
+        // ? Verificação de roles com autorização
         if (user.role !== role_1.default.MANAGER && user.role !== role_1.default.OWNER)
             throw app_error_1.default.authorizationError;
         const { pointsOfSale } = await this.pointsOfSaleRepository.find({
@@ -51,6 +51,8 @@ let CreateRouteService = class CreateRouteService {
         });
         if (pointsOfSale.length !== pointsOfSaleIds.length)
             throw app_error_1.default.pointOfSaleNotFound;
+        if (pointsOfSale.some(pointOfSale => pointOfSale.routeId !== undefined))
+            throw app_error_1.default.pointOfSaleBelongsToARoute;
         const groupIds = [
             ...new Set(pointsOfSale.map(pointOfSale => pointOfSale.groupId)),
         ];
@@ -59,7 +61,7 @@ let CreateRouteService = class CreateRouteService {
                 throw app_error_1.default.authorizationError;
             if (!user.groupIds)
                 throw app_error_1.default.unknownError;
-            if (user.groupIds.some(groupId => !groupIds.includes(groupId)))
+            if (groupIds.some(groupId => !user.groupIds?.includes(groupId)))
                 throw app_error_1.default.authorizationError;
         }
         if (user.role === role_1.default.OWNER) {

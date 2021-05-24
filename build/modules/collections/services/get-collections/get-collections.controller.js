@@ -11,18 +11,18 @@ class GetCollectionsController {
 exports.default = GetCollectionsController;
 GetCollectionsController.validate = celebrate_1.celebrate({
     query: {
-        machineId: celebrate_1.Joi.string().uuid(),
+        machineSerialNumber: celebrate_1.Joi.string(),
         limit: celebrate_1.Joi.number().integer().min(0),
         offset: celebrate_1.Joi.number().integer().min(0),
     },
 });
 GetCollectionsController.handle = async (request, response) => {
     const { userId } = request;
-    const { machineId, limit, offset } = request.query;
+    const { machineSerialNumber, limit, offset } = request.query;
     const getCollections = tsyringe_1.container.resolve(get_collections_service_1.default);
     const { collections, count } = await getCollections.execute({
         userId,
-        machineId,
+        machineSerialNumber,
         limit,
         offset,
     });
