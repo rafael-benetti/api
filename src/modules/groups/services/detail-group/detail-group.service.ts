@@ -2,12 +2,14 @@ import GroupsRepository from '@modules/groups/contracts/repositories/groups.repo
 import Period from '@modules/machines/contracts/dtos/period.dto';
 import Machine from '@modules/machines/contracts/models/machine';
 import MachinesRepository from '@modules/machines/contracts/repositories/machines.repository';
+import PointOfSale from '@modules/points-of-sale/contracts/models/point-of-sale';
+import PointsOfSaleRepository from '@modules/points-of-sale/contracts/repositories/points-of-sale.repository';
 import TelemetryLogsRepository from '@modules/telemetry-logs/contracts/repositories/telemetry-logs.repository';
-import UniversalFinancial from '@modules/universal-financial/contracts/entities/universal-financial';
 import UniversalFinancialRepository from '@modules/universal-financial/contracts/repositories/universal-financial.repository';
 import Role from '@modules/users/contracts/enums/role';
 import UsersRepository from '@modules/users/contracts/repositories/users.repository';
 import AppError from '@shared/errors/app-error';
+import { Promise } from 'bluebird';
 import {
   eachDayOfInterval,
   isSameDay,
@@ -55,6 +57,10 @@ interface Response {
   onlineMachines: number;
   givenPrizesCount?: number;
   income?: number;
+  incomePerPointOfSale: {
+    pointOfSale: PointOfSale;
+    income?: number;
+  }[];
 }
 
 @injectable()
@@ -74,6 +80,9 @@ export default class DetailGroupService {
 
     @inject('UniversalFinancialRepository')
     private universalFinancialRepository: UniversalFinancialRepository,
+
+    @inject('PointsOfSaleRepository')
+    private pointsOfSaleRepository: PointsOfSaleRepository,
   ) {}
 
   async execute({
@@ -105,67 +114,93 @@ export default class DetailGroupService {
     if (user.role === Role.MANAGER)
       if (!user.groupIds?.includes(groupId)) throw AppError.authorizationError;
 
-    const machinesSortedByLastCollection = (
-      await this.machinesRepository.find({
-        orderByLastCollection: true,
-        groupIds: [groupId],
-        limit: 5,
-        offset: 0,
-        fields: [
-          'id',
-          'serialNumber',
-          'lastCollection',
-          'lastConnection',
-          'pointOfSaleId',
-          'pointOfSale',
-        ],
-        populate: ['pointOfSale'],
-      })
-    ).machines;
+    const machinesSortedByLastCollectionPromise = this.machinesRepository.find({
+      orderByLastCollection: true,
+      groupIds: [groupId],
+      limit: 5,
+      offset: 0,
+      fields: [
+        'id',
+        'serialNumber',
+        'lastCollection',
+        'lastConnection',
+        'pointOfSaleId',
+        'pointOfSale',
+        'pointOfSale.label',
+      ],
+      populate: ['pointOfSale'],
+    });
 
-    const machinesSortedByLastConnection = (
-      await this.machinesRepository.find({
-        orderByLastConnection: true,
-        groupIds: [groupId],
-        limit: 5,
-        offset: 0,
-        fields: [
-          'id',
-          'serialNumber',
-          'lastConnection',
-          'lastCollection',
-          'pointOfSaleId',
-          'pointOfSale',
-        ],
-        populate: ['pointOfSale'],
-      })
-    ).machines;
+    const machinesSortedByLastConnectionPromise = this.machinesRepository.find({
+      orderByLastConnection: true,
+      groupIds: [groupId],
+      limit: 5,
+      offset: 0,
+      fields: [
+        'id',
+        'serialNumber',
+        'lastConnection',
+        'lastCollection',
+        'pointOfSaleId',
+        'pointOfSale',
+        'pointOfSale.label',
+      ],
+      populate: ['pointOfSale'],
+    });
 
-    const machinesSortedByStock = await this.machinesRepository.machineSortedByStock(
+    const machinesSortedByStockPromise = this.machinesRepository.machineSortedByStock(
       {
         groupIds: [groupId],
       },
     );
 
-    const offlineMachines = await this.machinesRepository.count({
+    const offlineMachinesPromise = this.machinesRepository.count({
       groupIds: [groupId],
       telemetryStatus: 'OFFLINE',
     });
 
-    const onlineMachines = await this.machinesRepository.count({
+    const onlineMachinesPromise = this.machinesRepository.count({
       groupIds: [groupId],
       telemetryStatus: 'ONLINE',
     });
 
-    const machinesNeverConnected = await this.machinesRepository.count({
+    const machinesNeverConnectedPromise = this.machinesRepository.count({
       groupIds: [groupId],
       telemetryStatus: 'VIRGIN',
     });
 
-    const machinesWithoutTelemetryBoard = await this.machinesRepository.count({
+    const machinesWithoutTelemetryBoardPromise = this.machinesRepository.count({
       groupIds: [groupId],
       telemetryStatus: 'NO_TELEMETRY',
     });
+
+    const universalFinancialPromise = this.universalFinancialRepository.find({
+      groupId: [groupId],
+    });
+
+    const [
+      machinesSortedByLastConnection,
+      machinesSortedByStock,
+      offlineMachines,
+      onlineMachines,
+      machinesNeverConnected,
+    ] = await Promise.all([
+      machinesSortedByLastConnectionPromise,
+      machinesSortedByStockPromise,
+      offlineMachinesPromise,
+      onlineMachinesPromise,
+      machinesNeverConnectedPromise,
+    ]);
+
+    const [
+      machinesWithoutTelemetryBoard,
+      machinesSortedByLastCollection,
+      universalFinancial,
+    ] = await Promise.all([
+      machinesWithoutTelemetryBoardPromise,
+      machinesSortedByLastCollectionPromise,
+      universalFinancialPromise,
+    ]);
 
     if (period) {
       endDate = new Date(Date.now());
@@ -188,41 +223,33 @@ export default class DetailGroupService {
         end: endDate,
       }).length <= 1 // TODO: DAR UMA CONFERIDA SE 24 O INTERVALO É 2 OU 1
     ) {
-      const telemetryLogsInPromise = async () => {
-        const response = await this.telemetryLogsRepository.find({
-          filters: {
-            date: {
-              startDate,
-              endDate,
-            },
-            groupId: [groupId],
-            maintenance: false,
-            type: 'IN',
+      const telemetryLogsInPromise = this.telemetryLogsRepository.find({
+        filters: {
+          date: {
+            startDate,
+            endDate,
           },
-        });
+          groupId: [groupId],
+          maintenance: false,
+          type: 'IN',
+        },
+      });
 
-        return response;
-      };
-
-      const telemetryLogsOutPromise = async () => {
-        const response = await this.telemetryLogsRepository.find({
-          filters: {
-            date: {
-              startDate,
-              endDate,
-            },
-            groupId: [groupId],
-            maintenance: false,
-            type: 'OUT',
+      const telemetryLogsOutPromise = this.telemetryLogsRepository.find({
+        filters: {
+          date: {
+            startDate,
+            endDate,
           },
-        });
-
-        return response;
-      };
+          groupId: [groupId],
+          maintenance: false,
+          type: 'OUT',
+        },
+      });
 
       const [telemetryLogsIn, telemetryLogsOut] = await Promise.all([
-        await telemetryLogsInPromise(),
-        await telemetryLogsOutPromise(),
+        telemetryLogsInPromise,
+        telemetryLogsOutPromise,
       ]);
 
       const hoursOfInterval = eachDayOfInterval({
@@ -258,11 +285,6 @@ export default class DetailGroupService {
         };
       });
     }
-
-    let universalFinancial: UniversalFinancial[] = [];
-    universalFinancial = await this.universalFinancialRepository.find({
-      groupId: [groupId],
-    });
 
     if (period !== Period.DAILY) {
       // ? FATURAMENTO
@@ -324,6 +346,43 @@ export default class DetailGroupService {
       others += item.others;
     });
 
+    const incomePerPointOfSalePromise = this.telemetryLogsRepository.incomePerPointOfSale(
+      {
+        groupIds: [groupId],
+        endDate,
+        startDate,
+      },
+    );
+
+    const pointsOfSalePromise = this.pointsOfSaleRepository.find({
+      by: 'groupId',
+      value: groupId,
+    });
+
+    const [{ pointsOfSale }, incomePerPointOfSale] = await Promise.all([
+      pointsOfSalePromise,
+      incomePerPointOfSalePromise,
+    ]);
+
+    const incomePerPointOfSalePromises = pointsOfSale.map(async pointOfSale => {
+      const numberOfMachines = await this.machinesRepository.count({
+        groupIds: [groupId],
+        pointOfSaleId: pointOfSale.id,
+      });
+
+      return {
+        pointOfSale,
+        income: incomePerPointOfSale.find(
+          income => income.id === pointOfSale.id,
+        )?.income,
+        numberOfMachines,
+      };
+    });
+
+    const incomePerPointOfSaleResponse = await Promise.all(
+      incomePerPointOfSalePromises,
+    );
+
     const chartData2 = {
       cashIncome,
       coinIncome,
@@ -333,8 +392,8 @@ export default class DetailGroupService {
 
     return {
       machinesNeverConnected,
-      machinesSortedByLastCollection,
-      machinesSortedByLastConnection,
+      machinesSortedByLastCollection: machinesSortedByLastCollection.machines,
+      machinesSortedByLastConnection: machinesSortedByLastConnection.machines,
       machinesSortedByStock,
       machinesWithoutTelemetryBoard,
       offlineMachines,
@@ -343,6 +402,7 @@ export default class DetailGroupService {
       income,
       chartData1,
       chartData2,
+      incomePerPointOfSale: incomePerPointOfSaleResponse,
     };
   }
 }

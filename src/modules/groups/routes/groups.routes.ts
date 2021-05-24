@@ -2,6 +2,7 @@ import authHandler from '@shared/server/express/middlewares/auth-handler';
 import { celebrate, Joi } from 'celebrate';
 import { Router } from 'express';
 import CreateGroupController from '../services/create-group/create-group.controller';
+import DetailGroupController from '../services/detail-group/detail-group.controller';
 import EditGroupController from '../services/edit-group/edit-group.controller';
 import ListGroupsController from '../services/list-groups/list-groups.controller';
 
@@ -47,6 +48,12 @@ groupsRoutes.get(
     { abortEarly: false },
   ),
   ListGroupsController.handle,
+);
+
+groupsRoutes.get(
+  '/:groupId',
+  DetailGroupController.validate,
+  DetailGroupController.handle,
 );
 
 export default groupsRoutes;

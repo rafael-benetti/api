@@ -1,9 +1,18 @@
 import Period from '@modules/machines/contracts/dtos/period.dto';
+import { celebrate, Joi } from 'celebrate';
 import { Response, Request } from 'express';
 import { container } from 'tsyringe';
 import DashboardInfoService from './dashboard-info.service';
 
 export default abstract class DashboardInfoController {
+  static validate = celebrate({
+    query: {
+      startDate: Joi.date(),
+      endDate: Joi.date(),
+      period: Joi.string().valid('DAILY', 'WEEKLY', 'MONTHLY'),
+    },
+  });
+
   static async handle(req: Request, res: Response): Promise<Response> {
     const { userId } = req;
 
