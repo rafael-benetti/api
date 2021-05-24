@@ -50,4 +50,18 @@ export default class MikroProductLogsRepository
 
     return productLogs.map(productLog => ProductLogMapper.map(productLog));
   }
+
+  async findOne({
+    filters,
+  }: FindProductLogsDto): Promise<ProductLog | undefined> {
+    const { groupId, logType } = filters;
+    const query: Record<string, unknown> = {};
+
+    if (groupId) query.groupId = groupId;
+    if (logType) query.logType = logType;
+
+    const productLog = await this.repository.findOne({ ...query });
+
+    return productLog ? ProductLogMapper.map(productLog) : undefined;
+  }
 }

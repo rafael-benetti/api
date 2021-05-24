@@ -1,9 +1,11 @@
+import Group from '@modules/groups/contracts/models/group';
 import GroupsRepository from '@modules/groups/contracts/repositories/groups.repository';
 import Period from '@modules/machines/contracts/dtos/period.dto';
 import Machine from '@modules/machines/contracts/models/machine';
 import MachinesRepository from '@modules/machines/contracts/repositories/machines.repository';
 import PointOfSale from '@modules/points-of-sale/contracts/models/point-of-sale';
 import PointsOfSaleRepository from '@modules/points-of-sale/contracts/repositories/points-of-sale.repository';
+import ProductLogsRepository from '@modules/products/contracts/repositories/product-logs.repository';
 import TelemetryLogsRepository from '@modules/telemetry-logs/contracts/repositories/telemetry-logs.repository';
 import UniversalFinancialRepository from '@modules/universal-financial/contracts/repositories/universal-financial.repository';
 import Role from '@modules/users/contracts/enums/role';
@@ -57,10 +59,12 @@ interface Response {
   onlineMachines: number;
   givenPrizesCount?: number;
   income?: number;
-  incomePerPointOfSale: {
+  group: Group;
+  pointsOfSaleSortedByIncome: {
     pointOfSale: PointOfSale;
     income?: number;
   }[];
+  lastPurchaseDate?: Date;
 }
 
 @injectable()
@@ -83,6 +87,9 @@ export default class DetailGroupService {
 
     @inject('PointsOfSaleRepository')
     private pointsOfSaleRepository: PointsOfSaleRepository,
+
+    @inject('ProductLogsRepository')
+    private productLogsRepository: ProductLogsRepository,
   ) {}
 
   async execute({
@@ -98,6 +105,13 @@ export default class DetailGroupService {
     });
 
     if (!user) throw AppError.userNotFound;
+
+    const group = await this.groupsRepository.findOne({
+      by: 'id',
+      value: groupId,
+    });
+
+    if (!group) throw AppError.groupNotFound;
 
     if (user.role === Role.OWNER) {
       const groupIds = (
@@ -346,6 +360,13 @@ export default class DetailGroupService {
       others += item.others;
     });
 
+    const lastPurchasePromise = this.productLogsRepository.findOne({
+      filters: {
+        logType: 'IN',
+        groupId,
+      },
+    });
+
     const incomePerPointOfSalePromise = this.telemetryLogsRepository.incomePerPointOfSale(
       {
         groupIds: [groupId],
@@ -359,28 +380,35 @@ export default class DetailGroupService {
       value: groupId,
     });
 
-    const [{ pointsOfSale }, incomePerPointOfSale] = await Promise.all([
+    const [
+      { pointsOfSale },
+      incomePerPointOfSale,
+      lastPurchase,
+    ] = await Promise.all([
       pointsOfSalePromise,
       incomePerPointOfSalePromise,
+      lastPurchasePromise,
     ]);
 
-    const incomePerPointOfSalePromises = pointsOfSale.map(async pointOfSale => {
-      const numberOfMachines = await this.machinesRepository.count({
-        groupIds: [groupId],
-        pointOfSaleId: pointOfSale.id,
-      });
+    const pointsOfSaleSortedByIncomePromises = pointsOfSale.map(
+      async pointOfSale => {
+        const numberOfMachines = await this.machinesRepository.count({
+          groupIds: [groupId],
+          pointOfSaleId: pointOfSale.id,
+        });
 
-      return {
-        pointOfSale,
-        income: incomePerPointOfSale.find(
-          income => income.id === pointOfSale.id,
-        )?.income,
-        numberOfMachines,
-      };
-    });
+        return {
+          pointOfSale,
+          income:
+            incomePerPointOfSale.find(income => income.id === pointOfSale.id)
+              ?.income || 0,
+          numberOfMachines,
+        };
+      },
+    );
 
-    const incomePerPointOfSaleResponse = await Promise.all(
-      incomePerPointOfSalePromises,
+    const pointsOfSaleSortedByIncomeResponse = await Promise.all(
+      pointsOfSaleSortedByIncomePromises,
     );
 
     const chartData2 = {
@@ -402,7 +430,9 @@ export default class DetailGroupService {
       income,
       chartData1,
       chartData2,
-      incomePerPointOfSale: incomePerPointOfSaleResponse,
+      pointsOfSaleSortedByIncome: pointsOfSaleSortedByIncomeResponse,
+      lastPurchaseDate: lastPurchase?.createdAt,
+      group,
     };
   }
 }

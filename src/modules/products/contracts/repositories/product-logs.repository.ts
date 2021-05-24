@@ -5,4 +5,5 @@ import ProductLog from '../entities/product-log';
 export default interface ProductLogsRepository {
   create(data: CreateProductLogDto): ProductLog;
   find(data: FindProductLogsDto): Promise<ProductLog[]>;
+  findOne(data: FindProductLogsDto): Promise<ProductLog | undefined>;
 }
