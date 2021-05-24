@@ -44,6 +44,7 @@ usersRoutes.patch(
   celebrate({
     body: {
       name: Joi.string(),
+      deviceToken: Joi.string(),
       newPassword: Joi.string(),
       password: Joi.string().when(Joi.ref('newPassword'), {
         then: Joi.string().required(),

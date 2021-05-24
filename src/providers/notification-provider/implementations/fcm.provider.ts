@@ -45,7 +45,7 @@ class FCMProvider implements NotificationProvider {
     };
   }
 
-  sendToDevices(
+  async sendToDevices(
     messagePayload: MessagePayload,
   ): Promise<{ data: string; status: number }> {
     const accessToken = await this.getAccessToken();
@@ -64,7 +64,7 @@ class FCMProvider implements NotificationProvider {
       url,
       {
         message: {
-          topic: messagePayload.topic,
+          token: [],
           notification: {
             title: messagePayload.title,
             body: messagePayload.body,
