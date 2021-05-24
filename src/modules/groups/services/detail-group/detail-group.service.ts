@@ -399,9 +399,9 @@ export default class DetailGroupService {
 
         return {
           pointOfSale,
-          income: incomePerPointOfSale.find(
-            income => income.id === pointOfSale.id,
-          )?.income,
+          income:
+            incomePerPointOfSale.find(income => income.id === pointOfSale.id)
+              ?.income || 0,
           numberOfMachines,
         };
       },
