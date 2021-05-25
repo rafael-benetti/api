@@ -49,7 +49,7 @@ class ListNotificationsService {
       }
     });
 
-    this.ormProvider.commit();
+    await this.ormProvider.commit();
 
     return notifications;
   }
