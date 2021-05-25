@@ -12,10 +12,11 @@ notificationsRouter.post(
   '/',
   celebrate({
     body: {
-      topic: Joi.string().required(),
+      topic: Joi.string(),
+      machineId: Joi.string(),
+      groupId: Joi.string().required(),
       title: Joi.string().required(),
       body: Joi.string().required(),
-      type: Joi.string().required(),
     },
   }),
   CreateNotificationController.handle,

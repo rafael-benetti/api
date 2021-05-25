@@ -1,6 +1,9 @@
+import logger from '@config/logger';
 import NotificationsRepository from '@modules/notifications/contracts/repositories/notifications.repostory';
+import UsersRepository from '@modules/users/contracts/repositories/users.repository';
 import NotificationProvider from '@providers/notification-provider/contracts/notification.provider';
 import OrmProvider from '@providers/orm-provider/contracts/models/orm-provider';
+import { token } from 'morgan';
 import { inject, injectable } from 'tsyringe';
 
 interface Request {
@@ -20,6 +23,9 @@ export default class CreateNotificationService {
     @inject('NotificationProvider')
     private notificationProvider: NotificationProvider,
 
+    @inject('UsersRepository')
+    private usersRepository: UsersRepository,
+
     @inject('NotificationsRepository')
     private notificationsRepository: NotificationsRepository,
   ) {}
@@ -31,18 +37,31 @@ export default class CreateNotificationService {
     machineId,
     operatorId,
   }: Request): Promise<void> {
-    const firebaseMessageInfo = await this.notificationProvider.sendToTopic({
-      title,
-      body,
+    const users = await this.usersRepository.find({
+      filters: {
+        groupIds: [groupId],
+      },
     });
 
-    this.notificationsRepository.create({
-      body,
+    const tokens = users
+      .filter(user => user?.deviceToken !== undefined)
+      .map(user => user.deviceToken) as string[];
+
+    logger.info(tokens);
+
+    const firebaseMessageInfo = await this.notificationProvider.sendToDevices({
       title,
-      groupId,
-      receivers,
-      machineId,
+      body,
+      tokens,
     });
+
+    // this.notificationsRepository.create({
+    //   body,
+    //   title,
+    //   groupId,
+    //   receivers,
+    //   machineId,
+    // });
 
     await this.ormProvider.commit();
   }

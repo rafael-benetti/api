@@ -2,6 +2,7 @@ import { google } from 'googleapis';
 import AppError from '@shared/errors/app-error';
 import Axios from 'axios';
 import fcmConfig from '@config/fcm';
+import { Promise } from 'bluebird';
 import NotificationProvider from '../contracts/notification.provider';
 import MessagePayload from '../contracts/dtos/message-payload.dto';
 
@@ -47,37 +48,49 @@ class FCMProvider implements NotificationProvider {
 
   async sendToDevices(
     messagePayload: MessagePayload,
-  ): Promise<{ data: string; status: number }> {
+  ): Promise<{ data: string; status: number }[] | undefined> {
     const accessToken = await this.getAccessToken();
 
     if (!accessToken) throw AppError.unknownError;
 
     const url =
-      'https://fcm.googleapis.com/v1/projects/notifications-4e0e2/messages:send';
+      'https://fcm.googleapis.com/v1/projects/notifications-4e0e2/messages:send'; // TODO: TROCAR NOME DO PROJETO
 
     const headers = {
       Authorization: `Bearer ${accessToken}`,
       'Content-type': 'application/json',
     };
 
-    const response = await this.client.post(
-      url,
-      {
-        message: {
-          token: [],
-          notification: {
-            title: messagePayload.title,
-            body: messagePayload.body,
+    if (!messagePayload.tokens) return undefined;
+
+    const promises = messagePayload.tokens.map(async token => {
+      const response = await this.client.post(
+        url,
+        {
+          message: {
+            token,
+            notification: {
+              title: messagePayload.title,
+              body: messagePayload.body,
+            },
           },
         },
-      },
-      { headers },
-    );
+        { headers },
+      );
 
-    return {
-      data: response.data,
-      status: response.status,
-    };
+      return response;
+    });
+
+    const responses = await Promise.all(promises);
+
+    const response = responses.map(response => {
+      return {
+        data: response.data,
+        status: response.status,
+      };
+    });
+
+    return response;
   }
 
   getAccessToken(): Promise<string | null | undefined> {

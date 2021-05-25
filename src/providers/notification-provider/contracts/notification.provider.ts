@@ -7,7 +7,7 @@ interface NotificationProvider {
 
   sendToDevices(
     messagePayload: MessagePayload,
-  ): Promise<{ data: string; status: number }>;
+  ): Promise<{ data: string; status: number }[] | undefined>;
 }
 
 export default NotificationProvider;
