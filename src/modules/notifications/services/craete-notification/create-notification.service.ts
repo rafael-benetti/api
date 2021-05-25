@@ -68,7 +68,12 @@ export default class CreateNotificationService {
     logger.info(firebaseMessageInfos);
 
     const receivers = operator?.id
-      ? [...users.map(user => user.id), operator.id]
+      ? [
+          ...users
+            .filter(user => user.deviceToken !== undefined)
+            .map(user => user.id),
+          operator.id,
+        ]
       : users.map(user => user.id);
 
     this.notificationsRepository.create({
