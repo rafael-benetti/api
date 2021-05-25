@@ -12,7 +12,7 @@ notificationsRouter.post(
   '/',
   celebrate({
     body: {
-      topic: Joi.string(),
+      operatorId: Joi.string(),
       machineId: Joi.string(),
       groupId: Joi.string().required(),
       title: Joi.string().required(),
