@@ -13,7 +13,7 @@ class NotificationsCountService {
     private notificationsRepository: NotificationsRepository,
   ) {}
 
-  async execute(userId: string): Promise<number> {
+  async execute(userId: string): Promise<{ numberOfNotifications: number }> {
     const user = await this.usersRepository.findOne({
       by: 'id',
       value: userId,
@@ -21,9 +21,9 @@ class NotificationsCountService {
 
     if (!user) throw AppError.userNotFound;
 
-    const notifications = await this.notificationsRepository.count(user.id);
+    const count = await this.notificationsRepository.count(user.id);
 
-    return notifications;
+    return { numberOfNotifications: count };
   }
 }
 
