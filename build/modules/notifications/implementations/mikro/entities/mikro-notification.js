@@ -19,8 +19,10 @@ let MikroNotification = class MikroNotification {
     constructor(data) {
         if (data) {
             this.title = data.title;
-            this.message = data.title;
-            this.title = data.title;
+            this.body = data.body;
+            this.groupId = data.groupId;
+            this.receivers = data.receivers;
+            this.machineId = data.machineId;
         }
     }
 };
@@ -34,8 +36,20 @@ __decorate([
 ], MikroNotification.prototype, "title", void 0);
 __decorate([
     core_1.Property(),
+    __metadata("design:type", Array)
+], MikroNotification.prototype, "receivers", void 0);
+__decorate([
+    core_1.Property(),
     __metadata("design:type", String)
-], MikroNotification.prototype, "message", void 0);
+], MikroNotification.prototype, "machineId", void 0);
+__decorate([
+    core_1.Property(),
+    __metadata("design:type", String)
+], MikroNotification.prototype, "body", void 0);
+__decorate([
+    core_1.Property(),
+    __metadata("design:type", String)
+], MikroNotification.prototype, "groupId", void 0);
 MikroNotification = __decorate([
     core_1.Entity({ collection: 'notifications' }),
     __metadata("design:paramtypes", [Object])

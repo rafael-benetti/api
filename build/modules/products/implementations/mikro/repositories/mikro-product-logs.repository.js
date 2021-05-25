@@ -49,5 +49,15 @@ class MikroProductLogsRepository {
         });
         return productLogs.map(productLog => product_log_mapper_1.default.map(productLog));
     }
+    async findOne({ filters, }) {
+        const { groupId, logType } = filters;
+        const query = {};
+        if (groupId)
+            query.groupId = groupId;
+        if (logType)
+            query.logType = logType;
+        const productLog = await this.repository.findOne({ ...query });
+        return productLog ? product_log_mapper_1.default.map(productLog) : undefined;
+    }
 }
 exports.default = MikroProductLogsRepository;

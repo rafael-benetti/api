@@ -9,11 +9,12 @@ class UpdateUserProfileController {
 }
 UpdateUserProfileController.handle = async (req, res) => {
     const { userId, file } = req;
-    const { name, newPassword, password, phoneNumber } = req.body;
+    const { name, newPassword, password, phoneNumber, deviceToken } = req.body;
     const updateUserProfile = tsyringe_1.container.resolve(update_user_profile_service_1.default);
     const user = await updateUserProfile.execute({
         userId,
         name,
+        deviceToken,
         password: newPassword
             ? {
                 new: newPassword,
