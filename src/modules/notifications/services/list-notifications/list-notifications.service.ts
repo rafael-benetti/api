@@ -1,58 +1,56 @@
-// import Notification from '@modules/notifications/contracts/entities/notification';
-// import NotificationsRepository from '@modules/notifications/contracts/repositories/notifications.repostory';
-// import Role from '@modules/users/contracts/enums/role';
-// import UsersRepository from '@modules/users/contracts/repositories/users.repository';
-// import AppError from '@shared/errors/app-error';
-// import { inject, injectable } from 'tsyringe';
-//
-// interface Request {
-//   userId: string;
-//   limit?: number;
-//   offset?: number;
-// }
-//
-// @injectable()
-// class ListNotificationsService {
-//   constructor(
-//     @inject('UsersRepository')
-//     private usersRepository: UsersRepository,
-//
-//     @inject('NotificationsRepository')
-//     private notificationsRepository: NotificationsRepository,
-//   ) {}
-//
-//   async execute({ userId, limit, offset }: Request): Promise<Notification[]> {
-//     const user = await this.usersRepository.findOne({
-//       by: 'id',
-//       value: userId,
-//     });
-//
-//     if (!user) throw AppError.userNotFound;
-//
-//     //if (user.role === Role.OPERATOR) {
-//     //  if (user.groupIds) {
-//     //    const notifications = await this.notificationsRepository.find({
-//     //      topic: user.groupIds,
-//     //      limit,
-//     //      offset,
-//     //    });
-// //
-//         return notifications;
-//       }
-//     //}
-//
-//     if (user.role === Role.MANAGER || user.role === Role.OWNER) {
-//       const notifications = await this.notificationsRepository.find({
-//         topic: user.id,
-//         limit,
-//         offset,
-//       });
-//       return notifications;
-//     }
-//
-//     return [];
-//   }
-// }
-//
-// export default ListNotificationsService;
-//
+import Notification from '@modules/notifications/contracts/entities/notification';
+import NotificationsRepository from '@modules/notifications/contracts/repositories/notifications.repostory';
+import UsersRepository from '@modules/users/contracts/repositories/users.repository';
+import OrmProvider from '@providers/orm-provider/contracts/models/orm-provider';
+import AppError from '@shared/errors/app-error';
+import { inject, injectable } from 'tsyringe';
+
+interface Request {
+  userId: string;
+  limit?: number;
+  offset?: number;
+}
+
+@injectable()
+class ListNotificationsService {
+  constructor(
+    @inject('UsersRepository')
+    private usersRepository: UsersRepository,
+
+    @inject('NotificationsRepository')
+    private notificationsRepository: NotificationsRepository,
+
+    @inject('OrmProvider')
+    private ormProvider: OrmProvider,
+  ) {}
+
+  async execute({
+    userId,
+    limit,
+    offset,
+  }: Request): Promise<{ notifications: Notification[]; count: number }> {
+    const user = await this.usersRepository.findOne({
+      by: 'id',
+      value: userId,
+    });
+
+    if (!user) throw AppError.userNotFound;
+
+    const notifications = await this.notificationsRepository.find({
+      userId: user.id,
+      limit,
+      offset,
+    });
+
+    notifications.notifications.forEach(notification => {
+      notification.isRead = true;
+      this.notificationsRepository.save(notification);
+    });
+
+    this.ormProvider.commit();
+
+    return notifications;
+  }
+}
+
+export default ListNotificationsService;

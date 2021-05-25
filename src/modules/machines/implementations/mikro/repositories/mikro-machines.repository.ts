@@ -147,7 +147,7 @@ class MikroMachinesRepository implements MachinesRepository {
       minimumPrizeCount: number;
     }[]
   > {
-    const stages: any[] = [
+    const stages: unknown[] = [
       {
         $match: {
           lastConnection: {

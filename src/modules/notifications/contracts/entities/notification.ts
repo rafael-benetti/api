@@ -10,4 +10,8 @@ export default class Notification {
   machineId?: string;
 
   groupId: string;
+
+  date: Date;
+
+  isRead: boolean;
 }

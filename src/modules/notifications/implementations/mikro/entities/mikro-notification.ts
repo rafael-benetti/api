@@ -22,6 +22,12 @@ class MikroNotification implements Notification {
   @Property()
   groupId: string;
 
+  @Property()
+  date: Date;
+
+  @Property()
+  isRead: boolean;
+
   constructor(data?: CreateNotificationDto) {
     if (data) {
       this.title = data.title;
@@ -29,6 +35,8 @@ class MikroNotification implements Notification {
       this.groupId = data.groupId;
       this.receivers = data.receivers;
       this.machineId = data.machineId;
+      this.date = new Date();
+      this.isRead = false;
     }
   }
 }
