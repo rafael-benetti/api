@@ -1,6 +1,7 @@
 import { Entity, PrimaryKey, Property } from '@mikro-orm/core';
 import CreateNotificationDto from '@modules/notifications/contracts/dtos/create-notification.dto';
 import Notification from '@modules/notifications/contracts/entities/notification';
+import { v4 } from 'uuid';
 
 @Entity({ collection: 'notifications' })
 class MikroNotification implements Notification {
@@ -30,6 +31,7 @@ class MikroNotification implements Notification {
 
   constructor(data?: CreateNotificationDto) {
     if (data) {
+      this.id = v4();
       this.title = data.title;
       this.body = data.body;
       this.groupId = data.groupId;
