@@ -4,8 +4,7 @@ import CreateNotificationService from './create-notification.service';
 
 abstract class CreateNotificationController {
   static async handle(req: Request, res: Response): Promise<Response> {
-    const { machineId } = req.params;
-    const { title, body, groupId, operatorId } = req.body;
+    const { title, body, groupId, operatorId, machineId } = req.body;
 
     const createNotificationService = container.resolve(
       CreateNotificationService,
