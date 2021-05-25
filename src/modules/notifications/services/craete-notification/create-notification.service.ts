@@ -1,9 +1,10 @@
 import logger from '@config/logger';
 import NotificationsRepository from '@modules/notifications/contracts/repositories/notifications.repostory';
+import Role from '@modules/users/contracts/enums/role';
 import UsersRepository from '@modules/users/contracts/repositories/users.repository';
 import NotificationProvider from '@providers/notification-provider/contracts/notification.provider';
 import OrmProvider from '@providers/orm-provider/contracts/models/orm-provider';
-import { token } from 'morgan';
+import { Promise } from 'bluebird';
 import { inject, injectable } from 'tsyringe';
 
 interface Request {
@@ -37,31 +38,57 @@ export default class CreateNotificationService {
     machineId,
     operatorId,
   }: Request): Promise<void> {
-    const users = await this.usersRepository.find({
-      filters: {
-        groupIds: [groupId],
-      },
-    });
+    let users;
+    let operator;
+
+    if (operatorId) {
+      [users, operator] = await Promise.all([
+        this.usersRepository.find({
+          filters: {
+            groupIds: [groupId],
+            role: Role.MANAGER,
+          },
+        }),
+
+        this.usersRepository.findOne({
+          by: 'id',
+          value: operatorId,
+        }),
+      ]);
+    } else {
+      users = await this.usersRepository.find({
+        filters: {
+          groupIds: [groupId],
+          role: Role.MANAGER,
+        },
+      });
+    }
 
     const tokens = users
       .filter(user => user?.deviceToken !== undefined)
       .map(user => user.deviceToken) as string[];
 
-    logger.info(tokens);
+    if (operator?.deviceToken) tokens.push(operator.deviceToken);
 
-    const firebaseMessageInfo = await this.notificationProvider.sendToDevices({
+    const firebaseMessageInfos = await this.notificationProvider.sendToDevices({
       title,
       body,
       tokens,
     });
 
-    // this.notificationsRepository.create({
-    //   body,
-    //   title,
-    //   groupId,
-    //   receivers,
-    //   machineId,
-    // });
+    logger.info(firebaseMessageInfos);
+
+    const receivers = operator?.id
+      ? [...users.map(user => user.id), operator.id]
+      : users.map(user => user.id);
+
+    this.notificationsRepository.create({
+      body,
+      title,
+      groupId,
+      receivers,
+      machineId,
+    });
 
     await this.ormProvider.commit();
   }
