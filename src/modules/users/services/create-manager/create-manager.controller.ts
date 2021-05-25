@@ -5,7 +5,7 @@ import CreateManagerService from './create-manager.service';
 abstract class CreateManagerController {
   static handle: RequestHandler = async (req, res) => {
     const { userId } = req;
-    const { email, name, groupIds, permissions } = req.body;
+    const { email, name, groupIds, permissions, phoneNumber } = req.body;
 
     const createManager = container.resolve(CreateManagerService);
 
@@ -15,6 +15,7 @@ abstract class CreateManagerController {
       name,
       groupIds,
       permissions,
+      phoneNumber,
     });
 
     return res.status(201).json(manager);
