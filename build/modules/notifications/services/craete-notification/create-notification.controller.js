@@ -7,15 +7,14 @@ const tsyringe_1 = require("tsyringe");
 const create_notification_service_1 = __importDefault(require("./create-notification.service"));
 class CreateNotificationController {
     static async handle(req, res) {
-        const { machineId } = req.params;
-        const { title, body, topic, type } = req.body;
+        const { title, body, groupId, operatorId, machineId } = req.body;
         const createNotificationService = tsyringe_1.container.resolve(create_notification_service_1.default);
         await createNotificationService.execute({
-            body,
-            machineId,
             title,
-            topic,
-            type,
+            body,
+            operatorId,
+            machineId,
+            groupId,
         });
         return res.status(204).json();
     }

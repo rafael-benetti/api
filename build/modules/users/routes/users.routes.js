@@ -33,6 +33,7 @@ usersRoutes.patch('/me', multer_1.default({
 }).single('file'), tsyringe_1.container.resolve('OrmProvider').forkMiddleware, celebrate_1.celebrate({
     body: {
         name: celebrate_1.Joi.string(),
+        deviceToken: celebrate_1.Joi.string(),
         newPassword: celebrate_1.Joi.string(),
         password: celebrate_1.Joi.string().when(celebrate_1.Joi.ref('newPassword'), {
             then: celebrate_1.Joi.string().required(),

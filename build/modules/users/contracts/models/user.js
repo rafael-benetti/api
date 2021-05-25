@@ -24,6 +24,7 @@ class User {
             this.phoneNumber = data.phoneNumber;
             this.isActive = data.isActive;
             this.ownerId = data.ownerId;
+            this.deviceToken = data.deviceToken;
         }
     }
 }

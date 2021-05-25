@@ -29,7 +29,7 @@ let UpdateUserProfileService = class UpdateUserProfileService {
         this.ormProvider = ormProvider;
         this.storageProvider = storageProvider;
     }
-    async execute({ userId, name, password, file, phoneNumber, }) {
+    async execute({ userId, name, password, file, phoneNumber, deviceToken, }) {
         const user = await this.usersRepository.findOne({
             by: 'id',
             value: userId,
@@ -48,6 +48,8 @@ let UpdateUserProfileService = class UpdateUserProfileService {
                 this.storageProvider.deleteFile(user.photo.key);
             user.photo = await this.storageProvider.uploadFile(file);
         }
+        if (deviceToken)
+            user.deviceToken = deviceToken;
         if (phoneNumber)
             user.phoneNumber = phoneNumber;
         this.usersRepository.save(user);

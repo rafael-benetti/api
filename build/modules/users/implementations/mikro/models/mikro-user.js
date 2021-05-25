@@ -35,6 +35,7 @@ let MikroUser = class MikroUser {
             this.phoneNumber = data.phoneNumber;
             this.isActive = data.isActive;
             this.ownerId = data.ownerId;
+            this.deviceToken = data.deviceToken;
         }
     }
 };
@@ -86,6 +87,10 @@ __decorate([
     core_1.Property(),
     __metadata("design:type", String)
 ], MikroUser.prototype, "ownerId", void 0);
+__decorate([
+    core_1.Property(),
+    __metadata("design:type", String)
+], MikroUser.prototype, "deviceToken", void 0);
 MikroUser = __decorate([
     core_1.Entity({ collection: 'users' }),
     __metadata("design:paramtypes", [Object])

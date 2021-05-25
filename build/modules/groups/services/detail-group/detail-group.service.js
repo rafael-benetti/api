@@ -15,12 +15,14 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
+const group_1 = __importDefault(require("../../contracts/models/group"));
 const groups_repository_1 = __importDefault(require("../../contracts/repositories/groups.repository"));
 const period_dto_1 = __importDefault(require("../../../machines/contracts/dtos/period.dto"));
 const machine_1 = __importDefault(require("../../../machines/contracts/models/machine"));
 const machines_repository_1 = __importDefault(require("../../../machines/contracts/repositories/machines.repository"));
 const point_of_sale_1 = __importDefault(require("../../../points-of-sale/contracts/models/point-of-sale"));
 const points_of_sale_repository_1 = __importDefault(require("../../../points-of-sale/contracts/repositories/points-of-sale.repository"));
+const product_logs_repository_1 = __importDefault(require("../../../products/contracts/repositories/product-logs.repository"));
 const telemetry_logs_repository_1 = __importDefault(require("../../../telemetry-logs/contracts/repositories/telemetry-logs.repository"));
 const universal_financial_repository_1 = __importDefault(require("../../../universal-financial/contracts/repositories/universal-financial.repository"));
 const role_1 = __importDefault(require("../../../users/contracts/enums/role"));
@@ -30,13 +32,14 @@ const bluebird_1 = require("bluebird");
 const date_fns_1 = require("date-fns");
 const tsyringe_1 = require("tsyringe");
 let DetailGroupService = class DetailGroupService {
-    constructor(usersRepository, groupsRepository, machinesRepository, telemetryLogsRepository, universalFinancialRepository, pointsOfSaleRepository) {
+    constructor(usersRepository, groupsRepository, machinesRepository, telemetryLogsRepository, universalFinancialRepository, pointsOfSaleRepository, productLogsRepository) {
         this.usersRepository = usersRepository;
         this.groupsRepository = groupsRepository;
         this.machinesRepository = machinesRepository;
         this.telemetryLogsRepository = telemetryLogsRepository;
         this.universalFinancialRepository = universalFinancialRepository;
         this.pointsOfSaleRepository = pointsOfSaleRepository;
+        this.productLogsRepository = productLogsRepository;
     }
     async execute({ userId, groupId, startDate, endDate, period, }) {
         const user = await this.usersRepository.findOne({
@@ -45,6 +48,12 @@ let DetailGroupService = class DetailGroupService {
         });
         if (!user)
             throw app_error_1.default.userNotFound;
+        const group = await this.groupsRepository.findOne({
+            by: 'id',
+            value: groupId,
+        });
+        if (!group)
+            throw app_error_1.default.groupNotFound;
         if (user.role === role_1.default.OWNER) {
             const groupIds = (await this.groupsRepository.find({
                 filters: {
@@ -230,6 +239,12 @@ let DetailGroupService = class DetailGroupService {
             creditCardIncome += item.creditCardIncome;
             others += item.others;
         });
+        const lastPurchasePromise = this.productLogsRepository.findOne({
+            filters: {
+                logType: 'IN',
+                groupId,
+            },
+        });
         const incomePerPointOfSalePromise = this.telemetryLogsRepository.incomePerPointOfSale({
             groupIds: [groupId],
             endDate,
@@ -239,22 +254,24 @@ let DetailGroupService = class DetailGroupService {
             by: 'groupId',
             value: groupId,
         });
-        const [{ pointsOfSale }, incomePerPointOfSale] = await bluebird_1.Promise.all([
+        const [{ pointsOfSale }, incomePerPointOfSale, lastPurchase,] = await bluebird_1.Promise.all([
             pointsOfSalePromise,
             incomePerPointOfSalePromise,
+            lastPurchasePromise,
         ]);
-        const incomePerPointOfSalePromises = pointsOfSale.map(async (pointOfSale) => {
+        const pointsOfSaleSortedByIncomePromises = pointsOfSale.map(async (pointOfSale) => {
             const numberOfMachines = await this.machinesRepository.count({
                 groupIds: [groupId],
                 pointOfSaleId: pointOfSale.id,
             });
             return {
                 pointOfSale,
-                income: incomePerPointOfSale.find(income => income.id === pointOfSale.id)?.income,
+                income: incomePerPointOfSale.find(income => income.id === pointOfSale.id)
+                    ?.income || 0,
                 numberOfMachines,
             };
         });
-        const incomePerPointOfSaleResponse = await bluebird_1.Promise.all(incomePerPointOfSalePromises);
+        const pointsOfSaleSortedByIncomeResponse = await bluebird_1.Promise.all(pointsOfSaleSortedByIncomePromises);
         const chartData2 = {
             cashIncome,
             coinIncome,
@@ -273,7 +290,9 @@ let DetailGroupService = class DetailGroupService {
             income,
             chartData1,
             chartData2,
-            incomePerPointOfSale: incomePerPointOfSaleResponse,
+            pointsOfSaleSortedByIncome: pointsOfSaleSortedByIncomeResponse,
+            lastPurchaseDate: lastPurchase?.createdAt,
+            group,
         };
     }
 };
@@ -285,6 +304,7 @@ DetailGroupService = __decorate([
     __param(3, tsyringe_1.inject('TelemetryLogsRepository')),
     __param(4, tsyringe_1.inject('UniversalFinancialRepository')),
     __param(5, tsyringe_1.inject('PointsOfSaleRepository')),
-    __metadata("design:paramtypes", [Object, Object, Object, Object, Object, Object])
+    __param(6, tsyringe_1.inject('ProductLogsRepository')),
+    __metadata("design:paramtypes", [Object, Object, Object, Object, Object, Object, Object])
 ], DetailGroupService);
 exports.default = DetailGroupService;

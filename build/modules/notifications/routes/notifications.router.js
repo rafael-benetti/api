@@ -12,10 +12,11 @@ const list_notifications_controller_1 = __importDefault(require("../services/lis
 const notificationsRouter = express_1.Router();
 notificationsRouter.post('/', celebrate_1.celebrate({
     body: {
-        topic: celebrate_1.Joi.string().required(),
+        operatorId: celebrate_1.Joi.string(),
+        machineId: celebrate_1.Joi.string(),
+        groupId: celebrate_1.Joi.string().required(),
         title: celebrate_1.Joi.string().required(),
         body: celebrate_1.Joi.string().required(),
-        type: celebrate_1.Joi.string().required(),
     },
 }), create_notification_controller_1.default.handle);
 notificationsRouter.use(auth_handler_1.default);
