@@ -147,7 +147,7 @@ class MikroMachinesRepository implements MachinesRepository {
       minimumPrizeCount: number;
     }[]
   > {
-    const machines = await this.repository.aggregate([
+    const stages: any[] = [
       {
         $match: {
           lastConnection: {
@@ -162,25 +162,6 @@ class MikroMachinesRepository implements MachinesRepository {
             $exists: true,
             $ne: null,
           },
-        },
-      },
-      {
-        $sort: {
-          priority: 1,
-        },
-      },
-      {
-        ...(groupIds && {
-          $match: {
-            groupId: {
-              $in: groupIds,
-            },
-          },
-        }),
-      },
-      {
-        $match: {
-          ...(operatorId && { operatorId }),
         },
       },
       {
@@ -202,9 +183,34 @@ class MikroMachinesRepository implements MachinesRepository {
         },
       },
       {
+        $sort: {
+          priority: 1,
+        },
+      },
+      {
         $limit: 5,
       },
-    ]);
+    ];
+
+    if (operatorId) {
+      stages.unshift({
+        $match: {
+          operatorId: { $eq: operatorId },
+        },
+      });
+    }
+
+    if (groupIds) {
+      stages.unshift({
+        $match: {
+          groupId: {
+            $in: groupIds,
+          },
+        },
+      });
+    }
+
+    const machines = await this.repository.aggregate(stages);
 
     return machines;
   }
@@ -212,6 +218,7 @@ class MikroMachinesRepository implements MachinesRepository {
   async count({
     ownerId,
     telemetryStatus,
+    operatorId,
     groupIds,
   }: FindMachinesDto): Promise<number> {
     const telemetryStatusQuery: Record<string, unknown> = {};
@@ -244,6 +251,7 @@ class MikroMachinesRepository implements MachinesRepository {
     const count = await this.repository.count({
       ...(ownerId && { ownerId }),
       ...(groupIds && { groupId: groupIds }),
+      ...(operatorId && { operatorId }),
       ...telemetryStatusQuery,
     });
 
