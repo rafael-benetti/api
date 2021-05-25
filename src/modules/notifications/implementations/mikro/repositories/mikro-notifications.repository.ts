@@ -39,6 +39,9 @@ class MikroNotificationsRepository implements NotificationsRepository {
       {
         limit,
         offset,
+        orderBy: {
+          date: 'ASC',
+        },
         fields: ['id', 'title', 'body', 'date', 'groupId', 'machineId'],
       },
     );

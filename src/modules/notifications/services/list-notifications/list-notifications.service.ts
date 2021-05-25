@@ -43,8 +43,10 @@ class ListNotificationsService {
     });
 
     notifications.notifications.forEach(notification => {
-      notification.isRead = true;
-      this.notificationsRepository.save(notification);
+      if (!notification.isRead) {
+        notification.isRead = true;
+        this.notificationsRepository.save(notification);
+      }
     });
 
     this.ormProvider.commit();

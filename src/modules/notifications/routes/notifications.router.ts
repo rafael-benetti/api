@@ -2,7 +2,7 @@ import authHandler from '@shared/server/express/middlewares/auth-handler';
 import { celebrate, Joi } from 'celebrate';
 import { Router } from 'express';
 import CreateNotificationController from '../services/craete-notification/create-notification.controller';
-import NotificationsCountController from '../services/get-notifications-count/get-notifications-count.controller';
+import GetNumberOfNotificationsUnreadController from '../services/get-notifications-count/get-numbers-notifications-unread.controller';
 import ListNotificationsController from '../services/list-notifications/list-notifications.controller';
 
 // TODO: ADICIONAR FUNÇÃO DE AUTENTICAÇÃO
@@ -26,6 +26,9 @@ notificationsRouter.post(
 notificationsRouter.use(authHandler);
 
 notificationsRouter.get('/', ListNotificationsController.handle);
-notificationsRouter.get('/count', NotificationsCountController.handle);
+notificationsRouter.get(
+  '/count',
+  GetNumberOfNotificationsUnreadController.handle,
+);
 
 export default notificationsRouter;
