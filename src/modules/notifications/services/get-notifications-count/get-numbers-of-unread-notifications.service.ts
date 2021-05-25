@@ -4,7 +4,7 @@ import AppError from '@shared/errors/app-error';
 import { inject, injectable } from 'tsyringe';
 
 @injectable()
-class GetNumberOfNotificationsUnreadService {
+class GetNumberOfUnreadNotificationsService {
   constructor(
     @inject('UsersRepository')
     private usersRepository: UsersRepository,
@@ -15,7 +15,7 @@ class GetNumberOfNotificationsUnreadService {
 
   async execute(
     userId: string,
-  ): Promise<{ numberOfNotificationsUnread: number }> {
+  ): Promise<{ numberOfUnreadNotifications: number }> {
     const user = await this.usersRepository.findOne({
       by: 'id',
       value: userId,
@@ -25,8 +25,8 @@ class GetNumberOfNotificationsUnreadService {
 
     const count = await this.notificationsRepository.count(user.id);
 
-    return { numberOfNotificationsUnread: count };
+    return { numberOfUnreadNotifications: count };
   }
 }
 
-export default GetNumberOfNotificationsUnreadService;
+export default GetNumberOfUnreadNotificationsService;
