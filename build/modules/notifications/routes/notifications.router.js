@@ -7,7 +7,7 @@ const auth_handler_1 = __importDefault(require("../../../shared/server/express/m
 const celebrate_1 = require("celebrate");
 const express_1 = require("express");
 const create_notification_controller_1 = __importDefault(require("../services/craete-notification/create-notification.controller"));
-const list_notifications_controller_1 = __importDefault(require("../services/list-notifications/list-notifications.controller"));
+// import ListNotificationsController from '../services/list-notifications/list-notifications.controller';
 // TODO: ADICIONAR FUNÇÃO DE AUTENTICAÇÃO
 const notificationsRouter = express_1.Router();
 notificationsRouter.post('/', celebrate_1.celebrate({
@@ -20,5 +20,5 @@ notificationsRouter.post('/', celebrate_1.celebrate({
     },
 }), create_notification_controller_1.default.handle);
 notificationsRouter.use(auth_handler_1.default);
-notificationsRouter.get('/', list_notifications_controller_1.default.handle);
+// notificationsRouter.get('/', ListNotificationsController.handle);
 exports.default = notificationsRouter;
