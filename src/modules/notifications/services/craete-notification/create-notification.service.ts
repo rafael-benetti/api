@@ -38,37 +38,26 @@ export default class CreateNotificationService {
     machineId,
     operatorId,
   }: Request): Promise<void> {
-    let users;
     let operator;
+    const users = await this.usersRepository.find({
+      filters: {
+        groupIds: [groupId],
+        role: Role.MANAGER,
+      },
+    });
 
     if (operatorId) {
-      [users, operator] = await Promise.all([
-        this.usersRepository.find({
-          filters: {
-            groupIds: [groupId],
-            role: Role.MANAGER,
-          },
-        }),
-
-        this.usersRepository.findOne({
-          by: 'id',
-          value: operatorId,
-        }),
-      ]);
-    } else {
-      users = await this.usersRepository.find({
-        filters: {
-          groupIds: [groupId],
-          role: Role.MANAGER,
-        },
+      operator = await this.usersRepository.findOne({
+        by: 'id',
+        value: operatorId,
       });
     }
 
-    const tokens = users
+    let tokens = users
       .filter(user => user?.deviceToken !== undefined)
       .map(user => user.deviceToken) as string[];
 
-    if (operator?.deviceToken) tokens.push(operator.deviceToken);
+    if (operator?.deviceToken) tokens = [...tokens, operator.deviceToken];
 
     const firebaseMessageInfos = await this.notificationProvider.sendToDevices({
       title,
