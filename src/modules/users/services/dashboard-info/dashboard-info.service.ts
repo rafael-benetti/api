@@ -187,13 +187,7 @@ export default class DashboardInfoService {
     let givenPrizesCount: number = 0;
 
     if (!isOperator)
-      if (
-        (period && period === Period.DAILY) ||
-        eachDayOfInterval({
-          start: startDate,
-          end: endDate,
-        }).length <= 2
-      ) {
+      if (period && period === Period.DAILY) {
         const telemetryLogsInPromise = async () => {
           const {
             telemetryLogs: response,
