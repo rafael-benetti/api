@@ -69,7 +69,7 @@ machinesRouter.get(
   '/:machineId',
   celebrate({
     query: {
-      period: Joi.string().valid('DAILY', 'WEEKLY', 'MONTHLY').default('DAILY'),
+      period: Joi.string().valid('DAILY', 'WEEKLY', 'MONTHLY'),
       startDate: Joi.date(),
       endDate: Joi.date(),
     },
