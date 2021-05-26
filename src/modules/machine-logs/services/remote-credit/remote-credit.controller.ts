@@ -27,7 +27,7 @@ abstract class RemoteCreditController {
       quantity,
     });
 
-    return res.status(204).json(),
+    return res.status(204).json();
   }
 }
 
