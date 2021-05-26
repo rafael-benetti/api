@@ -73,13 +73,14 @@ class FixMachineStockService {
     this.machinesRepository.save(machine);
 
     this.machineLogsRepository.create({
-      createdAt: new Date(),
       createdBy: user.id,
       machineId: machine.id,
       groupId: machine.groupId,
       observations,
+      quantity,
       type: MachineLogType.FIX_STOCK,
     });
+
     await this.ormProvider.commit();
 
     return machine;
