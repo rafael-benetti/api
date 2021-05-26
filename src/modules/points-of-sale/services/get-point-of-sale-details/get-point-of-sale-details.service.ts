@@ -121,7 +121,7 @@ class GetPointOfSaleDetailsService {
     if (!startDate) throw AppError.unknownError;
     if (!endDate) throw AppError.unknownError;
 
-    const telemetryLogs = await this.telemetryLogsRepository.find({
+    const { telemetryLogs } = await this.telemetryLogsRepository.find({
       filters: {
         machineId: machines.map(machine => machine.id),
         pointOfSaleId: pointOfSale.id,

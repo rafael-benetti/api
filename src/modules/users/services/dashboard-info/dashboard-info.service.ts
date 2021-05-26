@@ -195,7 +195,9 @@ export default class DashboardInfoService {
         }).length <= 1 // TODO: DAR UMA CONFERIDA SE 24 O INTERVALO É 2 OU 1
       ) {
         const telemetryLogsInPromise = async () => {
-          const response = await this.telemetryLogsRepository.find({
+          const {
+            telemetryLogs: response,
+          } = await this.telemetryLogsRepository.find({
             filters: {
               date: {
                 startDate,
@@ -211,7 +213,9 @@ export default class DashboardInfoService {
         };
 
         const telemetryLogsOutPromise = async () => {
-          const response = await this.telemetryLogsRepository.find({
+          const {
+            telemetryLogs: response,
+          } = await this.telemetryLogsRepository.find({
             filters: {
               date: {
                 startDate,
