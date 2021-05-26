@@ -1,3 +1,4 @@
+import logger from '@config/logger';
 import CreateTelemetryLogDto from '@modules/telemetry-logs/contracts/dtos/create-telemetry-log.dto';
 import FindTelemetryLogsDto from '@modules/telemetry-logs/contracts/dtos/find-telemetry-logs.dto';
 import GetIncomePerMachineResponseDto from '@modules/telemetry-logs/contracts/dtos/get-income-per-machine-response.dto';
@@ -41,7 +42,7 @@ class MikroTelemetryLogsRepository implements TelemetryLogsRepository {
 
     if (groupId) query.groupId = groupId;
     if (machineId) query.machineId = machineId;
-    if (date)
+    if (date?.startDate)
       if (!date.startDate) {
         query.date = {
           $lte: date.endDate,
