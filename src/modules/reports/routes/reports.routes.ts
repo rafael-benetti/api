@@ -1,5 +1,6 @@
 import authHandler from '@shared/server/express/middlewares/auth-handler';
 import { Router } from 'express';
+import GenerateCollectionsReportController from '../services/generate-collections-report/generate-collections-report.controller';
 import GenerateGroupReportController from '../services/generate-group-report/generate-group-report.controller';
 import GenerateMachinesController from '../services/generate-machines-report/generate-machines-report.controller';
 import GeneratePointsOfSaleReportController from '../services/generate-points-of-sale-report/generate-points-of-sale-report.controller';
@@ -25,6 +26,12 @@ reportsRoutes.get(
   '/machines',
   GenerateMachinesController.validate,
   GenerateMachinesController.handle,
+);
+
+reportsRoutes.get(
+  '/collections',
+  GenerateCollectionsReportController.validate,
+  GenerateCollectionsReportController.handle,
 );
 
 reportsRoutes.get(

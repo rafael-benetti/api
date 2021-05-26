@@ -58,10 +58,22 @@ export default class MikroCollectionsRepository
   ): Promise<{ collections: Collection[]; count: number }> {
     const [collections, count] = await this.repository.findAndCount(
       {
-        groupId: {
-          $in: data.groupIds,
-        },
+        ...(data.groupIds && {
+          groupId: {
+            $in: data.groupIds,
+          },
+        }),
         ...(data.machineId && { machineId: data.machineId }),
+        ...(data.startDate && {
+          date: {
+            $gte: data.startDate,
+          },
+        }),
+        ...(data.endDate && {
+          date: {
+            $lte: data.endDate,
+          },
+        }),
       },
       {
         limit: data.limit,

@@ -6,8 +6,8 @@ import GenerateMachinesReportService from './generate-machines-report.service';
 export default abstract class GenerateMachinesController {
   static validate = celebrate({
     query: {
-      startDate: Joi.date().iso(),
-      endDate: Joi.date().iso(),
+      startDate: Joi.date().iso().required(),
+      endDate: Joi.date().iso().required(),
       groupId: Joi.string(),
     },
   });
