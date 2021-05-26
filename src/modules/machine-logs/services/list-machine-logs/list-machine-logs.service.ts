@@ -85,13 +85,13 @@ class ListMachineLogsService {
     }
 
     const machineLogs = await this.machineLogsRepository.find({
+      startDate,
       endDate,
       groupId: machine.groupId,
-      limit,
       machineId,
       type,
       offset,
-      startDate,
+      limit,
     });
 
     return machineLogs;

@@ -26,8 +26,8 @@ abstract class ListMachineLogsController {
       userId,
       machineId: machineId as string,
       type: type as MachineLogType,
-      startDate: new Date(startDate as string),
-      endDate: new Date(endDate as string),
+      startDate: startDate ? new Date(startDate as string) : undefined,
+      endDate: endDate ? new Date(endDate as string) : undefined,
       limit: Number(limit),
       offset: Number(offset),
     });
