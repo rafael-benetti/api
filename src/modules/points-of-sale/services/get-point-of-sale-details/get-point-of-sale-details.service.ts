@@ -150,7 +150,7 @@ class GetPointOfSaleDetailsService {
     let chartData: ChartData[] = [];
 
     // ? CHART DATA PARA O PERIODO DIARIO
-    if (period === Period.DAILY) {
+    if (period && period === Period.DAILY) {
       const hoursOfInterval = eachHourOfInterval({
         start: startDate,
         end: endDate,
