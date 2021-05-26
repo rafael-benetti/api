@@ -1,4 +1,3 @@
-import logger from '@config/logger';
 import CreateTelemetryLogDto from '@modules/telemetry-logs/contracts/dtos/create-telemetry-log.dto';
 import FindTelemetryLogsDto from '@modules/telemetry-logs/contracts/dtos/find-telemetry-logs.dto';
 import GetIncomePerMachineResponseDto from '@modules/telemetry-logs/contracts/dtos/get-income-per-machine-response.dto';
@@ -28,7 +27,9 @@ class MikroTelemetryLogsRepository implements TelemetryLogsRepository {
     return TelemetryLogMapper.toApi(telemetryLog);
   }
 
-  async find(data: FindTelemetryLogsDto): Promise<TelemetryLog[]> {
+  async find(
+    data: FindTelemetryLogsDto,
+  ): Promise<{ telemetryLogs: TelemetryLog[]; count: number }> {
     const query: Record<string, unknown> = {};
 
     const {
@@ -59,7 +60,7 @@ class MikroTelemetryLogsRepository implements TelemetryLogsRepository {
 
     if (type) query.type = type;
 
-    const telemetryLogs = await this.repository.find(
+    const [telemetryLogs, count] = await this.repository.findAndCount(
       { ...query },
 
       {
@@ -69,7 +70,12 @@ class MikroTelemetryLogsRepository implements TelemetryLogsRepository {
       },
     );
 
-    return telemetryLogs;
+    return {
+      telemetryLogs: telemetryLogs.map(telemetryLog =>
+        TelemetryLogMapper.toApi(telemetryLog),
+      ),
+      count,
+    };
   }
 
   async getIncomePerMachine({

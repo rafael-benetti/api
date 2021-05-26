@@ -10,4 +10,6 @@ export default interface CreateMachineLogDto {
   type: MachineLogType;
 
   createdBy: string;
+
+  quantity: number;
 }

@@ -37,7 +37,7 @@ class ListTelemetryLogsService {
     endDate,
     limit,
     offset,
-  }: Request): Promise<TelemetryLog[]> {
+  }: Request): Promise<{ telemetryLogs: TelemetryLog[]; count: number }> {
     const user = await this.usersRepository.findOne({
       by: 'id',
       value: userId,
@@ -62,7 +62,7 @@ class ListTelemetryLogsService {
     )
       throw AppError.authorizationError;
 
-    const telemetryLogs = await this.telemetryLogsRepository.find({
+    const { telemetryLogs, count } = await this.telemetryLogsRepository.find({
       filters: {
         machineId,
         type,
@@ -75,7 +75,7 @@ class ListTelemetryLogsService {
       offset,
     });
 
-    return telemetryLogs;
+    return { telemetryLogs, count };
   }
 }
 export default ListTelemetryLogsService;

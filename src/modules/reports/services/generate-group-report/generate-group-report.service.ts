@@ -10,6 +10,7 @@ import MachinesRepository from '@modules/machines/contracts/repositories/machine
 import PointsOfSaleRepository from '@modules/points-of-sale/contracts/repositories/points-of-sale.repository';
 import { Promise } from 'bluebird';
 import MachineLogsRepository from '@modules/machine-logs/contracts/repositories/machine-logs.repository';
+import MachineLogType from '@modules/machine-logs/contracts/enums/machine-log-type';
 
 interface Request {
   userId: string;
@@ -102,16 +103,25 @@ export default class GenerateGroupReportService {
           },
         });
 
+        const remoteCreditsPromise = this.machineLogsRepository.find({
+          startDate,
+          endDate,
+          groupId: group.id,
+          type: MachineLogType.REMOTE_CREDIT,
+        });
+
         const [
           numberOfMachines,
           incomeMachines,
           { pointsOfSale },
           productLogs,
+          { machineLogs },
         ] = await Promise.all([
           numberOfMachinesPromise,
           incomeMachinesPromise,
           pointsOfSalePromise,
           productLogsPromise,
+          remoteCreditsPromise,
         ]);
 
         const productLogsPrizes = productLogs.filter(
@@ -133,6 +143,11 @@ export default class GenerateGroupReportService {
           .reduce((a, b) => a + b.cost, 0);
 
         const rent = pointsOfSale.reduce((a, b) => a + b.rent, 0);
+
+        const remoteCreditCost = machineLogs.reduce(
+          (a, b) => a + b.quantity,
+          0,
+        );
       }),
     );
   }

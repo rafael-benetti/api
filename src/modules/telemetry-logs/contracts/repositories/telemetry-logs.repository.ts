@@ -7,7 +7,9 @@ import TelemetryLog from '../entities/telemetry-log';
 
 interface TelemetryLogsRepository {
   create(data: CreateTelemetryLogDto): TelemetryLog;
-  find(data: FindTelemetryLogsDto): Promise<TelemetryLog[]>;
+  find(
+    data: FindTelemetryLogsDto,
+  ): Promise<{ telemetryLogs: TelemetryLog[]; count: number }>;
   getIncomePerMachine(
     data: GetIncomePerMachineDto,
   ): Promise<GetIncomePerMachineResponseDto[]>;

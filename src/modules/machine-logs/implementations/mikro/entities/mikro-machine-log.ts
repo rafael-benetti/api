@@ -27,6 +27,9 @@ class MikroMachineLog implements MachineLog {
   @Property()
   createdBy: string;
 
+  @Property()
+  quantity: number;
+
   constructor(data?: CreateMachineLogDto) {
     if (data) {
       this.id = v4();
@@ -36,6 +39,7 @@ class MikroMachineLog implements MachineLog {
       this.type = data.type;
       this.machineId = data.machineId;
       this.groupId = data.groupId;
+      this.quantity = data.quantity;
     }
   }
 }

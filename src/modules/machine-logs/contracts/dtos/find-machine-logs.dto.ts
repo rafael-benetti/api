@@ -1,7 +1,7 @@
 import MachineLogType from '../enums/machine-log-type';
 
 export default interface FindMachineLogsDto {
-  machineId: string;
+  machineId?: string;
   groupId: string;
   startDate?: Date;
   endDate?: Date;

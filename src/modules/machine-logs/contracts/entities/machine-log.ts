@@ -9,6 +9,8 @@ export default class MachineLog {
 
   observations: string;
 
+  quantity: number;
+
   type: MachineLogType;
 
   createdAt: Date;
