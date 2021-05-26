@@ -7,6 +7,7 @@ import UsersRepository from '@modules/users/contracts/repositories/users.reposit
 import AppError from '@shared/errors/app-error';
 import {
   eachDayOfInterval,
+  eachHourOfInterval,
   isSameDay,
   isSameHour,
   subDays,
@@ -229,7 +230,7 @@ export default class DashboardInfoService {
           await telemetryLogsOutPromise(),
         ]);
 
-        const hoursOfInterval = eachDayOfInterval({
+        const hoursOfInterval = eachHourOfInterval({
           start: startDate,
           end: endDate,
         });
