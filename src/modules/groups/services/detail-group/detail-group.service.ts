@@ -261,10 +261,10 @@ export default class DetailGroupService {
         },
       });
 
-      const [telemetryLogsIn, telemetryLogsOut] = await Promise.all([
-        telemetryLogsInPromise,
-        telemetryLogsOutPromise,
-      ]);
+      const [
+        { telemetryLogs: telemetryLogsIn },
+        { telemetryLogs: telemetryLogsOut },
+      ] = await Promise.all([telemetryLogsInPromise, telemetryLogsOutPromise]);
 
       const hoursOfInterval = eachDayOfInterval({
         start: startDate,

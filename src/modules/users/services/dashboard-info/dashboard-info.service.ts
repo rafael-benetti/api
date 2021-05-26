@@ -192,7 +192,7 @@ export default class DashboardInfoService {
         eachDayOfInterval({
           start: startDate,
           end: endDate,
-        }).length <= 1 // TODO: DAR UMA CONFERIDA SE 24 O INTERVALO É 2 OU 1
+        }).length <= 2
       ) {
         const telemetryLogsInPromise = async () => {
           const {
