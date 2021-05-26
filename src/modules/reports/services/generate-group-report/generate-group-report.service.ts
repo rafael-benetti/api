@@ -19,15 +19,14 @@ interface Request {
 }
 
 interface Response {
-  groupId: string;
   groupLabel: string;
   numberOfMachines: number;
   income: number;
-  givenPrizes: number;
-  productExpenses: number;
-  maintenceExpenses: number;
+  prizePurchaseAmount: number;
+  prizePurchaseCost: number;
+  maintenceConst: number;
   rent: number;
-  remote: number;
+  remoteCreditCost: number;
   balance: number;
 }
 
@@ -75,13 +74,13 @@ export default class GenerateGroupReportService {
       },
     });
 
-    const promises = Promise.all(
+    const response = await Promise.all(
       groups.map(async group => {
         const numberOfMachinesPromise = this.machinesRepository.count({
           groupIds: [group.id],
         });
 
-        const incomeMachinesPromise = this.telemetryLogsRepository.getIncomePerMachine(
+        const incomeGroupPromise = this.telemetryLogsRepository.getIncomePerGroup(
           {
             groupIds: [group.id],
             startDate,
@@ -112,17 +111,19 @@ export default class GenerateGroupReportService {
 
         const [
           numberOfMachines,
-          incomeMachines,
+          incomeGroup,
           { pointsOfSale },
           productLogs,
           { machineLogs },
         ] = await Promise.all([
           numberOfMachinesPromise,
-          incomeMachinesPromise,
+          incomeGroupPromise,
           pointsOfSalePromise,
           productLogsPromise,
           remoteCreditsPromise,
         ]);
+
+        const income = incomeGroup.reduce((a, b) => a + b.income, 0);
 
         const productLogsPrizes = productLogs.filter(
           productLog => productLog.productType === 'PRIZE',
@@ -148,7 +149,23 @@ export default class GenerateGroupReportService {
           (a, b) => a + b.quantity,
           0,
         );
+
+        const balance = income - (prizePurchaseCost + maintenceConst + rent);
+
+        return {
+          groupLabel: group.label ? group.label : 'Parceria Pessoal',
+          numberOfMachines,
+          income,
+          prizePurchaseAmount,
+          prizePurchaseCost,
+          maintenceConst,
+          rent,
+          remoteCreditCost,
+          balance,
+        };
       }),
     );
+
+    return response;
   }
 }

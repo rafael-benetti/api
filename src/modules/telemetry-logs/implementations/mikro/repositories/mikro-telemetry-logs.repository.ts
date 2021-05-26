@@ -123,6 +123,51 @@ class MikroTelemetryLogsRepository implements TelemetryLogsRepository {
     return incomePerMachine;
   }
 
+  async getIncomePerGroup({
+    groupIds,
+    startDate,
+    endDate,
+  }: GetIncomePerMachineDto): Promise<GetIncomePerMachineResponseDto[]> {
+    const incomePerGroup = await this.repository.aggregate([
+      {
+        $match: {
+          groupId: {
+            $in: groupIds,
+          },
+          date: {
+            $gte: startDate,
+            $lt: endDate,
+          },
+          type: 'IN',
+        },
+      },
+      {
+        $group: {
+          _id: '$groupId',
+          income: {
+            $sum: '$value',
+          },
+          numberOfPlays: {
+            $sum: '$numberOfPlays',
+          },
+          count: { $sum: 1 },
+        },
+      },
+      {
+        $project: {
+          _id: 0,
+          id: '$_id',
+          income: 1,
+          count: 1,
+          numberOfPlays: 1,
+          type: 1,
+        },
+      },
+    ]);
+
+    return incomePerGroup;
+  }
+
   async incomePerPointOfSale({
     groupIds,
     startDate,

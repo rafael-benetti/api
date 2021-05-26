@@ -13,6 +13,9 @@ interface TelemetryLogsRepository {
   getIncomePerMachine(
     data: GetIncomePerMachineDto,
   ): Promise<GetIncomePerMachineResponseDto[]>;
+  getIncomePerGroup(
+    data: GetIncomePerMachineDto,
+  ): Promise<GetIncomePerMachineResponseDto[]>;
   incomePerPointOfSale(
     data: GetIncomePerPointOfSaleDto,
   ): Promise<[{ income: number; id: string }]>;
