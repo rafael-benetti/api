@@ -1,4 +1,3 @@
-import { differenceInCalendarDays } from 'date-fns';
 import TelemetryLogsRepository from '@modules/telemetry-logs/contracts/repositories/telemetry-logs.repository';
 import Role from '@modules/users/contracts/enums/role';
 import UsersRepository from '@modules/users/contracts/repositories/users.repository';
@@ -7,26 +6,28 @@ import getGroupUniverse from '@shared/utils/get-group-universe';
 import { inject, injectable } from 'tsyringe';
 import ProductLogsRepository from '@modules/products/contracts/repositories/product-logs.repository';
 import GroupsRepository from '@modules/groups/contracts/repositories/groups.repository';
+import MachinesRepository from '@modules/machines/contracts/repositories/machines.repository';
+import PointsOfSaleRepository from '@modules/points-of-sale/contracts/repositories/points-of-sale.repository';
+import { Promise } from 'bluebird';
+import MachineLogsRepository from '@modules/machine-logs/contracts/repositories/machine-logs.repository';
 
 interface Request {
   userId: string;
-  dates: {
-    startDate: Date;
-    endDate: Date;
-  };
+  startDate: Date;
+  endDate: Date;
 }
 
 interface Response {
   groupId: string;
-  groupLabel?: string;
+  groupLabel: string;
+  numberOfMachines: number;
   income: number;
-  averageIncomePerDay: number;
-  plays: number;
   givenPrizes: number;
-  playsPerPrize: number;
   productExpenses: number;
-  productGains: number;
-  profit: number;
+  maintenceExpenses: number;
+  rent: number;
+  remote: number;
+  balance: number;
 }
 
 @injectable()
@@ -38,14 +39,23 @@ export default class GenerateGroupReportService {
     @inject('TelemetryLogsRepository')
     private telemetryLogsRepository: TelemetryLogsRepository,
 
+    @inject('GroupsRepository')
+    private groupsRepository: GroupsRepository,
+
+    @inject('MachinesRepository')
+    private machinesRepository: MachinesRepository,
+
     @inject('ProductLogsRepository')
     private productLogsRepository: ProductLogsRepository,
 
-    @inject('GroupsRepository')
-    private groupsRepository: GroupsRepository,
+    @inject('PointsOfSaleRepository')
+    private pointsOfSaleRepository: PointsOfSaleRepository,
+
+    @inject('MachineLogsRepository')
+    private machineLogsRepository: MachineLogsRepository,
   ) {}
 
-  async execute({ userId, dates }: Request): Promise<Response[]> {
+  async execute({ userId, endDate, startDate }: Request): Promise<Response[]> {
     const user = await this.usersRepository.findOne({
       by: 'id',
       value: userId,
@@ -64,64 +74,65 @@ export default class GenerateGroupReportService {
       },
     });
 
-    return Promise.all(
+    const promises = Promise.all(
       groups.map(async group => {
-        const telemetryLogs = await this.telemetryLogsRepository.find({
-          filters: {
-            groupId: group.id,
-            date: dates,
-          },
+        const numberOfMachinesPromise = this.machinesRepository.count({
+          groupIds: [group.id],
         });
 
-        const plays = telemetryLogs.filter(log => log.type === 'IN');
-
-        const income = plays.map(log => log.value).reduce((a, b) => a + b, 0);
-
-        const givenPrizes = telemetryLogs
-          .filter(log => log.type === 'OUT')
-          .map(log => log.value)
-          .reduce((a, b) => a + b, 0);
-
-        const playsPerPrize =
-          plays.length / (givenPrizes === 0 ? 1 : givenPrizes);
-
-        const numberOfDays = differenceInCalendarDays(
-          dates.endDate,
-          dates.startDate,
+        const incomeMachinesPromise = this.telemetryLogsRepository.getIncomePerMachine(
+          {
+            groupIds: [group.id],
+            startDate,
+            endDate,
+          },
         );
 
-        const averageIncomePerDay = income / numberOfDays;
+        const pointsOfSalePromise = this.pointsOfSaleRepository.find({
+          by: 'groupId',
+          value: group.id,
+        });
 
-        const productLogs = await this.productLogsRepository.find({
+        const productLogsPromise = this.productLogsRepository.find({
           filters: {
+            endDate,
+            startDate,
             groupId: group.id,
-            startDate: dates.startDate,
-            endDate: dates.endDate,
+            logType: 'IN',
           },
         });
 
-        const productExpenses = productLogs
-          .filter(log => log.logType === 'IN')
-          .map(log => log.cost * log.quantity)
-          .reduce((a, b) => a + b, 0);
+        const [
+          numberOfMachines,
+          incomeMachines,
+          { pointsOfSale },
+          productLogs,
+        ] = await Promise.all([
+          numberOfMachinesPromise,
+          incomeMachinesPromise,
+          pointsOfSalePromise,
+          productLogsPromise,
+        ]);
 
-        const productGains = productLogs
-          .filter(log => log.logType === 'OUT')
-          .map(log => log.cost * log.quantity)
-          .reduce((a, b) => a + b, 0);
+        const productLogsPrizes = productLogs.filter(
+          productLog => productLog.productType === 'PRIZE',
+        );
 
-        return {
-          groupLabel: group.label,
-          groupId: group.id,
-          income,
-          averageIncomePerDay,
-          plays: plays.length,
-          givenPrizes,
-          playsPerPrize,
-          productExpenses,
-          productGains,
-          profit: income + productGains - productExpenses,
-        };
+        const prizePurchaseAmount = productLogsPrizes.reduce(
+          (a, b) => a + b.quantity,
+          0,
+        );
+
+        const prizePurchaseCost = productLogsPrizes.reduce(
+          (a, b) => a + b.cost,
+          0,
+        );
+
+        const maintenceConst = productLogs
+          .filter(productLog => productLog.productType === 'SUPPLY')
+          .reduce((a, b) => a + b.cost, 0);
+
+        const rent = pointsOfSale.reduce((a, b) => a + b.rent, 0);
       }),
     );
   }

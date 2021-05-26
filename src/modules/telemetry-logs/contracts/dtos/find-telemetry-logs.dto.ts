@@ -6,7 +6,7 @@ interface FindTelemetryLogsDto {
     pointOfSaleId?: string | string[];
     date?: {
       startDate?: Date;
-      endDate: Date;
+      endDate?: Date;
     };
     maintenance?: boolean;
     type?: 'IN' | 'OUT';

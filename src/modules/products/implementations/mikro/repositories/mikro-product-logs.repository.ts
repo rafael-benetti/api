@@ -21,10 +21,12 @@ export default class MikroProductLogsRepository
   }
 
   async find(data: FindProductLogsDto): Promise<ProductLog[]> {
-    const { groupId, startDate, endDate } = data.filters;
+    const { groupId, startDate, endDate, productType } = data.filters;
     const query: Record<string, unknown> = {};
 
     if (groupId) query.groupId = groupId;
+    if (productType) query.productType = productType;
+
     if (startDate && endDate) {
       query.createdAt = {
         $gte: startDate,

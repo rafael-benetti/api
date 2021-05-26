@@ -3,6 +3,7 @@ import { Router } from 'express';
 import GenerateGroupReportController from '../services/generate-group-report/generate-group-report.controller';
 import GenerateMachinesController from '../services/generate-machines-report/generate-machines-report.controller';
 import GeneratePointsOfSaleReportController from '../services/generate-points-of-sale-report/generate-points-of-sale-report.controller';
+import GenerateStockReportController from '../services/generate-stock-report/generate-stock-report.controller';
 
 const reportsRoutes = Router();
 
@@ -24,6 +25,12 @@ reportsRoutes.get(
   '/machines',
   GenerateMachinesController.validate,
   GenerateMachinesController.handle,
+);
+
+reportsRoutes.get(
+  '/stocks',
+  GenerateStockReportController.validate,
+  GenerateStockReportController.handle,
 );
 
 export default reportsRoutes;

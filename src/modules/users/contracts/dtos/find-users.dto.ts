@@ -6,6 +6,7 @@ interface FindUsersDto {
     groupIds?: string[];
     ownerId?: string;
   };
+  fields?: string[];
   limit?: number;
   offset?: number;
   populate?: string[];

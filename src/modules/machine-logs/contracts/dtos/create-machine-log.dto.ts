@@ -9,7 +9,5 @@ export default interface CreateMachineLogDto {
 
   type: MachineLogType;
 
-  createdAt: Date;
-
   createdBy: string;
 }

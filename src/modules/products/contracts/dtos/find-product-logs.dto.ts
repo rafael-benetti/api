@@ -4,6 +4,7 @@ export default interface FindProductLogsDto {
     logType?: 'IN' | 'OUT';
     startDate?: Date;
     endDate?: Date;
+    productType?: 'SUPPLY' | 'PRIZE';
   };
   limit?: number;
   offset?: number;

@@ -10,8 +10,8 @@ interface Request {
   userId: string;
   machineId: string;
   type?: 'IN' | 'OUT';
-  startDate: Date;
-  endDate: Date;
+  startDate?: Date;
+  endDate?: Date;
   limit: number;
   offset: number;
 }

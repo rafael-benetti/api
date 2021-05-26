@@ -1,0 +1,76 @@
+import MachineLogType from '@modules/machine-logs/contracts/enums/machine-log-type';
+import MachineLogsRepository from '@modules/machine-logs/contracts/repositories/machine-logs.repository';
+import MachinesRepository from '@modules/machines/contracts/repositories/machines.repository';
+import Role from '@modules/users/contracts/enums/role';
+import UsersRepository from '@modules/users/contracts/repositories/users.repository';
+import MqttProvider from '@providers/mqtt-provider/contracts/models/mqtt-provider';
+import OrmProvider from '@providers/orm-provider/contracts/models/orm-provider';
+import AppError from '@shared/errors/app-error';
+import { inject, injectable } from 'tsyringe';
+
+interface Request {
+  userId: string;
+  machineId: string;
+  observations: string;
+}
+
+@injectable()
+export default class RemoteCreditService {
+  constructor(
+    @inject('UsersRepository')
+    private usersRepository: UsersRepository,
+
+    @inject('MachinesRepository')
+    private machinesRepository: MachinesRepository,
+
+    @inject('MachineLogsRepository')
+    private machineLogsRepository: MachineLogsRepository,
+
+    @inject('MqttProvider')
+    private mqttProvider: MqttProvider,
+
+    @inject('OrmProvider')
+    private ormProvider: OrmProvider,
+  ) {}
+
+  async execute({ userId, machineId, observations }: Request): Promise<void> {
+    const user = await this.usersRepository.findOne({
+      by: 'id',
+      value: userId,
+    });
+
+    if (!user) throw AppError.userNotFound;
+
+    if (user.role !== Role.OWNER && !user.permissions?.addRemoteCredit)
+      throw AppError.authorizationError;
+
+    const machine = await this.machinesRepository.findOne({
+      by: 'id',
+      value: machineId,
+    });
+
+    if (!machine) throw AppError.machineNotFound;
+
+    if (!machine.telemetryBoardId) throw AppError.telemetryBoardNotFound;
+
+    const payload = {
+      type: 'remoteCredit',
+      credit: 1,
+    };
+
+    this.mqttProvider.publish({
+      topic: `sub/${machine.telemetryBoardId}`,
+      payload: JSON.stringify(payload),
+    });
+
+    this.machineLogsRepository.create({
+      createdBy: user.id,
+      groupId: machine.groupId,
+      machineId: machine.id,
+      observations,
+      type: MachineLogType.REMOTE_CREDIT,
+    });
+
+    await this.ormProvider.commit();
+  }
+}

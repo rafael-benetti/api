@@ -1,4 +1,3 @@
-import logger from '@config/logger';
 import NotificationsRepository from '@modules/notifications/contracts/repositories/notifications.repostory';
 import Role from '@modules/users/contracts/enums/role';
 import UsersRepository from '@modules/users/contracts/repositories/users.repository';
@@ -64,8 +63,6 @@ export default class CreateNotificationService {
       body,
       tokens,
     });
-
-    logger.info(firebaseMessageInfos);
 
     const receivers = operator?.id
       ? [

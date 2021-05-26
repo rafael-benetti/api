@@ -48,6 +48,7 @@ class MikroUsersRepository implements UsersRepository {
         limit: data.limit,
         offset: data.offset,
         populate: data.populate,
+        fields: data.fields,
       },
     );
 

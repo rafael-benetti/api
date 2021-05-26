@@ -1,4 +1,3 @@
-import logger from '@config/logger';
 import CreateGroupDto from '@modules/groups/contracts/dtos/create-group.dto';
 import FindGroupDto from '@modules/groups/contracts/dtos/find-group.dto';
 import FindGroupsDto from '@modules/groups/contracts/dtos/find-groups.dto';
@@ -41,8 +40,6 @@ class MikroGroupsRepository implements GroupsRepository {
     if (ownerId) query.ownerId = ownerId;
     if (isPersonal !== undefined) query.isPersonal = isPersonal;
     if (ids) query.id = ids;
-
-    logger.info(data);
 
     const groups = await this.repository.find(
       {

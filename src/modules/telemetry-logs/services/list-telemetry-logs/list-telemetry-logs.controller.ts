@@ -14,8 +14,8 @@ export default abstract class ListTelemetryLogsController {
     const telemetryLogs = await listTelemetryLogsService.execute({
       userId,
       machineId: machineId as string,
-      startDate: new Date(startDate as string),
-      endDate: new Date(endDate as string),
+      startDate: startDate ? new Date(startDate as string) : undefined,
+      endDate: endDate ? new Date(endDate as string) : undefined,
       type: type as 'IN' | 'OUT',
       limit: Number(limit),
       offset: Number(offset),

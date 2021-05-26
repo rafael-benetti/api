@@ -30,7 +30,7 @@ class MikroMachineLog implements MachineLog {
   constructor(data?: CreateMachineLogDto) {
     if (data) {
       this.id = v4();
-      this.createdAt = data.createdAt;
+      this.createdAt = new Date();
       this.createdBy = data.createdBy;
       this.observations = data.observations;
       this.type = data.type;

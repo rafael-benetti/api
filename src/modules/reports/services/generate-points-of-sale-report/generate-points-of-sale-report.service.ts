@@ -89,6 +89,7 @@ class GeneratePointsOfSaleReportService {
 
       if (user.role === Role.MANAGER && !user.groupIds?.includes(group.id))
         throw AppError.authorizationError;
+
       groups = [group];
       groupIds.push(groupId);
     } else if (user.role === Role.MANAGER) {
