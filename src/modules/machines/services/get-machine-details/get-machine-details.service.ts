@@ -122,7 +122,7 @@ class GetMachineDetailsService {
       )?.name;
     }
 
-    const telemetryLogs = await this.telemetryLogsRepository.find({
+    const { telemetryLogs } = await this.telemetryLogsRepository.find({
       filters: {
         machineId,
         maintenance: false,
@@ -144,7 +144,9 @@ class GetMachineDetailsService {
     if (!startDate) throw AppError.unknownError;
     if (!endDate) throw AppError.unknownError;
 
-    const telemetryLogsOfPeriod = await this.telemetryLogsRepository.find({
+    const {
+      telemetryLogs: telemetryLogsOfPeriod,
+    } = await this.telemetryLogsRepository.find({
       filters: {
         machineId,
         date: {
@@ -281,7 +283,9 @@ class GetMachineDetailsService {
     }
 
     // ? HISTORICO DE EVENTOS
-    const transactionHistory = await this.telemetryLogsRepository.find({
+    const {
+      telemetryLogs: transactionHistory,
+    } = await this.telemetryLogsRepository.find({
       filters: {
         machineId,
       },
