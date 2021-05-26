@@ -14,6 +14,7 @@ import AppError from '@shared/errors/app-error';
 import { Promise } from 'bluebird';
 import {
   eachDayOfInterval,
+  eachHourOfInterval,
   isSameDay,
   isSameHour,
   subDays,
@@ -230,13 +231,7 @@ export default class DetailGroupService {
     let income: number = 0;
     let givenPrizesCount: number = 0;
 
-    if (
-      (period && period === Period.DAILY) ||
-      eachDayOfInterval({
-        start: startDate,
-        end: endDate,
-      }).length <= 1 // TODO: DAR UMA CONFERIDA SE 24 O INTERVALO É 2 OU 1
-    ) {
+    if (period && period === Period.DAILY) {
       const telemetryLogsInPromise = this.telemetryLogsRepository.find({
         filters: {
           date: {
@@ -266,7 +261,7 @@ export default class DetailGroupService {
         { telemetryLogs: telemetryLogsOut },
       ] = await Promise.all([telemetryLogsInPromise, telemetryLogsOutPromise]);
 
-      const hoursOfInterval = eachDayOfInterval({
+      const hoursOfInterval = eachHourOfInterval({
         start: startDate,
         end: endDate,
       });

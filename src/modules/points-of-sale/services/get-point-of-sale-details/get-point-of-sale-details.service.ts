@@ -180,11 +180,7 @@ class GetPointOfSaleDetailsService {
     }
 
     // ? CHART DATA PARA PERIODO SEMANAL E MENSAL
-    if (
-      period === Period.MONTHLY ||
-      period === Period.WEEKLY ||
-      (startDate && endDate)
-    ) {
+    if (period !== Period.DAILY) {
       const daysOfInterval = eachDayOfInterval({
         start: startDate,
         end: endDate,

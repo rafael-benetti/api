@@ -223,7 +223,7 @@ class GetMachineDetailsService {
     let chartData: ChartData[] = [];
 
     // ? CHART DATA PARA O PERIODO DIARIO
-    if (period === Period.DAILY) {
+    if (period && period === Period.DAILY) {
       const hoursOfInterval = eachHourOfInterval({
         start: startDate,
         end: endDate,
@@ -253,7 +253,7 @@ class GetMachineDetailsService {
     }
 
     // ? CHART DATA PARA PERIODO SEMANAL E MENSAL
-    if (period === Period.MONTHLY || period === Period.WEEKLY) {
+    if (period !== Period.DAILY) {
       const daysOfInterval = eachDayOfInterval({
         start: startDate,
         end: endDate,
