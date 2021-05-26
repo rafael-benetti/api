@@ -91,10 +91,12 @@ export default class GenerateCollectionsReportService {
         )
         .reduce((a, b) => a + b);
 
+      const mechanicalDiffence = finalMechanicalCount - initialMechanicalCount;
+
       return {
         initialMechanicalCount,
         finalMechanicalCount,
-        difference: finalMechanicalCount - initialMechanicalCount,
+        mechanicalDiffence,
       };
     });
   }

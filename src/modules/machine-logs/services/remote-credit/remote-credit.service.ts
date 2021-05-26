@@ -12,6 +12,7 @@ interface Request {
   userId: string;
   machineId: string;
   observations: string;
+  quantity: number;
 }
 
 @injectable()
@@ -33,7 +34,12 @@ export default class RemoteCreditService {
     private ormProvider: OrmProvider,
   ) {}
 
-  async execute({ userId, machineId, observations }: Request): Promise<void> {
+  async execute({
+    userId,
+    machineId,
+    observations,
+    quantity,
+  }: Request): Promise<void> {
     const user = await this.usersRepository.findOne({
       by: 'id',
       value: userId,
@@ -69,6 +75,7 @@ export default class RemoteCreditService {
       machineId: machine.id,
       observations,
       type: MachineLogType.REMOTE_CREDIT,
+      quantity,
     });
 
     await this.ormProvider.commit();

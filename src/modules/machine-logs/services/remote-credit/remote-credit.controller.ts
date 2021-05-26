@@ -16,7 +16,7 @@ abstract class RemoteCreditController {
   static async handle(req: Request, res: Response): Promise<Response> {
     const { userId } = req;
     const { machineId } = req.params;
-    const { observations } = req.body;
+    const { observations, quantity } = req.body;
 
     const remoteCreditService = container.resolve(RemoteCreditService);
 
@@ -24,6 +24,7 @@ abstract class RemoteCreditController {
       userId,
       machineId,
       observations,
+      quantity,
     });
 
     return res.json({ ok: true });
