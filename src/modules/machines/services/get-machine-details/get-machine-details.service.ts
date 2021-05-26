@@ -1,5 +1,7 @@
 import CollectionsRepository from '@modules/collections/contracts/repositories/collections.repository';
 import CounterTypesRepository from '@modules/counter-types/contracts/repositories/couter-types.repository';
+import MachineLog from '@modules/machine-logs/contracts/entities/machine-log';
+import MachineLogsRepository from '@modules/machine-logs/contracts/repositories/machine-logs.repository';
 import Period from '@modules/machines/contracts/dtos/period.dto';
 import Machine from '@modules/machines/contracts/models/machine';
 import MachinesRepository from '@modules/machines/contracts/repositories/machines.repository';
@@ -50,6 +52,7 @@ interface Response {
   chartData: ChartData[];
   boxesInfo: BoxInfo[];
   transactionHistory: TelemetryLog[];
+  machineLogs: MachineLog[];
 }
 
 @injectable()
@@ -69,6 +72,9 @@ class GetMachineDetailsService {
 
     @inject('CounterTypesRepository')
     private counterTypesRepository: CounterTypesRepository,
+
+    @inject('MachineLogsRepository')
+    private machineLogsRepository: MachineLogsRepository,
   ) {}
 
   public async execute({
@@ -292,6 +298,14 @@ class GetMachineDetailsService {
       limit: 5,
     });
 
+    // ? HISTORICO DE EVENTOS
+    const { machineLogs } = await this.machineLogsRepository.find({
+      machineId,
+      limit: 5,
+      offset: 0,
+      groupId: machine.groupId,
+    });
+
     return {
       machine,
       income,
@@ -301,6 +315,7 @@ class GetMachineDetailsService {
       givenPrizes,
       chartData,
       transactionHistory,
+      machineLogs,
       collectedBy,
     };
   }

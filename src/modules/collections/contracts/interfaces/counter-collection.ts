@@ -5,7 +5,7 @@ export default interface CounterCollection {
   counterTypeLabel: string;
   mechanicalCount: number;
   digitalCount: number;
-  operatorCount?: number;
+  userCount?: number;
   telemetryCount: number;
   photos: Photo[];
 }

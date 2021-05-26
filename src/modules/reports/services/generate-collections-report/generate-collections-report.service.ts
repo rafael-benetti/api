@@ -197,12 +197,36 @@ export default class GenerateCollectionsReportService {
         )
         .reduce((a, b) => a + b);
 
+      machineCollections.forEach(machineCollection =>
+        machineCollection.boxCollections.forEach(boxCollection =>
+          logger.info(boxCollection),
+        ),
+      );
+
+      const userCount = machineCollections
+        .map(machineCollection =>
+          machineCollection.boxCollections
+            .map(boxCollection =>
+              boxCollection.counterCollections.reduce(
+                (a, b) =>
+                  counterTypes.find(
+                    counterType => counterType.label === b.counterTypeLabel,
+                  )?.type === Type.IN
+                    ? a + (b.userCount ? b.userCount : 0)
+                    : 0,
+                0,
+              ),
+            )
+            .reduce((a, b) => a + b),
+        )
+        .reduce((a, b) => a + b);
+
       const digitalDiffenceOut = finalDigitalCountOut - initialDigitalCountOut;
 
       const initialDate = machineCollections[0].date;
       const finalDate = machineCollections[machineCollections.length - 1].date;
 
-      const days = differenceInDays();
+      const numberOfDays = differenceInDays(initialDate, finalDate);
 
       logger.info({
         initialMechanicalCountIn,
@@ -217,6 +241,8 @@ export default class GenerateCollectionsReportService {
         initialDigitalCountOut,
         finalDigitalCountOut,
         digitalDiffenceOut,
+        numberOfDays,
+        userCount,
       });
 
       return {
@@ -226,6 +252,14 @@ export default class GenerateCollectionsReportService {
         initialMechanicalCountOut,
         finalMechanicalCountOut,
         mechanicalDiffenceOut,
+        initialDigitalCountIn,
+        finalDigitalCountIn,
+        digitalDiffenceIn,
+        initialDigitalCountOut,
+        finalDigitalCountOut,
+        digitalDiffenceOut,
+        numberOfDays,
+        userCount,
       };
     });
   }
