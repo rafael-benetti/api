@@ -45,6 +45,7 @@ class CreateCategoryService {
     const checkCategoryExists = await this.categoriesRepository.findOne({
       by: 'label',
       value: label,
+      ownerId: user.ownerId,
     });
 
     if (checkCategoryExists) throw AppError.labelAlreadyInUsed;
