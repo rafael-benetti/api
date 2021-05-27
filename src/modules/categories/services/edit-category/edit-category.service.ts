@@ -64,10 +64,8 @@ class EditCategoryService {
         value: label,
       });
 
-      if (checkCategoryExists) {
-        if (checkCategoryExists?.id !== category.id)
-          throw AppError.labelAlreadyInUsed;
-      }
+      if (checkCategoryExists) throw AppError.labelAlreadyInUsed;
+
       category.label = label;
     }
 
