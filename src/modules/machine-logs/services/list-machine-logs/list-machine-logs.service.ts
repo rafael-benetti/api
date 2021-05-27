@@ -81,7 +81,8 @@ class ListMachineLogsService {
         })
       ).map(group => group.id);
 
-      if (!groupIds.includes(machine.id)) throw AppError.authorizationError;
+      if (!groupIds.includes(machine.groupId))
+        throw AppError.authorizationError;
     }
 
     const machineLogs = await this.machineLogsRepository.find({
