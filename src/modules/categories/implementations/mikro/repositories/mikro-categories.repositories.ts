@@ -21,6 +21,7 @@ class MikroCategoriesRepository implements CategoriesRepository {
   async findOne(data: FindCategoryDto): Promise<Category | undefined> {
     const category = await this.repository.findOne({
       [data.by]: data.value,
+      ownerId: data.ownerId,
     });
 
     return category ? CategoryMapper.toEntity(category) : undefined;
