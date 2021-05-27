@@ -12,8 +12,10 @@ import AppError from '@shared/errors/app-error';
 import {
   eachDayOfInterval,
   eachHourOfInterval,
+  endOfDay,
   isSameDay,
   isSameHour,
+  startOfDay,
   subDays,
   subMonths,
   subWeeks,
@@ -105,14 +107,14 @@ class DetailRouteService {
       by: 'routeId',
       value: route.id,
     });
+
     let operator;
 
-    if (route.operatorId) {
+    if (route.operatorId)
       operator = await this.usersRepository.findOne({
         by: 'id',
         value: route.operatorId,
       });
-    }
 
     if (period) {
       endDate = new Date(Date.now());
@@ -123,6 +125,11 @@ class DetailRouteService {
 
     if (!startDate) throw AppError.unknownError;
     if (!endDate) throw AppError.unknownError;
+
+    if (period !== Period.DAILY) {
+      startDate = startOfDay(startDate);
+      endDate = endOfDay(endDate);
+    }
 
     const { telemetryLogs } = await this.telemetryLogsRepository.find({
       filters: {

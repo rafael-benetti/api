@@ -15,8 +15,10 @@ import { Promise } from 'bluebird';
 import {
   eachDayOfInterval,
   eachHourOfInterval,
+  endOfDay,
   isSameDay,
   isSameHour,
+  startOfDay,
   subDays,
   subMonths,
   subWeeks,
@@ -226,6 +228,11 @@ export default class DetailGroupService {
 
     if (!startDate) throw AppError.unknownError;
     if (!endDate) throw AppError.unknownError;
+
+    if (period !== Period.DAILY) {
+      startDate = startOfDay(startDate);
+      endDate = endOfDay(endDate);
+    }
 
     let chartData1: ChartData1[] = [];
     let income: number = 0;

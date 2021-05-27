@@ -9,7 +9,7 @@ import Group from '@modules/groups/contracts/models/group';
 import Role from '@modules/users/contracts/enums/role';
 import MachineLogsRepository from '@modules/machine-logs/contracts/repositories/machine-logs.repository';
 import MachineLogType from '@modules/machine-logs/contracts/enums/machine-log-type';
-import { differenceInDays } from 'date-fns';
+import { differenceInDays, endOfDay, startOfDay } from 'date-fns';
 
 interface Request {
   userId: string;
@@ -130,6 +130,9 @@ class GenerateMachinesReportService {
       ],
     });
 
+    startDate = startOfDay(startDate);
+    endDate = endOfDay(endDate);
+
     const incomePerMachine = await this.telemetryLogsRepository.getIncomePerMachine(
       { groupIds, endDate, startDate },
     );
@@ -187,10 +190,13 @@ class GenerateMachinesReportService {
         remoteCreditAmount,
         numberOfPlays,
         gameValue: machine.gameValue,
-        playsPerPrize: numberOfPlays && prizes ? numberOfPlays / prizes : 0,
+        playsPerPrize:
+          numberOfPlays && prizes
+            ? Number((numberOfPlays / prizes).toFixed(2))
+            : 0,
         incomePerPrizeGoal: machine.incomePerPrizeGoal,
         incomePerMonthGoal: machine.incomePerMonthGoal,
-        averagePerDay: income ? income / numberOfDays : 0,
+        averagePerDay: Number((income ? income / numberOfDays : 0).toFixed(2)),
       };
     });
 

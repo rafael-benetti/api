@@ -5,14 +5,13 @@ import TelemetryLogsRepository from '@modules/telemetry-logs/contracts/repositor
 import Role from '@modules/users/contracts/enums/role';
 import UsersRepository from '@modules/users/contracts/repositories/users.repository';
 import AppError from '@shared/errors/app-error';
-import { differenceInDays } from 'date-fns';
+import { differenceInDays, endOfDay, startOfDay } from 'date-fns';
 import { inject, injectable } from 'tsyringe';
 import { Promise } from 'bluebird';
 import Group from '@modules/groups/contracts/models/group';
 import Address from '@modules/points-of-sale/contracts/models/address';
 import MachineLogType from '@modules/machine-logs/contracts/enums/machine-log-type';
 import MachineLogsRepository from '@modules/machine-logs/contracts/repositories/machine-logs.repository';
-import logger from '@config/logger';
 
 interface Response {
   label: string;
@@ -124,6 +123,9 @@ class GeneratePointsOfSaleReportService {
       groupIds = groups.map(group => group.id);
     }
 
+    startDate = startOfDay(startDate);
+    endDate = endOfDay(endDate);
+
     const days =
       differenceInDays(endDate, startDate) !== 0
         ? differenceInDays(endDate, startDate)
@@ -199,7 +201,7 @@ class GeneratePointsOfSaleReportService {
           machineIncome => machineIncome.id === machine.id,
         )?.numberOfPlays;
 
-        const averagePerDay = income / days;
+        const averagePerDay = Number((income / days).toFixed(2));
 
         const { incomePerMonthGoal } = machine;
 
@@ -213,7 +215,10 @@ class GeneratePointsOfSaleReportService {
           remoteCreditAmount,
           numberOfPlays,
           gameValue: machine.gameValue,
-          playsPerPrize: numberOfPlays && prizes ? numberOfPlays / prizes : 0,
+          playsPerPrize:
+            numberOfPlays && prizes
+              ? Number((numberOfPlays / prizes).toFixed(2))
+              : 0,
           incomePerMonthGoal,
           incomePerPrizeGoal,
           averagePerDay,
@@ -221,9 +226,6 @@ class GeneratePointsOfSaleReportService {
       });
 
       const machineAnalytics = await Promise.all(machineAnalyticsPromises);
-
-      logger.info(groups);
-      logger.info(pointOfSale.groupId);
 
       const groupLabel = groups.find(group => group.id === pointOfSale.groupId)
         ?.label;
@@ -234,10 +236,6 @@ class GeneratePointsOfSaleReportService {
           100
         : pointOfSale.rent;
 
-      logger.info(pointOfSale.rent);
-      logger.info(pointOfSale);
-
-      logger.info(rent);
       return {
         label: pointOfSale.label,
         rent,

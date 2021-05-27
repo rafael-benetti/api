@@ -1,4 +1,3 @@
-import logger from '@config/logger';
 import CollectionsRepository from '@modules/collections/contracts/repositories/collections.repository';
 import Type from '@modules/counter-types/contracts/enums/type';
 import CounterTypesRepository from '@modules/counter-types/contracts/repositories/couter-types.repository';
@@ -8,7 +7,7 @@ import Role from '@modules/users/contracts/enums/role';
 import UsersRepository from '@modules/users/contracts/repositories/users.repository';
 import AppError from '@shared/errors/app-error';
 import getGroupUniverse from '@shared/utils/get-group-universe';
-import { differenceInDays } from 'date-fns';
+import { differenceInDays, endOfDay, startOfDay } from 'date-fns';
 import { inject, injectable } from 'tsyringe';
 
 interface Request {
@@ -16,6 +15,23 @@ interface Request {
   startDate: Date;
   endDate: Date;
   pointOfSaleId: string;
+}
+
+interface Response {
+  initialMechanicalCountIn: number;
+  finalMechanicalCountIn: number;
+  mechanicalDiffenceIn: number;
+  initialMechanicalCountOut: number;
+  finalMechanicalCountOut: number;
+  mechanicalDiffenceOut: number;
+  initialDigitalCountIn: number;
+  finalDigitalCountIn: number;
+  digitalDiffenceIn: number;
+  initialDigitalCountOut: number;
+  finalDigitalCountOut: number;
+  digitalDiffenceOut: number;
+  numberOfDays: number;
+  userCount: number;
 }
 
 @injectable()
@@ -39,7 +55,7 @@ export default class GenerateCollectionsReportService {
     pointOfSaleId,
     startDate,
     endDate,
-  }: Request): Promise<void> {
+  }: Request): Promise<Response[]> {
     const user = await this.usersRepository.findOne({
       by: 'id',
       value: userId,
@@ -61,6 +77,9 @@ export default class GenerateCollectionsReportService {
 
     if (!groupIds.includes(pointOfSale?.groupId))
       throw AppError.authorizationError;
+
+    startDate = startOfDay(startDate);
+    endDate = endOfDay(endDate);
 
     const { collections } = await this.collectionsRepository.find({
       pointOfSaleId,
@@ -209,12 +228,6 @@ export default class GenerateCollectionsReportService {
         )
         .reduce((a, b) => a + b);
 
-      machineCollections.forEach(machineCollection =>
-        machineCollection.boxCollections.forEach(boxCollection =>
-          logger.info(boxCollection),
-        ),
-      );
-
       const userCount = machineCollections
         .map(machineCollection =>
           machineCollection.boxCollections
@@ -241,23 +254,6 @@ export default class GenerateCollectionsReportService {
 
       const numberOfDays = differenceInDays(finalDate, initialDate);
 
-      logger.info({
-        initialMechanicalCountIn,
-        finalMechanicalCountIn,
-        mechanicalDiffenceIn,
-        initialMechanicalCountOut,
-        finalMechanicalCountOut,
-        mechanicalDiffenceOut,
-        initialDigitalCountIn,
-        finalDigitalCountIn,
-        digitalDiffenceIn,
-        initialDigitalCountOut,
-        finalDigitalCountOut,
-        digitalDiffenceOut,
-        numberOfDays,
-        userCount,
-      });
-
       return {
         initialMechanicalCountIn,
         finalMechanicalCountIn,
@@ -275,5 +271,7 @@ export default class GenerateCollectionsReportService {
         userCount,
       };
     });
+
+    return machineReport;
   }
 }

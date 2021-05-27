@@ -11,6 +11,7 @@ import PointsOfSaleRepository from '@modules/points-of-sale/contracts/repositori
 import { Promise } from 'bluebird';
 import MachineLogsRepository from '@modules/machine-logs/contracts/repositories/machine-logs.repository';
 import MachineLogType from '@modules/machine-logs/contracts/enums/machine-log-type';
+import { endOfDay, startOfDay } from 'date-fns';
 
 interface Request {
   userId: string;
@@ -73,6 +74,9 @@ export default class GenerateGroupReportService {
         ids: universe,
       },
     });
+
+    startDate = startOfDay(startDate);
+    endDate = endOfDay(endDate);
 
     const response = await Promise.all(
       groups.map(async group => {

@@ -12,8 +12,10 @@ import AppError from '@shared/errors/app-error';
 import {
   eachDayOfInterval,
   eachHourOfInterval,
+  endOfDay,
   isSameDay,
   isSameHour,
+  startOfDay,
   subDays,
   subMonths,
   subWeeks,
@@ -120,6 +122,11 @@ class GetPointOfSaleDetailsService {
 
     if (!startDate) throw AppError.unknownError;
     if (!endDate) throw AppError.unknownError;
+
+    if (period !== Period.DAILY) {
+      startDate = startOfDay(startDate);
+      endDate = endOfDay(endDate);
+    }
 
     const { telemetryLogs } = await this.telemetryLogsRepository.find({
       filters: {
