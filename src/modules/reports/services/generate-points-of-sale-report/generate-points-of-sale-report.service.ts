@@ -1,33 +1,37 @@
 import GroupsRepository from '@modules/groups/contracts/repositories/groups.repository';
-import Machine from '@modules/machines/contracts/models/machine';
 import MachinesRepository from '@modules/machines/contracts/repositories/machines.repository';
-import PointOfSale from '@modules/points-of-sale/contracts/models/point-of-sale';
 import PointsOfSaleRepository from '@modules/points-of-sale/contracts/repositories/points-of-sale.repository';
 import TelemetryLogsRepository from '@modules/telemetry-logs/contracts/repositories/telemetry-logs.repository';
 import Role from '@modules/users/contracts/enums/role';
 import UsersRepository from '@modules/users/contracts/repositories/users.repository';
 import AppError from '@shared/errors/app-error';
-import { eachDayOfInterval } from 'date-fns';
+import { differenceInDays } from 'date-fns';
 import { inject, injectable } from 'tsyringe';
 import { Promise } from 'bluebird';
 import Group from '@modules/groups/contracts/models/group';
-
-interface MachineInfos {
-  machine: Machine;
-  income: number;
-  givenPrizes: number;
-  plays: number;
-  playsPerPrize: number;
-  averagePerDay: number;
-  incomePerMonthGoal?: number;
-  incomePerPrizeGoal?: number;
-}
+import Address from '@modules/points-of-sale/contracts/models/address';
+import MachineLogType from '@modules/machine-logs/contracts/enums/machine-log-type';
+import MachineLogsRepository from '@modules/machine-logs/contracts/repositories/machine-logs.repository';
+import logger from '@config/logger';
 
 interface Response {
-  group: Group;
-  pointsOfSale: {
-    pointOfSale: PointOfSale;
-    machineInfos: MachineInfos[];
+  label: string;
+  rent: number;
+  income: number;
+  address: Address;
+  groupLabel: string;
+  machineAnalytics: {
+    serialNumber: string;
+    category: string;
+    income: number | undefined;
+    prizes: number | undefined;
+    remoteCreditAmount: number | undefined;
+    numberOfPlays: number | undefined;
+    gameValue: number;
+    playsPerPrize: number;
+    incomePerPrizeGoal: number | undefined;
+    incomePerMonthGoal: number | undefined;
+    averagePerDay: number;
   }[];
 }
 
@@ -55,6 +59,9 @@ class GeneratePointsOfSaleReportService {
 
     @inject('TelemetryLogsRepository')
     private telemetryLogsRepository: TelemetryLogsRepository,
+
+    @inject('MachineLogsRepository')
+    private machineLogsRepository: MachineLogsRepository,
   ) {}
 
   async execute({
@@ -62,7 +69,13 @@ class GeneratePointsOfSaleReportService {
     groupId,
     startDate,
     endDate,
-  }: Request): Promise<Response[]> {
+  }: Request): Promise<{
+    data: {
+      startDate: Date;
+      endDate: Date;
+    };
+    pointsOfSaleAnalytics: Response[];
+  }> {
     const user = await this.usersRepository.findOne({
       by: 'id',
       value: userId,
@@ -111,93 +124,139 @@ class GeneratePointsOfSaleReportService {
       groupIds = groups.map(group => group.id);
     }
 
-    const days = eachDayOfInterval({
-      end: endDate,
-      start: startDate,
-    }).length;
+    const days =
+      differenceInDays(endDate, startDate) !== 0
+        ? differenceInDays(endDate, startDate)
+        : 1;
 
-    const groupsReports = groups.map(async group => {
-      const { pointsOfSale } = await this.pointsOfSaleRepository.find({
-        by: 'groupId',
-        value: group.id,
-        fields: ['id', 'label', 'address'],
+    const { pointsOfSale } = await this.pointsOfSaleRepository.find({
+      by: 'groupId',
+      value: groupIds,
+      fields: ['id', 'label', 'address', 'groupId', 'isPercentage', 'rent'],
+    });
+
+    const reportsPromises = pointsOfSale.map(async pointOfSale => {
+      const { machines } = await this.machinesRepository.find({
+        pointOfSaleId: pointOfSale.id,
+        fields: [
+          'id',
+          'serialNumber',
+          'incomePerMonthGoal',
+          'incomePerPrizeGoal',
+          'gameValue',
+          'categoryLabel',
+        ],
       });
 
-      const reportsPromises = pointsOfSale.map(async pointOfSale => {
-        const { machines } = await this.machinesRepository.find({
-          pointOfSaleId: pointOfSale.id,
-          fields: [
-            'id',
-            'serialNumber',
-            'incomePerMonthGoal',
-            'incomePerPrizeGoal',
-          ],
-        });
+      const {
+        machineLogs: machinesLogs,
+      } = await this.machineLogsRepository.find({
+        groupId: groupIds,
+        machineId: machines.map(machine => machine.id),
+        endDate,
+        startDate,
+        type: MachineLogType.REMOTE_CREDIT,
+      });
 
-        const machineInfosPromises = machines.map(async machine => {
-          const { telemetryLogs } = await this.telemetryLogsRepository.find({
-            filters: {
-              date: {
-                startDate,
-                endDate,
-              },
-              groupId,
-              machineId: machine.id,
-              maintenance: false,
-              pointOfSaleId: pointOfSale.id,
+      const incomePerMachine = await this.telemetryLogsRepository.getIncomePerMachine(
+        { groupIds, endDate, startDate },
+      );
+
+      const prizesPerMachine = await this.telemetryLogsRepository.getPrizesPerMachine(
+        {
+          endDate,
+          groupIds,
+          startDate,
+        },
+      );
+
+      const machineAnalyticsPromises = machines.map(async machine => {
+        const { telemetryLogs } = await this.telemetryLogsRepository.find({
+          filters: {
+            date: {
+              startDate,
+              endDate,
             },
-          });
-
-          const income = telemetryLogs
-            .filter(telemetryLog => telemetryLog.type === 'IN')
-            .reduce((a, b) => a + b.value, 0);
-
-          const givenPrizes = telemetryLogs
-            .filter(telemetryLog => telemetryLog.type === 'OUT')
-            .reduce((a, b) => a + b.value, 0);
-
-          const plays = telemetryLogs.reduce((a, b) => a + b.numberOfPlays, 0);
-
-          const playsPerPrize =
-            givenPrizes > 0 ? Math.trunc(plays / givenPrizes) : 0;
-
-          const averagePerDay = Math.trunc(income / days);
-
-          const { incomePerMonthGoal } = machine;
-
-          const { incomePerPrizeGoal } = machine;
-
-          return {
-            machine,
-            income,
-            givenPrizes,
-            plays,
-            playsPerPrize,
-            averagePerDay,
-            incomePerMonthGoal,
-            incomePerPrizeGoal,
-          };
+            groupId,
+            machineId: machine.id,
+            maintenance: false,
+            pointOfSaleId: pointOfSale.id,
+          },
         });
 
-        const machineInfos = await Promise.all(machineInfosPromises);
+        const remoteCreditAmount = machinesLogs
+          .filter(machineLog => machineLog.machineId === machine.id)
+          .reduce((a, b) => a + b.quantity, 0);
+
+        const income = telemetryLogs
+          .filter(telemetryLog => telemetryLog.type === 'IN')
+          .reduce((a, b) => a + b.value, 0);
+
+        const prizes = prizesPerMachine.find(prizes => prizes.id === machine.id)
+          ?.prizes;
+
+        const numberOfPlays = incomePerMachine.find(
+          machineIncome => machineIncome.id === machine.id,
+        )?.numberOfPlays;
+
+        const averagePerDay = income / days;
+
+        const { incomePerMonthGoal } = machine;
+
+        const { incomePerPrizeGoal } = machine;
 
         return {
-          pointOfSale,
-          machineInfos,
+          serialNumber: machine.serialNumber,
+          category: machine.categoryLabel,
+          income,
+          prizes,
+          remoteCreditAmount,
+          numberOfPlays,
+          gameValue: machine.gameValue,
+          playsPerPrize: numberOfPlays && prizes ? numberOfPlays / prizes : 0,
+          incomePerMonthGoal,
+          incomePerPrizeGoal,
+          averagePerDay,
         };
       });
 
-      const response = await Promise.all(reportsPromises);
+      const machineAnalytics = await Promise.all(machineAnalyticsPromises);
 
+      logger.info(groups);
+      logger.info(pointOfSale.groupId);
+
+      const groupLabel = groups.find(group => group.id === pointOfSale.groupId)
+        ?.label;
+
+      const rent = pointOfSale.isPercentage
+        ? (machineAnalytics.reduce((a, b) => a + b.income, 0) *
+            pointOfSale.rent) /
+          100
+        : pointOfSale.rent;
+
+      logger.info(pointOfSale.rent);
+      logger.info(pointOfSale);
+
+      logger.info(rent);
       return {
-        group,
-        pointsOfSale: response,
+        label: pointOfSale.label,
+        rent,
+        income: machineAnalytics.reduce((a, b) => a + b.income, 0),
+        address: pointOfSale.address,
+        groupLabel: groupLabel || 'Parceria Pessoal',
+        machineAnalytics,
       };
     });
 
-    const response = await Promise.all(groupsReports);
+    const response = await Promise.all(reportsPromises);
 
-    return response;
+    return {
+      data: {
+        startDate,
+        endDate,
+      },
+      pointsOfSaleAnalytics: response,
+    };
   }
 }
 

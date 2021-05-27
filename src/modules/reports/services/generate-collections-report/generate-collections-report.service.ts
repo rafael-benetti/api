@@ -81,14 +81,17 @@ export default class GenerateCollectionsReportService {
         collection => collection.machineId === machine.id,
       );
 
-      const initialMechanicalCountIn = machineCollections[0].boxCollections
+      const initialMechanicalCountIn = machineCollections[
+        machineCollections.length - 1
+      ].boxCollections
         .map(boxCollection =>
           boxCollection.counterCollections.reduce(
             (a, b) =>
-              counterTypes.find(counterType => counterType.id === b.counterId)
-                ?.type === Type.IN
+              counterTypes.find(
+                counterType => counterType.label === b.counterTypeLabel,
+              )?.type === Type.IN
                 ? a + (b.mechanicalCount ? b.mechanicalCount : 0)
-                : 0,
+                : a + 0,
             0,
           ),
         )
@@ -98,10 +101,11 @@ export default class GenerateCollectionsReportService {
         .map(boxCollection =>
           boxCollection.counterCollections.reduce(
             (a, b) =>
-              counterTypes.find(counterType => counterType.id === b.counterId)
-                ?.type === Type.IN
+              counterTypes.find(
+                counterType => counterType.label === b.counterTypeLabel,
+              )?.type === Type.IN
                 ? a + (b.mechanicalCount ? b.mechanicalCount : 0)
-                : 0,
+                : a + 0,
             0,
           ),
         )
@@ -110,7 +114,9 @@ export default class GenerateCollectionsReportService {
       const mechanicalDiffenceIn =
         finalMechanicalCountIn - initialMechanicalCountIn;
 
-      const initialMechanicalCountOut = machineCollections[0].boxCollections
+      const initialMechanicalCountOut = machineCollections[
+        machineCollections.length - 1
+      ].boxCollections
         .map(boxCollection =>
           boxCollection.counterCollections.reduce(
             (a, b) =>
@@ -118,7 +124,7 @@ export default class GenerateCollectionsReportService {
                 counterType => counterType.label === b.counterTypeLabel,
               )?.type === Type.OUT
                 ? a + (b.mechanicalCount ? b.mechanicalCount : 0)
-                : 0,
+                : a + 0,
             0,
           ),
         )
@@ -132,7 +138,7 @@ export default class GenerateCollectionsReportService {
                 counterType => counterType.label === b.counterTypeLabel,
               )?.type === Type.OUT
                 ? a + (b.mechanicalCount ? b.mechanicalCount : 0)
-                : 0,
+                : a + 0,
             0,
           ),
         )
@@ -141,14 +147,17 @@ export default class GenerateCollectionsReportService {
       const mechanicalDiffenceOut =
         finalMechanicalCountOut - initialMechanicalCountOut;
 
-      const initialDigitalCountIn = machineCollections[0].boxCollections
+      const initialDigitalCountIn = machineCollections[
+        machineCollections.length - 1
+      ].boxCollections
         .map(boxCollection =>
           boxCollection.counterCollections.reduce(
             (a, b) =>
-              counterTypes.find(counterType => counterType.id === b.counterId)
-                ?.type === Type.IN
-                ? a + (b.mechanicalCount ? b.mechanicalCount : 0)
-                : 0,
+              counterTypes.find(
+                counterType => counterType.label === b.counterTypeLabel,
+              )?.type === Type.IN
+                ? a + (b.digitalCount ? b.digitalCount : 0)
+                : a + 0,
             0,
           ),
         )
@@ -158,10 +167,11 @@ export default class GenerateCollectionsReportService {
         .map(boxCollection =>
           boxCollection.counterCollections.reduce(
             (a, b) =>
-              counterTypes.find(counterType => counterType.id === b.counterId)
-                ?.type === Type.IN
-                ? a + (b.mechanicalCount ? b.mechanicalCount : 0)
-                : 0,
+              counterTypes.find(
+                counterType => counterType.label === b.counterTypeLabel,
+              )?.type === Type.IN
+                ? a + (b.digitalCount ? b.digitalCount : 0)
+                : a + 0,
             0,
           ),
         )
@@ -169,15 +179,17 @@ export default class GenerateCollectionsReportService {
 
       const digitalDiffenceIn = finalDigitalCountIn - initialDigitalCountIn;
 
-      const initialDigitalCountOut = machineCollections[0].boxCollections
+      const initialDigitalCountOut = machineCollections[
+        machineCollections.length - 1
+      ].boxCollections
         .map(boxCollection =>
           boxCollection.counterCollections.reduce(
             (a, b) =>
               counterTypes.find(
                 counterType => counterType.label === b.counterTypeLabel,
               )?.type === Type.OUT
-                ? a + (b.mechanicalCount ? b.mechanicalCount : 0)
-                : 0,
+                ? a + (b.digitalCount ? b.digitalCount : 0)
+                : a + 0,
             0,
           ),
         )
@@ -190,8 +202,8 @@ export default class GenerateCollectionsReportService {
               counterTypes.find(
                 counterType => counterType.label === b.counterTypeLabel,
               )?.type === Type.OUT
-                ? a + (b.mechanicalCount ? b.mechanicalCount : 0)
-                : 0,
+                ? a + (b.digitalCount ? b.digitalCount : 0)
+                : a + 0,
             0,
           ),
         )
@@ -213,7 +225,7 @@ export default class GenerateCollectionsReportService {
                     counterType => counterType.label === b.counterTypeLabel,
                   )?.type === Type.IN
                     ? a + (b.userCount ? b.userCount : 0)
-                    : 0,
+                    : a + 0,
                 0,
               ),
             )
@@ -223,10 +235,11 @@ export default class GenerateCollectionsReportService {
 
       const digitalDiffenceOut = finalDigitalCountOut - initialDigitalCountOut;
 
-      const initialDate = machineCollections[0].date;
-      const finalDate = machineCollections[machineCollections.length - 1].date;
+      const initialDate =
+        machineCollections[machineCollections.length - 1].date;
+      const finalDate = machineCollections[0].date;
 
-      const numberOfDays = differenceInDays(initialDate, finalDate);
+      const numberOfDays = differenceInDays(finalDate, initialDate);
 
       logger.info({
         initialMechanicalCountIn,

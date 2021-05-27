@@ -58,7 +58,13 @@ class GenerateMachinesReportService {
     groupId,
     startDate,
     endDate,
-  }: Request): Promise<Response[]> {
+  }: Request): Promise<{
+    date: {
+      startDate: Date;
+      endDate: Date;
+    };
+    machineAnalytics: Response[];
+  }> {
     const user = await this.usersRepository.findOne({
       by: 'id',
       value: userId,
@@ -120,6 +126,7 @@ class GenerateMachinesReportService {
         'pointOfSale',
         'pointOfSale.id',
         'pointOfSale.label',
+        'groupId',
       ],
     });
 
@@ -187,7 +194,13 @@ class GenerateMachinesReportService {
       };
     });
 
-    return machineAnalytics;
+    return {
+      date: {
+        startDate,
+        endDate,
+      },
+      machineAnalytics,
+    };
   }
 }
 

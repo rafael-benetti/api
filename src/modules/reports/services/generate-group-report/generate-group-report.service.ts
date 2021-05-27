@@ -24,7 +24,7 @@ interface Response {
   income: number;
   prizePurchaseAmount: number;
   prizePurchaseCost: number;
-  maintenceConst: number;
+  maintenance: number;
   rent: number;
   remoteCreditCost: number;
   balance: number;
@@ -80,11 +80,11 @@ export default class GenerateGroupReportService {
           groupIds: [group.id],
         });
 
-        const incomeGroupPromise = this.telemetryLogsRepository.getIncomePerGroup(
+        const incomePerPointOfSalePromise = this.telemetryLogsRepository.incomePerPointOfSale(
           {
             groupIds: [group.id],
-            startDate,
             endDate,
+            startDate,
           },
         );
 
@@ -111,19 +111,19 @@ export default class GenerateGroupReportService {
 
         const [
           numberOfMachines,
-          incomeGroup,
+          incomePerPointOfSale,
           { pointsOfSale },
           productLogs,
           { machineLogs },
         ] = await Promise.all([
           numberOfMachinesPromise,
-          incomeGroupPromise,
+          incomePerPointOfSalePromise,
           pointsOfSalePromise,
           productLogsPromise,
           remoteCreditsPromise,
         ]);
 
-        const income = incomeGroup.reduce((a, b) => a + b.income, 0);
+        const income = incomePerPointOfSale.reduce((a, b) => a + b.income, 0);
 
         const productLogsPrizes = productLogs.filter(
           productLog => productLog.productType === 'PRIZE',
@@ -134,23 +134,37 @@ export default class GenerateGroupReportService {
           0,
         );
 
-        const prizePurchaseCost = productLogsPrizes.reduce(
-          (a, b) => a + b.cost,
-          0,
-        );
+        const prizePurchaseCost = productLogsPrizes.reduce((a, b) => {
+          return b.logType === 'IN'
+            ? a + b.cost * b.quantity
+            : a - b.cost * b.quantity;
+        }, 0);
 
-        const maintenceConst = productLogs
+        const maintenance = productLogs
           .filter(productLog => productLog.productType === 'SUPPLY')
-          .reduce((a, b) => a + b.cost, 0);
+          .reduce((a, b) => {
+            return b.logType === 'IN'
+              ? a + b.cost * b.quantity
+              : a - b.cost * b.quantity;
+          }, 0);
 
-        const rent = pointsOfSale.reduce((a, b) => a + b.rent, 0);
+        const rent = pointsOfSale
+          .map(pointOfSale =>
+            pointOfSale.isPercentage
+              ? (incomePerPointOfSale.find(
+                  pointOfSaleIncome => pointOfSaleIncome.id === pointOfSale.id,
+                )?.income ?? 0) *
+                (pointOfSale.rent / 100)
+              : pointOfSale.rent,
+          )
+          .reduce((a, b) => a + b);
 
         const remoteCreditCost = machineLogs.reduce(
           (a, b) => a + b.quantity,
           0,
         );
 
-        const balance = income - (prizePurchaseCost + maintenceConst + rent);
+        const balance = income - (prizePurchaseCost + maintenance + rent);
 
         return {
           groupLabel: group.label ? group.label : 'Parceria Pessoal',
@@ -158,7 +172,7 @@ export default class GenerateGroupReportService {
           income,
           prizePurchaseAmount,
           prizePurchaseCost,
-          maintenceConst,
+          maintenance,
           rent,
           remoteCreditCost,
           balance,
