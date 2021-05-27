@@ -3,13 +3,13 @@ import MachinesRepository from '@modules/machines/contracts/repositories/machine
 import TelemetryLogsRepository from '@modules/telemetry-logs/contracts/repositories/telemetry-logs.repository';
 import UsersRepository from '@modules/users/contracts/repositories/users.repository';
 import { inject, injectable } from 'tsyringe';
-import { Promise } from 'bluebird';
 import AppError from '@shared/errors/app-error';
 import Group from '@modules/groups/contracts/models/group';
 import Role from '@modules/users/contracts/enums/role';
 import MachineLogsRepository from '@modules/machine-logs/contracts/repositories/machine-logs.repository';
 import MachineLogType from '@modules/machine-logs/contracts/enums/machine-log-type';
 import { differenceInDays, endOfDay, startOfDay } from 'date-fns';
+import exportMachineReport from './export-machine-report';
 
 interface Request {
   userId: string;
@@ -198,6 +198,14 @@ class GenerateMachinesReportService {
         incomePerMonthGoal: machine.incomePerMonthGoal,
         averagePerDay: Number((income ? income / numberOfDays : 0).toFixed(2)),
       };
+    });
+
+    await exportMachineReport({
+      date: {
+        startDate,
+        endDate,
+      },
+      machineAnalytics,
     });
 
     return {

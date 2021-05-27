@@ -213,7 +213,9 @@ class GeneratePointsOfSaleReportService {
           income,
           prizes,
           remoteCreditAmount,
-          numberOfPlays,
+          numberOfPlays: numberOfPlays
+            ? Number(numberOfPlays.toFixed(2))
+            : numberOfPlays,
           gameValue: machine.gameValue,
           playsPerPrize:
             numberOfPlays && prizes
