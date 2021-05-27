@@ -58,7 +58,7 @@ class EditCategoryService {
     if (user.role === Role.MANAGER)
       if (!user.permissions?.editCategories) throw AppError.authorizationError;
 
-    if (label) {
+    if (label && category.label !== label) {
       const checkCategoryExists = await this.categoriesRepository.findOne({
         by: 'label',
         value: label,

@@ -1,5 +1,5 @@
 Arguments: 
-  /home/david/.nvm/versions/node/v16.0.0/bin/node /home/david/.nvm/versions/node/v16.0.0/bin/yarn add @types/excel4node -d
+  /home/david/.nvm/versions/node/v16.0.0/bin/node /home/david/.nvm/versions/node/v16.0.0/bin/yarn add exeljs
 
 PATH: 
   /home/david/.nvm/versions/node/v16.0.0/bin:/home/david/.zinit/polaris/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin:/usr/games:/usr/local/games:/snap/bin:/home/david/devtools/flutter/bin:/home/david/devtools/flutter/bin
@@ -14,7 +14,7 @@ Platform:
   linux x64
 
 Trace: 
-  Error: https://registry.yarnpkg.com/@types%2fexcel4node: Not found
+  Error: https://registry.yarnpkg.com/exeljs: Not found
       at Request.params.callback [as _callback] (/home/david/.nvm/versions/node/v16.0.0/lib/node_modules/yarn/lib/cli.js:66988:18)
       at Request.self.callback (/home/david/.nvm/versions/node/v16.0.0/lib/node_modules/yarn/lib/cli.js:140662:22)
       at Request.emit (node:events:365:28)
