@@ -1,3 +1,4 @@
+import PointOfSale from '@modules/points-of-sale/contracts/models/point-of-sale';
 import Box from './box';
 
 class Machine {
@@ -20,6 +21,8 @@ class Machine {
   operatorId?: string;
 
   locationId?: string;
+
+  pointOfSale?: PointOfSale;
 
   typeOfPrize?: { id: string; label: string };
 

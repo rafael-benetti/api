@@ -3,6 +3,7 @@ import FindTelemetryLogsDto from '@modules/telemetry-logs/contracts/dtos/find-te
 import GetIncomePerMachineResponseDto from '@modules/telemetry-logs/contracts/dtos/get-income-per-machine-response.dto';
 import GetIncomePerMachineDto from '@modules/telemetry-logs/contracts/dtos/get-income-per-machine.dto';
 import GetIncomePerPointOfSaleDto from '@modules/telemetry-logs/contracts/dtos/get-income-per-point-of-sale.dto';
+import GetPrizesPerMachineResponseDto from '@modules/telemetry-logs/contracts/dtos/get-prizes-per-machine-repository.dto';
 import TelemetryLog from '@modules/telemetry-logs/contracts/entities/telemetry-log';
 import TelemetryLogsRepository from '@modules/telemetry-logs/contracts/repositories/telemetry-logs.repository';
 import MikroOrmProvider from '@providers/orm-provider/implementations/mikro/mikro-orm-provider';
@@ -121,6 +122,47 @@ class MikroTelemetryLogsRepository implements TelemetryLogsRepository {
     ]);
 
     return incomePerMachine;
+  }
+
+  async getPrizesPerMachine({
+    groupIds,
+    startDate,
+    endDate,
+  }: GetIncomePerMachineDto): Promise<GetPrizesPerMachineResponseDto[]> {
+    const prizesPerMachine = await this.repository.aggregate([
+      {
+        $match: {
+          groupId: {
+            $in: groupIds,
+          },
+          date: {
+            $gte: startDate,
+            $lt: endDate,
+          },
+          type: 'OUT',
+        },
+      },
+      {
+        $group: {
+          _id: '$machineId',
+          prizes: {
+            $sum: '$value',
+          },
+          count: { $sum: 1 },
+        },
+      },
+      {
+        $project: {
+          _id: 0,
+          id: '$_id',
+          prizes: 1,
+          count: 1,
+          type: 1,
+        },
+      },
+    ]);
+
+    return prizesPerMachine;
   }
 
   async getIncomePerGroup({

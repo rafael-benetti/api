@@ -1,6 +1,5 @@
 import GroupsRepository from '@modules/groups/contracts/repositories/groups.repository';
 import MachinesRepository from '@modules/machines/contracts/repositories/machines.repository';
-import PointsOfSaleRepository from '@modules/points-of-sale/contracts/repositories/points-of-sale.repository';
 import TelemetryLogsRepository from '@modules/telemetry-logs/contracts/repositories/telemetry-logs.repository';
 import UsersRepository from '@modules/users/contracts/repositories/users.repository';
 import { inject, injectable } from 'tsyringe';
@@ -8,7 +7,9 @@ import { Promise } from 'bluebird';
 import AppError from '@shared/errors/app-error';
 import Group from '@modules/groups/contracts/models/group';
 import Role from '@modules/users/contracts/enums/role';
-import logger from '@config/logger';
+import MachineLogsRepository from '@modules/machine-logs/contracts/repositories/machine-logs.repository';
+import MachineLogType from '@modules/machine-logs/contracts/enums/machine-log-type';
+import { differenceInDays } from 'date-fns';
 
 interface Request {
   userId: string;
@@ -18,9 +19,19 @@ interface Request {
 }
 
 interface Response {
-  _id: string;
-  income: number;
-  count: number;
+  groupLabel: string;
+  serialNumber: string;
+  location: string | undefined;
+  category: string;
+  income: number | undefined;
+  prizes: number | undefined;
+  remoteCreditAmount: number | undefined;
+  numberOfPlays: number | undefined;
+  gameValue: number;
+  playsPerPrize: number;
+  incomePerPrizeGoal: number | undefined;
+  incomePerMonthGoal: number | undefined;
+  averagePerDay: number;
 }
 
 @injectable()
@@ -29,8 +40,8 @@ class GenerateMachinesReportService {
     @inject('UsersRepository')
     private usersRepository: UsersRepository,
 
-    @inject('PointsOfSaleRepository')
-    private pointsOfSaleRepository: PointsOfSaleRepository,
+    @inject('MachineLogsRepository')
+    private machineLogsRepository: MachineLogsRepository,
 
     @inject('GroupsRepository')
     private groupsRepository: GroupsRepository,
@@ -95,16 +106,88 @@ class GenerateMachinesReportService {
       groupIds = groups.map(group => group.id);
     }
 
-    const machines = await this.machinesRepository.find({
+    const { machines } = await this.machinesRepository.find({
       groupIds,
-      fields: ['pointOfSale'],
+      populate: ['pointOfSale'],
+      fields: [
+        'id',
+        'serialNumber',
+        'categoryLabel',
+        'gameValue',
+        'locationId',
+        'incomePerPrizeGoal',
+        'incomePerMonthGoal',
+        'pointOfSale',
+        'pointOfSale.id',
+        'pointOfSale.label',
+      ],
     });
 
     const incomePerMachine = await this.telemetryLogsRepository.getIncomePerMachine(
       { groupIds, endDate, startDate },
     );
 
-    return incomePerMachine;
+    const prizesPerMachine = await this.telemetryLogsRepository.getPrizesPerMachine(
+      {
+        endDate,
+        groupIds,
+        startDate,
+      },
+    );
+
+    const { machineLogs: machinesLogs } = await this.machineLogsRepository.find(
+      {
+        groupId: groupIds,
+        machineId: machines.map(machine => machine.id),
+        endDate,
+        startDate,
+        type: MachineLogType.REMOTE_CREDIT,
+      },
+    );
+
+    const numberOfDays =
+      differenceInDays(endDate, startDate) !== 0
+        ? differenceInDays(endDate, startDate)
+        : 1;
+
+    const machineAnalytics = machines.map(machine => {
+      const remoteCreditAmount = machinesLogs
+        .filter(machineLog => machineLog.machineId === machine.id)
+        .reduce((a, b) => a + b.quantity, 0);
+
+      const numberOfPlays = incomePerMachine.find(
+        machineIncome => machineIncome.id === machine.id,
+      )?.numberOfPlays;
+
+      const prizes = prizesPerMachine.find(prizes => prizes.id === machine.id)
+        ?.prizes;
+
+      const income = incomePerMachine.find(
+        machineIncome => machineIncome.id === machine.id,
+      )?.income;
+
+      const groupLabel =
+        groups.find(group => group.id === machine.groupId)?.label ||
+        'Parceria Pessoal';
+
+      return {
+        groupLabel,
+        serialNumber: machine.serialNumber,
+        location: machine.pointOfSale?.label,
+        category: machine.categoryLabel,
+        income,
+        prizes,
+        remoteCreditAmount,
+        numberOfPlays,
+        gameValue: machine.gameValue,
+        playsPerPrize: numberOfPlays && prizes ? numberOfPlays / prizes : 0,
+        incomePerPrizeGoal: machine.incomePerPrizeGoal,
+        incomePerMonthGoal: machine.incomePerMonthGoal,
+        averagePerDay: income ? income / numberOfDays : 0,
+      };
+    });
+
+    return machineAnalytics;
   }
 }
 

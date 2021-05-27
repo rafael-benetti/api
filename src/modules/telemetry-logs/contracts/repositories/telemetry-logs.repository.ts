@@ -3,6 +3,7 @@ import FindTelemetryLogsDto from '../dtos/find-telemetry-logs.dto';
 import GetIncomePerMachineResponseDto from '../dtos/get-income-per-machine-response.dto';
 import GetIncomePerMachineDto from '../dtos/get-income-per-machine.dto';
 import GetIncomePerPointOfSaleDto from '../dtos/get-income-per-point-of-sale.dto';
+import GetPrizesPerMachineResponseDto from '../dtos/get-prizes-per-machine-repository.dto';
 import TelemetryLog from '../entities/telemetry-log';
 
 interface TelemetryLogsRepository {
@@ -13,6 +14,9 @@ interface TelemetryLogsRepository {
   getIncomePerMachine(
     data: GetIncomePerMachineDto,
   ): Promise<GetIncomePerMachineResponseDto[]>;
+  getPrizesPerMachine(
+    data: GetIncomePerMachineDto,
+  ): Promise<GetPrizesPerMachineResponseDto[]>;
   getIncomePerGroup(
     data: GetIncomePerMachineDto,
   ): Promise<GetIncomePerMachineResponseDto[]>;
