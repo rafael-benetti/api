@@ -12,6 +12,8 @@ import Group from '@modules/groups/contracts/models/group';
 import Address from '@modules/points-of-sale/contracts/models/address';
 import MachineLogType from '@modules/machine-logs/contracts/enums/machine-log-type';
 import MachineLogsRepository from '@modules/machine-logs/contracts/repositories/machine-logs.repository';
+import ExcelJS from 'exceljs';
+import exportPointsOfSaleReport from './export-points-of-sale-report';
 
 interface Response {
   label: string;
@@ -39,6 +41,7 @@ interface Request {
   groupId: string;
   startDate: Date;
   endDate: Date;
+  download: boolean;
 }
 
 @injectable()
@@ -68,13 +71,17 @@ class GeneratePointsOfSaleReportService {
     groupId,
     startDate,
     endDate,
-  }: Request): Promise<{
-    data: {
-      startDate: Date;
-      endDate: Date;
-    };
-    pointsOfSaleAnalytics: Response[];
-  }> {
+    download,
+  }: Request): Promise<
+    | {
+        date: {
+          startDate: Date;
+          endDate: Date;
+        };
+        pointsOfSaleAnalytics: Response[];
+      }
+    | ExcelJS.Workbook
+  > {
     const user = await this.usersRepository.findOne({
       by: 'id',
       value: userId,
@@ -248,14 +255,26 @@ class GeneratePointsOfSaleReportService {
       };
     });
 
-    const response = await Promise.all(reportsPromises);
+    const pointsOfSaleAnalytics = await Promise.all(reportsPromises);
+
+    if (download) {
+      const Workbook = await exportPointsOfSaleReport({
+        date: {
+          startDate,
+          endDate,
+        },
+        pointsOfSaleAnalytics,
+      });
+
+      return Workbook;
+    }
 
     return {
-      data: {
+      date: {
         startDate,
         endDate,
       },
-      pointsOfSaleAnalytics: response,
+      pointsOfSaleAnalytics,
     };
   }
 }

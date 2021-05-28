@@ -12,11 +12,14 @@ import { Promise } from 'bluebird';
 import MachineLogsRepository from '@modules/machine-logs/contracts/repositories/machine-logs.repository';
 import MachineLogType from '@modules/machine-logs/contracts/enums/machine-log-type';
 import { endOfDay, startOfDay } from 'date-fns';
+import ExcelJS from 'exceljs';
+import exportGroupsReport from './export-groups-report';
 
 interface Request {
   userId: string;
   startDate: Date;
   endDate: Date;
+  download: boolean;
 }
 
 interface Response {
@@ -56,7 +59,21 @@ export default class GenerateGroupReportService {
     private machineLogsRepository: MachineLogsRepository,
   ) {}
 
-  async execute({ userId, endDate, startDate }: Request): Promise<Response[]> {
+  async execute({
+    userId,
+    endDate,
+    startDate,
+    download,
+  }: Request): Promise<
+    | {
+        date: {
+          startDate: Date;
+          endDate: Date;
+        };
+        groupsAnalytics: Response[];
+      }
+    | ExcelJS.Workbook
+  > {
     const user = await this.usersRepository.findOne({
       by: 'id',
       value: userId,
@@ -78,7 +95,7 @@ export default class GenerateGroupReportService {
     startDate = startOfDay(startDate);
     endDate = endOfDay(endDate);
 
-    const response = await Promise.all(
+    const groupsAnalytics = await Promise.all(
       groups.map(async group => {
         const numberOfMachinesPromise = this.machinesRepository.count({
           groupIds: [group.id],
@@ -184,6 +201,24 @@ export default class GenerateGroupReportService {
       }),
     );
 
-    return response;
+    if (download) {
+      const Workbook = await exportGroupsReport({
+        date: {
+          startDate,
+          endDate,
+        },
+        groupsAnalytics,
+      });
+
+      return Workbook;
+    }
+
+    return {
+      date: {
+        startDate,
+        endDate,
+      },
+      groupsAnalytics,
+    };
   }
 }

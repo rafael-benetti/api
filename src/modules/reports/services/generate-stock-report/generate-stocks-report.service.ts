@@ -6,10 +6,13 @@ import Role from '@modules/users/contracts/enums/role';
 import Group from '@modules/groups/contracts/models/group';
 import GroupsRepository from '@modules/groups/contracts/repositories/groups.repository';
 import Product from '@modules/users/contracts/models/product';
+import ExcelJS from 'exceljs';
+import exportStocksReport from './export-stocks-report';
 
 interface Request {
   userId: string;
   groupId: string;
+  download: boolean;
 }
 
 interface Response {
@@ -34,7 +37,11 @@ export default class GenerateStockReportService {
     private groupsRepository: GroupsRepository,
   ) {}
 
-  async execute({ userId, groupId }: Request): Promise<Response> {
+  async execute({
+    userId,
+    groupId,
+    download,
+  }: Request): Promise<Response | ExcelJS.Workbook> {
     const user = await this.usersRepository.findOne({
       by: 'id',
       value: userId,
@@ -122,6 +129,16 @@ export default class GenerateStockReportService {
         groupLabels,
       };
     });
+
+    if (download) {
+      const Workbook = await exportStocksReport({
+        columnsPrizes,
+        columnsSupliers,
+        users: usersResponse,
+      });
+
+      return Workbook;
+    }
 
     return {
       columnsPrizes,

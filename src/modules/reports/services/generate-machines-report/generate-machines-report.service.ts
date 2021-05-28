@@ -9,13 +9,15 @@ import Role from '@modules/users/contracts/enums/role';
 import MachineLogsRepository from '@modules/machine-logs/contracts/repositories/machine-logs.repository';
 import MachineLogType from '@modules/machine-logs/contracts/enums/machine-log-type';
 import { differenceInDays, endOfDay, startOfDay } from 'date-fns';
-import exportMachineReport from './export-machine-report';
+import ExcelJS from 'exceljs';
+import exportMachinesReport from './export-machines-report';
 
 interface Request {
   userId: string;
   groupId: string;
   startDate: Date;
   endDate: Date;
+  download: boolean;
 }
 
 interface Response {
@@ -58,13 +60,17 @@ class GenerateMachinesReportService {
     groupId,
     startDate,
     endDate,
-  }: Request): Promise<{
-    date: {
-      startDate: Date;
-      endDate: Date;
-    };
-    machineAnalytics: Response[];
-  }> {
+    download,
+  }: Request): Promise<
+    | {
+        date: {
+          startDate: Date;
+          endDate: Date;
+        };
+        machineAnalytics: Response[];
+      }
+    | ExcelJS.Workbook
+  > {
     const user = await this.usersRepository.findOne({
       by: 'id',
       value: userId,
@@ -200,13 +206,17 @@ class GenerateMachinesReportService {
       };
     });
 
-    await exportMachineReport({
-      date: {
-        startDate,
-        endDate,
-      },
-      machineAnalytics,
-    });
+    if (download) {
+      const Workbook = await exportMachinesReport({
+        date: {
+          startDate,
+          endDate,
+        },
+        machineAnalytics,
+      });
+
+      return Workbook;
+    }
 
     return {
       date: {

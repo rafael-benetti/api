@@ -2,35 +2,28 @@ import { celebrate, Joi } from 'celebrate';
 import { RequestHandler } from 'express';
 import { container } from 'tsyringe';
 import ExcelJS from 'exceljs';
-import GenerateMachinesReportService from './generate-machines-report.service';
+import GenerateStockReportService from './generate-stocks-report.service';
 
-export default abstract class GenerateMachinesController {
+export default abstract class GenerateStockReportController {
   static validate = celebrate({
     query: {
-      startDate: Joi.date().iso().required(),
-      endDate: Joi.date().iso().required(),
       groupId: Joi.string(),
-      download: Joi.bool().default(false),
+      download: Joi.boolean().default(false),
     },
   });
 
   static handle: RequestHandler = async (request, response) => {
     const { userId } = request;
-    const { startDate, endDate, groupId, download } = request.query as Record<
-      string,
-      never
-    >;
+    const { groupId, download } = request.query as Record<string, never>;
 
-    const generateMachinesReportService = container.resolve(
-      GenerateMachinesReportService,
+    const generateStockReportService = container.resolve(
+      GenerateStockReportService,
     );
 
     if (download) {
-      const report = (await generateMachinesReportService.execute({
+      const report = (await generateStockReportService.execute({
         userId,
         groupId,
-        startDate,
-        endDate,
         download,
       })) as ExcelJS.Workbook;
 
@@ -47,11 +40,9 @@ export default abstract class GenerateMachinesController {
       });
     }
 
-    const report = await generateMachinesReportService.execute({
+    const report = await generateStockReportService.execute({
       userId,
       groupId,
-      startDate,
-      endDate,
       download,
     });
 
