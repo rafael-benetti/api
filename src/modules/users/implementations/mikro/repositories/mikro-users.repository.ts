@@ -24,7 +24,10 @@ class MikroUsersRepository implements UsersRepository {
       {
         [data.by]: data.value,
       },
-      data.populate,
+      {
+        populate: data.populate,
+        fields: data.fields,
+      },
     );
 
     return user ? UserMapper.toApi(user) : undefined;

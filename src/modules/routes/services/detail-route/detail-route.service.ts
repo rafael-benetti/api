@@ -114,6 +114,14 @@ class DetailRouteService {
       operator = await this.usersRepository.findOne({
         by: 'id',
         value: route.operatorId,
+        fields: [
+          'name',
+          'groupIds',
+          'email',
+          'role',
+          'groupIds',
+          'permissions',
+        ],
       });
 
     if (period) {

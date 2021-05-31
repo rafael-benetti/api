@@ -116,12 +116,12 @@ class MikroMachinesRepository implements MachinesRepository {
       {
         ...(orderByLastCollection && {
           orderBy: {
-            lastCollection: 'ASC',
+            lastCollection: 'DESC',
           },
         }),
         ...(orderByLastConnection && {
           orderBy: {
-            lastConnection: 'ASC',
+            lastConnection: 'DESC',
           },
         }),
         limit,
