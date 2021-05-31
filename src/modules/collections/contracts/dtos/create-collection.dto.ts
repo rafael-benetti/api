@@ -16,5 +16,6 @@ export default interface CreateCollectionDto {
   reviewedData?: {
     date: Date;
     reviewedBy: string;
+    reviewerName: string;
   };
 }

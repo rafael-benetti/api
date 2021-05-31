@@ -75,6 +75,7 @@ export default class MikroCollection implements Collection {
   reviewedData?: {
     date: Date;
     reviewedBy: string;
+    reviewerName: string;
   };
 
   constructor(data?: CreateCollectionDto) {

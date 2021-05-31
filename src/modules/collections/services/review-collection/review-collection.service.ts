@@ -64,6 +64,7 @@ class ReviewCollectionService {
     collection.reviewedData = {
       date: new Date(),
       reviewedBy: user.id,
+      reviewerName: user.name,
     };
 
     this.collectionsRepository.save(collection);

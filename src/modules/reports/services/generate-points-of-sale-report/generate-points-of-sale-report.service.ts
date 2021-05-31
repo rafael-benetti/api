@@ -92,6 +92,9 @@ class GeneratePointsOfSaleReportService {
     if (user.role !== Role.MANAGER && user.role !== Role.OWNER)
       throw AppError.authorizationError;
 
+    if (user.role !== Role.OWNER && !user.permissions?.generateReports)
+      throw AppError.authorizationError;
+
     let groupIds: string[] = [];
     let groups: Group[] = [];
 

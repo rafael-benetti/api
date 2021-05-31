@@ -36,6 +36,7 @@ export default class Collection {
   reviewedData?: {
     date: Date;
     reviewedBy: string;
+    reviewerName: string;
   };
 
   constructor(data?: CreateCollectionDto) {
