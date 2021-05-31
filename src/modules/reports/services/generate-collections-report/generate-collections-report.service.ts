@@ -63,7 +63,7 @@ export default class GenerateCollectionsReportService {
 
     if (!user) throw AppError.userNotFound;
 
-    if (user.role !== Role.OWNER && user.permissions?.generateReports)
+    if (user.role !== Role.OWNER && !user.permissions?.generateReports)
       throw AppError.authorizationError;
 
     const pointOfSale = await this.pointsOfSaleRepository.findOne({
@@ -75,7 +75,7 @@ export default class GenerateCollectionsReportService {
 
     const groupIds = await getGroupUniverse(user);
 
-    if (!groupIds.includes(pointOfSale?.groupId))
+    if (!groupIds.includes(pointOfSale.groupId))
       throw AppError.authorizationError;
 
     startDate = startOfDay(startDate);

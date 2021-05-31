@@ -189,14 +189,14 @@ export default class GenerateGroupReportService {
 
         return {
           groupLabel: group.label ? group.label : 'Parceria Pessoal',
-          numberOfMachines,
-          income,
-          prizePurchaseAmount,
-          prizePurchaseCost,
-          maintenance,
-          rent,
-          remoteCreditCost,
-          balance,
+          numberOfMachines: numberOfMachines || 0,
+          income: income || 0,
+          prizePurchaseAmount: prizePurchaseAmount || 0,
+          prizePurchaseCost: prizePurchaseCost || 0,
+          maintenance: maintenance || 0,
+          rent: rent || 0,
+          remoteCreditCost: remoteCreditCost || 0,
+          balance: balance || 0,
         };
       }),
     );

@@ -6,6 +6,7 @@ import RemoteCreditService from './remote-credit.service';
 abstract class RemoteCreditController {
   static validate = celebrate({
     body: {
+      quantity: Joi.number().required(),
       observations: Joi.string().required(),
     },
     params: {

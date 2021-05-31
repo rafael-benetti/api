@@ -31,8 +31,8 @@ interface Response {
   numberOfPlays: number | undefined;
   gameValue: number;
   playsPerPrize: number;
-  incomePerPrizeGoal: number | undefined;
-  incomePerMonthGoal: number | undefined;
+  incomePerPrizeGoal?: number;
+  incomePerMonthGoal?: number;
   averagePerDay: number;
 }
 
@@ -191,10 +191,10 @@ class GenerateMachinesReportService {
         serialNumber: machine.serialNumber,
         location: machine.pointOfSale?.label,
         category: machine.categoryLabel,
-        income,
-        prizes,
-        remoteCreditAmount,
-        numberOfPlays,
+        income: income || 0,
+        prizes: prizes || 0,
+        remoteCreditAmount: remoteCreditAmount || 0,
+        numberOfPlays: numberOfPlays || 0,
         gameValue: machine.gameValue,
         playsPerPrize:
           numberOfPlays && prizes
@@ -202,7 +202,8 @@ class GenerateMachinesReportService {
             : 0,
         incomePerPrizeGoal: machine.incomePerPrizeGoal,
         incomePerMonthGoal: machine.incomePerMonthGoal,
-        averagePerDay: Number((income ? income / numberOfDays : 0).toFixed(2)),
+        averagePerDay:
+          Number((income ? income / numberOfDays : 0).toFixed(2)) || 0,
       };
     });
 

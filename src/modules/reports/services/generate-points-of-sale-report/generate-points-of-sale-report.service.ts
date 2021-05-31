@@ -217,9 +217,9 @@ class GeneratePointsOfSaleReportService {
         return {
           serialNumber: machine.serialNumber,
           category: machine.categoryLabel,
-          income,
-          prizes,
-          remoteCreditAmount,
+          income: income || 0,
+          prizes: prizes || 0,
+          remoteCreditAmount: remoteCreditAmount || 0,
           numberOfPlays: numberOfPlays
             ? Number(numberOfPlays.toFixed(2))
             : numberOfPlays,
@@ -230,7 +230,7 @@ class GeneratePointsOfSaleReportService {
               : 0,
           incomePerMonthGoal,
           incomePerPrizeGoal,
-          averagePerDay,
+          averagePerDay: averagePerDay || 0,
         };
       });
 
@@ -247,7 +247,7 @@ class GeneratePointsOfSaleReportService {
 
       return {
         label: pointOfSale.label,
-        rent,
+        rent: rent || 0,
         income: machineAnalytics.reduce((a, b) => a + b.income, 0),
         address: pointOfSale.address,
         groupLabel: groupLabel || 'Parceria Pessoal',
