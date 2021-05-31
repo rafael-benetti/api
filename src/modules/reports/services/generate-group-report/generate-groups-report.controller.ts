@@ -36,7 +36,7 @@ export default abstract class GenerateGroupReportController {
       );
       response.setHeader(
         'Content-Disposition',
-        'attachment; filename=relarorio.xlsx',
+        'attachment; filename=relatorio.xlsx',
       );
       return report.xlsx.write(response).then(() => {
         response.status(200).end();

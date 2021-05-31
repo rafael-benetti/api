@@ -45,7 +45,7 @@ export default async function exportGroupsReport({
   sheet.getRow(2).values = [
     'Nome',
     'Máquinas',
-    'Income',
+    'Faturamento',
     'Prêmios adquiridos',
     'Investimento em prêmios',
     'Investimento em suprimentos',
@@ -70,7 +70,7 @@ export default async function exportGroupsReport({
       width: 15,
     },
     {
-      key: 'Income',
+      key: 'Faturamento',
       style: {
         alignment: { horizontal: 'center', vertical: 'middle' },
         numFmt: 'R$#,##0.00',

@@ -1,10 +1,14 @@
 /* eslint-disable import/no-duplicates */
-import format from 'date-fns/format';
-import { ptBR } from 'date-fns/locale';
 
+import PointOfSale from '@modules/points-of-sale/contracts/models/point-of-sale';
+import { format } from 'date-fns';
+import { ptBR } from 'date-fns/locale';
 import ExcelJS from 'exceljs';
 
 interface Request {
+  serialNumber: string;
+  initialDate: Date;
+  finalDate: Date;
   initialMechanicalCountIn: number;
   finalMechanicalCountIn: number;
   mechanicalDiffenceIn: number;
@@ -21,47 +25,146 @@ interface Request {
   userCount: number;
 }
 
-export default async function exportCollectionsReport(
-  collectionsAnalytics: Request[],
-): Promise<ExcelJS.Workbook> {
+export default async function exportCollectionsReport({
+  collectionsAnalytics,
+  pointOfSale,
+  date,
+}: {
+  collectionsAnalytics: Request[];
+  pointOfSale: PointOfSale;
+  date: {
+    startDate: Date;
+    endDate: Date;
+  };
+}): Promise<ExcelJS.Workbook> {
   const workbook = new ExcelJS.Workbook();
 
   const sheet = workbook.addWorksheet('tabela 1');
 
-  sheet.mergeCells('A1', 'N1'); // TODO:
-  sheet.getCell('A1').value = `RELATÓRIO DE COLETAS`;
+  sheet.mergeCells('A7', 'Q7');
+  sheet.getCell('A7').value = `RELATÓRIO DE COLETAS`;
 
-  sheet.getCell('A1').alignment = { horizontal: 'center', vertical: 'middle' };
+  sheet.getCell('A7').alignment = { horizontal: 'center', vertical: 'middle' };
 
-  sheet.getRow(2).values = [
+  sheet.getCell('A2').value = `Ponto de venda:`;
+  sheet.getCell('A3').value = `Local:`;
+  sheet.getCell('A4').value = `Período:`;
+  sheet.getCell('A5').value = `Aluguel:`;
+
+  sheet.mergeCells('B2', 'D2');
+  sheet.mergeCells('B3', 'D3');
+  sheet.mergeCells('B4', 'D4');
+  sheet.mergeCells('B5', 'D5');
+
+  sheet.getCell('B2').value = `${pointOfSale.label}`;
+
+  sheet.getCell('B3').value = `${
+    (pointOfSale.address.street,
+    pointOfSale.address.neighborhood,
+    pointOfSale.address.city)
+  }-${pointOfSale.address.state}`;
+  sheet.getCell('B4').value = `${format(date.startDate, "dd 'de' MMMM", {
+    locale: ptBR,
+  })} - ${format(date.endDate, "dd 'de' MMMM", {
+    locale: ptBR,
+  })})`;
+  sheet.getCell('B5').value = pointOfSale.isPercentage
+    ? `${pointOfSale.rent} %`
+    : pointOfSale.rent;
+
+  sheet.getRow(8).values = [
     'Número de série',
     'Inicial',
     'Final',
     'Dias',
-    '',
-    'Investimento em suprimentos',
-    'Aluguel',
-    'Remoto',
-    'Balanço',
+    'Inicial Mecânico Entrada',
+    'Final Mecânico Entrada',
+    'Resultado Mecânico',
+    'Inicial Digital Entrada',
+    'Final Digital Entrada',
+    'Resultado Digital',
+    'Recolhido',
+    'Inicial Mecânico Saída',
+    'Final Mecânico Saída',
+    'Unid. Mecânico',
+    'Inicial Digital Saída',
+    'Final Digital Saída',
+    'Unid. Digital',
   ];
 
   sheet.columns = [
     {
-      key: 'Nome',
+      key: 'Número de série',
       style: {
         alignment: { horizontal: 'center', vertical: 'middle' },
       },
       width: 15,
     },
     {
-      key: 'Máquinas',
+      key: 'Inicial',
       style: {
         alignment: { horizontal: 'center', vertical: 'middle' },
       },
       width: 15,
     },
     {
-      key: 'Income',
+      key: 'Final',
+      style: {
+        alignment: { horizontal: 'center', vertical: 'middle' },
+      },
+      width: 15,
+    },
+    {
+      key: 'Dias',
+      style: {
+        alignment: { horizontal: 'center', vertical: 'middle' },
+      },
+      width: 15,
+    },
+    {
+      key: 'Inicial Mecânico Entrada',
+      style: {
+        alignment: { horizontal: 'center', vertical: 'middle' },
+      },
+      width: 15,
+    },
+    {
+      key: 'Final Mecânico Entrada',
+      style: {
+        alignment: { horizontal: 'center', vertical: 'middle' },
+      },
+      width: 15,
+    },
+    {
+      key: 'Resultado Mecânico',
+      style: {
+        alignment: { horizontal: 'center', vertical: 'middle' },
+      },
+      width: 15,
+    },
+    {
+      key: 'Inicial Digital Entrada',
+      style: {
+        alignment: { horizontal: 'center', vertical: 'middle' },
+      },
+      width: 15,
+    },
+    {
+      key: 'Final Digital Entrada',
+      style: {
+        alignment: { horizontal: 'center', vertical: 'middle' },
+      },
+      width: 15,
+    },
+    {
+      key: 'Resultado Digital',
+      style: {
+        alignment: { horizontal: 'center', vertical: 'middle' },
+      },
+      width: 15,
+    },
+    {
+      key: 'Recolhido',
       style: {
         alignment: { horizontal: 'center', vertical: 'middle' },
         numFmt: 'R$#,##0.00',
@@ -69,65 +172,68 @@ export default async function exportCollectionsReport(
       width: 15,
     },
     {
-      key: 'Prêmios adquiridos',
+      key: 'Inicial Mecânico Saída',
       style: {
         alignment: { horizontal: 'center', vertical: 'middle' },
       },
       width: 15,
     },
     {
-      key: 'Investimento em prêmios',
+      key: 'Final Mecânico Saída.',
       style: {
         alignment: { horizontal: 'center', vertical: 'middle' },
-        numFmt: 'R$#,##0.00',
       },
       width: 15,
     },
     {
-      key: 'Investimento em suprimentos',
+      key: 'Unid. Mecânico',
       style: {
         alignment: { horizontal: 'center', vertical: 'middle' },
-        numFmt: 'R$#,##0.00',
       },
       width: 15,
     },
     {
-      key: 'Aluguel',
+      key: 'Inicial Digital Saída',
       style: {
         alignment: { horizontal: 'center', vertical: 'middle' },
-        numFmt: 'R$#,##0.00',
       },
       width: 15,
     },
     {
-      key: 'Remoto',
+      key: 'Final Digital Saída',
       style: {
         alignment: { horizontal: 'center', vertical: 'middle' },
-        numFmt: 'R$#,##0.00',
       },
       width: 15,
     },
     {
-      key: 'Balanço',
+      key: 'Unid. Digital',
       style: {
         alignment: { horizontal: 'center', vertical: 'middle' },
-        numFmt: 'R$#,##0.00',
       },
       width: 15,
     },
   ];
 
-  groupsAnalytics.forEach(item => {
+  collectionsAnalytics.forEach(item => {
     sheet.addRow({
-      Nome: item.groupLabel,
-      Máquinas: item.numberOfMachines,
-      Income: item.income,
-      'Prêmios adquiridos': item.prizePurchaseAmount,
-      'Investimento em prêmios': item.prizePurchaseCost,
-      'Investimento em suprimentos': item.maintenance,
-      Aluguel: item.rent,
-      Remoto: item.remoteCreditCost,
-      Balanço: item.balance,
+      'Número de série': item.serialNumber,
+      Inicial: item.initialDate,
+      Final: item.finalDate,
+      Dias: item.numberOfDays,
+      'Inicial Mecânico Entrada': item.initialMechanicalCountIn,
+      'Final Mecânico Entrada': item.finalMechanicalCountIn,
+      'Resultado Mecânico': item.mechanicalDiffenceIn,
+      'Inicial Digital Entrada': item.initialDigitalCountIn,
+      'Final Digital Entrada': item.finalDigitalCountIn,
+      'Resultado Digital': item.digitalDiffenceIn,
+      Recolhido: item.userCount,
+      'Inicial Mecânico Saída': item.initialMechanicalCountOut,
+      'Final Mecânico Saída': item.finalMechanicalCountOut,
+      'Unid. Mecânico': item.digitalDiffenceOut,
+      'Inicial Digital Saída': item.initialMechanicalCountOut,
+      'Final Digital Saída': item.finalMechanicalCountOut,
+      'Unid. Digital': item.digitalDiffenceOut,
     });
   });
 

@@ -25,7 +25,7 @@ export default async function exportGroupsReport({
   const sheet = workbook.addWorksheet('tabela 1');
 
   sheet.mergeCells('A1', 'N1');
-  sheet.getCell('A1').value = 'RELATÓRIO DE ESTOQUE DE OPERADOR';
+  sheet.getCell('A1').value = 'RELATÓRIO DE ESTOQUE DE USUÁRIO';
 
   sheet.getCell('A1').alignment = { horizontal: 'center', vertical: 'middle' };
 
@@ -57,20 +57,18 @@ export default async function exportGroupsReport({
     const groupLabels = `${item.groupLabels}`;
 
     const row: { [key: string]: unknown } = {
-      Nome: item.name,
+      Operador: item.name,
       Parceria: groupLabels,
     };
 
     columnsPrizes.forEach(value => {
-      row[value.label] = item.prizes?.find(
-        prize => prize.id === value.id,
-      )?.quantity;
+      row[value.label] =
+        item.prizes?.find(prize => prize.id === value.id)?.quantity || 0;
     });
 
     columnsSupliers.forEach(value => {
-      row[value.label] = item.prizes?.find(
-        suplie => suplie.id === value.id,
-      )?.quantity;
+      row[value.label] =
+        item.prizes?.find(suplie => suplie.id === value.id)?.quantity || 0;
     });
 
     sheet.addRow(row);

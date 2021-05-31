@@ -9,15 +9,21 @@ import AppError from '@shared/errors/app-error';
 import getGroupUniverse from '@shared/utils/get-group-universe';
 import { differenceInDays, endOfDay, startOfDay } from 'date-fns';
 import { inject, injectable } from 'tsyringe';
+import ExcelJS from 'exceljs';
+import exportCollectionsReport from './export-collections-report';
 
 interface Request {
   userId: string;
   startDate: Date;
   endDate: Date;
   pointOfSaleId: string;
+  download: boolean;
 }
 
 interface Response {
+  serialNumber: string;
+  initialDate: Date;
+  finalDate: Date;
   initialMechanicalCountIn: number;
   finalMechanicalCountIn: number;
   mechanicalDiffenceIn: number;
@@ -55,7 +61,8 @@ export default class GenerateCollectionsReportService {
     pointOfSaleId,
     startDate,
     endDate,
-  }: Request): Promise<Response[]> {
+    download,
+  }: Request): Promise<Response[] | ExcelJS.Workbook> {
     const user = await this.usersRepository.findOne({
       by: 'id',
       value: userId,
@@ -255,6 +262,9 @@ export default class GenerateCollectionsReportService {
       const numberOfDays = differenceInDays(finalDate, initialDate);
 
       return {
+        serialNumber: machine.serialNumber,
+        initialDate,
+        finalDate,
         initialMechanicalCountIn,
         finalMechanicalCountIn,
         mechanicalDiffenceIn,
@@ -271,6 +281,19 @@ export default class GenerateCollectionsReportService {
         userCount,
       };
     });
+
+    if (download) {
+      const Workbook = await exportCollectionsReport({
+        pointOfSale,
+        collectionsAnalytics: machineReport,
+        date: {
+          startDate,
+          endDate,
+        },
+      });
+
+      return Workbook;
+    }
 
     return machineReport;
   }
