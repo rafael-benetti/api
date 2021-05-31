@@ -114,7 +114,7 @@ export default class GenerateCollectionsReportService {
             0,
           ),
         )
-        .reduce((a, b) => a + b);
+        .reduce((a, b) => a + b, 0);
 
       const finalMechanicalCountIn = machineCollections[0].boxCollections
         .map(boxCollection =>
@@ -128,7 +128,7 @@ export default class GenerateCollectionsReportService {
             0,
           ),
         )
-        .reduce((a, b) => a + b);
+        .reduce((a, b) => a + b, 0);
 
       const mechanicalDiffenceIn =
         finalMechanicalCountIn - initialMechanicalCountIn;
@@ -147,7 +147,7 @@ export default class GenerateCollectionsReportService {
             0,
           ),
         )
-        .reduce((a, b) => a + b);
+        .reduce((a, b) => a + b, 0);
 
       const finalMechanicalCountOut = machineCollections[0].boxCollections
         .map(boxCollection =>
@@ -161,7 +161,7 @@ export default class GenerateCollectionsReportService {
             0,
           ),
         )
-        .reduce((a, b) => a + b);
+        .reduce((a, b) => a + b, 0);
 
       const mechanicalDiffenceOut =
         finalMechanicalCountOut - initialMechanicalCountOut;
@@ -180,7 +180,7 @@ export default class GenerateCollectionsReportService {
             0,
           ),
         )
-        .reduce((a, b) => a + b);
+        .reduce((a, b) => a + b, 0);
 
       const finalDigitalCountIn = machineCollections[0].boxCollections
         .map(boxCollection =>
@@ -194,7 +194,7 @@ export default class GenerateCollectionsReportService {
             0,
           ),
         )
-        .reduce((a, b) => a + b);
+        .reduce((a, b) => a + b, 0);
 
       const digitalDiffenceIn = finalDigitalCountIn - initialDigitalCountIn;
 
@@ -212,7 +212,7 @@ export default class GenerateCollectionsReportService {
             0,
           ),
         )
-        .reduce((a, b) => a + b);
+        .reduce((a, b) => a + b, 0);
 
       const finalDigitalCountOut = machineCollections[0].boxCollections
         .map(boxCollection =>
@@ -226,7 +226,7 @@ export default class GenerateCollectionsReportService {
             0,
           ),
         )
-        .reduce((a, b) => a + b);
+        .reduce((a, b) => a + b, 0);
 
       const userCount = machineCollections
         .map(machineCollection =>
@@ -242,9 +242,9 @@ export default class GenerateCollectionsReportService {
                 0,
               ),
             )
-            .reduce((a, b) => a + b),
+            .reduce((a, b) => a + b, 0),
         )
-        .reduce((a, b) => a + b);
+        .reduce((a, b) => a + b, 0);
 
       const digitalDiffenceOut = finalDigitalCountOut - initialDigitalCountOut;
 

@@ -178,7 +178,7 @@ export default class GenerateGroupReportService {
                 (pointOfSale.rent / 100)
               : pointOfSale.rent,
           )
-          .reduce((a, b) => a + b);
+          .reduce((a, b) => a + b, 0);
 
         const remoteCreditCost = machineLogs.reduce(
           (a, b) => a + b.quantity,
