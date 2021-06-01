@@ -22,7 +22,7 @@ class NodemailerMailProvider {
         this.transporter.sendMail({
             from: {
                 name: 'Equipe Sttigma',
-                address: mail_1.default.user,
+                address: 'contato@sttigma.com',
             },
             to: {
                 name: data.receiverName,

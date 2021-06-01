@@ -15,6 +15,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
+const crypto_1 = require("crypto");
 const admins_repository_1 = __importDefault(require("../../contracts/repositories/admins.repository"));
 const couter_types_repository_1 = __importDefault(require("../../../counter-types/contracts/repositories/couter-types.repository"));
 const groups_repository_1 = __importDefault(require("../../../groups/contracts/repositories/groups.repository"));
@@ -50,8 +51,7 @@ let CreateOwnerService = class CreateOwnerService {
         });
         if (emailExists)
             throw app_error_1.default.emailAlreadyUsed;
-        // const password = randomBytes(3).toString('hex');
-        const password = 'q1';
+        const password = crypto_1.randomBytes(3).toString('hex');
         const user = this.usersRepository.create({
             email,
             password: this.hashProvider.hash(password),
@@ -99,7 +99,7 @@ let CreateOwnerService = class CreateOwnerService {
             type: type_1.default.OUT,
             ownerId: user.id,
         });
-        await this.ormProvider.commit();
+        // await this.ormProvider.commit();
     }
 };
 CreateOwnerService = __decorate([

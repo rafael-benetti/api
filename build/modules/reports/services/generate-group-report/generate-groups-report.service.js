@@ -29,6 +29,7 @@ const bluebird_1 = require("bluebird");
 const machine_logs_repository_1 = __importDefault(require("../../../machine-logs/contracts/repositories/machine-logs.repository"));
 const machine_log_type_1 = __importDefault(require("../../../machine-logs/contracts/enums/machine-log-type"));
 const date_fns_1 = require("date-fns");
+const logger_1 = __importDefault(require("../../../../config/logger"));
 const export_groups_report_1 = __importDefault(require("./export-groups-report"));
 let GenerateGroupReportService = class GenerateGroupReportService {
     constructor(usersRepository, telemetryLogsRepository, groupsRepository, machinesRepository, productLogsRepository, pointsOfSaleRepository, machineLogsRepository) {
@@ -40,7 +41,7 @@ let GenerateGroupReportService = class GenerateGroupReportService {
         this.pointsOfSaleRepository = pointsOfSaleRepository;
         this.machineLogsRepository = machineLogsRepository;
     }
-    async execute({ userId, endDate, startDate, download, }) {
+    async execute({ userId, endDate, startDate, download, groupIds, }) {
         const user = await this.usersRepository.findOne({
             by: 'id',
             value: userId,
@@ -50,11 +51,29 @@ let GenerateGroupReportService = class GenerateGroupReportService {
         if (user.role !== role_1.default.OWNER && !user.permissions?.generateReports)
             throw app_error_1.default.authorizationError;
         const universe = await get_group_universe_1.default(user);
-        const groups = await this.groupsRepository.find({
-            filters: {
-                ids: universe,
-            },
-        });
+        let groups;
+        if (groupIds) {
+            groups = await this.groupsRepository.find({
+                filters: {
+                    ids: groupIds,
+                },
+            });
+            logger_1.default.info(groupIds);
+            if (user.role === role_1.default.OWNER)
+                if (groups.some(group => group.ownerId !== user.id))
+                    throw app_error_1.default.authorizationError;
+            logger_1.default.info('ai');
+            if (user.role === role_1.default.MANAGER)
+                if (groups.some(group => !user.groupIds?.includes(group.id)))
+                    throw app_error_1.default.authorizationError;
+        }
+        else {
+            groups = await this.groupsRepository.find({
+                filters: {
+                    ids: universe,
+                },
+            });
+        }
         startDate = date_fns_1.startOfDay(startDate);
         endDate = date_fns_1.endOfDay(endDate);
         const groupsAnalytics = await bluebird_1.Promise.all(groups.map(async (group) => {

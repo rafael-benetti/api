@@ -18,6 +18,8 @@ const edit_operator_controller_1 = __importDefault(require("../services/edit-ope
 const get_user_profile_controller_1 = __importDefault(require("../services/get-user-profile/get-user-profile.controller"));
 const list_managers_controller_1 = __importDefault(require("../services/list-managers/list-managers.controller"));
 const list_operators_controller_1 = __importDefault(require("../services/list-operators/list-operators.controller"));
+const request_password_reset_controller_1 = __importDefault(require("../services/request-password-reset/request-password-reset.controller"));
+const reset_password_controller_1 = __importDefault(require("../services/reset-password/reset-password.controller"));
 const update_user_profile_controller_1 = __importDefault(require("../services/update-user-profile/update-user-profile.controller"));
 const usersRoutes = express_1.Router();
 usersRoutes.post('/auth', celebrate_1.celebrate({
@@ -26,6 +28,16 @@ usersRoutes.post('/auth', celebrate_1.celebrate({
         password: celebrate_1.Joi.string().required(),
     },
 }, { abortEarly: false }), authenticate_user_controller_1.default.handle);
+usersRoutes.post('/forgot-password', celebrate_1.celebrate({
+    body: {
+        email: celebrate_1.Joi.string().email().required(),
+    },
+}), request_password_reset_controller_1.default.handle);
+usersRoutes.post('/reset-password', celebrate_1.celebrate({
+    body: {
+        resetPasswordtoken: celebrate_1.Joi.string().required(),
+    },
+}), reset_password_controller_1.default.handle);
 usersRoutes.use(auth_handler_1.default);
 usersRoutes.get('/me', get_user_profile_controller_1.default.handle);
 usersRoutes.patch('/me', multer_1.default({

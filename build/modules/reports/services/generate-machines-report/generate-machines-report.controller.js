@@ -15,11 +15,12 @@ GenerateMachinesController.validate = celebrate_1.celebrate({
         endDate: celebrate_1.Joi.date().iso().required(),
         groupId: celebrate_1.Joi.string(),
         download: celebrate_1.Joi.bool().default(false),
+        machineIds: celebrate_1.Joi.array().items(celebrate_1.Joi.string()),
     },
 });
 GenerateMachinesController.handle = async (request, response) => {
     const { userId } = request;
-    const { startDate, endDate, groupId, download } = request.query;
+    const { startDate, endDate, groupId, download, machineIds, } = request.query;
     const generateMachinesReportService = tsyringe_1.container.resolve(generate_machines_report_service_1.default);
     if (download) {
         const report = (await generateMachinesReportService.execute({
@@ -28,6 +29,7 @@ GenerateMachinesController.handle = async (request, response) => {
             startDate,
             endDate,
             download,
+            machineIds,
         }));
         response.setHeader('Content-Type', 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet');
         response.setHeader('Content-Disposition', 'attachment; filename=relarorio.xlsx');
@@ -41,6 +43,7 @@ GenerateMachinesController.handle = async (request, response) => {
         startDate,
         endDate,
         download,
+        machineIds,
     });
     return response.json(report);
 };
