@@ -116,7 +116,7 @@ class CreateOwnerService {
       ownerId: user.id,
     });
 
-    await this.ormProvider.commit();
+    // await this.ormProvider.commit();
   }
 }
 
