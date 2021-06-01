@@ -13,6 +13,8 @@ import EditOperatorController from '../services/edit-operator/edit-operator.cont
 import GetUserProfileController from '../services/get-user-profile/get-user-profile.controller';
 import ListManagersController from '../services/list-managers/list-managers.controller';
 import ListOperatorsController from '../services/list-operators/list-operators.controller';
+import RequestPasswordResetController from '../services/request-password-reset/request-password-reset.controller';
+import ResetPasswordController from '../services/reset-password/reset-password.controller';
 import UpdateUserProfileController from '../services/update-user-profile/update-user-profile.controller';
 
 const usersRoutes = Router();
@@ -29,6 +31,26 @@ usersRoutes.post(
     { abortEarly: false },
   ),
   AuthenticateUserController.handle,
+);
+
+usersRoutes.post(
+  '/forgot-password',
+  celebrate({
+    body: {
+      email: Joi.string().email().required(),
+    },
+  }),
+  RequestPasswordResetController.handle,
+);
+
+usersRoutes.post(
+  '/reset-password',
+  celebrate({
+    body: {
+      resetPasswordtoken: Joi.string().required(),
+    },
+  }),
+  ResetPasswordController.handle,
 );
 
 usersRoutes.use(authHandler);
