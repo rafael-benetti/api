@@ -231,7 +231,7 @@ class GenerateMachinesReportService {
       return {
         groupLabel,
         serialNumber: machine.serialNumber,
-        location: machine.pointOfSale?.label,
+        location: machine.pointOfSale?.label || '',
         category: machine.categoryLabel,
         income: income || 0,
         prizes: prizes || 0,
@@ -242,8 +242,8 @@ class GenerateMachinesReportService {
           numberOfPlays && prizes
             ? Number((numberOfPlays / prizes).toFixed(2))
             : 0,
-        incomePerPrizeGoal: machine.incomePerPrizeGoal,
-        incomePerMonthGoal: machine.incomePerMonthGoal,
+        incomePerPrizeGoal: machine.incomePerPrizeGoal || 0,
+        incomePerMonthGoal: machine.incomePerMonthGoal || 0,
         averagePerDay:
           Number((income ? income / numberOfDays : 0).toFixed(2)) || 0,
       };
