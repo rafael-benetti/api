@@ -13,6 +13,7 @@ import MachineLogsRepository from '@modules/machine-logs/contracts/repositories/
 import MachineLogType from '@modules/machine-logs/contracts/enums/machine-log-type';
 import { endOfDay, startOfDay } from 'date-fns';
 import ExcelJS from 'exceljs';
+import logger from '@config/logger';
 import exportGroupsReport from './export-groups-report';
 
 interface Request {
@@ -20,6 +21,7 @@ interface Request {
   startDate: Date;
   endDate: Date;
   download: boolean;
+  groupIds: string[];
 }
 
 interface Response {
@@ -64,6 +66,7 @@ export default class GenerateGroupReportService {
     endDate,
     startDate,
     download,
+    groupIds,
   }: Request): Promise<
     | {
         date: {
@@ -86,11 +89,30 @@ export default class GenerateGroupReportService {
 
     const universe = await getGroupUniverse(user);
 
-    const groups = await this.groupsRepository.find({
-      filters: {
-        ids: universe,
-      },
-    });
+    let groups;
+    if (groupIds) {
+      groups = await this.groupsRepository.find({
+        filters: {
+          ids: groupIds,
+        },
+      });
+      logger.info(groupIds);
+
+      if (user.role === Role.OWNER)
+        if (groups.some(group => group.ownerId !== user.id))
+          throw AppError.authorizationError;
+
+      logger.info('ai');
+      if (user.role === Role.MANAGER)
+        if (groups.some(group => !user.groupIds?.includes(group.id)))
+          throw AppError.authorizationError;
+    } else {
+      groups = await this.groupsRepository.find({
+        filters: {
+          ids: universe,
+        },
+      });
+    }
 
     startDate = startOfDay(startDate);
     endDate = endOfDay(endDate);

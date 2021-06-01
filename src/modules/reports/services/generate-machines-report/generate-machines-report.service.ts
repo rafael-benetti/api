@@ -10,6 +10,7 @@ import MachineLogsRepository from '@modules/machine-logs/contracts/repositories/
 import MachineLogType from '@modules/machine-logs/contracts/enums/machine-log-type';
 import { differenceInDays, endOfDay, startOfDay } from 'date-fns';
 import ExcelJS from 'exceljs';
+import logger from '@config/logger';
 import exportMachinesReport from './export-machines-report';
 
 interface Request {
@@ -18,6 +19,7 @@ interface Request {
   startDate: Date;
   endDate: Date;
   download: boolean;
+  machineIds: string[];
 }
 
 interface Response {
@@ -61,6 +63,7 @@ class GenerateMachinesReportService {
     startDate,
     endDate,
     download,
+    machineIds,
   }: Request): Promise<
     | {
         date: {
@@ -87,7 +90,7 @@ class GenerateMachinesReportService {
     let groupIds: string[] = [];
     let groups: Group[] = [];
 
-    if (groupId) {
+    if (groupId && !machineIds) {
       const group = await this.groupsRepository.findOne({
         by: 'id',
         value: groupId,
@@ -102,7 +105,7 @@ class GenerateMachinesReportService {
         throw AppError.authorizationError;
       groups = [group];
       groupIds.push(groupId);
-    } else if (user.role === Role.MANAGER) {
+    } else if (user.role === Role.MANAGER && !machineIds) {
       if (!user.groupIds) throw AppError.unknownError;
       groupIds = user.groupIds;
       groups = await this.groupsRepository.find({
@@ -110,7 +113,7 @@ class GenerateMachinesReportService {
           ids: user.groupIds,
         },
       });
-    } else if (user.role === Role.OWNER) {
+    } else if (user.role === Role.OWNER && !machineIds) {
       groups = await this.groupsRepository.find({
         filters: {
           ownerId: user.id,
@@ -121,23 +124,59 @@ class GenerateMachinesReportService {
       groupIds = groups.map(group => group.id);
     }
 
-    const { machines } = await this.machinesRepository.find({
-      groupIds,
-      populate: ['pointOfSale'],
-      fields: [
-        'id',
-        'serialNumber',
-        'categoryLabel',
-        'gameValue',
-        'locationId',
-        'incomePerPrizeGoal',
-        'incomePerMonthGoal',
-        'pointOfSale',
-        'pointOfSale.id',
-        'pointOfSale.label',
-        'groupId',
-      ],
-    });
+    let machines;
+
+    if (machineIds) {
+      machines = (
+        await this.machinesRepository.find({
+          id: machineIds,
+          populate: ['pointOfSale'],
+          fields: [
+            'id',
+            'serialNumber',
+            'categoryLabel',
+            'gameValue',
+            'locationId',
+            'incomePerPrizeGoal',
+            'incomePerMonthGoal',
+            'pointOfSale',
+            'pointOfSale.id',
+            'pointOfSale.label',
+            'groupId',
+            'ownerId',
+          ],
+        })
+      ).machines;
+
+      if (user.role === Role.OWNER)
+        if (machines.some(machine => machine.ownerId !== user.id))
+          throw AppError.authorizationError;
+
+      logger.info('oi');
+      if (user.role === Role.MANAGER)
+        if (machines.some(machine => !user.groupIds?.includes(machine.groupId)))
+          throw AppError.authorizationError;
+    } else {
+      machines = (
+        await this.machinesRepository.find({
+          groupIds,
+          populate: ['pointOfSale'],
+          fields: [
+            'id',
+            'serialNumber',
+            'categoryLabel',
+            'gameValue',
+            'locationId',
+            'incomePerPrizeGoal',
+            'incomePerMonthGoal',
+            'pointOfSale',
+            'pointOfSale.id',
+            'pointOfSale.label',
+            'groupId',
+          ],
+        })
+      ).machines;
+    }
 
     startDate = startOfDay(startDate);
     endDate = endOfDay(endDate);

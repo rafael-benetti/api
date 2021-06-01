@@ -11,15 +11,19 @@ export default abstract class GenerateMachinesController {
       endDate: Joi.date().iso().required(),
       groupId: Joi.string(),
       download: Joi.bool().default(false),
+      machineIds: Joi.array().items(Joi.string()),
     },
   });
 
   static handle: RequestHandler = async (request, response) => {
     const { userId } = request;
-    const { startDate, endDate, groupId, download } = request.query as Record<
-      string,
-      never
-    >;
+    const {
+      startDate,
+      endDate,
+      groupId,
+      download,
+      machineIds,
+    } = request.query as Record<string, never>;
 
     const generateMachinesReportService = container.resolve(
       GenerateMachinesReportService,
@@ -32,6 +36,7 @@ export default abstract class GenerateMachinesController {
         startDate,
         endDate,
         download,
+        machineIds,
       })) as ExcelJS.Workbook;
 
       response.setHeader(
@@ -53,6 +58,7 @@ export default abstract class GenerateMachinesController {
       startDate,
       endDate,
       download,
+      machineIds,
     });
 
     return response.json(report);
