@@ -17,7 +17,7 @@ class NodemailerMailProvider implements MailProvider {
     this.transporter.sendMail({
       from: {
         name: 'Equipe Sttigma',
-        address: mailConfig.user,
+        address: 'contato@sttigma.com',
       },
       to: {
         name: data.receiverName,

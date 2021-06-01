@@ -1,3 +1,4 @@
+import { randomBytes } from 'crypto';
 import Role from '@modules/users/contracts/enums/role';
 import Permissions from '@modules/users/contracts/models/permissions';
 import User from '@modules/users/contracts/models/user';
@@ -81,8 +82,7 @@ class CreateManagerService {
 
     if (emailExists) throw AppError.emailAlreadyUsed;
 
-    // const password = randomBytes(3).toString('hex');
-    const password = 'q1';
+    const password = randomBytes(3).toString('hex');
 
     const manager = this.usersRepository.create({
       email,

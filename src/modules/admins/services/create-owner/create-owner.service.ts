@@ -1,3 +1,4 @@
+import { randomBytes } from 'crypto';
 import AdminsRepository from '@modules/admins/contracts/repositories/admins.repository';
 import CounterTypesRepository from '@modules/counter-types/contracts/repositories/couter-types.repository';
 import GroupsRepository from '@modules/groups/contracts/repositories/groups.repository';
@@ -57,8 +58,7 @@ class CreateOwnerService {
 
     if (emailExists) throw AppError.emailAlreadyUsed;
 
-    // const password = randomBytes(3).toString('hex');
-    const password = 'q1';
+    const password = randomBytes(3).toString('hex');
 
     const user = this.usersRepository.create({
       email,
@@ -116,7 +116,7 @@ class CreateOwnerService {
       ownerId: user.id,
     });
 
-    await this.ormProvider.commit();
+    // await this.ormProvider.commit();
   }
 }
 
