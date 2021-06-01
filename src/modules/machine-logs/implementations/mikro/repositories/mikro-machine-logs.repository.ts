@@ -50,7 +50,7 @@ class MikroMachineLogsRepository implements MachineLogsRepository {
         limit,
         offset,
         orderBy: {
-          createdAt: 'ASC',
+          createdAt: 'DESC',
         },
       },
     );

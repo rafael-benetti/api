@@ -10,12 +10,13 @@ export default abstract class GenerateGroupReportController {
       startDate: Joi.date().iso(),
       endDate: Joi.date().iso(),
       download: Joi.boolean().default(false),
+      groupIds: Joi.array().items(Joi.string()),
     },
   });
 
   static handle: RequestHandler = async (request, response) => {
     const { userId } = request;
-    const { startDate, endDate, download } = request.query as Record<
+    const { startDate, endDate, download, groupIds } = request.query as Record<
       string,
       never
     >;
@@ -28,6 +29,7 @@ export default abstract class GenerateGroupReportController {
         startDate,
         endDate,
         download,
+        groupIds,
       })) as ExcelJS.Workbook;
 
       response.setHeader(
@@ -48,6 +50,7 @@ export default abstract class GenerateGroupReportController {
       startDate,
       endDate,
       download,
+      groupIds,
     });
 
     return response.json(report);

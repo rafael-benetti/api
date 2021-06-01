@@ -42,6 +42,7 @@ interface Request {
   startDate: Date;
   endDate: Date;
   download: boolean;
+  pointsOfSaleIds: string[];
 }
 
 @injectable()
@@ -72,6 +73,7 @@ class GeneratePointsOfSaleReportService {
     startDate,
     endDate,
     download,
+    pointsOfSaleIds,
   }: Request): Promise<
     | {
         date: {
@@ -98,7 +100,7 @@ class GeneratePointsOfSaleReportService {
     let groupIds: string[] = [];
     let groups: Group[] = [];
 
-    if (groupId) {
+    if (groupId && !pointsOfSaleIds) {
       const group = await this.groupsRepository.findOne({
         by: 'id',
         value: groupId,
@@ -114,7 +116,7 @@ class GeneratePointsOfSaleReportService {
 
       groups = [group];
       groupIds.push(groupId);
-    } else if (user.role === Role.MANAGER) {
+    } else if (user.role === Role.MANAGER && !pointsOfSaleIds) {
       if (!user.groupIds) throw AppError.unknownError;
       groupIds = user.groupIds;
       groups = await this.groupsRepository.find({
@@ -122,7 +124,7 @@ class GeneratePointsOfSaleReportService {
           ids: user.groupIds,
         },
       });
-    } else if (user.role === Role.OWNER) {
+    } else if (user.role === Role.OWNER && !pointsOfSaleIds) {
       groups = await this.groupsRepository.find({
         filters: {
           ownerId: user.id,
@@ -133,6 +135,25 @@ class GeneratePointsOfSaleReportService {
       groupIds = groups.map(group => group.id);
     }
 
+    let pointsOfSale;
+    if (pointsOfSaleIds) {
+      pointsOfSale = (
+        await this.pointsOfSaleRepository.find({
+          by: 'id',
+          value: pointsOfSaleIds,
+          fields: ['id', 'label', 'address', 'groupId', 'isPercentage', 'rent'],
+        })
+      ).pointsOfSale;
+    } else {
+      pointsOfSale = (
+        await this.pointsOfSaleRepository.find({
+          by: 'groupId',
+          value: groupIds,
+          fields: ['id', 'label', 'address', 'groupId', 'isPercentage', 'rent'],
+        })
+      ).pointsOfSale;
+    }
+
     startDate = startOfDay(startDate);
     endDate = endOfDay(endDate);
 
@@ -140,12 +161,6 @@ class GeneratePointsOfSaleReportService {
       differenceInDays(endDate, startDate) !== 0
         ? differenceInDays(endDate, startDate)
         : 1;
-
-    const { pointsOfSale } = await this.pointsOfSaleRepository.find({
-      by: 'groupId',
-      value: groupIds,
-      fields: ['id', 'label', 'address', 'groupId', 'isPercentage', 'rent'],
-    });
 
     const reportsPromises = pointsOfSale.map(async pointOfSale => {
       const { machines } = await this.machinesRepository.find({

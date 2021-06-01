@@ -11,15 +11,19 @@ export default abstract class GeneratePointsOfSaleReportController {
       endDate: Joi.date().iso(),
       groupId: Joi.string(),
       download: Joi.bool().default(false),
+      pointsOfSaleIds: Joi.array().items(Joi.string()),
     },
   });
 
   static handle: RequestHandler = async (request, response) => {
     const { userId } = request;
-    const { startDate, endDate, groupId, download } = request.query as Record<
-      string,
-      never
-    >;
+    const {
+      startDate,
+      endDate,
+      groupId,
+      download,
+      pointsOfSaleIds,
+    } = request.query as Record<string, never>;
 
     const generatePointsOfSaleReport = container.resolve(
       GeneratePointsOfSaleReport,
@@ -32,6 +36,7 @@ export default abstract class GeneratePointsOfSaleReportController {
         startDate,
         endDate,
         download,
+        pointsOfSaleIds,
       })) as ExcelJS.Workbook;
 
       response.setHeader(
@@ -53,6 +58,7 @@ export default abstract class GeneratePointsOfSaleReportController {
       startDate,
       endDate,
       download,
+      pointsOfSaleIds,
     });
 
     return response.json(report);
