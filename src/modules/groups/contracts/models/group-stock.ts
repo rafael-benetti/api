@@ -1,9 +1,8 @@
-import Prize from '@modules/users/contracts/models/prize';
-import Supply from '@modules/users/contracts/models/supply';
+import Product from '@modules/users/contracts/models/product';
 
 interface GroupStock {
-  prizes: Prize[];
-  supplies: Supply[];
+  prizes: Product[];
+  supplies: Product[];
 }
 
 export default GroupStock;

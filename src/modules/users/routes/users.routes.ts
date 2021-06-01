@@ -1,10 +1,13 @@
+import OrmProvider from '@providers/orm-provider/contracts/models/orm-provider';
 import authHandler from '@shared/server/express/middlewares/auth-handler';
 import { celebrate, Joi } from 'celebrate';
 import { Router } from 'express';
 import multer from 'multer';
+import { container } from 'tsyringe';
 import AuthenticateUserController from '../services/authenticate-user/authenticate-user.controller';
 import CreateManagerController from '../services/create-manager/create-manager.controller';
 import CreateOperatorController from '../services/create-operator/create-operator.controller';
+import DashboardInfoController from '../services/dashboard-info/dashboard-info.controller';
 import EditManagerController from '../services/edit-manager/edit-manager.controller';
 import EditOperatorController from '../services/edit-operator/edit-operator.controller';
 import GetUserProfileController from '../services/get-user-profile/get-user-profile.controller';
@@ -37,14 +40,16 @@ usersRoutes.patch(
   multer({
     storage: multer.memoryStorage(),
   }).single('file'),
+  container.resolve<OrmProvider>('OrmProvider').forkMiddleware,
   celebrate({
     body: {
       name: Joi.string(),
+      deviceToken: Joi.string(),
       newPassword: Joi.string(),
       password: Joi.string().when(Joi.ref('newPassword'), {
         then: Joi.string().required(),
       }),
-      phoneNumber: Joi.string(),
+      phoneNumber: Joi.string().min(13).max(14),
     },
   }),
   UpdateUserProfileController.handle,
@@ -62,10 +67,10 @@ usersRoutes.post(
           createMachines: Joi.bool().default(false),
           editMachines: Joi.bool().default(false),
           deleteMachines: Joi.bool().default(false),
+          fixMachineStock: Joi.bool().default(false),
           createProducts: Joi.bool().default(false),
           editProducts: Joi.bool().default(false),
           deleteProducts: Joi.bool().default(false),
-          transferProducts: Joi.bool().default(false),
           createCategories: Joi.bool().default(false),
           editCategories: Joi.bool().default(false),
           deleteCategories: Joi.bool().default(false),
@@ -83,14 +88,10 @@ usersRoutes.post(
           deleteRoutes: Joi.bool().default(false),
           createManagers: Joi.bool().default(false),
           createOperators: Joi.bool().default(false),
-          editManagers: Joi.bool().default(false),
-          editOperators: Joi.bool().default(false),
           listManagers: Joi.bool().default(false),
           listOperators: Joi.bool().default(false),
-          deleteManagers: Joi.bool().default(false),
-          deleteOperators: Joi.bool().default(false),
         }).required(),
-        phoneNumber: Joi.string(),
+        phoneNumber: Joi.string().min(13).max(14),
       },
     },
     { abortEarly: false },
@@ -108,10 +109,10 @@ usersRoutes.patch(
           createMachines: Joi.bool().default(false),
           editMachines: Joi.bool().default(false),
           deleteMachines: Joi.bool().default(false),
+          fixMachineStock: Joi.bool().default(false),
           createProducts: Joi.bool().default(false),
           editProducts: Joi.bool().default(false),
           deleteProducts: Joi.bool().default(false),
-          transferProducts: Joi.bool().default(false),
           createCategories: Joi.bool().default(false),
           editCategories: Joi.bool().default(false),
           deleteCategories: Joi.bool().default(false),
@@ -129,14 +130,10 @@ usersRoutes.patch(
           deleteRoutes: Joi.bool().default(false),
           createManagers: Joi.bool().default(false),
           createOperators: Joi.bool().default(false),
-          editManagers: Joi.bool().default(false),
-          editOperators: Joi.bool().default(false),
           listManagers: Joi.bool().default(false),
           listOperators: Joi.bool().default(false),
-          deleteManagers: Joi.bool().default(false),
-          deleteOperators: Joi.bool().default(false),
         }),
-        phoneNumber: Joi.string(),
+        phoneNumber: Joi.string().min(13).max(14),
         isActive: Joi.bool(),
       },
     },
@@ -168,13 +165,13 @@ usersRoutes.post(
         permissions: Joi.object({
           editMachines: Joi.bool().default(false),
           deleteMachines: Joi.bool().default(false),
-          transferProducts: Joi.bool().default(false),
+          fixMachineStock: Joi.bool().default(false),
           addRemoteCredit: Joi.bool().default(false),
           toggleMaintenanceMode: Joi.bool().default(false),
           editCollections: Joi.bool().default(false),
           deleteCollections: Joi.bool().default(false),
         }).required(),
-        phoneNumber: Joi.string(),
+        phoneNumber: Joi.string().min(13).max(14),
       },
     },
     { abortEarly: false },
@@ -191,13 +188,13 @@ usersRoutes.patch(
         permissions: Joi.object({
           editMachines: Joi.bool().default(false),
           deleteMachines: Joi.bool().default(false),
-          transferProducts: Joi.bool().default(false),
+          fixMachineStock: Joi.bool().default(false),
           addRemoteCredit: Joi.bool().default(false),
           toggleMaintenanceMode: Joi.bool().default(false),
           editCollections: Joi.bool().default(false),
           deleteCollections: Joi.bool().default(false),
         }),
-        phoneNumber: Joi.string(),
+        phoneNumber: Joi.string().min(13).max(14),
         isActive: Joi.bool(),
       },
     },
@@ -216,6 +213,12 @@ usersRoutes.get(
     },
   }),
   ListOperatorsController.handle,
+);
+
+usersRoutes.get(
+  '/dashboard',
+  DashboardInfoController.validate,
+  DashboardInfoController.handle,
 );
 
 export default usersRoutes;

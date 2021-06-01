@@ -1,4 +1,3 @@
-import Role from '@modules/users/contracts/enums/role';
 import User from '@modules/users/contracts/models/user';
 import UsersRepository from '@modules/users/contracts/repositories/users.repository';
 import HashProvider from '@providers/hash-provider/contracts/models/hash-provider';
@@ -7,11 +6,11 @@ import StorageProvider from '@providers/storage-provider/contracts/models/storag
 
 import AppError from '@shared/errors/app-error';
 import { inject, injectable } from 'tsyringe';
-import { v4 } from 'uuid';
 
 interface Request {
   userId: string;
   name?: string;
+  deviceToken?: string;
   password?: {
     old: string;
     new: string;
@@ -42,6 +41,7 @@ class UpdateUserProfileService {
     password,
     file,
     phoneNumber,
+    deviceToken,
   }: Request): Promise<User> {
     const user = await this.usersRepository.findOne({
       by: 'id',
@@ -59,21 +59,15 @@ class UpdateUserProfileService {
       user.password = this.hashProvider.hash(password.new);
     }
 
-    if (user.role !== Role.OWNER) {
-      if (file)
-        user.photo = {
-          downloadUrl: `url`,
-          key: v4(),
-        };
-
-      if (phoneNumber) user.phoneNumber = phoneNumber;
-    }
-
     if (file) {
       if (user.photo) this.storageProvider.deleteFile(user.photo.key);
 
       user.photo = await this.storageProvider.uploadFile(file);
     }
+
+    if (deviceToken) user.deviceToken = deviceToken;
+
+    if (phoneNumber) user.phoneNumber = phoneNumber;
 
     this.usersRepository.save(user);
 

@@ -4,8 +4,12 @@ import User from '@modules/users/contracts/models/user';
 import UsersRepository from '@modules/users/contracts/repositories/users.repository';
 import validatePermissions from '@modules/users/utils/validate-permissions';
 import HashProvider from '@providers/hash-provider/contracts/models/hash-provider';
+import MailProvider from '@providers/mail-provider/contracts/models/mail.provider';
+import signUpEmailTemplate from '@providers/mail-provider/templates/sign-up-email-template';
 import OrmProvider from '@providers/orm-provider/contracts/models/orm-provider';
 import AppError from '@shared/errors/app-error';
+import getGroupUniverse from '@shared/utils/get-group-universe';
+import isInGroupUniverse from '@shared/utils/is-in-group-universe';
 import { inject, injectable } from 'tsyringe';
 
 interface Request {
@@ -26,6 +30,9 @@ class CreateOperatorService {
     @inject('HashProvider')
     private hashProvider: HashProvider,
 
+    @inject('MailProvider')
+    private mailProvider: MailProvider,
+
     @inject('OrmProvider')
     private ormProvider: OrmProvider,
   ) {}
@@ -45,11 +52,18 @@ class CreateOperatorService {
 
     if (!user) throw AppError.userNotFound;
 
+    const universe = await getGroupUniverse(user);
+
     if (
-      user.role !== Role.OWNER &&
-      (!user.permissions?.createOperators ||
-        groupIds.some(groupId => !user.groupIds?.includes(groupId)))
+      !isInGroupUniverse({
+        groups: groupIds,
+        universe,
+        method: 'UNION',
+      })
     )
+      throw AppError.authorizationError;
+
+    if (user.role !== Role.OWNER && !user.permissions?.createOperators)
       throw AppError.authorizationError;
 
     if (
@@ -67,9 +81,12 @@ class CreateOperatorService {
 
     if (emailExists) throw AppError.emailAlreadyUsed;
 
+    // const password = randomBytes(3).toString('hex');
+    const password = 'q1';
+
     const operator = this.usersRepository.create({
       email,
-      password: this.hashProvider.hash('q1'),
+      password: this.hashProvider.hash(password),
       name,
       role: Role.OPERATOR,
       groupIds,
@@ -81,6 +98,20 @@ class CreateOperatorService {
       phoneNumber,
       isActive: true,
       ownerId: user.ownerId || user.id,
+    });
+
+    const mailData = signUpEmailTemplate({
+      receiverName: operator.name,
+      receiverEmail: operator.email,
+      password,
+    });
+
+    this.mailProvider.send({
+      receiverName: operator.name,
+      receiverEmail: operator.email,
+      subject: mailData.subject,
+      html: mailData.htmlBody,
+      text: mailData.plainText,
     });
 
     await this.ormProvider.commit();

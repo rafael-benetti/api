@@ -1,3 +1,5 @@
+import MachinesRepository from '@modules/machines/contracts/repositories/machines.repository';
+import RoutesRepository from '@modules/routes/contracts/repositories/routes.repository';
 import Role from '@modules/users/contracts/enums/role';
 import Permissions from '@modules/users/contracts/models/permissions';
 import User from '@modules/users/contracts/models/user';
@@ -5,6 +7,8 @@ import UsersRepository from '@modules/users/contracts/repositories/users.reposit
 import validatePermissions from '@modules/users/utils/validate-permissions';
 import OrmProvider from '@providers/orm-provider/contracts/models/orm-provider';
 import AppError from '@shared/errors/app-error';
+import getGroupUniverse from '@shared/utils/get-group-universe';
+import isInGroupUniverse from '@shared/utils/is-in-group-universe';
 import { inject, injectable } from 'tsyringe';
 
 interface Request {
@@ -21,6 +25,12 @@ class EditOperatorService {
   constructor(
     @inject('UsersRepository')
     private usersRepository: UsersRepository,
+
+    @inject('RoutesRepository')
+    private routesRepository: RoutesRepository,
+
+    @inject('MachinesRepository')
+    private machinesRepository: MachinesRepository,
 
     @inject('OrmProvider')
     private ormProvider: OrmProvider,
@@ -41,7 +51,7 @@ class EditOperatorService {
 
     if (!user) throw AppError.userNotFound;
 
-    if (user.role !== Role.OWNER && !user.permissions?.editOperators)
+    if (user.role !== Role.OWNER && !user.permissions?.createOperators)
       throw AppError.authorizationError;
 
     const operator = await this.usersRepository.findOne({
@@ -53,18 +63,68 @@ class EditOperatorService {
 
     if (operator.role !== Role.OPERATOR) throw AppError.userNotFound;
 
-    if (operator.groupIds?.every(groupId => !user.groupIds?.includes(groupId)))
+    if (user.role === Role.OWNER && operator.ownerId !== user.id)
       throw AppError.authorizationError;
 
     if (groupIds) {
-      const groupIdsDiff = groupIds
-        .filter(x => !operator.groupIds?.includes(x))
-        .concat(operator.groupIds?.filter(x => !groupIds.includes(x)) || []);
+      const universe = await getGroupUniverse(user);
 
-      if (groupIdsDiff.some(groupId => !user.groupIds?.includes(groupId)))
+      if (
+        !isInGroupUniverse({
+          groups: groupIds,
+          universe,
+          method: 'INTERSECTION',
+        })
+      )
         throw AppError.authorizationError;
 
-      operator.groupIds = groupIds;
+      if (user.role !== Role.OWNER) {
+        if (operator.groupIds?.every(groupId => !universe.includes(groupId)))
+          throw AppError.authorizationError;
+      }
+
+      const commonGroups = operator.groupIds?.filter(group =>
+        universe.includes(group),
+      );
+
+      const deletedGroups = commonGroups?.filter(
+        group => !groupIds.includes(group),
+      );
+
+      const routesToDelete = await this.routesRepository.find({
+        operatorId: operator.id,
+        groupIds: deletedGroups,
+      });
+
+      routesToDelete.forEach(route => {
+        delete route.operatorId;
+
+        this.routesRepository.save(route);
+      });
+
+      const { machines: machinesToDelete } = await this.machinesRepository.find(
+        {
+          operatorId: operator.id,
+          groupIds: deletedGroups,
+        },
+      );
+
+      machinesToDelete.forEach(machine => {
+        delete machine.operatorId;
+
+        this.machinesRepository.save(machine);
+      });
+      let uncommonGroups;
+      if (user.role === Role.OWNER) {
+        uncommonGroups = operator.groupIds?.filter(
+          group =>
+            !operator.groupIds
+              ?.filter(group => user.groupIds?.includes(group))
+              ?.includes(group),
+        );
+      }
+
+      operator.groupIds = [...groupIds, ...(uncommonGroups || [])];
     }
 
     if (permissions) {

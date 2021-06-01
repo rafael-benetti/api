@@ -5,6 +5,8 @@ import { Router } from 'express';
 import AuthenticateAdminController from '../services/authenticate-admin/authenticate-admin.controller';
 import CreateAdminController from '../services/create-admin/create-admin.controller';
 import CreateOwnerController from '../services/create-owner/create-owner.controller';
+import CreateTelemetryBoardController from '../services/create-telemetry-board/create-telemetry-board.controller';
+import GetAllTelemetryBoardsController from '../services/get-all-telemetry-boards/get-all-telemetry-boards.controller';
 import ListOwnersController from '../services/list-owners/list-owners.controller';
 
 const adminsRoutes = Router();
@@ -60,5 +62,13 @@ adminsRoutes.post(
 );
 
 adminsRoutes.get('/owners', ListOwnersController.handle);
+
+adminsRoutes.post(
+  '/telemetry-boards',
+  CreateTelemetryBoardController.validate,
+  CreateTelemetryBoardController.handle,
+);
+
+adminsRoutes.get('/telemetry-boards', GetAllTelemetryBoardsController.handle);
 
 export default adminsRoutes;

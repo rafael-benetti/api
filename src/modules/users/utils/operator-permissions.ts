@@ -1,11 +1,11 @@
 const operatorPermissions = [
-  'editMachines',
-  'deleteMachines',
-  'transferProducts',
   'addRemoteCredit',
   'toggleMaintenanceMode',
+  'editMachines',
+  'deleteMachines',
   'editCollections',
   'deleteCollections',
+  'fixMachineStock',
 ];
 
 export default operatorPermissions;

@@ -1,34 +1,40 @@
 interface Permissions {
-  createMachines: boolean;
-  editMachines: boolean;
-  deleteMachines: boolean;
-  createProducts: boolean;
-  editProducts: boolean;
-  deleteProducts: boolean;
-  transferProducts: boolean;
-  createCategories: boolean;
-  editCategories: boolean;
-  deleteCategories: boolean;
   generateReports: boolean;
-  addRemoteCredit: boolean;
-  toggleMaintenanceMode: boolean;
+
   createGroups: boolean;
   editGroups: boolean;
   deleteGroups: boolean;
-  createPointsOfSale: boolean;
-  editPointsOfSale: boolean;
-  deletePointsOfSale: boolean;
+
   createRoutes: boolean;
   editRoutes: boolean;
   deleteRoutes: boolean;
+
+  createPointsOfSale: boolean;
+  editPointsOfSale: boolean;
+  deletePointsOfSale: boolean;
+
+  createProducts: boolean;
+  editProducts: boolean;
+  deleteProducts: boolean;
+
+  createCategories: boolean;
+  editCategories: boolean;
+  deleteCategories: boolean;
+
+  createMachines: boolean;
+  editMachines: boolean;
+  deleteMachines: boolean;
+  fixMachineStock: boolean;
+
   createManagers: boolean;
-  createOperators: boolean;
-  editManagers: boolean;
-  editOperators: boolean;
-  deleteManagers: boolean;
-  deleteOperators: boolean;
   listManagers: boolean;
+
+  createOperators: boolean;
   listOperators: boolean;
+
+  addRemoteCredit: boolean;
+  toggleMaintenanceMode: boolean;
+
   editCollections: boolean;
   deleteCollections: boolean;
 }

@@ -3,6 +3,7 @@ import { celebrate, Joi } from 'celebrate';
 import { Router } from 'express';
 import CreatePointOfSaleController from '../services/create-point-of-sale/create-point-of-sale.controller';
 import EditPointOfSaleController from '../services/edit-point-of-sale/edit-point-of-sale.controller';
+import GetPointOfSaleDetailsController from '../services/get-point-of-sale-details/get-point-of-sale-details.controller';
 import ListPointsOfSaleController from '../services/list-points-of-sale/list-points-of-sale.controller';
 
 const pointsOfSaleRoutes = Router();
@@ -17,9 +18,9 @@ pointsOfSaleRoutes.post(
         groupId: Joi.string().required(),
         label: Joi.string().required(),
         contactName: Joi.string().required(),
-        primaryPhoneNumber: Joi.string().required(),
-        secondaryPhoneNumber: Joi.string(),
-        rent: Joi.number().positive().default(0),
+        primaryPhoneNumber: Joi.string().min(13).max(14).required(),
+        secondaryPhoneNumber: Joi.string().min(13).max(14),
+        rent: Joi.number().greater(-1),
         isPercentage: Joi.bool(),
         address: Joi.object({
           zipCode: Joi.string().required(),
@@ -27,7 +28,7 @@ pointsOfSaleRoutes.post(
           city: Joi.string().required(),
           street: Joi.string().required(),
           neighborhood: Joi.string().required(),
-          number: Joi.number().required(),
+          number: Joi.string().required(),
           extraInfo: Joi.string(),
         }).required(),
       },
@@ -43,9 +44,9 @@ pointsOfSaleRoutes.patch(
     body: {
       label: Joi.string(),
       contactName: Joi.string(),
-      primaryPhoneNumber: Joi.string(),
-      secondaryPhoneNumber: Joi.string(),
-      rent: Joi.number().positive(),
+      primaryPhoneNumber: Joi.string().min(13).max(14),
+      secondaryPhoneNumber: Joi.string().min(13).max(14),
+      rent: Joi.number().greater(-1),
       isPercentage: Joi.bool(),
       address: Joi.object({
         extraInfo: Joi.string(),
@@ -56,5 +57,20 @@ pointsOfSaleRoutes.patch(
 );
 
 pointsOfSaleRoutes.get('/', ListPointsOfSaleController.handle);
+
+pointsOfSaleRoutes.get(
+  '/:pointOfSaleId',
+  celebrate({
+    query: {
+      period: Joi.string().valid('DAILY', 'WEEKLY', 'MONTHLY'),
+      startDate: Joi.date(),
+      endDate: Joi.date(),
+    },
+    params: {
+      pointOfSaleId: Joi.string().required(),
+    },
+  }),
+  GetPointOfSaleDetailsController.handle,
+);
 
 export default pointsOfSaleRoutes;

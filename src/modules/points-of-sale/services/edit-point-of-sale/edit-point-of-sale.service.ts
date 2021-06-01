@@ -60,7 +60,9 @@ class EditPointOfSaleService {
 
     if (!pointOfSale) throw AppError.pointOfSaleNotFound;
 
-    if (!user.groupIds?.includes(pointOfSale.groupId))
+    if (user.role === Role.OWNER) {
+      if (user.id !== pointOfSale.ownerId) throw AppError.authorizationError;
+    } else if (!user.groupIds?.includes(pointOfSale.groupId))
       throw AppError.authorizationError;
 
     if (label) pointOfSale.label = label;
@@ -70,7 +72,7 @@ class EditPointOfSaleService {
       pointOfSale.secondaryPhoneNumber = secondaryPhoneNumber;
     if (rent !== undefined) pointOfSale.rent = rent;
     if (isPercentage !== undefined) pointOfSale.isPercentage = isPercentage;
-    if (address) pointOfSale.address = address;
+    if (address) pointOfSale.address.extraInfo = address.extraInfo;
 
     this.pointsOfSaleRepository.save(pointOfSale);
 

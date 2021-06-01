@@ -5,6 +5,8 @@ import UsersRepository from '@modules/users/contracts/repositories/users.reposit
 import validatePermissions from '@modules/users/utils/validate-permissions';
 import OrmProvider from '@providers/orm-provider/contracts/models/orm-provider';
 import AppError from '@shared/errors/app-error';
+import getGroupUniverse from '@shared/utils/get-group-universe';
+import isInGroupUniverse from '@shared/utils/is-in-group-universe';
 import { inject, injectable } from 'tsyringe';
 
 interface Request {
@@ -41,7 +43,7 @@ class EditManagerService {
 
     if (!user) throw AppError.userNotFound;
 
-    if (user.role !== Role.OWNER && !user.permissions?.editManagers)
+    if (user.role !== Role.OWNER && !user.permissions?.createManagers)
       throw AppError.authorizationError;
 
     const manager = await this.usersRepository.findOne({
@@ -53,18 +55,33 @@ class EditManagerService {
 
     if (manager.role !== Role.MANAGER) throw AppError.userNotFound;
 
-    if (manager.groupIds?.every(groupId => !user.groupIds?.includes(groupId)))
+    if (user.role === Role.OWNER && manager.ownerId !== user.id)
       throw AppError.authorizationError;
 
     if (groupIds) {
-      const groupIdsDiff = groupIds
-        .filter(x => !manager.groupIds?.includes(x))
-        .concat(manager.groupIds?.filter(x => !groupIds.includes(x)) || []);
-
-      if (groupIdsDiff.some(groupId => !user.groupIds?.includes(groupId)))
+      const universe = await getGroupUniverse(user);
+      if (
+        !isInGroupUniverse({
+          groups: groupIds,
+          universe,
+          method: 'INTERSECTION',
+        })
+      )
         throw AppError.authorizationError;
 
-      manager.groupIds = groupIds;
+      if (user.role !== Role.OWNER) {
+        if (manager.groupIds?.every(groupId => !universe.includes(groupId)))
+          throw AppError.authorizationError;
+      }
+
+      const uncommonGroups = manager.groupIds?.filter(
+        group =>
+          !manager.groupIds
+            ?.filter(group => universe.includes(group))
+            ?.includes(group),
+      );
+
+      manager.groupIds = [...groupIds, ...(uncommonGroups || [])];
     }
 
     if (permissions) {

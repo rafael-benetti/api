@@ -20,9 +20,7 @@ class RedisSessionProvider implements SessionProvider {
   async getTokenOwner(token: string): Promise<string | undefined> {
     const userId = await this.client.get(token);
 
-    if (userId) {
-      await this.client.expire(token, this.timeToLive);
-    }
+    if (userId) await this.client.expire(token, this.timeToLive);
 
     return userId || undefined;
   }

@@ -1,37 +1,38 @@
 const managerPermissions = [
-  'createMachines',
-  'editMachines',
-  'deleteMachines',
-  'createProducts',
-  'editProducts',
-  'deleteProducts',
-  'transferProducts',
-  'createCategories',
-  'editCategories',
-  'deleteCategories',
-  'listGroups',
+  'addRemoteCredit',
+  'toggleMaintenanceMode',
+  'generateReports',
+  // GROUPS
   'createGroups',
   'editGroups',
   'deleteGroups',
-  'createPointsOfSale',
-  'editPointsOfSale',
-  'deletePointsOfSale',
+  // ROUTES
   'createRoutes',
   'editRoutes',
   'deleteRoutes',
-  'listManagers',
-  'listOperators',
+  // POINTS OF SALES
+  'createPointsOfSale',
+  'editPointsOfSale',
+  'deletePointsOfSale',
+  // PRODUCTS
+  'createProducts',
+  'editProducts',
+  'deleteProducts',
+  // CATEGORIES
+  'createCategories',
+  'editCategories',
+  'deleteCategories',
+  // MACHINES
+  'createMachines',
+  'editMachines',
+  'deleteMachines',
+  'fixMachineStock',
+  // MANAGERS
   'createManagers',
+  'listManagers',
+  // OPERATORS
   'createOperators',
-  'editManagers',
-  'editOperators',
-  'deleteManagers',
-  'deleteOperators',
-  'toggleMaintenanceMode',
-  'editCollections',
-  'deleteCollections',
-  'addRemoteCredit',
-  'generateReports',
+  'listOperators',
 ];
 
 export default managerPermissions;

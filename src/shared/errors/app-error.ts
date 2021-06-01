@@ -17,6 +17,32 @@ export default class AppError {
     statusCode: 409,
   });
 
+  static collectionAlreadyReviewed = new AppError({
+    errorCode: 'COLLECTION_ALREADY_REVIEWED',
+    message: 'This collections already been reviewed .',
+    statusCode: 409,
+  });
+
+  static machineHasLocation = new AppError({
+    errorCode: 'MACHINE_HAS_POINT_OF_SALE',
+    message:
+      'You cannot change the group of a machine which has a point of sale.',
+    statusCode: 409,
+  });
+
+  static machineBelongsToARoute = new AppError({
+    errorCode: 'MACHINE_BELONGS_TO_A_ROUTE',
+    message:
+      'You cannot change the operator of a machine that belongs to a route.',
+    statusCode: 400,
+  });
+
+  static pointOfSaleBelongsToARoute = new AppError({
+    errorCode: 'POINT_OF_SALE_BELONGS_TO_A_ROUTE',
+    message: 'You cannot put one point of sale that belongs to a route.',
+    statusCode: 400,
+  });
+
   static serialNumberAlreadyUsed = new AppError({
     errorCode: 'SERIAL_NUMBER_ALREADY_USED',
     message: 'This serial number is unavailable.',
@@ -29,6 +55,18 @@ export default class AppError {
     statusCode: 401,
   });
 
+  static thisMachineIsOffline = new AppError({
+    errorCode: 'THIS_MACHINE_IS_OFFLINE',
+    message: "You can't make collectios in machines that are offline",
+    statusCode: 401,
+  });
+
+  static thisMachineHasTelemetryBoard = new AppError({
+    errorCode: 'THIS_MACHINE_HAS_TELEMETRY_BOARD',
+    message: "You can't transfer machines that have telemetry board",
+    statusCode: 401,
+  });
+
   static invalidToken = new AppError({
     errorCode: 'INVALID_TOKEN',
     message: 'Your auth token is invalid.',
@@ -36,7 +74,7 @@ export default class AppError {
   });
 
   static oldPasswordIsMissing = new AppError({
-    errorCode: 'OLD_PASSWoRD_IS_MISSING',
+    errorCode: 'OLD_PASSWORD_IS_MISSING',
     message: 'You need to inform the old password to set a new password.',
     statusCode: 401,
   });
@@ -89,10 +127,59 @@ export default class AppError {
     statusCode: 409,
   });
 
+  static noTransfersBetweenOperators = new AppError({
+    errorCode: 'NO_TRANSFERS_BETWEEN_OPERATORS',
+    message: "You can't transfer to another operator",
+    statusCode: 409,
+  });
+
+  static noTransfersBetweenMachines = new AppError({
+    errorCode: 'NO_TRANSFERS_BETWEEN_MACHINES',
+    message: "You can't transfer to another machine",
+    statusCode: 409,
+  });
+
+  static thisIsNotLastCollection = new AppError({
+    errorCode: 'YOU_CAN_ONLY_EDIT_LAST_COLLECTION',
+    message: 'You can only edit last collection',
+    statusCode: 409,
+  });
+
+  static machineInStock = new AppError({
+    errorCode: 'MACHINE_IN_STOCK',
+    message: 'This machine is still in stock.',
+    statusCode: 409,
+  });
+
   static productNotFound = new AppError({
     errorCode: 'PRODUCT_NOT_FOUND',
     message: "Could not find the 'product'.",
     statusCode: 404,
+  });
+
+  static collectionNotFound = new AppError({
+    errorCode: 'COLLECTION_NOT_FOUND',
+    message: "Could not find the 'collection'.",
+    statusCode: 404,
+  });
+
+  static telemetryBoardNotFound = new AppError({
+    errorCode: 'TELEMETRY_BOARD_NOT_FOUND',
+    message: 'We could not find this telemetry board',
+    statusCode: 404,
+  });
+
+  static counterTypeNotFound = new AppError({
+    errorCode: 'COUNTER_TYPE_NOT_FOUND',
+    message: "Could not find the 'counter type'.",
+    statusCode: 404,
+  });
+
+  static productInStock = new AppError({
+    errorCode: 'PRODUCT_IN_STOCK',
+    message:
+      'This product is still in stock. Remove all units before deleting the product',
+    statusCode: 409,
   });
 
   static pointOfSaleNotFound = new AppError({
@@ -104,12 +191,6 @@ export default class AppError {
   static groupNotFound = new AppError({
     errorCode: 'GROUP_NOT_FOUND',
     message: "Could not find the 'group'.",
-    statusCode: 404,
-  });
-
-  static sellingPointNotFound = new AppError({
-    errorCode: 'SELLING_POINT_NOT_FOUND',
-    message: "Could not find the 'Selling Point'.",
     statusCode: 404,
   });
 
@@ -125,10 +206,34 @@ export default class AppError {
     statusCode: 404,
   });
 
+  static boxNotFound = new AppError({
+    errorCode: 'BOX_NOT_FOUND',
+    message: 'We could not find this box',
+    statusCode: 404,
+  });
+
+  static counterNotFound = new AppError({
+    errorCode: 'COUNTER_NOT_FOUND',
+    message: 'We could not find this counter',
+    statusCode: 404,
+  });
+
+  static routeNotFound = new AppError({
+    errorCode: 'ROUTE_NOT_FOUND',
+    message: "Could not find the 'route'.",
+    statusCode: 404,
+  });
+
   static userNotFound = new AppError({
     errorCode: 'USER_NOT_FOUND',
     message: 'Could not find this user',
     statusCode: 404,
+  });
+
+  static missingGroupId = new AppError({
+    errorCode: 'MISSING_GROUP_ID',
+    message: 'Owners need to inform a group id to make transfers',
+    statusCode: 400,
   });
 
   static authorizationError = new AppError({

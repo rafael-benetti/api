@@ -24,21 +24,34 @@ class MikroUsersRepository implements UsersRepository {
       {
         [data.by]: data.value,
       },
-      data.populate,
+      {
+        populate: data.populate,
+        fields: data.fields,
+      },
     );
 
     return user ? UserMapper.toApi(user) : undefined;
   }
 
   async find(data: FindUsersDto): Promise<User[]> {
+    const query: { [key: string]: unknown } = {};
+
+    if (data.filters.role) query.role = data.filters.role;
+    if (data.filters.ownerId) query.ownerId = data.filters.ownerId;
+    if (data.filters.groupIds)
+      query.groupIds = {
+        $in: data.filters.groupIds,
+      };
+
     const users = await this.repository.find(
       {
-        role: data.filters.role,
+        ...query,
       },
       {
         limit: data.limit,
         offset: data.offset,
         populate: data.populate,
+        fields: data.fields,
       },
     );
 

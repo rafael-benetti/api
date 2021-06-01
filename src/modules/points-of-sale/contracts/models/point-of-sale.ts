@@ -11,19 +11,19 @@ class PointOfSale {
 
   routeId?: string;
 
-  label: string; //
+  label: string;
 
-  contactName: string; //
+  contactName: string;
 
-  primaryPhoneNumber: string; //
+  primaryPhoneNumber: string;
 
-  secondaryPhoneNumber?: string; //
+  secondaryPhoneNumber?: string;
 
-  rent: number; //
+  rent: number;
 
-  isPercentage: boolean; //
+  isPercentage: boolean;
 
-  address: Address; //
+  address: Address;
 
   constructor(data?: CreatePointOfSaleDto) {
     if (data) {

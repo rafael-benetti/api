@@ -1,7 +1,7 @@
 import { v4 } from 'uuid';
 import CreateUserDto from '../dtos/create-user.dto';
 import Role from '../enums/role';
-import OperatorStock from './operator-stock';
+import UserStock from './operator-stock';
 import Permissions from './permissions';
 import Photo from './photo';
 
@@ -20,7 +20,7 @@ class User {
 
   permissions?: Permissions;
 
-  stock?: OperatorStock;
+  stock?: UserStock;
 
   photo?: Photo;
 
@@ -29,6 +29,8 @@ class User {
   isActive?: boolean;
 
   ownerId?: string;
+
+  deviceToken?: string;
 
   constructor(data?: CreateUserDto) {
     if (data) {
@@ -44,6 +46,7 @@ class User {
       this.phoneNumber = data.phoneNumber;
       this.isActive = data.isActive;
       this.ownerId = data.ownerId;
+      this.deviceToken = data.deviceToken;
     }
   }
 }

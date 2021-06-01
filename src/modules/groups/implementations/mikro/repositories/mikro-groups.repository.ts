@@ -1,4 +1,3 @@
-import logger from '@config/logger';
 import CreateGroupDto from '@modules/groups/contracts/dtos/create-group.dto';
 import FindGroupDto from '@modules/groups/contracts/dtos/find-group.dto';
 import FindGroupsDto from '@modules/groups/contracts/dtos/find-groups.dto';
@@ -32,13 +31,14 @@ class MikroGroupsRepository implements GroupsRepository {
   }
 
   async find(data: FindGroupsDto): Promise<Group[]> {
-    const { ownerId, ids } = data.filters;
+    const { ownerId, isPersonal, ids } = data.filters;
 
     const query: {
       [key: string]: unknown;
     } = {};
 
     if (ownerId) query.ownerId = ownerId;
+    if (isPersonal !== undefined) query.isPersonal = isPersonal;
     if (ids) query.id = ids;
 
     const groups = await this.repository.find(
@@ -49,6 +49,7 @@ class MikroGroupsRepository implements GroupsRepository {
         limit: data.limit,
         offset: data.offset,
         populate: data.populate,
+        ...(data.fields && { fields: data.fields }),
       },
     );
 
@@ -57,7 +58,6 @@ class MikroGroupsRepository implements GroupsRepository {
 
   save(data: Group): void {
     const group = GroupMapper.toOrm(data);
-    logger.info(group);
     this.repository.persist(group);
   }
 
