@@ -47,7 +47,7 @@ usersRoutes.post(
   '/reset-password',
   celebrate({
     body: {
-      resetPasswordtoken: Joi.string().required(),
+      resetPasswordToken: Joi.string().required(),
     },
   }),
   ResetPasswordController.handle,
