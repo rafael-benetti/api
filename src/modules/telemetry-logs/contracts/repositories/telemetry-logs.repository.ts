@@ -23,6 +23,7 @@ interface TelemetryLogsRepository {
   incomePerPointOfSale(
     data: GetIncomePerPointOfSaleDto,
   ): Promise<[{ income: number; id: string }]>;
+  save(data: TelemetryLog): void;
 }
 
 export default TelemetryLogsRepository;

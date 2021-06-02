@@ -254,6 +254,11 @@ class MikroTelemetryLogsRepository implements TelemetryLogsRepository {
 
     return pointsOfSale as [{ income: number; id: string }];
   }
+
+  save(data: TelemetryLog): void {
+    const telemetryLog = TelemetryLogMapper.toOrm(data);
+    this.repository.persist(telemetryLog);
+  }
 }
 
 export default MikroTelemetryLogsRepository;
