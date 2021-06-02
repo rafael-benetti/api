@@ -50,9 +50,13 @@ class CreditsScript {
           )) as string;
         }
 
+        const machineId = (await this.client.get(
+          `@machines:${credit.machineId}`,
+        )) as string;
+
         this.telemetryLogsRepository.create({
           date: credit.date,
-          machineId: credit.machineId.toString(),
+          machineId,
           maintenance: credit.isTest === 1,
           pin: credit.pin ? credit.pin.toString() : undefined,
           telemetryBoardId,

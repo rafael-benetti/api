@@ -6,6 +6,7 @@ import Redis from 'ioredis';
 import TelemetryLogsRepository from '@modules/telemetry-logs/contracts/repositories/telemetry-logs.repository';
 import TypeMachinesRepository from 'migration-script/modules/machines/typeorm/repositories/type-machines.repository';
 import logger from '@config/logger';
+import Type from '@modules/counter-types/contracts/enums/type';
 import TypeGiftsRepository from '../typeorm/repositories/type-gifts.respository';
 
 @injectable()
@@ -55,13 +56,17 @@ class GiftsScript {
           )) as string;
         }
 
+        const machineId = (await this.client.get(
+          `@machines:${gift.machineId}`,
+        )) as string;
+
         this.telemetryLogsRepository.create({
           date: gift.date,
-          machineId: gift.machineId.toString(),
+          machineId,
           maintenance: false,
           pin: gift.pin ? gift.pin.toString() : undefined,
           telemetryBoardId,
-          type: 'OUT',
+          type: Type.OUT,
           value: gift.value,
           pointOfSaleId,
           routeId: undefined,

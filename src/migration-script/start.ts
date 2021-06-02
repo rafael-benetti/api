@@ -37,44 +37,38 @@ const start = async () => {
 
   const machineCategoriesScript = container.resolve(MachineCategoriesScript);
 
-  // await usersScript.execute();
-  // logger.info('usersScript.execute()');
-  //
-  // await companiesScript.execute();
-  // logger.info('companiesScript.execute()');
-  //
-  // await machinesScript.createCountersTypes();
-  // logger.info('machinesScript.createCountersTypes()');
-  //
-  // await machineCategoriesScript.execute();
-  // logger.info('machineCategoriesScript.execute()');
-  //
-  // await usersScript.setOwnerId();
-  // logger.info('usersScript.setOwnerId');
-  //
-  // await usersScript.setGroupIds();
-  // logger.info('usersScript.setGroupIds()');
-  //
-  // await companiesScript.setOwnerId();
-  // logger.info('companiesScript.setOwnerId()');
-  //
-  // await telemetryScript.execute();
-  // logger.info('telemetryScript.execute()');
-  //
-  // await creditsScript.execute();
-  // logger.info('creditsScript.execute()');
-  //
-  // await giftsScript.execute();
-  // logger.info('giftsScript.execute()');
+  await usersScript.execute();
+  logger.info('usersScript.execute()');
 
-  // await machinesScript.execute();
-  // logger.info('machinesScript.execute()');
+  await companiesScript.execute();
+  logger.info('companiesScript.execute()');
 
-  // await telemetryScript.setMachineId();
-  // logger.info('telemetryScript.setMachineId()');
+  await machinesScript.createCountersTypes();
+  logger.info('machinesScript.createCountersTypes()');
 
-  await creditsScript.setMachineId();
-  logger.info('creditsScript.setMachineId()');
+  await machineCategoriesScript.execute();
+  logger.info('machineCategoriesScript.execute()');
+
+  await usersScript.setOwnerId();
+  logger.info('usersScript.setOwnerId');
+
+  await usersScript.setGroupIds();
+  logger.info('usersScript.setGroupIds()');
+
+  await companiesScript.setOwnerId();
+  logger.info('companiesScript.setOwnerId()');
+
+  await telemetryScript.execute();
+  logger.info('telemetryScript.execute()');
+
+  await machinesScript.execute();
+  logger.info('machinesScript.execute()');
+
+  await creditsScript.execute();
+  logger.info('creditsScript.execute()');
+
+  await giftsScript.execute();
+  logger.info('giftsScript.execute()');
 };
 
 start();

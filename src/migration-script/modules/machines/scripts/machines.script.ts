@@ -138,7 +138,9 @@ class MachinesScript {
               counterTypeId: counterType.id,
               hasDigital: typeCounter.hasDigital === 1,
               hasMechanical: typeCounter.hasMechanical === 1,
-              pin: typeCounter.pin?.toString(),
+              pin: typeCounter.pin
+                ? `Pino ${typeCounter.pin?.toString()}`
+                : undefined,
             });
           });
 
