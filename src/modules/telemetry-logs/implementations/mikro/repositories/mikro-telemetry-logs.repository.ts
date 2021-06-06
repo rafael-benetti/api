@@ -3,6 +3,8 @@ import FindTelemetryLogsDto from '@modules/telemetry-logs/contracts/dtos/find-te
 import GetIncomePerMachineResponseDto from '@modules/telemetry-logs/contracts/dtos/get-income-per-machine-response.dto';
 import GetIncomePerMachineDto from '@modules/telemetry-logs/contracts/dtos/get-income-per-machine.dto';
 import GetIncomePerPointOfSaleDto from '@modules/telemetry-logs/contracts/dtos/get-income-per-point-of-sale.dto';
+import GetMachineIncomePerDay from '@modules/telemetry-logs/contracts/dtos/get-machine-income-per-day';
+import GetPointOfSaleIncomePerDateDto from '@modules/telemetry-logs/contracts/dtos/get-point-of-sale-income-per-date.dto';
 import GetPrizesPerMachineResponseDto from '@modules/telemetry-logs/contracts/dtos/get-prizes-per-machine-repository.dto';
 import TelemetryLog from '@modules/telemetry-logs/contracts/entities/telemetry-log';
 import TelemetryLogsRepository from '@modules/telemetry-logs/contracts/repositories/telemetry-logs.repository';
@@ -28,7 +30,7 @@ class MikroTelemetryLogsRepository implements TelemetryLogsRepository {
     return TelemetryLogMapper.toApi(telemetryLog);
   }
 
-  async find(
+  async findAndCount(
     data: FindTelemetryLogsDto,
   ): Promise<{ telemetryLogs: TelemetryLog[]; count: number }> {
     const query: Record<string, unknown> = {};
@@ -79,6 +81,50 @@ class MikroTelemetryLogsRepository implements TelemetryLogsRepository {
     };
   }
 
+  async find(data: FindTelemetryLogsDto): Promise<TelemetryLog[]> {
+    const query: Record<string, unknown> = {};
+
+    const {
+      groupId,
+      pointOfSaleId,
+      machineId,
+      date,
+      maintenance,
+      type,
+    } = data.filters;
+
+    if (groupId) query.groupId = groupId;
+    if (machineId) query.machineId = machineId;
+    if (date?.startDate)
+      if (!date.startDate) {
+        query.date = {
+          $lte: date.endDate,
+        };
+      } else {
+        query.date = {
+          $gte: date.startDate,
+          $lte: date.endDate,
+        };
+      }
+    if (maintenance !== undefined) query.maintenance = maintenance;
+
+    if (pointOfSaleId !== undefined) query.pointOfSaleId = pointOfSaleId;
+
+    if (type) query.type = type;
+
+    const telemetryLogs = await this.repository.find(
+      { ...query },
+
+      {
+        orderBy: { date: 'DESC' },
+        limit: data.limit,
+        offset: data.offset,
+      },
+    );
+
+    return telemetryLogs;
+  }
+
   async getIncomePerMachine({
     groupIds,
     startDate,
@@ -90,6 +136,7 @@ class MikroTelemetryLogsRepository implements TelemetryLogsRepository {
           groupId: {
             $in: groupIds,
           },
+          maintenance: false,
           date: {
             $gte: startDate,
             $lt: endDate,
@@ -135,6 +182,7 @@ class MikroTelemetryLogsRepository implements TelemetryLogsRepository {
           groupId: {
             $in: groupIds,
           },
+          maintenance: false,
           date: {
             $gte: startDate,
             $lt: endDate,
@@ -176,6 +224,7 @@ class MikroTelemetryLogsRepository implements TelemetryLogsRepository {
           groupId: {
             $in: groupIds,
           },
+          maintenance: false,
           date: {
             $gte: startDate,
             $lt: endDate,
@@ -221,6 +270,7 @@ class MikroTelemetryLogsRepository implements TelemetryLogsRepository {
           groupId: {
             $in: groupIds,
           },
+          maintenance: false,
           date: {
             $gte: startDate,
             $lt: endDate,
@@ -253,6 +303,201 @@ class MikroTelemetryLogsRepository implements TelemetryLogsRepository {
     ]);
 
     return pointsOfSale as [{ income: number; id: string }];
+  }
+
+  async getMachineIncomePerDay({
+    groupIds,
+    startDate,
+    endDate,
+    machineId,
+    withHours,
+  }: GetMachineIncomePerDay): Promise<
+    { income: number; id: string; date: Date }[]
+  > {
+    const response = await this.repository.aggregate([
+      {
+        $match: {
+          groupId: {
+            $in: groupIds,
+          },
+          machineId,
+          maintenance: false,
+          pin: {
+            $exists: true,
+            $ne: null,
+          },
+          date: {
+            $exists: true,
+            $ne: null,
+            $gte: startDate,
+            $lt: endDate,
+          },
+          type: 'IN',
+        },
+      },
+      {
+        $group: {
+          _id: {
+            $dateToString: {
+              format: `%Y-%m-%d${withHours ? 'T%H:00:00' : ''}`,
+              date: '$date',
+              timezone: '-03:00',
+            },
+          },
+
+          income: {
+            $sum: '$value',
+          },
+          numberOfPlays: {
+            $sum: '$numberOfPlays',
+          },
+          count: { $sum: 1 },
+        },
+      },
+      {
+        $project: {
+          _id: 0,
+          id: '$_id',
+          income: 1,
+          count: 1,
+          pin: 1,
+          numberOfPlays: 1,
+          type: 1,
+        },
+      },
+    ]);
+
+    return response as { income: number; id: string; date: Date }[];
+  }
+
+  async getMachineGivenPrizesPerDay({
+    groupIds,
+    startDate,
+    endDate,
+    machineId,
+    withHours,
+  }: GetMachineIncomePerDay): Promise<
+    { givenPrizes: number; id: { date: string; pin: number }; date: Date }[]
+  > {
+    const response = await this.repository.aggregate([
+      {
+        $match: {
+          groupId: {
+            $in: groupIds,
+          },
+          machineId,
+          maintenance: false,
+          pin: {
+            $exists: true,
+            $ne: null,
+          },
+          date: {
+            $exists: true,
+            $ne: null,
+            $gte: startDate,
+            $lt: endDate,
+          },
+          type: 'OUT',
+        },
+      },
+      {
+        $group: {
+          _id: {
+            pin: '$pin',
+            date: {
+              $dateToString: {
+                format: `%Y-%m-%d${withHours ? 'T%H:00:00' : ''}`,
+                date: '$date',
+                timezone: '-03:00',
+              },
+            },
+          },
+          givenPrizes: {
+            $sum: '$value',
+          },
+          count: { $sum: 1 },
+        },
+      },
+      {
+        $project: {
+          _id: 0,
+          id: '$_id',
+          date: 1,
+          count: 1,
+          pin: 1,
+          type: 1,
+          givenPrizes: 1,
+        },
+      },
+    ]);
+
+    return response as {
+      id: { date: string; pin: number };
+      givenPrizes: number;
+      date: Date;
+    }[];
+  }
+
+  async getPointOfSaleIncomePerDate({
+    startDate,
+    endDate,
+    pointOfSaleId,
+    withHours,
+  }: GetPointOfSaleIncomePerDateDto): Promise<
+    {
+      total: number;
+      id: { date: string; type: 'IN' | 'OUT'; machineId: string };
+    }[]
+  > {
+    const response = await this.repository.aggregate([
+      {
+        $match: {
+          pointOfSaleId,
+          maintenance: false,
+          date: {
+            $exists: true,
+            $ne: null,
+            $gte: startDate,
+            $lt: endDate,
+          },
+        },
+      },
+      {
+        $group: {
+          _id: {
+            $dateToString: {
+              format: `%Y-%m-%d${withHours ? 'T%H:00:00' : ''}`,
+              date: '$date',
+              timezone: '-03:00',
+            },
+            type: '$type',
+            machineId: '$machineId',
+          },
+          total: {
+            $sum: '$value',
+          },
+          numberOfPlays: {
+            $sum: '$numberOfPlays',
+          },
+          count: { $sum: 1 },
+        },
+      },
+      {
+        $project: {
+          _id: 0,
+          id: '$_id',
+          total: 1,
+          count: 1,
+          numberOfPlays: 1,
+          type: 1,
+        },
+      },
+    ]);
+
+    return response as {
+      total: number;
+      id: { date: string; type: 'IN' | 'OUT'; machineId: string };
+    }[];
   }
 
   save(data: TelemetryLog): void {

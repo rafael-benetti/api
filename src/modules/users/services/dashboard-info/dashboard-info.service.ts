@@ -189,45 +189,33 @@ export default class DashboardInfoService {
 
     if (!isOperator)
       if (period && period === Period.DAILY) {
-        const telemetryLogsInPromise = async () => {
-          const {
-            telemetryLogs: response,
-          } = await this.telemetryLogsRepository.find({
-            filters: {
-              date: {
-                startDate,
-                endDate,
-              },
-              groupId: groupIds,
-              maintenance: false,
-              type: 'IN',
+        const telemetryLogsInPromise = this.telemetryLogsRepository.find({
+          filters: {
+            date: {
+              startDate,
+              endDate,
             },
-          });
+            groupId: groupIds,
+            maintenance: false,
+            type: 'IN',
+          },
+        });
 
-          return response;
-        };
-
-        const telemetryLogsOutPromise = async () => {
-          const {
-            telemetryLogs: response,
-          } = await this.telemetryLogsRepository.find({
-            filters: {
-              date: {
-                startDate,
-                endDate,
-              },
-              groupId: groupIds,
-              maintenance: false,
-              type: 'OUT',
+        const telemetryLogsOutPromise = this.telemetryLogsRepository.find({
+          filters: {
+            date: {
+              startDate,
+              endDate,
             },
-          });
-
-          return response;
-        };
+            groupId: groupIds,
+            maintenance: false,
+            type: 'OUT',
+          },
+        });
 
         const [telemetryLogsIn, telemetryLogsOut] = await Promise.all([
-          await telemetryLogsInPromise(),
-          await telemetryLogsOutPromise(),
+          telemetryLogsInPromise,
+          telemetryLogsOutPromise,
         ]);
 
         const hoursOfInterval = eachHourOfInterval({

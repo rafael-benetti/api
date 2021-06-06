@@ -21,7 +21,7 @@ class TelemetryLog {
 
   maintenance: boolean;
 
-  numberOfPlays: number;
+  numberOfPlays?: number;
 }
 
 export default TelemetryLog;

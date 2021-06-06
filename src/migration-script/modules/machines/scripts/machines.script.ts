@@ -102,7 +102,14 @@ class MachinesScript {
 
             if (
               typeCounter.name.toLowerCase().includes('notei') ||
-              typeCounter.name.toLowerCase().includes('dinhei')
+              typeCounter.name.toLowerCase().includes('dinhei') ||
+              typeCounter.name.toLowerCase().includes('cré') ||
+              typeCounter.name.toLowerCase().includes('cre') ||
+              typeCounter.name.toLowerCase().includes('entrada') ||
+              typeCounter.name.toLowerCase().includes('coin') ||
+              typeCounter.name.toLowerCase().includes('box') ||
+              typeCounter.name.toLowerCase().includes('0') ||
+              typeCounter.name.toLowerCase().includes('haste')
             )
               counterType = countersTypes.find(
                 item => item.label === 'Noteiro',
@@ -115,17 +122,6 @@ class MachinesScript {
               counterType = countersTypes.find(
                 item => item.label === 'Moedeiro',
               );
-
-            if (
-              typeCounter.name.toLowerCase().includes('cré') ||
-              typeCounter.name.toLowerCase().includes('cre') ||
-              typeCounter.name.toLowerCase().includes('entrada') ||
-              typeCounter.name.toLowerCase().includes('coin') ||
-              typeCounter.name.toLowerCase().includes('box') ||
-              typeCounter.name.toLowerCase().includes('0') ||
-              typeCounter.name.toLowerCase().includes('haste')
-            )
-              counterType = countersTypes.find(item => item.label === 'Misto');
 
             if (!counterType) {
               logger.info(ownerId);
@@ -176,6 +172,7 @@ class MachinesScript {
           categoryId,
           categoryLabel: category?.label ? category.label : '',
           boxes,
+          lastCollection: typeMachine.lastCollection,
         });
 
         await this.client.set(`@machines:${typeMachine.id}`, `${machine.id}`);
@@ -224,12 +221,6 @@ class MachinesScript {
       this.counterTypesRepository.create({
         label: 'Prêmio',
         type: Type.OUT,
-        ownerId: user.id,
-      });
-
-      this.counterTypesRepository.create({
-        label: 'Misto',
-        type: Type.IN,
         ownerId: user.id,
       });
 

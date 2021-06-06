@@ -7,6 +7,7 @@ import TelemetryLogsRepository from '@modules/telemetry-logs/contracts/repositor
 import TypeMachinesRepository from 'migration-script/modules/machines/typeorm/repositories/type-machines.repository';
 import logger from '@config/logger';
 import Type from '@modules/counter-types/contracts/enums/type';
+import MachinesRepository from '@modules/machines/contracts/repositories/machines.repository';
 import TypeGiftsRepository from '../typeorm/repositories/type-gifts.respository';
 
 @injectable()
@@ -23,6 +24,9 @@ class GiftsScript {
     @inject('TypeMachinesRepository')
     private typeMachinesRepository: TypeMachinesRepository,
 
+    @inject('MachinesRepository')
+    private machinesRepository: MachinesRepository,
+
     @inject('OrmProvider')
     private ormProvider: OrmProvider,
   ) {}
@@ -33,28 +37,13 @@ class GiftsScript {
     const gifts = await this.typeGiftsRepository.find();
     let count = 0;
     logger.info(count);
+    const { machines } = await this.machinesRepository.find({});
 
     try {
       for (const gift of gifts) {
         const telemetryBoardId = (await this.client.get(
           `@telemetryBoards:${gift.telemetryId}`,
         )) as string;
-
-        const pointOfSaleId = (await this.client.get(
-          `@points:${gift.sellingPointId}`,
-        )) as string;
-
-        const machine = await this.typeMachinesRepository.findOne(
-          gift.telemetryId,
-        );
-
-        let groupId = 'null';
-
-        if (machine) {
-          groupId = (await this.client.get(
-            `@groups:${machine.companyId}`,
-          )) as string;
-        }
 
         const machineId = (await this.client.get(
           `@machines:${gift.machineId}`,
@@ -68,10 +57,10 @@ class GiftsScript {
           telemetryBoardId,
           type: Type.OUT,
           value: gift.value,
-          pointOfSaleId,
+          pointOfSaleId: undefined,
           routeId: undefined,
-          groupId,
-          numberOfPlays: gift.value,
+          groupId:
+            machines.find(machine => machine.id === machineId)?.groupId || '',
         });
         count += 1;
         if (count % 20000 === 0) {

@@ -60,6 +60,8 @@ const start = async () => {
 
   await telemetryScript.execute();
   logger.info('telemetryScript.execute()');
+  await companiesScript.setOwnerId();
+  logger.info('companiesScript.setOwnerId()');
 
   await machinesScript.execute();
   logger.info('machinesScript.execute()');
@@ -69,6 +71,9 @@ const start = async () => {
 
   await giftsScript.execute();
   logger.info('giftsScript.execute()');
+
+  await telemetryScript.setMachineId();
+  logger.info('setasdasd');
 };
 
 start();

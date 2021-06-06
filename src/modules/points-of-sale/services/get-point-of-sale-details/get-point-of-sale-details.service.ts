@@ -128,31 +128,28 @@ class GetPointOfSaleDetailsService {
       endDate = endOfDay(endDate);
     }
 
-    const { telemetryLogs } = await this.telemetryLogsRepository.find({
-      filters: {
-        machineId: machines.map(machine => machine.id),
-        pointOfSaleId: pointOfSale.id,
-        date: {
-          startDate,
-          endDate,
-        },
-        maintenance: false,
+    const telemetryLogs = await this.telemetryLogsRepository.getPointOfSaleIncomePerDate(
+      {
+        endDate,
+        pointOfSaleId,
+        startDate,
+        withHours: false,
       },
-    });
+    );
 
     const telemetryLogsIn = telemetryLogs.filter(
-      telemetryLog => telemetryLog.type === 'IN',
+      telemetryLog => telemetryLog.id.type === 'IN',
     );
 
     const telemetryLogsOut = telemetryLogs.filter(
-      telemetryLog => telemetryLog.type === 'OUT',
+      telemetryLog => telemetryLog.id.type === 'OUT',
     );
 
     // ? FATURAMENTO
-    const income = telemetryLogsIn.reduce((a, b) => a + b.value, 0);
+    const income = telemetryLogsIn.reduce((a, b) => a + b.total, 0);
 
     // ? PREMIOS ENTREGUES
-    const givenPrizesCount = telemetryLogsOut.reduce((a, b) => a + b.value, 0);
+    const givenPrizesCount = telemetryLogsOut.reduce((a, b) => a + b.total, 0);
 
     let chartData: ChartData[] = [];
 
@@ -164,19 +161,15 @@ class GetPointOfSaleDetailsService {
       });
 
       chartData = hoursOfInterval.map(hour => {
-        const incomeInHour = telemetryLogsIn
-          .filter(telemetry => isSameHour(hour, telemetry.date))
-          .reduce(
-            (accumulator, currentValue) => accumulator + currentValue.value,
-            0,
-          );
+        const incomeInHour =
+          telemetryLogsIn
+            .filter(telemetry => isSameHour(hour, new Date(telemetry.id.date)))
+            .reduce((a, b) => a + b.total, 0) || 0;
 
-        const prizesCountInHour = telemetryLogsOut
-          .filter(telemetry => isSameHour(hour, telemetry.date))
-          .reduce(
-            (accumulator, currentValue) => accumulator + currentValue.value,
-            0,
-          );
+        const prizesCountInHour =
+          telemetryLogsOut
+            .filter(telemetry => isSameHour(hour, new Date(telemetry.id.date)))
+            .reduce((a, b) => a + b.total, 0) || 0;
 
         return {
           date: hour.toISOString(),
@@ -194,19 +187,15 @@ class GetPointOfSaleDetailsService {
       });
 
       chartData = daysOfInterval.map(day => {
-        const incomeInDay = telemetryLogsIn
-          .filter(telemetry => isSameDay(day, telemetry.date))
-          .reduce(
-            (accumulator, currentValue) => accumulator + currentValue.value,
-            0,
-          );
+        const incomeInDay =
+          telemetryLogsIn
+            .filter(telemetry => isSameDay(day, new Date(telemetry.id.date)))
+            .reduce((a, b) => a + b.total, 0) || 0;
 
-        const prizesCountInDay = telemetryLogsOut
-          .filter(telemetry => isSameDay(day, telemetry.date))
-          .reduce(
-            (accumulator, currentValue) => accumulator + currentValue.value,
-            0,
-          );
+        const prizesCountInDay =
+          telemetryLogsOut
+            .filter(telemetry => isSameDay(day, new Date(telemetry.id.date)))
+            .reduce((a, b) => a + b.total, 0) || 0;
 
         return {
           date: day.toISOString(),
@@ -220,11 +209,11 @@ class GetPointOfSaleDetailsService {
       return {
         machine,
         income: telemetryLogsIn
-          .filter(telemetryLog => telemetryLog.machineId === machine.id)
-          .reduce((a, b) => a + b.value, 0),
+          .filter(telemetryLog => telemetryLog.id.machineId === machine.id)
+          .reduce((a, b) => a + b.total, 0),
         givenPrizes: telemetryLogsOut
-          .filter(telemetryLog => telemetryLog.machineId === machine.id)
-          .reduce((a, b) => a + b.value, 0),
+          .filter(telemetryLog => telemetryLog.id.machineId === machine.id)
+          .reduce((a, b) => a + b.total, 0),
       };
     });
 

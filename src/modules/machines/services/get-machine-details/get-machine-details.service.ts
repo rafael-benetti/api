@@ -11,6 +11,7 @@ import TelemetryLogsRepository from '@modules/telemetry-logs/contracts/repositor
 import Role from '@modules/users/contracts/enums/role';
 import UsersRepository from '@modules/users/contracts/repositories/users.repository';
 import AppError from '@shared/errors/app-error';
+import { Promise } from 'bluebird';
 import {
   eachDayOfInterval,
   eachHourOfInterval,
@@ -131,18 +132,6 @@ class GetMachineDetailsService {
       )?.name;
     }
 
-    const { telemetryLogs } = await this.telemetryLogsRepository.find({
-      filters: {
-        machineId,
-        maintenance: false,
-        groupId: machine.groupId,
-        date: {
-          startDate: lastCollection,
-          endDate: new Date(Date.now()),
-        },
-      },
-    });
-
     if (period) {
       endDate = new Date(Date.now());
       logger.info(endDate);
@@ -159,49 +148,67 @@ class GetMachineDetailsService {
       endDate = endOfDay(endDate);
     }
 
-    const {
-      telemetryLogs: telemetryLogsOfPeriod,
-    } = await this.telemetryLogsRepository.find({
+    const machineIncomePerDayPromise = this.telemetryLogsRepository.getMachineIncomePerDay(
+      {
+        machineId,
+        endDate,
+        startDate,
+        groupIds: [machine.groupId],
+        withHours: period === Period.DAILY,
+      },
+    );
+
+    const machineGivenPrizesPerDayPromise = this.telemetryLogsRepository.getMachineGivenPrizesPerDay(
+      {
+        machineId,
+        endDate,
+        startDate,
+        groupIds: [machine.groupId],
+        withHours: period === Period.DAILY,
+      },
+    );
+
+    // ? HISTORICO DE JOGADAS
+    const transactionHistoryPromise = await this.telemetryLogsRepository.find({
       filters: {
         machineId,
-        date: {
-          startDate,
-          endDate,
-        },
-        maintenance: false,
       },
+      limit: 5,
     });
 
-    const telemetryLogsOfPeriodIn = telemetryLogsOfPeriod.filter(
-      telemetryLog => telemetryLog.type === 'IN',
-    );
+    // ? HISTORICO DE EVENTOS
+    const machineLogsPromise = this.machineLogsRepository.find({
+      machineId,
+      limit: 5,
+      offset: 0,
+      groupId: machine.groupId,
+    });
 
-    const telemetryLogsOfPeriodOut = telemetryLogsOfPeriod.filter(
-      telemetryLog => telemetryLog.type === 'OUT',
-    );
-
-    const telemetryLogsOut = telemetryLogs.filter(
-      telemetryLog => telemetryLog.type === 'OUT',
-    );
+    const [
+      machineIncomePerDay,
+      machineGivenPrizesPerDay,
+      { machineLogs },
+      transactionHistory,
+    ] = await Promise.all([
+      machineIncomePerDayPromise,
+      machineGivenPrizesPerDayPromise,
+      machineLogsPromise,
+      transactionHistoryPromise,
+    ]);
 
     const counterTypes = await this.counterTypesRepository.find({
       ownerId: user.role === Role.OWNER ? user.id : user.ownerId,
     });
 
     // ? ULTIMA COMUNICAÇÃO
-    const lastConnection = telemetryLogs[0]?.date
-      ? telemetryLogs[0].date
-      : undefined;
+    const { lastConnection } = machine;
 
     // ? FATURAMENTO
-    const income = telemetryLogsOfPeriodIn.reduce(
-      (accumulator, currentValue) => accumulator + currentValue.value,
-      0,
-    );
+    const income = machineIncomePerDay.reduce((a, b) => a + b.income, 0);
 
     // ? PREMIOS ENTREGUES
-    const givenPrizes = telemetryLogsOfPeriodOut.reduce(
-      (accumulator, currentValue) => accumulator + currentValue.value,
+    const givenPrizes = machineGivenPrizesPerDay.reduce(
+      (a, b) => a + b.givenPrizes,
       0,
     );
 
@@ -215,15 +222,13 @@ class GetMachineDetailsService {
         )?.type;
 
         if (counterType === 'OUT') {
-          const counterLogs = telemetryLogsOut.filter(telemetryLog => {
-            return (
-              telemetryLog.pin?.toString() === counter.pin?.replace('Pino ', '')
-            );
-          });
-          givenPrizesCount += counterLogs.reduce(
-            (accumulator, currentValue) => accumulator + currentValue.value,
-            0,
-          );
+          givenPrizesCount =
+            machineGivenPrizesPerDay.find(givenPrizeOfDay => {
+              return (
+                givenPrizeOfDay.id.pin?.toString() ===
+                counter.pin?.replace('Pino ', '')
+              );
+            })?.givenPrizes || 0;
         }
       });
 
@@ -245,19 +250,15 @@ class GetMachineDetailsService {
       });
 
       chartData = hoursOfInterval.map(hour => {
-        const incomeInHour = telemetryLogsOfPeriodIn
-          .filter(telemetry => isSameHour(hour, telemetry.date))
-          .reduce(
-            (accumulator, currentValue) => accumulator + currentValue.value,
-            0,
-          );
+        const incomeInHour =
+          machineIncomePerDay.find(telemetry =>
+            isSameHour(hour, new Date(telemetry.id)),
+          )?.income || 0;
 
-        const prizesCountInHour = telemetryLogsOfPeriodOut
-          .filter(telemetry => isSameHour(hour, telemetry.date))
-          .reduce(
-            (accumulator, currentValue) => accumulator + currentValue.value,
-            0,
-          );
+        const prizesCountInHour =
+          machineGivenPrizesPerDay.find(telemetry =>
+            isSameHour(hour, new Date(telemetry.id.date)),
+          )?.givenPrizes || 0;
 
         return {
           date: hour.toISOString(),
@@ -275,19 +276,15 @@ class GetMachineDetailsService {
       });
 
       chartData = daysOfInterval.map(day => {
-        const incomeInDay = telemetryLogsOfPeriodIn
-          .filter(telemetry => isSameDay(day, telemetry.date))
-          .reduce(
-            (accumulator, currentValue) => accumulator + currentValue.value,
-            0,
-          );
+        const incomeInDay =
+          machineIncomePerDay.find(telemetry =>
+            isSameDay(day, new Date(telemetry.id).setUTCHours(3)),
+          )?.income || 0;
 
-        const prizesCountInDay = telemetryLogsOfPeriodOut
-          .filter(telemetry => isSameDay(day, telemetry.date))
-          .reduce(
-            (accumulator, currentValue) => accumulator + currentValue.value,
-            0,
-          );
+        const prizesCountInDay =
+          machineGivenPrizesPerDay.find(telemetry =>
+            isSameDay(day, new Date(telemetry.id.date).setUTCHours(3)),
+          )?.givenPrizes || 0;
 
         return {
           date: day.toISOString(),
@@ -296,24 +293,6 @@ class GetMachineDetailsService {
         };
       });
     }
-
-    // ? HISTORICO DE EVENTOS
-    const {
-      telemetryLogs: transactionHistory,
-    } = await this.telemetryLogsRepository.find({
-      filters: {
-        machineId,
-      },
-      limit: 5,
-    });
-
-    // ? HISTORICO DE EVENTOS
-    const { machineLogs } = await this.machineLogsRepository.find({
-      machineId,
-      limit: 5,
-      offset: 0,
-      groupId: machine.groupId,
-    });
 
     return {
       machine,

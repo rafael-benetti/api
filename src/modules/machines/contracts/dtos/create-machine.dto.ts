@@ -30,4 +30,6 @@ export default interface CreateMachineDto {
   incomePerPrizeGoal?: number;
 
   incomePerMonthGoal?: number;
+
+  lastCollection?: Date;
 }

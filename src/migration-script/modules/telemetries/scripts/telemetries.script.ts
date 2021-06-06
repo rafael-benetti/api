@@ -95,24 +95,18 @@ class TelemetriesScript {
     });
 
     for (const telemetry of telemetryBoards) {
-      const typeMachine = await this.typeMachinesRepository.findOne(
-        telemetry.id,
-      );
+      const machineId = (await this.client.get(
+        `@machines:${telemetry.machineId}`,
+      )) as string;
 
-      if (typeMachine) {
-        const machineId = (await this.client.get(
-          `@machines:${typeMachine.id}`,
-        )) as string;
+      const ownerId = (await this.client.get(
+        `@users:${telemetry.ownerId}`,
+      )) as string;
 
-        const ownerId = (await this.client.get(
-          `@users:${telemetry.ownerId}`,
-        )) as string;
+      telemetry.machineId = machineId;
+      telemetry.ownerId = ownerId;
 
-        telemetry.machineId = machineId;
-        telemetry.ownerId = ownerId;
-
-        this.telemetryBoardsRepository.save(telemetry);
-      }
+      this.telemetryBoardsRepository.save(telemetry);
     }
 
     await this.ormProvider.commit();
