@@ -15,6 +15,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
+const crypto_1 = require("crypto");
 const role_1 = __importDefault(require("../../contracts/enums/role"));
 const permissions_1 = __importDefault(require("../../contracts/models/permissions"));
 const user_1 = __importDefault(require("../../contracts/models/user"));
@@ -62,8 +63,7 @@ let CreateOperatorService = class CreateOperatorService {
         });
         if (emailExists)
             throw app_error_1.default.emailAlreadyUsed;
-        // const password = randomBytes(3).toString('hex');
-        const password = 'q1';
+        const password = crypto_1.randomBytes(3).toString('hex');
         const operator = this.usersRepository.create({
             email,
             password: this.hashProvider.hash(password),

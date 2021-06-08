@@ -24,5 +24,16 @@ class RedisSessionProvider {
             await this.client.expire(token, this.timeToLive);
         return userId || undefined;
     }
+    async createPasswordResetToken(userId) {
+        const token = crypto_1.randomBytes(128).toString('base64url');
+        await this.client.set(token, userId);
+        return token;
+    }
+    async getPasswordResetTokenOwner(token) {
+        const userId = await this.client.get(token);
+        if (userId)
+            this.client.expire(token, 0);
+        return userId || undefined;
+    }
 }
 exports.default = RedisSessionProvider;

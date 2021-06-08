@@ -3,14 +3,31 @@ import FindTelemetryLogsDto from '../dtos/find-telemetry-logs.dto';
 import GetIncomePerMachineResponseDto from '../dtos/get-income-per-machine-response.dto';
 import GetIncomePerMachineDto from '../dtos/get-income-per-machine.dto';
 import GetIncomePerPointOfSaleDto from '../dtos/get-income-per-point-of-sale.dto';
+import GetMachineIncomePerDay from '../dtos/get-machine-income-per-day';
+import GetPointOfSaleIncomePerDateDto from '../dtos/get-point-of-sale-income-per-date.dto';
 import GetPrizesPerMachineResponseDto from '../dtos/get-prizes-per-machine-repository.dto';
 import TelemetryLog from '../entities/telemetry-log';
 
 interface TelemetryLogsRepository {
   create(data: CreateTelemetryLogDto): TelemetryLog;
-  find(
+  findAndCount(
     data: FindTelemetryLogsDto,
   ): Promise<{ telemetryLogs: TelemetryLog[]; count: number }>;
+
+  find(data: FindTelemetryLogsDto): Promise<TelemetryLog[]>;
+
+  getPointOfSaleIncomePerDate({
+    startDate,
+    endDate,
+    pointOfSaleId,
+    withHours,
+  }: GetPointOfSaleIncomePerDateDto): Promise<
+    {
+      total: number;
+      id: { date: string; type: 'IN' | 'OUT'; machineId: string };
+    }[]
+  >;
+
   getIncomePerMachine(
     data: GetIncomePerMachineDto,
   ): Promise<GetIncomePerMachineResponseDto[]>;
@@ -23,6 +40,25 @@ interface TelemetryLogsRepository {
   incomePerPointOfSale(
     data: GetIncomePerPointOfSaleDto,
   ): Promise<[{ income: number; id: string }]>;
+  getMachineIncomePerDay({
+    groupIds,
+    startDate,
+    endDate,
+    machineId,
+  }: GetMachineIncomePerDay): Promise<
+    { income: number; id: string; date: Date }[]
+  >;
+
+  getMachineGivenPrizesPerDay({
+    groupIds,
+    startDate,
+    endDate,
+    machineId,
+  }: GetMachineIncomePerDay): Promise<
+    { givenPrizes: number; id: { date: string; pin: number }; date: Date }[]
+  >;
+
+  save(data: TelemetryLog): void;
 }
 
 export default TelemetryLogsRepository;

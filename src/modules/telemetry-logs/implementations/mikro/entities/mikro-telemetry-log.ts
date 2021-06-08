@@ -39,7 +39,7 @@ class MikroTelemetryLog implements TelemetryLog {
   maintenance: boolean;
 
   @Property()
-  numberOfPlays: number;
+  numberOfPlays?: number;
 
   constructor(data?: CreateTelemetryLogDto) {
     if (data) {

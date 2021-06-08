@@ -41,7 +41,7 @@ class MikroMachineLogsRepository {
             limit,
             offset,
             orderBy: {
-                createdAt: 'ASC',
+                createdAt: 'DESC',
             },
         });
         return { machineLogs, count };

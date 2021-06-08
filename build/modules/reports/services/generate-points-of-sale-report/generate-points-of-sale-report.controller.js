@@ -15,11 +15,12 @@ GeneratePointsOfSaleReportController.validate = celebrate_1.celebrate({
         endDate: celebrate_1.Joi.date().iso(),
         groupId: celebrate_1.Joi.string(),
         download: celebrate_1.Joi.bool().default(false),
+        pointsOfSaleIds: celebrate_1.Joi.array().items(celebrate_1.Joi.string()),
     },
 });
 GeneratePointsOfSaleReportController.handle = async (request, response) => {
     const { userId } = request;
-    const { startDate, endDate, groupId, download } = request.query;
+    const { startDate, endDate, groupId, download, pointsOfSaleIds, } = request.query;
     const generatePointsOfSaleReport = tsyringe_1.container.resolve(generate_points_of_sale_report_service_1.default);
     if (download) {
         const report = (await generatePointsOfSaleReport.execute({
@@ -28,6 +29,7 @@ GeneratePointsOfSaleReportController.handle = async (request, response) => {
             startDate,
             endDate,
             download,
+            pointsOfSaleIds,
         }));
         response.setHeader('Content-Type', 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet');
         response.setHeader('Content-Disposition', 'attachment; filename=relarorio.xlsx');
@@ -41,6 +43,7 @@ GeneratePointsOfSaleReportController.handle = async (request, response) => {
         startDate,
         endDate,
         download,
+        pointsOfSaleIds,
     });
     return response.json(report);
 };

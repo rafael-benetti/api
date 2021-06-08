@@ -39,7 +39,7 @@ let GeneratePointsOfSaleReportService = class GeneratePointsOfSaleReportService 
         this.telemetryLogsRepository = telemetryLogsRepository;
         this.machineLogsRepository = machineLogsRepository;
     }
-    async execute({ userId, groupId, startDate, endDate, download, }) {
+    async execute({ userId, groupId, startDate, endDate, download, pointsOfSaleIds, }) {
         const user = await this.usersRepository.findOne({
             by: 'id',
             value: userId,
@@ -52,7 +52,7 @@ let GeneratePointsOfSaleReportService = class GeneratePointsOfSaleReportService 
             throw app_error_1.default.authorizationError;
         let groupIds = [];
         let groups = [];
-        if (groupId) {
+        if (groupId && !pointsOfSaleIds) {
             const group = await this.groupsRepository.findOne({
                 by: 'id',
                 value: groupId,
@@ -66,7 +66,7 @@ let GeneratePointsOfSaleReportService = class GeneratePointsOfSaleReportService 
             groups = [group];
             groupIds.push(groupId);
         }
-        else if (user.role === role_1.default.MANAGER) {
+        else if (user.role === role_1.default.MANAGER && !pointsOfSaleIds) {
             if (!user.groupIds)
                 throw app_error_1.default.unknownError;
             groupIds = user.groupIds;
@@ -76,7 +76,7 @@ let GeneratePointsOfSaleReportService = class GeneratePointsOfSaleReportService 
                 },
             });
         }
-        else if (user.role === role_1.default.OWNER) {
+        else if (user.role === role_1.default.OWNER && !pointsOfSaleIds) {
             groups = await this.groupsRepository.find({
                 filters: {
                     ownerId: user.id,
@@ -85,16 +85,26 @@ let GeneratePointsOfSaleReportService = class GeneratePointsOfSaleReportService 
             });
             groupIds = groups.map(group => group.id);
         }
+        let pointsOfSale;
+        if (pointsOfSaleIds) {
+            pointsOfSale = (await this.pointsOfSaleRepository.find({
+                by: 'id',
+                value: pointsOfSaleIds,
+                fields: ['id', 'label', 'address', 'groupId', 'isPercentage', 'rent'],
+            })).pointsOfSale;
+        }
+        else {
+            pointsOfSale = (await this.pointsOfSaleRepository.find({
+                by: 'groupId',
+                value: groupIds,
+                fields: ['id', 'label', 'address', 'groupId', 'isPercentage', 'rent'],
+            })).pointsOfSale;
+        }
         startDate = date_fns_1.startOfDay(startDate);
         endDate = date_fns_1.endOfDay(endDate);
         const days = date_fns_1.differenceInDays(endDate, startDate) !== 0
             ? date_fns_1.differenceInDays(endDate, startDate)
             : 1;
-        const { pointsOfSale } = await this.pointsOfSaleRepository.find({
-            by: 'groupId',
-            value: groupIds,
-            fields: ['id', 'label', 'address', 'groupId', 'isPercentage', 'rent'],
-        });
         const reportsPromises = pointsOfSale.map(async (pointOfSale) => {
             const { machines } = await this.machinesRepository.find({
                 pointOfSaleId: pointOfSale.id,

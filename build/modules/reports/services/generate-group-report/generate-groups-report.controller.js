@@ -14,11 +14,12 @@ GenerateGroupReportController.validate = celebrate_1.celebrate({
         startDate: celebrate_1.Joi.date().iso(),
         endDate: celebrate_1.Joi.date().iso(),
         download: celebrate_1.Joi.boolean().default(false),
+        groupIds: celebrate_1.Joi.array().items(celebrate_1.Joi.string()),
     },
 });
 GenerateGroupReportController.handle = async (request, response) => {
     const { userId } = request;
-    const { startDate, endDate, download } = request.query;
+    const { startDate, endDate, download, groupIds } = request.query;
     const generateGroupReport = tsyringe_1.container.resolve(generate_groups_report_service_1.default);
     if (download) {
         const report = (await generateGroupReport.execute({
@@ -26,6 +27,7 @@ GenerateGroupReportController.handle = async (request, response) => {
             startDate,
             endDate,
             download,
+            groupIds,
         }));
         response.setHeader('Content-Type', 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet');
         response.setHeader('Content-Disposition', 'attachment; filename=relatorio.xlsx');
@@ -38,6 +40,7 @@ GenerateGroupReportController.handle = async (request, response) => {
         startDate,
         endDate,
         download,
+        groupIds,
     });
     return response.json(report);
 };

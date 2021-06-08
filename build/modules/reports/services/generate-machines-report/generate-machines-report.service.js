@@ -26,6 +26,7 @@ const role_1 = __importDefault(require("../../../users/contracts/enums/role"));
 const machine_logs_repository_1 = __importDefault(require("../../../machine-logs/contracts/repositories/machine-logs.repository"));
 const machine_log_type_1 = __importDefault(require("../../../machine-logs/contracts/enums/machine-log-type"));
 const date_fns_1 = require("date-fns");
+const logger_1 = __importDefault(require("../../../../config/logger"));
 const export_machines_report_1 = __importDefault(require("./export-machines-report"));
 let GenerateMachinesReportService = class GenerateMachinesReportService {
     constructor(usersRepository, machineLogsRepository, groupsRepository, machinesRepository, telemetryLogsRepository) {
@@ -35,7 +36,7 @@ let GenerateMachinesReportService = class GenerateMachinesReportService {
         this.machinesRepository = machinesRepository;
         this.telemetryLogsRepository = telemetryLogsRepository;
     }
-    async execute({ userId, groupId, startDate, endDate, download, }) {
+    async execute({ userId, groupId, startDate, endDate, download, machineIds, }) {
         const user = await this.usersRepository.findOne({
             by: 'id',
             value: userId,
@@ -48,7 +49,7 @@ let GenerateMachinesReportService = class GenerateMachinesReportService {
             throw app_error_1.default.authorizationError;
         let groupIds = [];
         let groups = [];
-        if (groupId) {
+        if (groupId && !machineIds) {
             const group = await this.groupsRepository.findOne({
                 by: 'id',
                 value: groupId,
@@ -62,7 +63,7 @@ let GenerateMachinesReportService = class GenerateMachinesReportService {
             groups = [group];
             groupIds.push(groupId);
         }
-        else if (user.role === role_1.default.MANAGER) {
+        else if (user.role === role_1.default.MANAGER && !machineIds) {
             if (!user.groupIds)
                 throw app_error_1.default.unknownError;
             groupIds = user.groupIds;
@@ -72,7 +73,7 @@ let GenerateMachinesReportService = class GenerateMachinesReportService {
                 },
             });
         }
-        else if (user.role === role_1.default.OWNER) {
+        else if (user.role === role_1.default.OWNER && !machineIds) {
             groups = await this.groupsRepository.find({
                 filters: {
                     ownerId: user.id,
@@ -81,23 +82,53 @@ let GenerateMachinesReportService = class GenerateMachinesReportService {
             });
             groupIds = groups.map(group => group.id);
         }
-        const { machines } = await this.machinesRepository.find({
-            groupIds,
-            populate: ['pointOfSale'],
-            fields: [
-                'id',
-                'serialNumber',
-                'categoryLabel',
-                'gameValue',
-                'locationId',
-                'incomePerPrizeGoal',
-                'incomePerMonthGoal',
-                'pointOfSale',
-                'pointOfSale.id',
-                'pointOfSale.label',
-                'groupId',
-            ],
-        });
+        let machines;
+        if (machineIds) {
+            machines = (await this.machinesRepository.find({
+                id: machineIds,
+                populate: ['pointOfSale'],
+                fields: [
+                    'id',
+                    'serialNumber',
+                    'categoryLabel',
+                    'gameValue',
+                    'locationId',
+                    'incomePerPrizeGoal',
+                    'incomePerMonthGoal',
+                    'pointOfSale',
+                    'pointOfSale.id',
+                    'pointOfSale.label',
+                    'groupId',
+                    'ownerId',
+                ],
+            })).machines;
+            if (user.role === role_1.default.OWNER)
+                if (machines.some(machine => machine.ownerId !== user.id))
+                    throw app_error_1.default.authorizationError;
+            logger_1.default.info('oi');
+            if (user.role === role_1.default.MANAGER)
+                if (machines.some(machine => !user.groupIds?.includes(machine.groupId)))
+                    throw app_error_1.default.authorizationError;
+        }
+        else {
+            machines = (await this.machinesRepository.find({
+                groupIds,
+                populate: ['pointOfSale'],
+                fields: [
+                    'id',
+                    'serialNumber',
+                    'categoryLabel',
+                    'gameValue',
+                    'locationId',
+                    'incomePerPrizeGoal',
+                    'incomePerMonthGoal',
+                    'pointOfSale',
+                    'pointOfSale.id',
+                    'pointOfSale.label',
+                    'groupId',
+                ],
+            })).machines;
+        }
         startDate = date_fns_1.startOfDay(startDate);
         endDate = date_fns_1.endOfDay(endDate);
         const incomePerMachine = await this.telemetryLogsRepository.getIncomePerMachine({ groupIds, endDate, startDate });
@@ -129,7 +160,7 @@ let GenerateMachinesReportService = class GenerateMachinesReportService {
             return {
                 groupLabel,
                 serialNumber: machine.serialNumber,
-                location: machine.pointOfSale?.label,
+                location: machine.pointOfSale?.label || '',
                 category: machine.categoryLabel,
                 income: income || 0,
                 prizes: prizes || 0,
@@ -139,8 +170,8 @@ let GenerateMachinesReportService = class GenerateMachinesReportService {
                 playsPerPrize: numberOfPlays && prizes
                     ? Number((numberOfPlays / prizes).toFixed(2))
                     : 0,
-                incomePerPrizeGoal: machine.incomePerPrizeGoal,
-                incomePerMonthGoal: machine.incomePerMonthGoal,
+                incomePerPrizeGoal: machine.incomePerPrizeGoal || 0,
+                incomePerMonthGoal: machine.incomePerMonthGoal || 0,
                 averagePerDay: Number((income ? income / numberOfDays : 0).toFixed(2)) || 0,
             };
         });
