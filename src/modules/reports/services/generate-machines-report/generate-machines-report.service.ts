@@ -10,7 +10,6 @@ import MachineLogsRepository from '@modules/machine-logs/contracts/repositories/
 import MachineLogType from '@modules/machine-logs/contracts/enums/machine-log-type';
 import { differenceInDays, endOfDay, startOfDay } from 'date-fns';
 import ExcelJS from 'exceljs';
-import logger from '@config/logger';
 import exportMachinesReport from './export-machines-report';
 
 interface Request {
@@ -152,7 +151,6 @@ class GenerateMachinesReportService {
         if (machines.some(machine => machine.ownerId !== user.id))
           throw AppError.authorizationError;
 
-      logger.info('oi');
       if (user.role === Role.MANAGER)
         if (machines.some(machine => !user.groupIds?.includes(machine.groupId)))
           throw AppError.authorizationError;

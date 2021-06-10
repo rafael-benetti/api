@@ -64,6 +64,11 @@ export default class GetCollectionsService {
       collection.machine = machines.find(
         machine => machine.id === collection.machineId,
       );
+
+      if (!collection.pointOfSaleId)
+        collection.pointOfSale = {
+          label: '',
+        };
     });
 
     return {

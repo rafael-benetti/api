@@ -42,10 +42,10 @@ export default class MikroCollection implements Collection {
   user: MikroUser;
 
   @Property()
-  pointOfSaleId: string;
+  pointOfSaleId?: string;
 
   @OneToOne({ name: 'pointOfSaleId' })
-  pointOfSale: MikroPointOfSale;
+  pointOfSale?: MikroPointOfSale;
 
   @Property()
   routeId?: string;
@@ -87,8 +87,12 @@ export default class MikroCollection implements Collection {
       this.userId = data.userId;
       this.pointOfSaleId = data.pointOfSaleId;
       this.routeId = data.routeId;
+      if (data.date === undefined) {
+        this.date = new Date();
+      } else {
+        this.date = data.date;
+      }
       this.observations = data.observations;
-      this.date = new Date();
       this.boxCollections = data.boxCollections;
       this.startLocation = data.startLocation;
       this.endLocation = data.endLocation;

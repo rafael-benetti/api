@@ -146,7 +146,7 @@ class CreateCollectionService {
       machineId,
     );
 
-    const { telemetryLogs } = await this.telemetryLogsRepository.find({
+    const telemetryLogs = await this.telemetryLogsRepository.find({
       filters: {
         date: {
           startDate: previousCollection?.date,

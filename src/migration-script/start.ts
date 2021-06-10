@@ -17,6 +17,7 @@ import CreditsScript from './modules/credits/scripts/credits.script';
 import GiftsScript from './modules/gifts/scripts/gifts.script';
 import MachineCategoriesScript from './modules/machines-categories/scripts/machines-categories.script';
 import MachinesScript from './modules/machines/scripts/machines.script';
+import MachineCollectScript from './modules/machine-collect/scripts/machine-collect.script';
 
 const start = async () => {
   createConnections();
@@ -37,42 +38,50 @@ const start = async () => {
 
   const machineCategoriesScript = container.resolve(MachineCategoriesScript);
 
-  await usersScript.execute();
-  logger.info('usersScript.execute()');
+  const machineCollectScript = container.resolve(MachineCollectScript);
+  //
+  // await usersScript.execute();
+  // logger.info('usersScript.execute()');
+  //
+  // await companiesScript.execute();
+  // logger.info('companiesScript.execute()');
+  //
+  // await machinesScript.createCountersTypes();
+  // logger.info('machinesScript.createCountersTypes()');
+  //
+  // await machineCategoriesScript.execute();
+  // logger.info('machineCategoriesScript.execute()');
+  //
+  // await usersScript.setOwnerId();
+  // logger.info('usersScript.setOwnerId');
+  //
+  // await usersScript.setGroupIds();
+  // logger.info('usersScript.setGroupIds()');
+  //
+  // await companiesScript.setOwnerId();
+  // logger.info('companiesScript.setOwnerId()');
+  //
+  // await telemetryScript.execute();
+  // logger.info('telemetryScript.execute()');
+  //
+  // await companiesScript.setOwnerId();
+  // logger.info('companiesScript.setOwnerId()');
+  //
+  // await machinesScript.execute();
+  // logger.info('machinesScript.execute()');
 
-  await companiesScript.execute();
-  logger.info('companiesScript.execute()');
+  // await creditsScript.execute();
+  // logger.info('creditsScript.execute()');
+  // await giftsScript.execute();
+  // logger.info('giftsScript.execute()');
 
-  await machinesScript.createCountersTypes();
-  logger.info('machinesScript.createCountersTypes()');
+  // await telemetryScript.setMachineId();
+  // logger.info('setasdasd');
 
-  await machineCategoriesScript.execute();
-  logger.info('machineCategoriesScript.execute()');
+  // await machineCollectScript.execute();
+  // logger.info('setasdasd');
 
-  await usersScript.setOwnerId();
-  logger.info('usersScript.setOwnerId');
-
-  await usersScript.setGroupIds();
-  logger.info('usersScript.setGroupIds()');
-
-  await companiesScript.setOwnerId();
-  logger.info('companiesScript.setOwnerId()');
-
-  await telemetryScript.execute();
-  logger.info('telemetryScript.execute()');
-  await companiesScript.setOwnerId();
-  logger.info('companiesScript.setOwnerId()');
-
-  await machinesScript.execute();
-  logger.info('machinesScript.execute()');
-
-  await creditsScript.execute();
-  logger.info('creditsScript.execute()');
-
-  await giftsScript.execute();
-  logger.info('giftsScript.execute()');
-
-  await telemetryScript.setMachineId();
+  await machineCollectScript.setPreviousCollection();
   logger.info('setasdasd');
 };
 

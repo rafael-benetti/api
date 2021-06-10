@@ -1,5 +1,6 @@
 import { v4 } from 'uuid';
 import Machine from '@modules/machines/contracts/models/machine';
+
 import CreateCollectionDto from '../dtos/create-collection.dto';
 import BoxCollection from '../interfaces/box-collection';
 import Geolocation from '../dtos/geolocation.dto';
@@ -17,7 +18,9 @@ export default class Collection {
 
   userId: string;
 
-  pointOfSaleId: string;
+  pointOfSaleId?: string;
+
+  pointOfSale?: unknown;
 
   routeId?: string;
 
@@ -49,7 +52,11 @@ export default class Collection {
       this.pointOfSaleId = data.pointOfSaleId;
       this.routeId = data.routeId;
       this.observations = data.observations;
-      this.date = new Date();
+      if (data.date === undefined) {
+        this.date = new Date();
+      } else {
+        this.date = data.date;
+      }
       this.boxCollections = data.boxCollections;
       this.reviewedData = data.reviewedData;
     }

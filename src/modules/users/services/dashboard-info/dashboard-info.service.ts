@@ -257,6 +257,10 @@ export default class DashboardInfoService {
     if (!isOperator)
       universalFinancial = await this.universalFinancialRepository.find({
         groupId: groupIds,
+        date: {
+          end: endDate,
+          start: startDate,
+        },
       });
 
     if (!isOperator)

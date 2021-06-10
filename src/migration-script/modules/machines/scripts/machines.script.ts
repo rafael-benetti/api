@@ -64,7 +64,6 @@ class MachinesScript {
 
         if (!group) throw AppError.groupNotFound;
 
-        // ANCHOR VERIFICAR QUEM É O DONO DA MAGUINE
         const ownerId = group?.ownerId;
 
         const boxesIds = [
@@ -115,8 +114,21 @@ class MachinesScript {
                 item => item.label === 'Noteiro',
               );
 
+            if (typeCounter.name.toLowerCase().includes('remoto'))
+              counterType = countersTypes.find(
+                item => item.label === 'Crédito Remoto',
+              );
+
             if (typeCounter.name.toLowerCase().includes('cart'))
               counterType = countersTypes.find(item => item.label === 'Cartão');
+
+            if (
+              typeCounter.name.toLowerCase().includes('fiche') ||
+              typeCounter.name.toLowerCase().includes('ficha')
+            )
+              counterType = countersTypes.find(
+                item => item.label === 'Ficheiro',
+              );
 
             if (typeCounter.name.toLowerCase().includes('moedei'))
               counterType = countersTypes.find(
@@ -130,7 +142,7 @@ class MachinesScript {
               throw AppError.counterTypeNotFound;
             }
 
-            return new Counter({
+            const counter = new Counter({
               counterTypeId: counterType.id,
               hasDigital: typeCounter.hasDigital === 1,
               hasMechanical: typeCounter.hasMechanical === 1,
@@ -138,11 +150,27 @@ class MachinesScript {
                 ? `Pino ${typeCounter.pin?.toString()}`
                 : undefined,
             });
+
+            this.client.set(
+              `@boxes:@machineId:${typeMachine.id}:@counterId:${typeCounter.id}`,
+              boxeId,
+            );
+
+            this.client.set(
+              `@counters:@machineId:${typeMachine.id}:@counterId:${typeCounter.id}`,
+              counter.id,
+            );
+
+            return counter;
           });
 
-          return new Box({
+          const box = new Box({
             counters,
           });
+
+          this.client.set(`@boxes:${boxeId}`, box.id);
+
+          return box;
         });
 
         const telemetryBoardId = await this.client.get(
@@ -176,12 +204,11 @@ class MachinesScript {
         });
 
         await this.client.set(`@machines:${typeMachine.id}`, `${machine.id}`);
+        await this.ormProvider.commit();
       }
     } catch (error) {
       logger.info(error);
     }
-
-    await this.ormProvider.commit();
   }
 
   async createCountersTypes(): Promise<void> {

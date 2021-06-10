@@ -74,9 +74,9 @@ class CreditsScript {
       }
     } catch (error) {
       logger.error(error);
-
-      await this.ormProvider.commit();
     }
+
+    await this.ormProvider.commit();
   }
 }
 
