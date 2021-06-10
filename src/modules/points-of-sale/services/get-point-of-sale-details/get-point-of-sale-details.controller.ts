@@ -17,8 +17,8 @@ abstract class GetPointOfSaleDetailsController {
       pointOfSaleId,
       userId,
       period: period as Period,
-      startDate: new Date(startDate as string),
-      endDate: new Date(endDate as string),
+      startDate: startDate ? new Date(startDate as string) : undefined,
+      endDate: endDate ? new Date(endDate as string) : undefined,
     });
 
     return res.json(response);

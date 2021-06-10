@@ -181,7 +181,7 @@ class UsersScript {
       const user = this.usersRepository.create({
         email: typeUser.email,
         name: typeUser.name,
-        password: this.hashProvider.hash('q1'),
+        password: typeUser.password,
         isActive: typeUser.isActive === 1,
         photo: undefined,
         phoneNumber: undefined,

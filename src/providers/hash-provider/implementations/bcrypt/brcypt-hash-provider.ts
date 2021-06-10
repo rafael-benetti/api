@@ -3,7 +3,7 @@ import { hashSync, compareSync } from 'bcrypt';
 
 class BcryptHashProvider implements HashProvider {
   hash(payload: string): string {
-    return hashSync(payload, 8);
+    return hashSync(payload, 10);
   }
 
   compare(payload: string, hashed: string): boolean {

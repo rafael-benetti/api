@@ -39,50 +39,51 @@ const start = async () => {
   const machineCategoriesScript = container.resolve(MachineCategoriesScript);
 
   const machineCollectScript = container.resolve(MachineCollectScript);
-  //
-  // await usersScript.execute();
-  // logger.info('usersScript.execute()');
-  //
-  // await companiesScript.execute();
-  // logger.info('companiesScript.execute()');
-  //
-  // await machinesScript.createCountersTypes();
-  // logger.info('machinesScript.createCountersTypes()');
-  //
-  // await machineCategoriesScript.execute();
-  // logger.info('machineCategoriesScript.execute()');
-  //
-  // await usersScript.setOwnerId();
-  // logger.info('usersScript.setOwnerId');
-  //
-  // await usersScript.setGroupIds();
-  // logger.info('usersScript.setGroupIds()');
-  //
-  // await companiesScript.setOwnerId();
-  // logger.info('companiesScript.setOwnerId()');
-  //
-  // await telemetryScript.execute();
-  // logger.info('telemetryScript.execute()');
-  //
-  // await companiesScript.setOwnerId();
-  // logger.info('companiesScript.setOwnerId()');
-  //
-  // await machinesScript.execute();
-  // logger.info('machinesScript.execute()');
+
+  await usersScript.execute();
+  logger.info('usersScript.execute()');
+
+  await companiesScript.execute();
+  logger.info('companiesScript.execute()');
+
+  await machinesScript.createCountersTypes();
+  logger.info('machinesScript.createCountersTypes()');
+
+  await machineCategoriesScript.execute();
+  logger.info('machineCategoriesScript.execute()');
+
+  await usersScript.setOwnerId();
+  logger.info('usersScript.setOwnerId');
+
+  await usersScript.setGroupIds();
+  logger.info('usersScript.setGroupIds()');
+
+  await companiesScript.setOwnerId();
+  logger.info('companiesScript.setOwnerId()');
+
+  await telemetryScript.execute();
+  logger.info('telemetryScript.execute()');
+
+  await companiesScript.setOwnerId();
+  logger.info('companiesScript.setOwnerId()');
+
+  await machinesScript.execute();
+  logger.info('machinesScript.execute()');
 
   // await creditsScript.execute();
   // logger.info('creditsScript.execute()');
+  //
   // await giftsScript.execute();
   // logger.info('giftsScript.execute()');
-
+  //
   // await telemetryScript.setMachineId();
   // logger.info('setasdasd');
-
+  //
   // await machineCollectScript.execute();
   // logger.info('setasdasd');
-
-  await machineCollectScript.setPreviousCollection();
-  logger.info('setasdasd');
+  //
+  // await machineCollectScript.setPreviousCollection();
+  // logger.info('setasdasd');
 };
 
 start();

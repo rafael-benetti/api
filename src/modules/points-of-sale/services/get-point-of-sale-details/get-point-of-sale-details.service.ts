@@ -25,9 +25,9 @@ import { inject, injectable } from 'tsyringe';
 interface Request {
   userId: string;
   pointOfSaleId: string;
-  period: Period;
-  startDate: Date;
-  endDate: Date;
+  period?: Period;
+  startDate?: Date;
+  endDate?: Date;
 }
 
 interface MachineInfo {

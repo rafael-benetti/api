@@ -34,6 +34,7 @@ export default class MikroCollectionsRepository
           'pointOfSale',
           'route',
           'machine',
+          'previousCollection.user',
         ],
       },
     );

@@ -92,6 +92,7 @@ class MachinesScript {
               typeCounter.name.toLowerCase().includes('saida') ||
               typeCounter.name.toLowerCase().includes('saída') ||
               typeCounter.name.toLowerCase().includes('pelu') ||
+              typeCounter.name.toLowerCase().includes('pelú') ||
               typeCounter.name.toLowerCase().includes('bala') ||
               typeCounter.name.toLowerCase().includes('porta a') ||
               typeCounter.name.toLowerCase().includes('porta b') ||
