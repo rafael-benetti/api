@@ -70,14 +70,15 @@ const start = async () => {
   await machinesScript.execute();
   logger.info('machinesScript.execute()');
 
+  await telemetryScript.setMachineId();
+  logger.info('setasdasd');
+
   // await creditsScript.execute();
   // logger.info('creditsScript.execute()');
   //
   // await giftsScript.execute();
   // logger.info('giftsScript.execute()');
-  //
-  // await telemetryScript.setMachineId();
-  // logger.info('setasdasd');
+
   //
   // await machineCollectScript.execute();
   // logger.info('setasdasd');

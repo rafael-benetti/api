@@ -88,21 +88,7 @@ class MachineCategoriesScript {
             boxes.push(
               new Box({
                 // ? CONTADOR DE SAIDA
-                counters: [
-                  new Counter({
-                    counterTypeId: counterTypeIdOut,
-                    hasDigital: false,
-                    hasMechanical: false,
-                    pin: undefined,
-                  }),
-                  // ? CONTADOR DE ENTRADA
-                  new Counter({
-                    counterTypeId: counterTypeIdIn,
-                    hasDigital: false,
-                    hasMechanical: false,
-                    pin: undefined,
-                  }),
-                ],
+                counters: [],
               }),
             );
           }
@@ -111,30 +97,9 @@ class MachineCategoriesScript {
             typeMachineCategory.name === 'Mega Plush' ||
             typeMachineCategory.name === 'MAQ. DE TIRO'
           ) {
-            // ? CONTADORES DE ENTRADA
-            for (let i = 0; i < 2; i += 1) {
-              counters.push(
-                new Counter({
-                  counterTypeId: counterTypeIdIn,
-                  hasDigital: false,
-                  hasMechanical: false,
-                  pin: undefined,
-                }),
-              );
-            }
-            // ? CONTADOR DE SAIDA
-            counters.push(
-              new Counter({
-                counterTypeId: counterTypeIdOut,
-                hasDigital: false,
-                hasMechanical: false,
-                pin: undefined,
-              }),
-            );
-
             boxes.push(
               new Box({
-                counters,
+                counters: [],
               }),
             );
           }
@@ -143,22 +108,7 @@ class MachineCategoriesScript {
             for (let i = 0; i < 3; i += 1) {
               boxes.push(
                 new Box({
-                  counters: [
-                    // ? CONTADORES DE ENTRADA
-                    new Counter({
-                      counterTypeId: counterTypeIdIn,
-                      hasDigital: false,
-                      hasMechanical: false,
-                      pin: undefined,
-                    }),
-                    // ? CONTADORES DE SAIDA
-                    new Counter({
-                      counterTypeId: counterTypeIdOut,
-                      hasDigital: false,
-                      hasMechanical: false,
-                      pin: undefined,
-                    }),
-                  ],
+                  counters: [],
                 }),
               );
             }
@@ -171,22 +121,7 @@ class MachineCategoriesScript {
             for (let i = 0; i < 6; i += 1) {
               boxes.push(
                 new Box({
-                  counters: [
-                    // ? CONTADORES DE ENTRADA
-                    new Counter({
-                      counterTypeId: counterTypeIdIn,
-                      hasDigital: false,
-                      hasMechanical: false,
-                      pin: undefined,
-                    }),
-                    // ? CONTADORES DE SAIDA
-                    new Counter({
-                      counterTypeId: counterTypeIdOut,
-                      hasDigital: false,
-                      hasMechanical: false,
-                      pin: undefined,
-                    }),
-                  ],
+                  counters: [],
                 }),
               );
             }
@@ -217,7 +152,7 @@ class MachineCategoriesScript {
 
             boxes.push(
               new Box({
-                counters,
+                counters: [],
               }),
             );
           }
