@@ -99,7 +99,7 @@ let CreateOwnerService = class CreateOwnerService {
             type: type_1.default.OUT,
             ownerId: user.id,
         });
-        // await this.ormProvider.commit();
+        await this.ormProvider.commit();
     }
 };
 CreateOwnerService = __decorate([

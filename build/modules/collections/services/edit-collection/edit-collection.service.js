@@ -28,7 +28,6 @@ const storage_provider_1 = __importDefault(require("../../../../providers/storag
 const orm_provider_1 = __importDefault(require("../../../../providers/orm-provider/contracts/models/orm-provider"));
 const app_error_1 = __importDefault(require("../../../../shared/errors/app-error"));
 const tsyringe_1 = require("tsyringe");
-const logger_1 = __importDefault(require("../../../../config/logger"));
 let EditCollectionService = class EditCollectionService {
     constructor(collectionsRepository, usersRepository, telemetryLogsRepository, machinesRepository, pointsOfSaleRepository, ormProvider, storageProvider) {
         this.collectionsRepository = collectionsRepository;
@@ -146,8 +145,6 @@ let EditCollectionService = class EditCollectionService {
                     if (boxCollection.boxId === lastBoxCollection.boxId) {
                         boxCollection.counterCollections.forEach(counterCollection => {
                             if (counterCollection.counterId === lastCounterCollection.counterId) {
-                                logger_1.default.info('counterCollection.photoscounterCollection.photoscounterCollection.photoscounterCollection.photoscounterCollection.photos');
-                                logger_1.default.info(lastCounterCollection.photos);
                                 counterCollection.photos = [
                                     ...(counterCollection.photos ?? []),
                                     ...(lastCounterCollection.photos ?? []),
