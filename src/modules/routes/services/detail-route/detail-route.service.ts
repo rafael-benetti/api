@@ -139,7 +139,7 @@ class DetailRouteService {
       endDate = endOfDay(endDate);
     }
 
-    const { telemetryLogs } = await this.telemetryLogsRepository.find({
+    const telemetryLogs = await this.telemetryLogsRepository.find({
       filters: {
         routeId,
         date: {

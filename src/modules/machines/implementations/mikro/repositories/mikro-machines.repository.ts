@@ -116,12 +116,12 @@ class MikroMachinesRepository implements MachinesRepository {
       {
         ...(orderByLastCollection && {
           orderBy: {
-            lastCollection: 'DESC',
+            lastCollection: 'ASC',
           },
         }),
         ...(orderByLastConnection && {
           orderBy: {
-            lastConnection: 'DESC',
+            lastConnection: 'ASC',
           },
         }),
         limit,
@@ -238,7 +238,7 @@ class MikroMachinesRepository implements MachinesRepository {
 
       if (telemetryStatus === 'VIRGIN') {
         telemetryStatusQuery.telemetryBoardId = {
-          $ne: true,
+          $ne: null,
         };
         telemetryStatusQuery.lastConnection = null;
       }
@@ -253,6 +253,7 @@ class MikroMachinesRepository implements MachinesRepository {
       ...(groupIds && { groupId: groupIds }),
       ...(operatorId && { operatorId }),
       ...telemetryStatusQuery,
+      isActive: true,
     });
 
     return count;

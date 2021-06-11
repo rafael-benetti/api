@@ -104,6 +104,10 @@ export default class DashboardInfoService {
         })
       ).map(group => group.id);
 
+    if (user.role === Role.MANAGER)
+      if (user.groupIds) groupIds = user.groupIds as string[];
+      else throw AppError.missingGroupId;
+
     const machinesSortedByLastCollection = (
       await this.machinesRepository.find({
         orderByLastCollection: true,

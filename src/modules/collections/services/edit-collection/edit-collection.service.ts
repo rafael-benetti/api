@@ -11,7 +11,6 @@ import StorageProvider from '@providers/storage-provider/contracts/models/storag
 import OrmProvider from '@providers/orm-provider/contracts/models/orm-provider';
 import AppError from '@shared/errors/app-error';
 import { inject, injectable } from 'tsyringe';
-import logger from '@config/logger';
 
 interface Request {
   userId: string;
@@ -158,7 +157,7 @@ class EditCollectionService {
         lastCollection.previousCollectionId,
       );
 
-    const { telemetryLogs } = await this.telemetryLogsRepository.find({
+    const telemetryLogs = await this.telemetryLogsRepository.find({
       filters: {
         date: {
           startDate: previousCollection?.date,
@@ -214,11 +213,6 @@ class EditCollectionService {
               if (
                 counterCollection.counterId === lastCounterCollection.counterId
               ) {
-                logger.info(
-                  'counterCollection.photoscounterCollection.photoscounterCollection.photoscounterCollection.photoscounterCollection.photos',
-                );
-                logger.info(lastCounterCollection.photos);
-
                 counterCollection.photos = [
                   ...(counterCollection.photos ?? []),
                   ...(lastCounterCollection.photos ?? []),

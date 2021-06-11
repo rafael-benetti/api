@@ -198,7 +198,7 @@ class GeneratePointsOfSaleReportService {
       );
 
       const machineAnalyticsPromises = machines.map(async machine => {
-        const { telemetryLogs } = await this.telemetryLogsRepository.find({
+        const telemetryLogs = await this.telemetryLogsRepository.find({
           filters: {
             date: {
               startDate,
