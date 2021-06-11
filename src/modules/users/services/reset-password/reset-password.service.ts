@@ -52,9 +52,9 @@ class ResertPasswordService {
     this.mailProvider.send({
       receiverName: user.name,
       receiverEmail: user.email,
-      subject: 'Senha baga',
-      html: password,
-      text: password,
+      subject: 'Sua nova senha Sttigma está aqui',
+      html: `<p>Sua nova senha: ${password}</p>`,
+      text: `Sua nova senha: ${password}`,
     });
 
     await this.ormProvider.commit();

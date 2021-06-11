@@ -34,7 +34,7 @@ class RequestPasswordResetService {
 
       const emailTemplate = requestPasswordResetTemplate({
         receiverName: user.name,
-        resetPasswordLink: token,
+        resetPasswordLink: `https://app.sttigma.com.br/email-confirmado?token=${token}`,
       });
 
       this.mailProvider.send({
