@@ -103,7 +103,7 @@ async function exportGroupsReport({ groupsAnalytics, date, }) {
         sheet.addRow({
             Nome: item.groupLabel,
             Máquinas: item.numberOfMachines,
-            Income: item.income,
+            Faturamento: item.income,
             'Prêmios adquiridos': item.prizePurchaseAmount,
             'Investimento em prêmios': item.prizePurchaseCost,
             'Investimento em suprimentos': item.maintenance,
