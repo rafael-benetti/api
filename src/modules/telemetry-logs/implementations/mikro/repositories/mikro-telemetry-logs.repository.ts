@@ -341,7 +341,6 @@ class MikroTelemetryLogsRepository implements TelemetryLogsRepository {
             $dateToString: {
               format: `%Y-%m-%d${withHours ? 'T%H:00:00' : ''}`,
               date: '$date',
-              timezone: '00:00',
             },
           },
 
@@ -408,7 +407,6 @@ class MikroTelemetryLogsRepository implements TelemetryLogsRepository {
               $dateToString: {
                 format: `%Y-%m-%d${withHours ? 'T%H:00:00' : ''}`,
                 date: '$date',
-                timezone: '00:00',
               },
             },
           },
@@ -469,7 +467,6 @@ class MikroTelemetryLogsRepository implements TelemetryLogsRepository {
               $dateToString: {
                 format: `%Y-%m-%d${withHours ? 'T%H:00:00' : ''}`,
                 date: '$date',
-                timezone: '00:00',
               },
             },
             type: '$type',
