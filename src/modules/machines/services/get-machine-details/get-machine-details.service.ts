@@ -172,6 +172,7 @@ class GetMachineDetailsService {
     const transactionHistoryPromise = await this.telemetryLogsRepository.find({
       filters: {
         machineId,
+        groupId: machine.groupId,
       },
       limit: 5,
     });

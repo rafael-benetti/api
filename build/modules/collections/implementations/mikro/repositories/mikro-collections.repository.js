@@ -29,12 +29,12 @@ class MikroCollectionsRepository {
         }, {
             populate: [
                 'previousCollection',
+                'previousCollection.user',
                 'user',
                 'group',
                 'pointOfSale',
                 'route',
                 'machine',
-                'previousCollection.user',
             ],
         });
         return collection ? collections_mapper_1.default.map(collection) : undefined;
@@ -75,6 +75,7 @@ class MikroCollectionsRepository {
             offset: data.offset,
             populate: [
                 'previousCollection',
+                'previousCollection.user',
                 'user',
                 'group',
                 'pointOfSale',

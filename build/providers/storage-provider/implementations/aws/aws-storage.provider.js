@@ -17,7 +17,7 @@ class AwsStorageProvider {
     }
     async uploadFile(file) {
         const payload = {
-            Body: file,
+            Body: file.buffer,
             Bucket: aws_1.default.bucket,
             ACL: 'public-read',
             Key: uuid_1.v4(),

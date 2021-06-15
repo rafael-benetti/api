@@ -290,7 +290,7 @@ let MikroTelemetryLogsRepository = class MikroTelemetryLogsRepository {
                         $dateToString: {
                             format: `%Y-%m-%d${withHours ? 'T%H:00:00' : ''}`,
                             date: '$date',
-                            timezone: '-03:00',
+                            timezone: '00:00',
                         },
                     },
                     income: {
@@ -346,7 +346,7 @@ let MikroTelemetryLogsRepository = class MikroTelemetryLogsRepository {
                             $dateToString: {
                                 format: `%Y-%m-%d${withHours ? 'T%H:00:00' : ''}`,
                                 date: '$date',
-                                timezone: '-03:00',
+                                timezone: '00:00',
                             },
                         },
                     },
@@ -391,7 +391,7 @@ let MikroTelemetryLogsRepository = class MikroTelemetryLogsRepository {
                             $dateToString: {
                                 format: `%Y-%m-%d${withHours ? 'T%H:00:00' : ''}`,
                                 date: '$date',
-                                timezone: '-03:00',
+                                timezone: '00:00',
                             },
                         },
                         type: '$type',

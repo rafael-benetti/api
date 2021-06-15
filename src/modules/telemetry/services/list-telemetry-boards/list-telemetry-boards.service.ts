@@ -6,6 +6,7 @@ import AppError from '@shared/errors/app-error';
 import { inject, injectable } from 'tsyringe';
 
 interface Request {
+  groupId: string;
   userId: string;
   limit?: number;
   offset?: number;
@@ -21,7 +22,12 @@ class ListTelemetryBoardsService {
     private telemetryBoardsRepository: TelemetryBoardsRepository,
   ) {}
 
-  async execute({ userId, limit, offset }: Request): Promise<TelemetryBoard[]> {
+  async execute({
+    userId,
+    groupId,
+    limit,
+    offset,
+  }: Request): Promise<TelemetryBoard[]> {
     const user = await this.usersRepository.findOne({
       by: 'id',
       value: userId,
@@ -29,10 +35,18 @@ class ListTelemetryBoardsService {
 
     if (!user) throw AppError.userNotFound;
 
+    let groupIds;
+
+    if (groupId) {
+      groupIds = [groupId];
+    } else if (user.role === Role.MANAGER) {
+      groupIds = user.groupIds;
+    }
+
     const telemetryBoards = await this.telemetryBoardsRepository.find({
       filters: {
         ownerId: user.role === Role.OWNER ? user.id : undefined,
-        groupIds: user.role === Role.OWNER ? undefined : user.groupIds,
+        groupIds: user.role === Role.OWNER ? undefined : groupIds,
       },
       limit,
       offset,

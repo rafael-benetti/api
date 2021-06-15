@@ -84,11 +84,18 @@ let EditMachineService = class EditMachineService {
                     throw app_error_1.default.authorizationError;
             }
             machine.groupId = groupId;
+            if (machine.telemetryBoardId) {
+                const telemetryBoard = await this.telemetryBoardsRepository.findById(machine.telemetryBoardId);
+                if (telemetryBoard)
+                    telemetryBoard.machineId = undefined;
+                machine.telemetryBoardId = undefined;
+            }
             machine.operatorId = undefined;
             machine.locationId = undefined;
-            machine.telemetryBoardId = undefined;
             machine.typeOfPrize = undefined;
             machine.minimumPrizeCount = undefined;
+            machine.lastCollection = undefined;
+            machine.lastConnection = undefined;
             this.machinesRepository.save(machine);
             await this.ormProvider.commit();
             return machine;

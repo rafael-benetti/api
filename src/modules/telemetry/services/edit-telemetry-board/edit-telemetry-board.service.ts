@@ -41,7 +41,11 @@ class EditTelemetryBoardService {
 
     if (!user) throw AppError.userNotFound;
 
-    if (user.role !== Role.OWNER) throw AppError.authorizationError;
+    if (user.role !== Role.OWNER && user.role !== Role.MANAGER)
+      throw AppError.authorizationError;
+
+    if (user.role === Role.MANAGER && !user.permissions?.editGroups)
+      throw AppError.authorizationError;
 
     const telemetryBoard = await this.telemetryBoardsRepository.findById(
       telemetryId,
@@ -58,7 +62,11 @@ class EditTelemetryBoardService {
 
     if (!group) throw AppError.groupNotFound;
 
-    if (group.ownerId !== user.id) throw AppError.authorizationError;
+    if (user.role === Role.OWNER)
+      if (group.ownerId !== user.id) throw AppError.authorizationError;
+
+    if (user.role === Role.MANAGER)
+      if (!user.groupIds?.includes(groupId)) throw AppError.authorizationError;
 
     telemetryBoard.groupId = group.id;
 

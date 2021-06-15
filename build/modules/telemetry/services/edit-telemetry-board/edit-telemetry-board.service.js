@@ -37,7 +37,9 @@ let EditTelemetryBoardService = class EditTelemetryBoardService {
         });
         if (!user)
             throw app_error_1.default.userNotFound;
-        if (user.role !== role_1.default.OWNER)
+        if (user.role !== role_1.default.OWNER && user.role !== role_1.default.MANAGER)
+            throw app_error_1.default.authorizationError;
+        if (user.role === role_1.default.MANAGER && !user.permissions?.editGroups)
             throw app_error_1.default.authorizationError;
         const telemetryBoard = await this.telemetryBoardsRepository.findById(telemetryId);
         if (!telemetryBoard)
@@ -50,8 +52,12 @@ let EditTelemetryBoardService = class EditTelemetryBoardService {
         });
         if (!group)
             throw app_error_1.default.groupNotFound;
-        if (group.ownerId !== user.id)
-            throw app_error_1.default.authorizationError;
+        if (user.role === role_1.default.OWNER)
+            if (group.ownerId !== user.id)
+                throw app_error_1.default.authorizationError;
+        if (user.role === role_1.default.MANAGER)
+            if (!user.groupIds?.includes(groupId))
+                throw app_error_1.default.authorizationError;
         telemetryBoard.groupId = group.id;
         this.telemetryBoardsRepository.save(telemetryBoard);
         await this.ormProvider.commit();

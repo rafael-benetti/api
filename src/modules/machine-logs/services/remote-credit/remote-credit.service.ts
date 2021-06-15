@@ -61,7 +61,7 @@ export default class RemoteCreditService {
 
     const payload = {
       type: 'remoteCredit',
-      credit: 1,
+      credit: quantity,
     };
 
     this.mqttProvider.publish({

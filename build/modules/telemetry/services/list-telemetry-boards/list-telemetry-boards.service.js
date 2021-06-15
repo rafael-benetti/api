@@ -26,17 +26,24 @@ let ListTelemetryBoardsService = class ListTelemetryBoardsService {
         this.usersRepository = usersRepository;
         this.telemetryBoardsRepository = telemetryBoardsRepository;
     }
-    async execute({ userId, limit, offset }) {
+    async execute({ userId, groupId, limit, offset, }) {
         const user = await this.usersRepository.findOne({
             by: 'id',
             value: userId,
         });
         if (!user)
             throw app_error_1.default.userNotFound;
+        let groupIds;
+        if (groupId) {
+            groupIds = [groupId];
+        }
+        else if (user.role === role_1.default.MANAGER) {
+            groupIds = user.groupIds;
+        }
         const telemetryBoards = await this.telemetryBoardsRepository.find({
             filters: {
                 ownerId: user.role === role_1.default.OWNER ? user.id : undefined,
-                groupIds: user.role === role_1.default.OWNER ? undefined : user.groupIds,
+                groupIds: user.role === role_1.default.OWNER ? undefined : groupIds,
             },
             limit,
             offset,

@@ -29,12 +29,12 @@ export default class MikroCollectionsRepository
       {
         populate: [
           'previousCollection',
+          'previousCollection.user',
           'user',
           'group',
           'pointOfSale',
           'route',
           'machine',
-          'previousCollection.user',
         ],
       },
     );
@@ -86,6 +86,7 @@ export default class MikroCollectionsRepository
         offset: data.offset,
         populate: [
           'previousCollection',
+          'previousCollection.user',
           'user',
           'group',
           'pointOfSale',

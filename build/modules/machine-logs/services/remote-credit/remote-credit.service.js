@@ -51,7 +51,7 @@ let RemoteCreditService = class RemoteCreditService {
             throw app_error_1.default.telemetryBoardNotFound;
         const payload = {
             type: 'remoteCredit',
-            credit: 1,
+            credit: quantity,
         };
         this.mqttProvider.publish({
             topic: `sub/${machine.telemetryBoardId}`,
