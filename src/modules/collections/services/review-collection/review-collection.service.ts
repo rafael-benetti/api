@@ -11,6 +11,12 @@ interface Request {
   collectionId: string;
 }
 
+interface Response {
+  date: Date;
+  reviewedBy: string;
+  reviewerName: string;
+}
+
 @injectable()
 class ReviewCollectionService {
   constructor(
@@ -27,7 +33,7 @@ class ReviewCollectionService {
     private ormProvider: OrmProvider,
   ) {}
 
-  async execute({ userId, collectionId }: Request): Promise<void> {
+  async execute({ userId, collectionId }: Request): Promise<Response> {
     const user = await this.usersRepository.findOne({
       by: 'id',
       value: userId,
@@ -70,6 +76,8 @@ class ReviewCollectionService {
     this.collectionsRepository.save(collection);
 
     await this.ormProvider.commit();
+
+    return collection.reviewedData;
   }
 }
 

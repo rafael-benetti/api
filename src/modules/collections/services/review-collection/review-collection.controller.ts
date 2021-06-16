@@ -16,12 +16,12 @@ abstract class ReviewCollectionController {
 
     const reviewCollectionService = container.resolve(ReviewCollectionService);
 
-    await reviewCollectionService.execute({
+    const reviewedData = await reviewCollectionService.execute({
       collectionId,
       userId,
     });
 
-    return res.status(204).json();
+    return res.json(reviewedData);
   }
 }
 
