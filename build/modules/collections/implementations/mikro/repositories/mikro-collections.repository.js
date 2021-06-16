@@ -57,6 +57,7 @@ class MikroCollectionsRepository {
                 },
             }),
             ...(data.machineId && { machineId: data.machineId }),
+            ...(data.pointOfSaleId && { pointOfSaleId: data.pointOfSaleId }),
             ...(data.startDate && {
                 date: {
                     $gte: data.startDate,
