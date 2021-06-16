@@ -11,11 +11,11 @@ class ReviewCollectionController {
         const { userId } = req;
         const { collectionId } = req.params;
         const reviewCollectionService = tsyringe_1.container.resolve(review_collection_service_1.default);
-        await reviewCollectionService.execute({
+        const reviewedData = await reviewCollectionService.execute({
             collectionId,
             userId,
         });
-        return res.status(204).json();
+        return res.json(reviewedData);
     }
 }
 ReviewCollectionController.validate = celebrate_1.celebrate({

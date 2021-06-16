@@ -62,6 +62,7 @@ let ReviewCollectionService = class ReviewCollectionService {
         };
         this.collectionsRepository.save(collection);
         await this.ormProvider.commit();
+        return collection.reviewedData;
     }
 };
 ReviewCollectionService = __decorate([
