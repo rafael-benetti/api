@@ -9,10 +9,11 @@ class ListTelemetryBoardsController {
 }
 ListTelemetryBoardsController.handle = async (req, res) => {
     const { userId } = req;
-    const { groupId, limit, offset } = req.query;
+    const { groupId, telemetryBoardId, limit, offset } = req.query;
     const listTelemetryBoards = tsyringe_1.container.resolve(list_telemetry_boards_service_1.default);
     const telemetryBoards = await listTelemetryBoards.execute({
         userId,
+        telemetryBoardId: telemetryBoardId ? Number(telemetryBoardId) : undefined,
         groupId: groupId,
         limit: limit ? Number(limit) : undefined,
         offset: offset ? Number(offset) : undefined,

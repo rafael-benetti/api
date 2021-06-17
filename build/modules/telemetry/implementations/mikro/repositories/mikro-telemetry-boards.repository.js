@@ -49,6 +49,10 @@ let MikroTelemetryBoardsRepository = class MikroTelemetryBoardsRepository {
             query.groupId = {
                 $in: data.filters.groupIds,
             };
+        if (data.filters.id)
+            query.id = {
+                id: data.filters.id,
+            };
         if (data.filters.ownerId)
             query.ownerId = data.filters.ownerId;
         const [telemetryBoards, count] = await this.repository.findAndCount({ ...query }, {

@@ -15,6 +15,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
+const logger_1 = __importDefault(require("../../../../config/logger"));
 const telemetry_board_1 = __importDefault(require("../../contracts/entities/telemetry-board"));
 const telemetry_boards_repository_1 = __importDefault(require("../../contracts/repositories/telemetry-boards.repository"));
 const role_1 = __importDefault(require("../../../users/contracts/enums/role"));
@@ -26,7 +27,7 @@ let ListTelemetryBoardsService = class ListTelemetryBoardsService {
         this.usersRepository = usersRepository;
         this.telemetryBoardsRepository = telemetryBoardsRepository;
     }
-    async execute({ userId, groupId, limit, offset, }) {
+    async execute({ userId, groupId, telemetryBoardId, limit, offset, }) {
         const user = await this.usersRepository.findOne({
             by: 'id',
             value: userId,
@@ -40,8 +41,10 @@ let ListTelemetryBoardsService = class ListTelemetryBoardsService {
         else if (user.role === role_1.default.MANAGER) {
             groupIds = user.groupIds;
         }
+        logger_1.default.info(telemetryBoardId);
         const { telemetryBoards, count, } = await this.telemetryBoardsRepository.find({
             filters: {
+                id: telemetryBoardId,
                 ownerId: user.role === role_1.default.OWNER ? user.id : undefined,
                 groupIds: user.role === role_1.default.OWNER ? undefined : groupIds,
             },
