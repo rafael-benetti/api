@@ -27,7 +27,10 @@ class ListTelemetryBoardsService {
     groupId,
     limit,
     offset,
-  }: Request): Promise<TelemetryBoard[]> {
+  }: Request): Promise<{
+    telemetryBoards: TelemetryBoard[];
+    count: number;
+  }> {
     const user = await this.usersRepository.findOne({
       by: 'id',
       value: userId,
@@ -43,7 +46,10 @@ class ListTelemetryBoardsService {
       groupIds = user.groupIds;
     }
 
-    const telemetryBoards = await this.telemetryBoardsRepository.find({
+    const {
+      telemetryBoards,
+      count,
+    } = await this.telemetryBoardsRepository.find({
       filters: {
         ownerId: user.role === Role.OWNER ? user.id : undefined,
         groupIds: user.role === Role.OWNER ? undefined : groupIds,
@@ -52,7 +58,7 @@ class ListTelemetryBoardsService {
       offset,
     });
 
-    return telemetryBoards;
+    return { telemetryBoards, count };
   }
 }
 

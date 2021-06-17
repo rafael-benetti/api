@@ -37,7 +37,12 @@ class MikroTelemetryBoardsRepository implements TelemetryBoardsRepository {
       : undefined;
   }
 
-  async find(data: FindTelemetryBoardsDto): Promise<TelemetryBoard[]> {
+  async find(
+    data: FindTelemetryBoardsDto,
+  ): Promise<{
+    telemetryBoards: TelemetryBoard[];
+    count: number;
+  }> {
     const query: { [key: string]: unknown } = {};
 
     if (data.filters.groupIds)
@@ -47,7 +52,7 @@ class MikroTelemetryBoardsRepository implements TelemetryBoardsRepository {
 
     if (data.filters.ownerId) query.ownerId = data.filters.ownerId;
 
-    const telemetryBoards = (await this.repository.find(
+    const [telemetryBoards, count] = await this.repository.findAndCount(
       { ...query },
       {
         limit: data.limit,
@@ -63,9 +68,14 @@ class MikroTelemetryBoardsRepository implements TelemetryBoardsRepository {
           'connectionType',
         ],
       },
-    )) as MikroTelemetryBoard[];
+    );
 
-    return telemetryBoards.map(board => TelemetryBoardMapper.toApi(board));
+    return {
+      telemetryBoards: telemetryBoards.map(board =>
+        TelemetryBoardMapper.toApi(board),
+      ),
+      count,
+    };
   }
 
   save(data: TelemetryBoard): void {
