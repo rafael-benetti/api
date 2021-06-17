@@ -40,7 +40,7 @@ let ListTelemetryBoardsService = class ListTelemetryBoardsService {
         else if (user.role === role_1.default.MANAGER) {
             groupIds = user.groupIds;
         }
-        const telemetryBoards = await this.telemetryBoardsRepository.find({
+        const { telemetryBoards, count, } = await this.telemetryBoardsRepository.find({
             filters: {
                 ownerId: user.role === role_1.default.OWNER ? user.id : undefined,
                 groupIds: user.role === role_1.default.OWNER ? undefined : groupIds,
@@ -48,7 +48,7 @@ let ListTelemetryBoardsService = class ListTelemetryBoardsService {
             limit,
             offset,
         });
-        return telemetryBoards;
+        return { telemetryBoards, count };
     }
 };
 ListTelemetryBoardsService = __decorate([

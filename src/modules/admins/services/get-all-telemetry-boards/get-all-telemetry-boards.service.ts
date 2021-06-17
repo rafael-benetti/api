@@ -10,7 +10,7 @@ class GetAllTelemetryBoardsService {
   ) {}
 
   async execute(): Promise<TelemetryBoard[]> {
-    const telemetryBoards = this.telemetryBoardsRepository.find({
+    const { telemetryBoards } = await this.telemetryBoardsRepository.find({
       filters: {},
     });
 

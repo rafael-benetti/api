@@ -23,7 +23,7 @@ let GetAllTelemetryBoardsService = class GetAllTelemetryBoardsService {
         this.telemetryBoardsRepository = telemetryBoardsRepository;
     }
     async execute() {
-        const telemetryBoards = this.telemetryBoardsRepository.find({
+        const { telemetryBoards } = await this.telemetryBoardsRepository.find({
             filters: {},
         });
         return telemetryBoards;

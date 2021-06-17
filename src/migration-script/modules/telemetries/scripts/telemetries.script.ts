@@ -90,7 +90,7 @@ class TelemetriesScript {
 
   async setMachineId(): Promise<void> {
     this.ormProvider.clear();
-    const telemetryBoards = await this.telemetryBoardsRepository.find({
+    const { telemetryBoards } = await this.telemetryBoardsRepository.find({
       filters: {},
     });
 

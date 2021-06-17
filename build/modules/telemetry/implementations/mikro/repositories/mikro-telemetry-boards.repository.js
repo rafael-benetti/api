@@ -51,7 +51,7 @@ let MikroTelemetryBoardsRepository = class MikroTelemetryBoardsRepository {
             };
         if (data.filters.ownerId)
             query.ownerId = data.filters.ownerId;
-        const telemetryBoards = (await this.repository.find({ ...query }, {
+        const [telemetryBoards, count] = await this.repository.findAndCount({ ...query }, {
             limit: data.limit,
             offset: data.offset,
             populate: ['machine'],
@@ -64,8 +64,11 @@ let MikroTelemetryBoardsRepository = class MikroTelemetryBoardsRepository {
                 'connectionStrength',
                 'connectionType',
             ],
-        }));
-        return telemetryBoards.map(board => telemetry_board_mapper_1.default.toApi(board));
+        });
+        return {
+            telemetryBoards: telemetryBoards.map(board => telemetry_board_mapper_1.default.toApi(board)),
+            count,
+        };
     }
     save(data) {
         const telemetryBoard = telemetry_board_mapper_1.default.toOrm(data);
