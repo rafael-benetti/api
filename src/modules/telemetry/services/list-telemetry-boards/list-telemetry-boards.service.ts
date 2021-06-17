@@ -1,3 +1,4 @@
+import logger from '@config/logger';
 import TelemetryBoard from '@modules/telemetry/contracts/entities/telemetry-board';
 import TelemetryBoardsRepository from '@modules/telemetry/contracts/repositories/telemetry-boards.repository';
 import Role from '@modules/users/contracts/enums/role';
@@ -8,6 +9,7 @@ import { inject, injectable } from 'tsyringe';
 interface Request {
   groupId: string;
   userId: string;
+  telemetryBoardId?: number;
   limit?: number;
   offset?: number;
 }
@@ -25,6 +27,7 @@ class ListTelemetryBoardsService {
   async execute({
     userId,
     groupId,
+    telemetryBoardId,
     limit,
     offset,
   }: Request): Promise<{
@@ -46,11 +49,13 @@ class ListTelemetryBoardsService {
       groupIds = user.groupIds;
     }
 
+    logger.info(telemetryBoardId);
     const {
       telemetryBoards,
       count,
     } = await this.telemetryBoardsRepository.find({
       filters: {
+        id: telemetryBoardId,
         ownerId: user.role === Role.OWNER ? user.id : undefined,
         groupIds: user.role === Role.OWNER ? undefined : groupIds,
       },

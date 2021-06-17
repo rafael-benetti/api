@@ -2,6 +2,7 @@ interface FindTelemetryBoardsDto {
   filters: {
     groupIds?: string[];
     ownerId?: string;
+    id?: number;
   };
   limit?: number;
   offset?: number;
