@@ -106,6 +106,7 @@ class DetailRouteService {
     const { pointsOfSale } = await this.pointsOfSaleRepository.find({
       by: 'routeId',
       value: route.id,
+      populate: ['group'],
     });
 
     let operator;

@@ -15,7 +15,6 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-const logger_1 = __importDefault(require("../../../../config/logger"));
 const period_dto_1 = __importDefault(require("../../../machines/contracts/dtos/period.dto"));
 const point_of_sale_1 = __importDefault(require("../../../points-of-sale/contracts/models/point-of-sale"));
 const points_of_sale_repository_1 = __importDefault(require("../../../points-of-sale/contracts/repositories/points-of-sale.repository"));
@@ -59,6 +58,7 @@ let DetailRouteService = class DetailRouteService {
         const { pointsOfSale } = await this.pointsOfSaleRepository.find({
             by: 'routeId',
             value: route.id,
+            populate: ['group'],
         });
         let operator;
         if (route.operatorId)
@@ -100,7 +100,6 @@ let DetailRouteService = class DetailRouteService {
                 },
             },
         });
-        logger_1.default.info(telemetryLogs);
         const telemetryLogsIn = telemetryLogs.filter(telemetryLog => telemetryLog.type === 'IN');
         const telemetryLogsOut = telemetryLogs.filter(telemetryLog => telemetryLog.type === 'OUT');
         // ? FATURAMENTO

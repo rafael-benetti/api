@@ -44,8 +44,12 @@ let EditTelemetryBoardService = class EditTelemetryBoardService {
         const telemetryBoard = await this.telemetryBoardsRepository.findById(telemetryId);
         if (!telemetryBoard)
             throw app_error_1.default.telemetryBoardNotFound;
-        if (telemetryBoard.ownerId !== user.id)
-            throw app_error_1.default.authorizationError;
+        if (user.role === role_1.default.MANAGER)
+            if (!user.groupIds?.includes(telemetryBoard.groupId))
+                throw app_error_1.default.authorizationError;
+        if (user.role === role_1.default.OWNER)
+            if (telemetryBoard.ownerId !== user.id)
+                throw app_error_1.default.authorizationError;
         const group = await this.groupsRepository.findOne({
             by: 'id',
             value: groupId,

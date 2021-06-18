@@ -36,6 +36,7 @@ let ListTelemetryBoardsService = class ListTelemetryBoardsService {
         if (!user)
             throw app_error_1.default.userNotFound;
         let groupIds;
+        let telemetryBoardIds;
         if (groupId) {
             groupIds = [groupId];
         }
@@ -46,13 +47,18 @@ let ListTelemetryBoardsService = class ListTelemetryBoardsService {
             const { machines } = await this.machinesRepository.find({
                 operatorId: user.id,
             });
-            groupIds = machines.map(machine => machine.groupId);
+            telemetryBoardIds = machines
+                .map(machine => machine.telemetryBoardId)
+                .filter(telemetryBoardId => telemetryBoardId);
+            groupIds = user.groupIds;
         }
+        if (telemetryBoardId)
+            telemetryBoardIds = [telemetryBoardId];
         const { telemetryBoards, count, } = await this.telemetryBoardsRepository.find({
             filters: {
-                id: telemetryBoardId,
+                id: telemetryBoardIds,
                 ownerId: user.role === role_1.default.OWNER && !groupId ? user.id : undefined,
-                groupIds,
+                groupIds: user.role === role_1.default.OWNER && groupId ? undefined : groupIds,
             },
             limit,
             offset,

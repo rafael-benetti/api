@@ -16,7 +16,6 @@ class MqttClientProvider {
         });
     }
     async publish({ payload, topic }) {
-        logger_1.default.info(this.client.connected);
         this.client.publish(topic, payload, {
             qos: 1,
         });

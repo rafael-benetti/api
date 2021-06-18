@@ -1,9 +1,12 @@
+import Group from '@modules/groups/contracts/models/group';
 import CreateTelemetryBoardDto from '../dtos/create-telemetry-board.dto';
 
 class TelemetryBoard {
   id: number;
 
   groupId: string;
+
+  group?: Group;
 
   integratedCircuitCardId?: string;
 

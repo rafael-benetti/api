@@ -83,12 +83,9 @@ let EditOperatorService = class EditOperatorService {
                 delete machine.operatorId;
                 this.machinesRepository.save(machine);
             });
-            let uncommonGroups;
-            if (user.role === role_1.default.OWNER) {
-                uncommonGroups = operator.groupIds?.filter(group => !operator.groupIds
-                    ?.filter(group => user.groupIds?.includes(group))
-                    ?.includes(group));
-            }
+            const uncommonGroups = user.groupIds?.filter(group => !user.groupIds
+                ?.filter(group => universe.includes(group))
+                ?.includes(group));
             operator.groupIds = [...groupIds, ...(uncommonGroups || [])];
         }
         if (permissions) {

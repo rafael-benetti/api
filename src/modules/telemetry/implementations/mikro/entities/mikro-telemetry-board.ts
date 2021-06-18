@@ -1,4 +1,5 @@
 import { Entity, OneToOne, PrimaryKey, Property } from '@mikro-orm/core';
+import MikroGroup from '@modules/groups/implementations/mikro/models/mikro-group';
 import MikroMachine from '@modules/machines/implementations/mikro/models/mikro-machine';
 import CreateTelemetryBoardDto from '@modules/telemetry/contracts/dtos/create-telemetry-board.dto';
 import TelemetryBoard from '@modules/telemetry/contracts/entities/telemetry-board';
@@ -13,6 +14,9 @@ class MikroTelemetryBoard implements TelemetryBoard {
 
   @Property()
   groupId: string;
+
+  @OneToOne({ name: 'groupId' })
+  group?: MikroGroup;
 
   @Property()
   integratedCircuitCardId?: string;

@@ -46,7 +46,7 @@ class ListTelemetryBoardsService {
 
     let groupIds;
 
-    let telemetryBoardIds: number[] = [];
+    let telemetryBoardIds: number[] | undefined;
 
     if (groupId) {
       groupIds = [groupId];
@@ -59,16 +59,20 @@ class ListTelemetryBoardsService {
       telemetryBoardIds = machines
         .map(machine => machine.telemetryBoardId)
         .filter(telemetryBoardId => telemetryBoardId) as number[];
+
+      groupIds = user.groupIds;
     }
+
+    if (telemetryBoardId) telemetryBoardIds = [telemetryBoardId];
 
     const {
       telemetryBoards,
       count,
     } = await this.telemetryBoardsRepository.find({
       filters: {
-        id: telemetryBoardId || telemetryBoardIds,
+        id: telemetryBoardIds,
         ownerId: user.role === Role.OWNER && !groupId ? user.id : undefined,
-        groupIds,
+        groupIds: user.role === Role.OWNER && groupId ? undefined : groupIds,
       },
       limit,
       offset,

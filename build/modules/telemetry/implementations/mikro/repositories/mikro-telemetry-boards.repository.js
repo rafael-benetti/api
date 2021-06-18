@@ -38,6 +38,18 @@ let MikroTelemetryBoardsRepository = class MikroTelemetryBoardsRepository {
     async findById(id) {
         const telemetryBoard = await this.repository.findOne({
             id,
+        }, {
+            populate: ['machine', 'group'],
+            fields: [
+                'ownerId',
+                'groupId',
+                'group',
+                'machineId',
+                'machine.serialNumber',
+                'lastConnection',
+                'connectionStrength',
+                'connectionType',
+            ],
         });
         return telemetryBoard
             ? telemetry_board_mapper_1.default.toApi(telemetryBoard)
@@ -51,17 +63,18 @@ let MikroTelemetryBoardsRepository = class MikroTelemetryBoardsRepository {
             };
         if (data.filters.id)
             query.id = {
-                id: data.filters.id,
+                $in: data.filters.id,
             };
         if (data.filters.ownerId)
             query.ownerId = data.filters.ownerId;
         const [telemetryBoards, count] = await this.repository.findAndCount({ ...query }, {
             limit: data.limit,
             offset: data.offset,
-            populate: ['machine'],
+            populate: ['machine', 'group'],
             fields: [
                 'ownerId',
                 'groupId',
+                'group',
                 'machineId',
                 'machine.serialNumber',
                 'lastConnection',

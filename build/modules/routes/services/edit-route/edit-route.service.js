@@ -51,7 +51,7 @@ let EditRouteService = class EditRouteService {
         if (user.role === role_1.default.MANAGER) {
             if (!user.permissions?.editRoutes)
                 throw app_error_1.default.authorizationError;
-            if (user.groupIds?.some(groupId => !route.groupIds.includes(groupId)))
+            if (route.groupIds?.some(groupId => !user.groupIds?.includes(groupId)))
                 throw app_error_1.default.authorizationError;
         }
         if (user.role === role_1.default.OWNER) {
@@ -86,7 +86,7 @@ let EditRouteService = class EditRouteService {
         ];
         if (groupIds !== undefined) {
             if (user.role === role_1.default.MANAGER)
-                if (user.groupIds?.some(groupId => !groupIds.includes(groupId)))
+                if (groupIds?.some(groupId => !user.groupIds?.includes(groupId)))
                     throw app_error_1.default.authorizationError;
             if (user.role === role_1.default.OWNER) {
                 const userGroups = await this.groupsRepository.find({

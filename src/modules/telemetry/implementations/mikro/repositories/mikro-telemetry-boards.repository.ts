@@ -28,9 +28,24 @@ class MikroTelemetryBoardsRepository implements TelemetryBoardsRepository {
   }
 
   async findById(id: number): Promise<TelemetryBoard | undefined> {
-    const telemetryBoard = await this.repository.findOne({
-      id,
-    });
+    const telemetryBoard = await this.repository.findOne(
+      {
+        id,
+      },
+      {
+        populate: ['machine', 'group'],
+        fields: [
+          'ownerId',
+          'groupId',
+          'group',
+          'machineId',
+          'machine.serialNumber',
+          'lastConnection',
+          'connectionStrength',
+          'connectionType',
+        ],
+      },
+    );
 
     return telemetryBoard
       ? TelemetryBoardMapper.toApi(telemetryBoard)
@@ -62,10 +77,11 @@ class MikroTelemetryBoardsRepository implements TelemetryBoardsRepository {
       {
         limit: data.limit,
         offset: data.offset,
-        populate: ['machine'],
+        populate: ['machine', 'group'],
         fields: [
           'ownerId',
           'groupId',
+          'group',
           'machineId',
           'machine.serialNumber',
           'lastConnection',

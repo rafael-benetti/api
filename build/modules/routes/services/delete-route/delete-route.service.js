@@ -15,7 +15,6 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-const logger_1 = __importDefault(require("../../../../config/logger"));
 const groups_repository_1 = __importDefault(require("../../../groups/contracts/repositories/groups.repository"));
 const points_of_sale_repository_1 = __importDefault(require("../../../points-of-sale/contracts/repositories/points-of-sale.repository"));
 const routes_repository_1 = __importDefault(require("../../contracts/repositories/routes.repository"));

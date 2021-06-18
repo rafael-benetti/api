@@ -13,6 +13,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 const core_1 = require("@mikro-orm/core");
+const mikro_group_1 = __importDefault(require("../../../../groups/implementations/mikro/models/mikro-group"));
 const mikro_machine_1 = __importDefault(require("../../../../machines/implementations/mikro/models/mikro-machine"));
 const create_telemetry_board_dto_1 = __importDefault(require("../../../contracts/dtos/create-telemetry-board.dto"));
 const telemetry_board_1 = __importDefault(require("../../../contracts/entities/telemetry-board"));
@@ -41,6 +42,10 @@ __decorate([
     core_1.Property(),
     __metadata("design:type", String)
 ], MikroTelemetryBoard.prototype, "groupId", void 0);
+__decorate([
+    core_1.OneToOne({ name: 'groupId' }),
+    __metadata("design:type", mikro_group_1.default)
+], MikroTelemetryBoard.prototype, "group", void 0);
 __decorate([
     core_1.Property(),
     __metadata("design:type", String)

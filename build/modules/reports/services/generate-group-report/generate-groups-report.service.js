@@ -29,7 +29,6 @@ const bluebird_1 = require("bluebird");
 const machine_logs_repository_1 = __importDefault(require("../../../machine-logs/contracts/repositories/machine-logs.repository"));
 const machine_log_type_1 = __importDefault(require("../../../machine-logs/contracts/enums/machine-log-type"));
 const date_fns_1 = require("date-fns");
-const logger_1 = __importDefault(require("../../../../config/logger"));
 const export_groups_report_1 = __importDefault(require("./export-groups-report"));
 let GenerateGroupReportService = class GenerateGroupReportService {
     constructor(usersRepository, telemetryLogsRepository, groupsRepository, machinesRepository, productLogsRepository, pointsOfSaleRepository, machineLogsRepository) {
@@ -58,11 +57,9 @@ let GenerateGroupReportService = class GenerateGroupReportService {
                     ids: groupIds,
                 },
             });
-            logger_1.default.info(groupIds);
             if (user.role === role_1.default.OWNER)
                 if (groups.some(group => group.ownerId !== user.id))
                     throw app_error_1.default.authorizationError;
-            logger_1.default.info('ai');
             if (user.role === role_1.default.MANAGER)
                 if (groups.some(group => !user.groupIds?.includes(group.id)))
                     throw app_error_1.default.authorizationError;

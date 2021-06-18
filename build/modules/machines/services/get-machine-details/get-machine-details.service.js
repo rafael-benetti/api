@@ -15,7 +15,6 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-const logger_1 = __importDefault(require("../../../../config/logger"));
 const collections_repository_1 = __importDefault(require("../../../collections/contracts/repositories/collections.repository"));
 const couter_types_repository_1 = __importDefault(require("../../../counter-types/contracts/repositories/couter-types.repository"));
 const machine_log_1 = __importDefault(require("../../../machine-logs/contracts/entities/machine-log"));
@@ -74,7 +73,6 @@ let GetMachineDetailsService = class GetMachineDetailsService {
         }
         if (period) {
             endDate = new Date(Date.now());
-            logger_1.default.info(endDate);
             if (period === period_dto_1.default.DAILY)
                 startDate = date_fns_1.subDays(endDate, 1);
             if (period === period_dto_1.default.WEEKLY)

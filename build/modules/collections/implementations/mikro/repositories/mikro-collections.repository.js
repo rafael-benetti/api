@@ -3,7 +3,6 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-const logger_1 = __importDefault(require("../../../../../config/logger"));
 const create_collection_dto_1 = __importDefault(require("../../../contracts/dtos/create-collection.dto"));
 const find_collections_dto_1 = __importDefault(require("../../../contracts/dtos/find-collections.dto"));
 const collection_1 = __importDefault(require("../../../contracts/entities/collection"));
@@ -23,7 +22,6 @@ class MikroCollectionsRepository {
         return collections_mapper_1.default.map(collection);
     }
     async findOne(collectionId) {
-        logger_1.default.info(collectionId);
         const collection = await this.repository.findOne({
             id: collectionId,
         }, {
