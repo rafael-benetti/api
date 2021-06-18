@@ -13,7 +13,6 @@ import MachineLogsRepository from '@modules/machine-logs/contracts/repositories/
 import MachineLogType from '@modules/machine-logs/contracts/enums/machine-log-type';
 import { endOfDay, startOfDay } from 'date-fns';
 import ExcelJS from 'exceljs';
-import logger from '@config/logger';
 import exportGroupsReport from './export-groups-report';
 
 interface Request {
@@ -96,13 +95,11 @@ export default class GenerateGroupReportService {
           ids: groupIds,
         },
       });
-      logger.info(groupIds);
 
       if (user.role === Role.OWNER)
         if (groups.some(group => group.ownerId !== user.id))
           throw AppError.authorizationError;
 
-      logger.info('ai');
       if (user.role === Role.MANAGER)
         if (groups.some(group => !user.groupIds?.includes(group.id)))
           throw AppError.authorizationError;

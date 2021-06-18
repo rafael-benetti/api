@@ -65,7 +65,7 @@ class EditRouteService {
     if (user.role === Role.MANAGER) {
       if (!user.permissions?.editRoutes) throw AppError.authorizationError;
 
-      if (user.groupIds?.some(groupId => !route.groupIds.includes(groupId)))
+      if (route.groupIds?.some(groupId => !user.groupIds?.includes(groupId)))
         throw AppError.authorizationError;
     }
 
@@ -111,7 +111,7 @@ class EditRouteService {
 
     if (groupIds !== undefined) {
       if (user.role === Role.MANAGER)
-        if (user.groupIds?.some(groupId => !groupIds.includes(groupId)))
+        if (groupIds?.some(groupId => !user.groupIds?.includes(groupId)))
           throw AppError.authorizationError;
 
       if (user.role === Role.OWNER) {

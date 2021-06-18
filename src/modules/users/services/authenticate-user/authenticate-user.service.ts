@@ -1,4 +1,3 @@
-import logger from '@config/logger';
 import User from '@modules/users/contracts/models/user';
 import UsersRepository from '@modules/users/contracts/repositories/users.repository';
 import HashProvider from '@providers/hash-provider/contracts/models/hash-provider';

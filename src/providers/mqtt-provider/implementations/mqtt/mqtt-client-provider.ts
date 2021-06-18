@@ -11,7 +11,6 @@ export default class MqttClientProvider implements MqttProvider {
   });
 
   async publish({ payload, topic }: PublishMqttDto): Promise<void> {
-    logger.info(this.client.connected);
     this.client.publish(topic, payload, {
       qos: 1,
     });

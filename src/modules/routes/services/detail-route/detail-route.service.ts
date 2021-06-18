@@ -1,4 +1,3 @@
-import logger from '@config/logger';
 import Period from '@modules/machines/contracts/dtos/period.dto';
 import PointOfSale from '@modules/points-of-sale/contracts/models/point-of-sale';
 import PointsOfSaleRepository from '@modules/points-of-sale/contracts/repositories/points-of-sale.repository';
@@ -149,8 +148,6 @@ class DetailRouteService {
         },
       },
     });
-
-    logger.info(telemetryLogs);
 
     const telemetryLogsIn = telemetryLogs.filter(
       telemetryLog => telemetryLog.type === 'IN',

@@ -1,3 +1,4 @@
+import logger from '@config/logger';
 import { RequestHandler } from 'express';
 import { container } from 'tsyringe';
 import EditOperatorService from './edit-operator.service';
@@ -7,6 +8,7 @@ abstract class EditOperatorController {
     const { userId } = req;
     const { operatorId } = req.params;
     const { groupIds, permissions, phoneNumber, isActive } = req.body;
+    logger.info(groupIds);
 
     const editOperator = container.resolve(EditOperatorService);
 

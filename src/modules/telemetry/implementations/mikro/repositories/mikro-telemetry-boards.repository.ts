@@ -52,7 +52,7 @@ class MikroTelemetryBoardsRepository implements TelemetryBoardsRepository {
 
     if (data.filters.id)
       query.id = {
-        id: data.filters.id,
+        $in: data.filters.id,
       };
 
     if (data.filters.ownerId) query.ownerId = data.filters.ownerId;

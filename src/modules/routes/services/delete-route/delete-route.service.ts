@@ -1,4 +1,3 @@
-import logger from '@config/logger';
 import GroupsRepository from '@modules/groups/contracts/repositories/groups.repository';
 import PointsOfSaleRepository from '@modules/points-of-sale/contracts/repositories/points-of-sale.repository';
 import RoutesRepository from '@modules/routes/contracts/repositories/routes.repository';
@@ -8,7 +7,6 @@ import OrmProvider from '@providers/orm-provider/contracts/models/orm-provider';
 import AppError from '@shared/errors/app-error';
 
 import { inject, injectable } from 'tsyringe';
-import { TreeLevelColumn } from 'typeorm';
 
 interface Request {
   userId: string;

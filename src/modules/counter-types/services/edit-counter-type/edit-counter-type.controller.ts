@@ -1,4 +1,3 @@
-import logger from '@config/logger';
 import { Request, Response } from 'express';
 import { container } from 'tsyringe';
 import EditCounterTypeService from './edit-counter-type.service';
