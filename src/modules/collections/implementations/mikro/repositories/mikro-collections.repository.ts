@@ -1,4 +1,3 @@
-import logger from '@config/logger';
 import createCollectionDto from '@modules/collections/contracts/dtos/create-collection.dto';
 import FindCollectionsDto from '@modules/collections/contracts/dtos/find-collections.dto';
 
@@ -21,7 +20,6 @@ export default class MikroCollectionsRepository
   }
 
   async findOne(collectionId: string): Promise<Collection | undefined> {
-    logger.info(collectionId);
     const collection = await this.repository.findOne(
       {
         id: collectionId,

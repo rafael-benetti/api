@@ -1,4 +1,5 @@
 import PointOfSale from '@modules/points-of-sale/contracts/models/point-of-sale';
+import TelemetryBoard from '@modules/telemetry/contracts/entities/telemetry-board';
 import Box from './box';
 
 class Machine {
@@ -9,6 +10,8 @@ class Machine {
   categoryLabel: string;
 
   telemetryBoardId?: number;
+
+  telemetryBoard?: TelemetryBoard;
 
   groupId: string;
 

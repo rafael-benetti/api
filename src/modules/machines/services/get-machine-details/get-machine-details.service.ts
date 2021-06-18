@@ -1,4 +1,3 @@
-import logger from '@config/logger';
 import CollectionsRepository from '@modules/collections/contracts/repositories/collections.repository';
 import CounterTypesRepository from '@modules/counter-types/contracts/repositories/couter-types.repository';
 import MachineLog from '@modules/machine-logs/contracts/entities/machine-log';
@@ -134,7 +133,6 @@ class GetMachineDetailsService {
 
     if (period) {
       endDate = new Date(Date.now());
-      logger.info(endDate);
       if (period === Period.DAILY) startDate = subDays(endDate, 1);
       if (period === Period.WEEKLY) startDate = subWeeks(endDate, 1);
       if (period === Period.MONTHLY) startDate = subMonths(endDate, 1);
