@@ -76,11 +76,13 @@ let MikroTelemetryLogsRepository = class MikroTelemetryLogsRepository {
     }
     async find(data) {
         const query = {};
-        const { groupId, pointOfSaleId, machineId, date, maintenance, type, } = data.filters;
+        const { groupId, pointOfSaleId, machineId, date, maintenance, routeId, type, } = data.filters;
         if (groupId)
             query.groupId = groupId;
         if (machineId)
             query.machineId = machineId;
+        if (routeId)
+            query.routeId = routeId;
         if (date?.startDate)
             if (!date.startDate) {
                 query.date = {
