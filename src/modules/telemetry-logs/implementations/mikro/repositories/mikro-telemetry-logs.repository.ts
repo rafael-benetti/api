@@ -90,11 +90,14 @@ class MikroTelemetryLogsRepository implements TelemetryLogsRepository {
       machineId,
       date,
       maintenance,
+      routeId,
       type,
     } = data.filters;
 
     if (groupId) query.groupId = groupId;
     if (machineId) query.machineId = machineId;
+    if (routeId) query.routeId = routeId;
+
     if (date?.startDate)
       if (!date.startDate) {
         query.date = {

@@ -1,3 +1,4 @@
+import MachinesRepository from '@modules/machines/contracts/repositories/machines.repository';
 import TelemetryBoard from '@modules/telemetry/contracts/entities/telemetry-board';
 import TelemetryBoardsRepository from '@modules/telemetry/contracts/repositories/telemetry-boards.repository';
 import Role from '@modules/users/contracts/enums/role';
@@ -21,6 +22,9 @@ class ListTelemetryBoardsService {
 
     @inject('TelemetryBoardsRepository')
     private telemetryBoardsRepository: TelemetryBoardsRepository,
+
+    @inject('MachinesRepository')
+    private machinesRepository: MachinesRepository,
   ) {}
 
   async execute({
@@ -46,6 +50,11 @@ class ListTelemetryBoardsService {
       groupIds = [groupId];
     } else if (user.role === Role.MANAGER) {
       groupIds = user.groupIds;
+    } else if (user.role === Role.OPERATOR) {
+      const { machines } = await this.machinesRepository.find({
+        operatorId: user.id,
+      });
+      groupIds = machines.map(machine => machine.groupId);
     }
 
     const {
@@ -55,7 +64,7 @@ class ListTelemetryBoardsService {
       filters: {
         id: telemetryBoardId,
         ownerId: user.role === Role.OWNER && !groupId ? user.id : undefined,
-        groupIds: user.role === Role.OWNER && groupId ? [groupId] : groupIds,
+        groupIds,
       },
       limit,
       offset,
