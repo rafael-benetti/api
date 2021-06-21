@@ -10,6 +10,7 @@ import Role from '@modules/users/contracts/enums/role';
 import UsersRepository from '@modules/users/contracts/repositories/users.repository';
 import AppError from '@shared/errors/app-error';
 import {
+  addHours,
   eachDayOfInterval,
   eachHourOfInterval,
   endOfDay,
@@ -133,7 +134,7 @@ class GetPointOfSaleDetailsService {
         endDate,
         pointOfSaleId,
         startDate,
-        withHours: false,
+        withHours: period === Period.DAILY,
       },
     );
 
@@ -184,7 +185,7 @@ class GetPointOfSaleDetailsService {
       const daysOfInterval = eachDayOfInterval({
         start: startDate,
         end: endDate,
-      });
+      }).map(day => addHours(day, 4));
 
       chartData = daysOfInterval.map(day => {
         const incomeInDay =

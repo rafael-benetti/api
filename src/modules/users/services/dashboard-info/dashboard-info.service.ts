@@ -6,6 +6,7 @@ import Role from '@modules/users/contracts/enums/role';
 import UsersRepository from '@modules/users/contracts/repositories/users.repository';
 import AppError from '@shared/errors/app-error';
 import {
+  addHours,
   eachDayOfInterval,
   eachHourOfInterval,
   isSameDay,
@@ -225,7 +226,7 @@ export default class DashboardInfoService {
         const hoursOfInterval = eachHourOfInterval({
           start: startDate,
           end: endDate,
-        });
+        }).map(day => addHours(day, 4));
 
         // ? FATURAMENTO
         income = telemetryLogsIn.reduce((a, b) => a + b.value, 0);
@@ -285,7 +286,7 @@ export default class DashboardInfoService {
         const daysOfInterval = eachDayOfInterval({
           start: startDate,
           end: endDate,
-        });
+        }).map(day => addHours(day, 4));
 
         chartData1 = daysOfInterval.map(day => {
           const incomeInDay = universalFinancial

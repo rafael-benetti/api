@@ -10,6 +10,7 @@ import User from '@modules/users/contracts/models/user';
 import UsersRepository from '@modules/users/contracts/repositories/users.repository';
 import AppError from '@shared/errors/app-error';
 import {
+  addHours,
   eachDayOfInterval,
   eachHourOfInterval,
   endOfDay,
@@ -201,7 +202,7 @@ class DetailRouteService {
       const daysOfInterval = eachDayOfInterval({
         start: startDate,
         end: endDate,
-      });
+      }).map(day => addHours(day, 4));
 
       chartData1 = daysOfInterval.map(day => {
         const incomeInDay = telemetryLogsIn

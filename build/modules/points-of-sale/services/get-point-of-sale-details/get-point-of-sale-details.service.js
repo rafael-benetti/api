@@ -86,7 +86,7 @@ let GetPointOfSaleDetailsService = class GetPointOfSaleDetailsService {
             endDate,
             pointOfSaleId,
             startDate,
-            withHours: false,
+            withHours: period === period_dto_1.default.DAILY,
         });
         const telemetryLogsIn = telemetryLogs.filter(telemetryLog => telemetryLog.id.type === 'IN');
         const telemetryLogsOut = telemetryLogs.filter(telemetryLog => telemetryLog.id.type === 'OUT');
@@ -120,7 +120,7 @@ let GetPointOfSaleDetailsService = class GetPointOfSaleDetailsService {
             const daysOfInterval = date_fns_1.eachDayOfInterval({
                 start: startDate,
                 end: endDate,
-            });
+            }).map(day => date_fns_1.addHours(day, 4));
             chartData = daysOfInterval.map(day => {
                 const incomeInDay = telemetryLogsIn
                     .filter(telemetry => date_fns_1.isSameDay(day, new Date(telemetry.id.date)))

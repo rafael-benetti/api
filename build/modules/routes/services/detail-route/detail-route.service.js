@@ -132,7 +132,7 @@ let DetailRouteService = class DetailRouteService {
             const daysOfInterval = date_fns_1.eachDayOfInterval({
                 start: startDate,
                 end: endDate,
-            });
+            }).map(day => date_fns_1.addHours(day, 4));
             chartData1 = daysOfInterval.map(day => {
                 const incomeInDay = telemetryLogsIn
                     .filter(telemetry => date_fns_1.isSameDay(day, telemetry.date))
