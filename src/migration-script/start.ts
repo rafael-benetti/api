@@ -61,8 +61,8 @@ const start = async () => {
   // await companiesScript.setOwnerId();
   // logger.info('companiesScript.setOwnerId()');
   //
-  // await telemetryScript.execute();
-  // logger.info('telemetryScript.execute()');
+  await telemetryScript.execute();
+  logger.info('telemetryScript.execute()');
   //
   // await companiesScript.setOwnerId();
   // logger.info('companiesScript.setOwnerId()');
@@ -78,12 +78,12 @@ const start = async () => {
   //
   // await giftsScript.execute();
   // logger.info('giftsScript.execute()');
-
-  await machineCollectScript.execute();
-  logger.info('setasdasd');
-
-  await machineCollectScript.setPreviousCollection();
-  logger.info('setasdasd');
+  //
+  // await machineCollectScript.execute();
+  // logger.info('setasdasd');
+  //
+  // await machineCollectScript.setPreviousCollection();
+  // logger.info('setasdasd');
 };
 
 start();

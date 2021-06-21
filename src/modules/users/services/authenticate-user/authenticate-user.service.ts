@@ -31,7 +31,7 @@ class AuthenticateUserService {
   async execute({ email, password }: Request): Promise<Response> {
     const user = await this.usersRepository.findOne({
       by: 'email',
-      value: email,
+      value: email.toLowerCase(),
     });
 
     if (!user) throw AppError.incorrectEmailOrPassword;

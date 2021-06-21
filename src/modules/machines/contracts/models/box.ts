@@ -14,10 +14,9 @@ class Box {
   constructor(data?: CreateBoxDto) {
     if (data) {
       this.id = data.id || v4();
-      this.numberOfPrizes = 0;
-      this.currentMoney = 0;
-      this.counters = data.counters;
+      this.numberOfPrizes = data.numberOfPrizes || 0;
       this.currentMoney = data.currentMoney ? data.currentMoney : 0;
+      this.counters = data.counters;
     }
   }
 }
