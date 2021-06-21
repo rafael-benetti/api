@@ -30,7 +30,7 @@ let AuthenticateUserService = class AuthenticateUserService {
     async execute({ email, password }) {
         const user = await this.usersRepository.findOne({
             by: 'email',
-            value: email,
+            value: email.toLowerCase(),
         });
         if (!user)
             throw app_error_1.default.incorrectEmailOrPassword;

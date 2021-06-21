@@ -100,6 +100,18 @@ let EditMachineService = class EditMachineService {
             await this.ormProvider.commit();
             return machine;
         }
+        // ? ALTERA STATUS DA MAQUINA PARA DESATIVADA(DELETADA),
+        // ? E DESVINCULAR A MACHINE DA TELEMETRY BOARD
+        if (isActive === false) {
+            machine.isActive = isActive;
+            if (machine.telemetryBoardId) {
+                const telemetryBoard = await this.telemetryBoardsRepository.findById(machine.telemetryBoardId);
+                if (telemetryBoard)
+                    telemetryBoard.machineId = undefined;
+                machine.telemetryBoardId = undefined;
+                machine.lastConnection = undefined;
+            }
+        }
         if (serialNumber && serialNumber !== machine.serialNumber) {
             const checkMachineExists = await this.machinesRepository.findOne({
                 by: 'serialNumber',
@@ -162,18 +174,6 @@ let EditMachineService = class EditMachineService {
         }
         else if (locationId === null)
             machine.locationId = locationId;
-        // ? ALTERA STATUS DA MAQUINA PARA DESATIVADA(DELETADA),
-        // ? E DESVINCULAR A MACHINE DA TELEMETRY BOARD
-        if (isActive !== undefined) {
-            machine.isActive = isActive;
-            if (machine.telemetryBoardId) {
-                const telemetryBoard = await this.telemetryBoardsRepository.findById(machine.telemetryBoardId);
-                if (telemetryBoard)
-                    telemetryBoard.machineId = undefined;
-                machine.telemetryBoardId = undefined;
-                machine.lastConnection = undefined;
-            }
-        }
         if (categoryId) {
             const category = await this.categoriesRepository.findOne({
                 by: 'id',
@@ -192,6 +192,8 @@ let EditMachineService = class EditMachineService {
                     counters,
                     currentMoney: machine.boxes.find(boxx => boxx.id === box.id)
                         ?.currentMoney,
+                    numberOfPrizes: machine.boxes.find(boxx => boxx.id === box.id)
+                        ?.numberOfPrizes,
                 });
             });
             const counterTypeIds = [

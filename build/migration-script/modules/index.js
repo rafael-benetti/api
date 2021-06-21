@@ -1,0 +1,26 @@
+"use strict";
+var __importDefault = (this && this.__importDefault) || function (mod) {
+    return (mod && mod.__esModule) ? mod : { "default": mod };
+};
+Object.defineProperty(exports, "__esModule", { value: true });
+const tsyringe_1 = require("tsyringe");
+const type_companies_repository_1 = __importDefault(require("./companies/typeorm/repositories/type-companies.repository"));
+const type_counters_repository_1 = __importDefault(require("./counters/typeorm/repositories/type-counters.repository"));
+const type_credits_repository_1 = __importDefault(require("./credits/typeorm/repositories/type-credits.repository"));
+const type_gifts_respository_1 = __importDefault(require("./gifts/typeorm/repositories/type-gifts.respository"));
+const type_machine_collect_repository_1 = __importDefault(require("./machine-collect/typeorm/repositories/type-machine-collect-repository"));
+const type_machine_categories_repository_1 = __importDefault(require("./machines-categories/typeorm/repositories/type-machine-categories.repository"));
+const type_machines_repository_1 = __importDefault(require("./machines/typeorm/repositories/type-machines.repository"));
+const selling_points_repostory_1 = __importDefault(require("./selling-points/typeorm/repositories/selling-points.repostory"));
+const type_telemetries_repository_1 = __importDefault(require("./telemetries/typeorm/repositories/type-telemetries.repository"));
+const type_users_repository_1 = __importDefault(require("./users/typeorm/repostories/type-users-repository"));
+tsyringe_1.container.registerSingleton('TypeUsersRepository', tsyringe_1.delay(() => type_users_repository_1.default));
+tsyringe_1.container.registerSingleton('TypeCompaniesRepository', tsyringe_1.delay(() => type_companies_repository_1.default));
+tsyringe_1.container.registerSingleton('TypeMachinesRepository', tsyringe_1.delay(() => type_machines_repository_1.default));
+tsyringe_1.container.registerSingleton('TypeCountersRepository', tsyringe_1.delay(() => type_counters_repository_1.default));
+tsyringe_1.container.registerSingleton('TypeSellingPointsRepository', tsyringe_1.delay(() => selling_points_repostory_1.default));
+tsyringe_1.container.registerSingleton('TypeTelemetriesRepository', tsyringe_1.delay(() => type_telemetries_repository_1.default));
+tsyringe_1.container.registerSingleton('TypeCreditsRepository', tsyringe_1.delay(() => type_credits_repository_1.default));
+tsyringe_1.container.registerSingleton('TypeGiftsRepository', tsyringe_1.delay(() => type_gifts_respository_1.default));
+tsyringe_1.container.registerSingleton('MachineCategoriesRepository', tsyringe_1.delay(() => type_machine_categories_repository_1.default));
+tsyringe_1.container.registerSingleton('TypeMachineCollectRepository', tsyringe_1.delay(() => type_machine_collect_repository_1.default));
