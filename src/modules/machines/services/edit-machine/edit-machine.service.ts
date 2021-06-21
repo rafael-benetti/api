@@ -135,7 +135,10 @@ class EditMachineService {
         const telemetryBoard = await this.telemetryBoardsRepository.findById(
           machine.telemetryBoardId,
         );
-        if (telemetryBoard) telemetryBoard.machineId = undefined;
+        if (telemetryBoard) {
+          telemetryBoard.machineId = undefined;
+          this.telemetryBoardsRepository.save(telemetryBoard);
+        }
         machine.telemetryBoardId = undefined;
       }
 
@@ -155,13 +158,16 @@ class EditMachineService {
 
     // ? ALTERA STATUS DA MAQUINA PARA DESATIVADA(DELETADA),
     // ? E DESVINCULAR A MACHINE DA TELEMETRY BOARD
-    if (isActive === false) {
+    if (isActive !== undefined) {
       machine.isActive = isActive;
-      if (machine.telemetryBoardId) {
+      if (machine.telemetryBoardId && machine.isActive === false) {
         const telemetryBoard = await this.telemetryBoardsRepository.findById(
           machine.telemetryBoardId,
         );
-        if (telemetryBoard) telemetryBoard.machineId = undefined;
+        if (telemetryBoard) {
+          telemetryBoard.machineId = undefined;
+          this.telemetryBoardsRepository.save(telemetryBoard);
+        }
         machine.telemetryBoardId = undefined;
         machine.lastConnection = undefined;
       }
