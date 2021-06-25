@@ -57,6 +57,7 @@ let CreateOperatorService = class CreateOperatorService {
             permissions,
         }))
             throw app_error_1.default.incorrectPermissionsForOperator;
+        email = email.toLowerCase();
         const emailExists = await this.usersRepository.findOne({
             by: 'email',
             value: email,

@@ -24,6 +24,7 @@ class CreateAdminService {
   ) {}
 
   async execute({ email, name }: Request): Promise<Admin> {
+    email = email.toLowerCase();
     const emailExists = await this.adminsRepository.findOne({
       by: 'email',
       value: email,

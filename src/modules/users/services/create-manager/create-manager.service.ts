@@ -75,6 +75,8 @@ class CreateManagerService {
     )
       throw AppError.incorrectPermissionsForManager;
 
+    email = email.toLowerCase();
+
     const emailExists = await this.usersRepository.findOne({
       by: 'email',
       value: email,

@@ -31,7 +31,7 @@ class AuthenticateAdminService {
   public async execute({ email, password }: Request): Promise<Response> {
     const admin = await this.adminsRepository.findOne({
       by: 'email',
-      value: email,
+      value: email.toLowerCase(),
     });
 
     if (!admin) throw AppError.incorrectEmailOrPassword;

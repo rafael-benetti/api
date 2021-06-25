@@ -151,7 +151,7 @@ let GeneratePointsOfSaleReportService = class GeneratePointsOfSaleReportService 
                     .reduce((a, b) => a + b.value, 0);
                 const prizes = prizesPerMachine.find(prizes => prizes.id === machine.id)
                     ?.prizes;
-                const numberOfPlays = (incomePerMachine.find(machineIncome => machineIncome.id === machine.id)?.income || 0) / machine.gameValue;
+                const numberOfPlays = Math.floor((incomePerMachine.find(machineIncome => machineIncome.id === machine.id)?.income || 0) / machine.gameValue);
                 const averagePerDay = Number((income / days).toFixed(2));
                 const { incomePerMonthGoal } = machine;
                 const { incomePerPrizeGoal } = machine;

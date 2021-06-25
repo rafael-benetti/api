@@ -149,8 +149,8 @@ let GenerateMachinesReportService = class GenerateMachinesReportService {
             const remoteCreditAmount = machinesLogs
                 .filter(machineLog => machineLog.machineId === machine.id)
                 .reduce((a, b) => a + b.quantity, 0);
-            const numberOfPlays = (incomePerMachine.find(machineIncome => machineIncome.id === machine.id)
-                ?.income || 0) / machine.gameValue;
+            const numberOfPlays = Math.floor((incomePerMachine.find(machineIncome => machineIncome.id === machine.id)
+                ?.income || 0) / machine.gameValue);
             const prizes = prizesPerMachine.find(prizes => prizes.id === machine.id)
                 ?.prizes;
             const income = incomePerMachine.find(machineIncome => machineIncome.id === machine.id)?.income;

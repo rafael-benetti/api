@@ -28,6 +28,7 @@ let CreateAdminService = class CreateAdminService {
         this.ormProvider = ormProvider;
     }
     async execute({ email, name }) {
+        email = email.toLowerCase();
         const emailExists = await this.adminsRepository.findOne({
             by: 'email',
             value: email,

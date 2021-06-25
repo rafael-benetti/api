@@ -45,6 +45,7 @@ let CreateOwnerService = class CreateOwnerService {
         });
         if (!admin)
             throw app_error_1.default.authorizationError;
+        email = email.toLowerCase();
         const emailExists = await this.usersRepository.findOne({
             by: 'email',
             value: email,

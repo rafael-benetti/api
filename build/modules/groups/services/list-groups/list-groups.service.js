@@ -42,6 +42,20 @@ let ListGroupsService = class ListGroupsService {
                 offset,
             });
             return groups;
+            // const findCountOfMachines = groups.map(async group => {
+            //  const machinesCount = await this.machinesRepository.count({
+            //    groupIds: [group.id],
+            //  });
+            //
+            //  return {
+            //    group,
+            //    machinesCount,
+            //  };
+            // });
+            //
+            // const response = await Promise.all(findCountOfMachines);
+            //
+            // return response;
         }
         const groups = await this.groupsRepository.find({
             filters: {
@@ -51,6 +65,20 @@ let ListGroupsService = class ListGroupsService {
             offset,
         });
         return groups;
+        // const findCountOfMachines = groups.map(async group => {
+        //  const machinesCount = await this.machinesRepository.count({
+        //    groupIds: [group.id],
+        //  });
+        //
+        //  return {
+        //    group,
+        //    machinesCount,
+        //  };
+        // });
+        //
+        // const response = await Promise.all(findCountOfMachines);
+        //
+        // return response;
     }
 };
 ListGroupsService = __decorate([
