@@ -41,6 +41,9 @@ class MikroTelemetryLog implements TelemetryLog {
   @Property()
   numberOfPlays?: number;
 
+  @Property()
+  offline: boolean;
+
   constructor(data?: CreateTelemetryLogDto) {
     if (data) {
       this.id = v4();
@@ -55,6 +58,7 @@ class MikroTelemetryLog implements TelemetryLog {
       this.type = data.type;
       this.value = data.value;
       this.numberOfPlays = data.numberOfPlays;
+      this.offline = data.offline;
     }
   }
 }

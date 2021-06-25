@@ -19,5 +19,7 @@ export default interface CreateTelemetryLogDto {
 
   maintenance: boolean;
 
+  offline: boolean;
+
   numberOfPlays?: number;
 }

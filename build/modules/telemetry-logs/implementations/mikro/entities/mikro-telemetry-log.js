@@ -31,6 +31,7 @@ let MikroTelemetryLog = class MikroTelemetryLog {
             this.type = data.type;
             this.value = data.value;
             this.numberOfPlays = data.numberOfPlays;
+            this.offline = data.offline;
         }
     }
 };
@@ -82,6 +83,10 @@ __decorate([
     core_1.Property(),
     __metadata("design:type", Number)
 ], MikroTelemetryLog.prototype, "numberOfPlays", void 0);
+__decorate([
+    core_1.Property(),
+    __metadata("design:type", Boolean)
+], MikroTelemetryLog.prototype, "offline", void 0);
 MikroTelemetryLog = __decorate([
     core_1.Entity({ collection: 'telemetry-logs' }),
     __metadata("design:paramtypes", [Object])
