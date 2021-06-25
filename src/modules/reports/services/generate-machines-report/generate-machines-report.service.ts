@@ -211,9 +211,10 @@ class GenerateMachinesReportService {
         .filter(machineLog => machineLog.machineId === machine.id)
         .reduce((a, b) => a + b.quantity, 0);
 
-      const numberOfPlays =
+      const numberOfPlays = Math.floor(
         (incomePerMachine.find(machineIncome => machineIncome.id === machine.id)
-          ?.income || 0) / machine.gameValue;
+          ?.income || 0) / machine.gameValue,
+      );
 
       const prizes = prizesPerMachine.find(prizes => prizes.id === machine.id)
         ?.prizes;

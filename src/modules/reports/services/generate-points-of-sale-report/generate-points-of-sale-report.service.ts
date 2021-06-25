@@ -222,10 +222,11 @@ class GeneratePointsOfSaleReportService {
         const prizes = prizesPerMachine.find(prizes => prizes.id === machine.id)
           ?.prizes;
 
-        const numberOfPlays =
+        const numberOfPlays = Math.floor(
           (incomePerMachine.find(
             machineIncome => machineIncome.id === machine.id,
-          )?.income || 0) / machine.gameValue;
+          )?.income || 0) / machine.gameValue,
+        );
 
         const averagePerDay = Number((income / days).toFixed(2));
 
