@@ -13,6 +13,7 @@ import UsersRepository from '@modules/users/contracts/repositories/users.reposit
 import AppError from '@shared/errors/app-error';
 import { Promise } from 'bluebird';
 import {
+  addHours,
   eachDayOfInterval,
   eachHourOfInterval,
   endOfDay,
@@ -319,7 +320,7 @@ export default class DetailGroupService {
       const daysOfInterval = eachDayOfInterval({
         start: startDate,
         end: endDate,
-      });
+      }).map(day => addHours(day, 4));
 
       chartData1 = daysOfInterval.map(day => {
         const incomeInDay = universalFinancial

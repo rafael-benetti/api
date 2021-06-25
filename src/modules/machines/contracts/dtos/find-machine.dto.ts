@@ -8,6 +8,7 @@ interface FindMachineDto {
     | 'telemetryBoardId';
   value: string | string[] | number;
   populate?: string[];
+  ownerId?: string;
 }
 
 export default FindMachineDto;

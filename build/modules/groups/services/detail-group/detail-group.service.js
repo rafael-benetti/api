@@ -209,7 +209,7 @@ let DetailGroupService = class DetailGroupService {
             const daysOfInterval = date_fns_1.eachDayOfInterval({
                 start: startDate,
                 end: endDate,
-            });
+            }).map(day => date_fns_1.addHours(day, 4));
             chartData1 = daysOfInterval.map(day => {
                 const incomeInDay = universalFinancial
                     .filter(item => date_fns_1.isSameDay(day, item.date))

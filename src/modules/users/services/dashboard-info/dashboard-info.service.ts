@@ -133,6 +133,7 @@ export default class DashboardInfoService {
         orderByLastConnection: true,
         operatorId: isOperator ? user.id : undefined,
         groupIds: isOperator ? undefined : groupIds,
+        telemetryStatus: 'OFFLINE',
         limit: 5,
         offset: 0,
         fields: [
@@ -226,7 +227,7 @@ export default class DashboardInfoService {
         const hoursOfInterval = eachHourOfInterval({
           start: startDate,
           end: endDate,
-        }).map(day => addHours(day, 4));
+        });
 
         // ? FATURAMENTO
         income = telemetryLogsIn.reduce((a, b) => a + b.value, 0);

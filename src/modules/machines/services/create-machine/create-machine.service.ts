@@ -85,6 +85,7 @@ class CreateMachineService {
     const checkMachineExists = await this.machinesRepository.findOne({
       by: 'serialNumber',
       value: serialNumber,
+      ownerId: user.role === Role.OWNER ? user.id : user.ownerId,
     });
 
     if (checkMachineExists) throw AppError.serialNumberAlreadyUsed;

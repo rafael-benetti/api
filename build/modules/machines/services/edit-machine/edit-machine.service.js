@@ -86,8 +86,10 @@ let EditMachineService = class EditMachineService {
             machine.groupId = groupId;
             if (machine.telemetryBoardId) {
                 const telemetryBoard = await this.telemetryBoardsRepository.findById(machine.telemetryBoardId);
-                if (telemetryBoard)
+                if (telemetryBoard) {
                     telemetryBoard.machineId = undefined;
+                    this.telemetryBoardsRepository.save(telemetryBoard);
+                }
                 machine.telemetryBoardId = undefined;
             }
             machine.operatorId = undefined;
