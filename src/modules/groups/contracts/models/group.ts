@@ -13,6 +13,8 @@ class Group {
 
   ownerId: string;
 
+  numberOfMachines?: number;
+
   constructor(data?: CreateGroupDto) {
     if (data) {
       this.id = v4();

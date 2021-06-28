@@ -17,14 +17,17 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 Object.defineProperty(exports, "__esModule", { value: true });
 const group_1 = __importDefault(require("../../contracts/models/group"));
 const groups_repository_1 = __importDefault(require("../../contracts/repositories/groups.repository"));
+const machines_repository_1 = __importDefault(require("../../../machines/contracts/repositories/machines.repository"));
 const role_1 = __importDefault(require("../../../users/contracts/enums/role"));
 const users_repository_1 = __importDefault(require("../../../users/contracts/repositories/users.repository"));
 const app_error_1 = __importDefault(require("../../../../shared/errors/app-error"));
+const bluebird_1 = require("bluebird");
 const tsyringe_1 = require("tsyringe");
 let ListGroupsService = class ListGroupsService {
-    constructor(usersRepository, groupsRepository) {
+    constructor(usersRepository, groupsRepository, machinesRepository) {
         this.usersRepository = usersRepository;
         this.groupsRepository = groupsRepository;
+        this.machinesRepository = machinesRepository;
     }
     async execute({ userId, limit, offset }) {
         const user = await this.usersRepository.findOne({
@@ -41,21 +44,15 @@ let ListGroupsService = class ListGroupsService {
                 limit,
                 offset,
             });
-            return groups;
-            // const findCountOfMachines = groups.map(async group => {
-            //  const machinesCount = await this.machinesRepository.count({
-            //    groupIds: [group.id],
-            //  });
-            //
-            //  return {
-            //    group,
-            //    machinesCount,
-            //  };
-            // });
-            //
-            // const response = await Promise.all(findCountOfMachines);
-            //
-            // return response;
+            const findCountOfMachines = groups.map(async (group) => {
+                const machinesCount = await this.machinesRepository.count({
+                    groupIds: [group.id],
+                });
+                group.numberOfMachines = machinesCount;
+                return group;
+            });
+            const response = await bluebird_1.Promise.all(findCountOfMachines);
+            return response;
         }
         const groups = await this.groupsRepository.find({
             filters: {
@@ -64,27 +61,22 @@ let ListGroupsService = class ListGroupsService {
             limit,
             offset,
         });
-        return groups;
-        // const findCountOfMachines = groups.map(async group => {
-        //  const machinesCount = await this.machinesRepository.count({
-        //    groupIds: [group.id],
-        //  });
-        //
-        //  return {
-        //    group,
-        //    machinesCount,
-        //  };
-        // });
-        //
-        // const response = await Promise.all(findCountOfMachines);
-        //
-        // return response;
+        const findCountOfMachines = groups.map(async (group) => {
+            const machinesCount = await this.machinesRepository.count({
+                groupIds: [group.id],
+            });
+            group.numberOfMachines = machinesCount;
+            return group;
+        });
+        const response = await bluebird_1.Promise.all(findCountOfMachines);
+        return response;
     }
 };
 ListGroupsService = __decorate([
     tsyringe_1.injectable(),
     __param(0, tsyringe_1.inject('UsersRepository')),
     __param(1, tsyringe_1.inject('GroupsRepository')),
-    __metadata("design:paramtypes", [Object, Object])
+    __param(2, tsyringe_1.inject('MachinesRepository')),
+    __metadata("design:paramtypes", [Object, Object, Object])
 ], ListGroupsService);
 exports.default = ListGroupsService;
