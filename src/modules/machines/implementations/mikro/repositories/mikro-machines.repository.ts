@@ -170,6 +170,7 @@ class MikroMachinesRepository implements MachinesRepository {
           serialNumber: '$serialNumber',
           minimumPrizeCount: '$minimumPrizeCount',
           lastConnection: '$lastConnection',
+          categoryLabel: '$categoryLabel',
           groupId: '$groupId',
           priority: {
             $subtract: [

@@ -3,6 +3,6 @@ export default interface GetMachineIncomePerDay {
   withHours: boolean;
   machineId: string;
   type?: 'IN' | 'OUT';
-  startDate: Date;
-  endDate: Date;
+  startDate?: Date;
+  endDate?: Date;
 }

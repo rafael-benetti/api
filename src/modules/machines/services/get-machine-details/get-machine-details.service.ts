@@ -1,3 +1,4 @@
+import logger from '@config/logger';
 import CollectionsRepository from '@modules/collections/contracts/repositories/collections.repository';
 import CounterTypesRepository from '@modules/counter-types/contracts/repositories/couter-types.repository';
 import MachineLog from '@modules/machine-logs/contracts/entities/machine-log';
@@ -167,6 +168,16 @@ class GetMachineDetailsService {
       },
     );
 
+    const machineGivenPrizesPerPinPromise = this.telemetryLogsRepository.getMachineGivenPrizesPerDay(
+      {
+        machineId,
+        startDate: lastCollection,
+        endDate: new Date(),
+        groupIds: [machine.groupId],
+        withHours: false,
+      },
+    );
+
     // ? HISTORICO DE JOGADAS
     const transactionHistoryPromise = await this.telemetryLogsRepository.find({
       filters: {
@@ -189,11 +200,13 @@ class GetMachineDetailsService {
       machineGivenPrizesPerDay,
       { machineLogs },
       transactionHistory,
+      machineGivenPrizesPerPin,
     ] = await Promise.all([
       machineIncomePerDayPromise,
       machineGivenPrizesPerDayPromise,
       machineLogsPromise,
       transactionHistoryPromise,
+      machineGivenPrizesPerPinPromise,
     ]);
 
     const counterTypes = await this.counterTypesRepository.find({
@@ -222,13 +235,14 @@ class GetMachineDetailsService {
         )?.type;
 
         if (counterType === 'OUT') {
-          givenPrizesCount =
-            machineGivenPrizesPerDay.find(givenPrizeOfDay => {
+          givenPrizesCount = machineGivenPrizesPerPin
+            .filter(givenPrizeOfDay => {
               return (
                 givenPrizeOfDay.id.pin?.toString() ===
                 counter.pin?.replace('Pino ', '')
               );
-            })?.givenPrizes || 0;
+            })
+            .reduce((a, b) => a + b.givenPrizes, 0);
         }
       });
 

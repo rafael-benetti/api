@@ -65,6 +65,7 @@ let DashboardInfoService = class DashboardInfoService {
             fields: [
                 'id',
                 'serialNumber',
+                'categoryLabel',
                 'lastCollection',
                 'lastConnection',
                 'pointOfSaleId',
@@ -82,6 +83,7 @@ let DashboardInfoService = class DashboardInfoService {
             fields: [
                 'id',
                 'serialNumber',
+                'categoryLabel',
                 'lastConnection',
                 'lastCollection',
                 'pointOfSaleId',

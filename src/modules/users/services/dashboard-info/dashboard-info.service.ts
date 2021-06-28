@@ -119,6 +119,7 @@ export default class DashboardInfoService {
         fields: [
           'id',
           'serialNumber',
+          'categoryLabel',
           'lastCollection',
           'lastConnection',
           'pointOfSaleId',
@@ -139,6 +140,7 @@ export default class DashboardInfoService {
         fields: [
           'id',
           'serialNumber',
+          'categoryLabel',
           'lastConnection',
           'lastCollection',
           'pointOfSaleId',

@@ -15,6 +15,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
+const logger_1 = __importDefault(require("../../../../config/logger"));
 const collections_repository_1 = __importDefault(require("../../../collections/contracts/repositories/collections.repository"));
 const couter_types_repository_1 = __importDefault(require("../../../counter-types/contracts/repositories/couter-types.repository"));
 const machine_log_1 = __importDefault(require("../../../machine-logs/contracts/entities/machine-log"));
@@ -102,6 +103,13 @@ let GetMachineDetailsService = class GetMachineDetailsService {
             groupIds: [machine.groupId],
             withHours: period === period_dto_1.default.DAILY,
         });
+        const machineGivenPrizesPerPinPromise = this.telemetryLogsRepository.getMachineGivenPrizesPerDay({
+            machineId,
+            startDate: lastCollection,
+            endDate: new Date(),
+            groupIds: [machine.groupId],
+            withHours: false,
+        });
         // ? HISTORICO DE JOGADAS
         const transactionHistoryPromise = await this.telemetryLogsRepository.find({
             filters: {
@@ -117,11 +125,12 @@ let GetMachineDetailsService = class GetMachineDetailsService {
             offset: 0,
             groupId: machine.groupId,
         });
-        const [machineIncomePerDay, machineGivenPrizesPerDay, { machineLogs }, transactionHistory,] = await bluebird_1.Promise.all([
+        const [machineIncomePerDay, machineGivenPrizesPerDay, { machineLogs }, transactionHistory, machineGivenPrizesPerPin,] = await bluebird_1.Promise.all([
             machineIncomePerDayPromise,
             machineGivenPrizesPerDayPromise,
             machineLogsPromise,
             transactionHistoryPromise,
+            machineGivenPrizesPerPinPromise,
         ]);
         const counterTypes = await this.counterTypesRepository.find({
             ownerId: user.role === role_1.default.OWNER ? user.id : user.ownerId,
@@ -139,11 +148,12 @@ let GetMachineDetailsService = class GetMachineDetailsService {
             boxe.counters.forEach(counter => {
                 const counterType = counterTypes.find(counterType => counterType.id === counter.counterTypeId)?.type;
                 if (counterType === 'OUT') {
-                    givenPrizesCount =
-                        machineGivenPrizesPerDay.find(givenPrizeOfDay => {
-                            return (givenPrizeOfDay.id.pin?.toString() ===
-                                counter.pin?.replace('Pino ', ''));
-                        })?.givenPrizes || 0;
+                    givenPrizesCount = machineGivenPrizesPerPin
+                        .filter(givenPrizeOfDay => {
+                        return (givenPrizeOfDay.id.pin?.toString() ===
+                            counter.pin?.replace('Pino ', ''));
+                    })
+                        .reduce((a, b) => a + b.givenPrizes, 0);
                 }
             });
             return {
