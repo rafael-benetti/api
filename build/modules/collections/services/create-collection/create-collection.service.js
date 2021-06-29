@@ -16,6 +16,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 /* eslint-disable @typescript-eslint/no-explicit-any */
+const logger_1 = __importDefault(require("../../../../config/logger"));
 const collection_1 = __importDefault(require("../../contracts/entities/collection"));
 const collections_repository_1 = __importDefault(require("../../contracts/repositories/collections.repository"));
 const machines_repository_1 = __importDefault(require("../../../machines/contracts/repositories/machines.repository"));
@@ -103,9 +104,9 @@ let CreateCollectionService = class CreateCollectionService {
                 },
                 machineId,
                 maintenance: false,
-                type: 'IN',
             },
         });
+        logger_1.default.info(telemetryLogs);
         await Promise.all(boxCollections.map(async (boxCollection) => {
             const box = machine.boxes.find(box => box.id === boxCollection.boxId);
             if (!box)
@@ -120,6 +121,8 @@ let CreateCollectionService = class CreateCollectionService {
                 if (!counter)
                     throw app_error_1.default.counterNotFound;
                 counterCollection.telemetryCount = telemetryLogs
+                    .filter(telemetryLog => telemetryLog.pin?.toString() ===
+                    counter.pin?.split(' ')[1].toString())
                     .map(log => log.value)
                     .reduce((a, b) => a + b, 0);
                 if (files && files.length > 0) {

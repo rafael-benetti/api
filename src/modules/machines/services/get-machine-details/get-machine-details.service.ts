@@ -1,4 +1,3 @@
-import logger from '@config/logger';
 import CollectionsRepository from '@modules/collections/contracts/repositories/collections.repository';
 import CounterTypesRepository from '@modules/counter-types/contracts/repositories/couter-types.repository';
 import MachineLog from '@modules/machine-logs/contracts/entities/machine-log';

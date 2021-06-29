@@ -1,4 +1,5 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
+import logger from '@config/logger';
 import Collection from '@modules/collections/contracts/entities/collection';
 import CollectionsRepository from '@modules/collections/contracts/repositories/collections.repository';
 import MachinesRepository from '@modules/machines/contracts/repositories/machines.repository';
@@ -154,9 +155,10 @@ class CreateCollectionService {
         },
         machineId,
         maintenance: false,
-        type: 'IN',
       },
     });
+
+    logger.info(telemetryLogs);
 
     await Promise.all(
       boxCollections.map(async boxCollection => {
@@ -182,6 +184,11 @@ class CreateCollectionService {
             if (!counter) throw AppError.counterNotFound;
 
             counterCollection.telemetryCount = telemetryLogs
+              .filter(
+                telemetryLog =>
+                  telemetryLog.pin?.toString() ===
+                  counter.pin?.split(' ')[1].toString(),
+              )
               .map(log => log.value)
               .reduce((a, b) => a + b, 0);
 

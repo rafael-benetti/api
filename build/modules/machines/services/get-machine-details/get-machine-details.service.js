@@ -15,7 +15,6 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-const logger_1 = __importDefault(require("../../../../config/logger"));
 const collections_repository_1 = __importDefault(require("../../../collections/contracts/repositories/collections.repository"));
 const couter_types_repository_1 = __importDefault(require("../../../counter-types/contracts/repositories/couter-types.repository"));
 const machine_log_1 = __importDefault(require("../../../machine-logs/contracts/entities/machine-log"));

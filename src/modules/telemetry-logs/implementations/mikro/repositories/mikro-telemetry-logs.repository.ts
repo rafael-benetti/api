@@ -98,17 +98,22 @@ class MikroTelemetryLogsRepository implements TelemetryLogsRepository {
     if (machineId) query.machineId = machineId;
     if (routeId) query.routeId = routeId;
 
-    if (date?.startDate)
-      if (!date.startDate) {
+    if (date?.startDate || date?.endDate)
+      if (date.startDate && !date.endDate) {
+        query.date = {
+          $gte: date.startDate,
+        };
+      } else if (date.endDate && !date.startDate) {
         query.date = {
           $lte: date.endDate,
         };
-      } else {
+      } else if (date.endDate && date.startDate) {
         query.date = {
           $gte: date.startDate,
           $lte: date.endDate,
         };
       }
+
     if (maintenance !== undefined) query.maintenance = maintenance;
 
     if (pointOfSaleId !== undefined) query.pointOfSaleId = pointOfSaleId;
