@@ -221,6 +221,7 @@ class MikroMachinesRepository implements MachinesRepository {
     telemetryStatus,
     operatorId,
     groupIds,
+    pointOfSaleId,
   }: FindMachinesDto): Promise<number> {
     const telemetryStatusQuery: Record<string, unknown> = {};
 
@@ -253,6 +254,7 @@ class MikroMachinesRepository implements MachinesRepository {
       ...(ownerId && { ownerId }),
       ...(groupIds && { groupId: groupIds }),
       ...(operatorId && { operatorId }),
+      ...(pointOfSaleId && { locationId: pointOfSaleId }),
       ...telemetryStatusQuery,
       isActive: true,
     });

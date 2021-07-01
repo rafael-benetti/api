@@ -140,6 +140,7 @@ export default class DetailGroupService {
       fields: [
         'id',
         'serialNumber',
+        'categoryLabel',
         'lastCollection',
         'lastConnection',
         'pointOfSaleId',
@@ -152,11 +153,13 @@ export default class DetailGroupService {
     const machinesSortedByLastConnectionPromise = this.machinesRepository.find({
       orderByLastConnection: true,
       groupIds: [groupId],
+      telemetryStatus: 'OFFLINE',
       limit: 5,
       offset: 0,
       fields: [
         'id',
         'serialNumber',
+        'categoryLabel',
         'lastConnection',
         'lastCollection',
         'pointOfSaleId',
