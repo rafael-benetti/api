@@ -74,6 +74,7 @@ let DetailGroupService = class DetailGroupService {
             fields: [
                 'id',
                 'serialNumber',
+                'categoryLabel',
                 'lastCollection',
                 'lastConnection',
                 'pointOfSaleId',
@@ -85,11 +86,13 @@ let DetailGroupService = class DetailGroupService {
         const machinesSortedByLastConnectionPromise = this.machinesRepository.find({
             orderByLastConnection: true,
             groupIds: [groupId],
+            telemetryStatus: 'OFFLINE',
             limit: 5,
             offset: 0,
             fields: [
                 'id',
                 'serialNumber',
+                'categoryLabel',
                 'lastConnection',
                 'lastCollection',
                 'pointOfSaleId',

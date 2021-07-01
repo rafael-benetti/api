@@ -170,7 +170,7 @@ class MikroMachinesRepository {
         const machines = await this.repository.aggregate(stages);
         return machines;
     }
-    async count({ ownerId, telemetryStatus, operatorId, groupIds, }) {
+    async count({ ownerId, telemetryStatus, operatorId, groupIds, pointOfSaleId, }) {
         const telemetryStatusQuery = {};
         if (telemetryStatus) {
             if (telemetryStatus === 'ONLINE') {
@@ -197,6 +197,7 @@ class MikroMachinesRepository {
             ...(ownerId && { ownerId }),
             ...(groupIds && { groupId: groupIds }),
             ...(operatorId && { operatorId }),
+            ...(pointOfSaleId && { locationId: pointOfSaleId }),
             ...telemetryStatusQuery,
             isActive: true,
         });

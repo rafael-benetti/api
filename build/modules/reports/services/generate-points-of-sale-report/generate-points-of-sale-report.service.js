@@ -137,7 +137,7 @@ let GeneratePointsOfSaleReportService = class GeneratePointsOfSaleReportService 
                             startDate,
                             endDate,
                         },
-                        groupId,
+                        groupId: pointOfSale.groupId,
                         machineId: machine.id,
                         maintenance: false,
                         pointOfSaleId: pointOfSale.id,
