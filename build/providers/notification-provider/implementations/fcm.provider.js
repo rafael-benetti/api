@@ -30,6 +30,7 @@ class FCMProvider {
                 notification: {
                     title: messagePayload.title,
                     body: messagePayload.body,
+                    sound: 'default',
                 },
             },
         }, { headers });
