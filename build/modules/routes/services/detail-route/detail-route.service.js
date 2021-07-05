@@ -16,6 +16,8 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 const period_dto_1 = __importDefault(require("../../../machines/contracts/dtos/period.dto"));
+const machine_1 = __importDefault(require("../../../machines/contracts/models/machine"));
+const machines_repository_1 = __importDefault(require("../../../machines/contracts/repositories/machines.repository"));
 const point_of_sale_1 = __importDefault(require("../../../points-of-sale/contracts/models/point-of-sale"));
 const points_of_sale_repository_1 = __importDefault(require("../../../points-of-sale/contracts/repositories/points-of-sale.repository"));
 const route_1 = __importDefault(require("../../contracts/models/route"));
@@ -28,11 +30,12 @@ const app_error_1 = __importDefault(require("../../../../shared/errors/app-error
 const date_fns_1 = require("date-fns");
 const tsyringe_1 = require("tsyringe");
 let DetailRouteService = class DetailRouteService {
-    constructor(routesRepository, usersRepository, pointsOfSaleRepository, telemetryLogsRepository) {
+    constructor(routesRepository, usersRepository, pointsOfSaleRepository, telemetryLogsRepository, machinesRepository) {
         this.routesRepository = routesRepository;
         this.usersRepository = usersRepository;
         this.pointsOfSaleRepository = pointsOfSaleRepository;
         this.telemetryLogsRepository = telemetryLogsRepository;
+        this.machinesRepository = machinesRepository;
     }
     async execute({ userId, routeId, period, endDate, startDate, }) {
         const user = await this.usersRepository.findOne({
@@ -127,6 +130,13 @@ let DetailRouteService = class DetailRouteService {
                 };
             });
         }
+        // ? MACHINES ORDERED
+        const { machines } = await this.machinesRepository.find({
+            pointOfSaleId: pointsOfSale.map(pointOfSale => pointOfSale.id),
+            orderByLastCollection: true,
+            populate: ['pointOfSale'],
+            fields: ['pointOfSale', 'serialNumber', 'lastCollection', 'id'],
+        });
         // ? CHART DATA PARA PERIODO SEMANAL E MENSAL
         if (period === period_dto_1.default.MONTHLY || period === period_dto_1.default.WEEKLY) {
             const daysOfInterval = date_fns_1.eachDayOfInterval({
@@ -168,6 +178,7 @@ let DetailRouteService = class DetailRouteService {
             givenPrizesCount,
             chartData1,
             chartData2,
+            machines,
         };
     }
 };
@@ -177,6 +188,7 @@ DetailRouteService = __decorate([
     __param(1, tsyringe_1.inject('UsersRepository')),
     __param(2, tsyringe_1.inject('PointsOfSaleRepository')),
     __param(3, tsyringe_1.inject('TelemetryLogsRepository')),
-    __metadata("design:paramtypes", [Object, Object, Object, Object])
+    __param(4, tsyringe_1.inject('MachinesRepository')),
+    __metadata("design:paramtypes", [Object, Object, Object, Object, Object])
 ], DetailRouteService);
 exports.default = DetailRouteService;

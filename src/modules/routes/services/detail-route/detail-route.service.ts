@@ -1,4 +1,6 @@
 import Period from '@modules/machines/contracts/dtos/period.dto';
+import Machine from '@modules/machines/contracts/models/machine';
+import MachinesRepository from '@modules/machines/contracts/repositories/machines.repository';
 import PointOfSale from '@modules/points-of-sale/contracts/models/point-of-sale';
 import PointsOfSaleRepository from '@modules/points-of-sale/contracts/repositories/points-of-sale.repository';
 import Route from '@modules/routes/contracts/models/route';
@@ -52,6 +54,7 @@ interface Response {
   givenPrizesCount: number;
   chartData1: ChartData[];
   chartData2: ChartData2[];
+  machines: Machine[];
 }
 
 @injectable()
@@ -68,6 +71,9 @@ class DetailRouteService {
 
     @inject('TelemetryLogsRepository')
     private telemetryLogsRepository: TelemetryLogsRepository,
+
+    @inject('MachinesRepository')
+    private machinesRepository: MachinesRepository,
   ) {}
 
   public async execute({
@@ -196,6 +202,14 @@ class DetailRouteService {
         };
       });
     }
+    // ? MACHINES ORDERED
+
+    const { machines } = await this.machinesRepository.find({
+      pointOfSaleId: pointsOfSale.map(pointOfSale => pointOfSale.id),
+      orderByLastCollection: true,
+      populate: ['pointOfSale'],
+      fields: ['pointOfSale', 'serialNumber', 'lastCollection', 'id'],
+    });
 
     // ? CHART DATA PARA PERIODO SEMANAL E MENSAL
     if (period === Period.MONTHLY || period === Period.WEEKLY) {
@@ -263,6 +277,7 @@ class DetailRouteService {
       givenPrizesCount,
       chartData1,
       chartData2,
+      machines,
     };
   }
 }
