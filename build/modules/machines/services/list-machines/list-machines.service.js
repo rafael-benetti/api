@@ -85,6 +85,7 @@ let ListMachinesService = class ListMachinesService {
         filters.limit = limit;
         filters.offset = offset;
         filters.isActive = isActive;
+        filters.populate = ['operator'];
         const result = await this.machinesRepository.find(filters);
         const machinesPromise = result.machines.map(async (machine) => {
             const [givenPrizes,] = await this.telemetryLogsRepository.getPrizesPerMachine({
@@ -99,6 +100,9 @@ let ListMachinesService = class ListMachinesService {
             else {
                 machine.givenPrizes = 0;
             }
+            machine.operator = {
+                name: machine.operator?.name,
+            };
             return machine;
         });
         const machines = await bluebird_1.Promise.all(machinesPromise);

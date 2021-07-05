@@ -127,6 +127,8 @@ class ListMachinesService {
 
     filters.isActive = isActive;
 
+    filters.populate = ['operator'];
+
     const result = await this.machinesRepository.find(filters);
 
     const machinesPromise = result.machines.map(async machine => {
@@ -144,6 +146,10 @@ class ListMachinesService {
       } else {
         machine.givenPrizes = 0;
       }
+
+      machine.operator = {
+        name: machine.operator?.name,
+      };
 
       return machine;
     });

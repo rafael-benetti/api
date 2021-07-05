@@ -23,6 +23,8 @@ class Machine {
 
   operatorId?: string;
 
+  operator?: any;
+
   locationId?: string;
 
   pointOfSale?: PointOfSale;
