@@ -63,7 +63,7 @@ __decorate([
 __decorate([
     core_1.OneToOne({ name: 'createdBy' }),
     __metadata("design:type", mikro_user_1.default)
-], MikroMachineLog.prototype, "createdByUser", void 0);
+], MikroMachineLog.prototype, "user", void 0);
 __decorate([
     core_1.Property(),
     __metadata("design:type", Number)
