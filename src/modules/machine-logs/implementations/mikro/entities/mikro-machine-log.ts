@@ -1,7 +1,8 @@
-import { Entity, PrimaryKey, Property } from '@mikro-orm/core';
+import { Entity, OneToOne, PrimaryKey, Property } from '@mikro-orm/core';
 import CreateMachineLogDto from '@modules/machine-logs/contracts/dtos/create-machine-log.dto';
 import MachineLog from '@modules/machine-logs/contracts/entities/machine-log';
 import MachineLogType from '@modules/machine-logs/contracts/enums/machine-log-type';
+import MikroUser from '@modules/users/implementations/mikro/models/mikro-user';
 import { v4 } from 'uuid';
 
 @Entity({ collection: 'machine-logs' })
@@ -26,6 +27,9 @@ class MikroMachineLog implements MachineLog {
 
   @Property()
   createdBy: string;
+
+  @OneToOne({ name: 'createdBy' })
+  createdByUser?: MikroUser;
 
   @Property()
   quantity: number;

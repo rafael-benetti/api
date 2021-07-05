@@ -24,6 +24,8 @@ class MikroMachineLogsRepository implements MachineLogsRepository {
     type,
     startDate,
     endDate,
+    fields,
+    populate,
     limit,
     offset,
   }: FindMachineLogsDto): Promise<{
@@ -52,6 +54,8 @@ class MikroMachineLogsRepository implements MachineLogsRepository {
         orderBy: {
           createdAt: 'DESC',
         },
+        populate,
+        fields,
       },
     );
 

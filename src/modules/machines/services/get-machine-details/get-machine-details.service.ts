@@ -192,6 +192,18 @@ class GetMachineDetailsService {
       limit: 5,
       offset: 0,
       groupId: machine.groupId,
+      populate: ['createdByUser'],
+      fields: [
+        'createdByUser.name',
+        'id',
+        'machineId',
+        'groupId',
+        'observations',
+        'type',
+        'createdAt',
+        'createdBy',
+        'quantity',
+      ],
     });
 
     const [

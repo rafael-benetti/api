@@ -91,6 +91,17 @@ class ListMachineLogsService {
       groupId: machine.groupId,
       machineId,
       type,
+      populate: ['createdByUser'],
+      fields: [
+        'createdByUser.name',
+        'machineId',
+        'groupId',
+        'observations',
+        'type',
+        'createdAt',
+        'createdBy',
+        'quantity',
+      ],
       offset,
       limit,
     });

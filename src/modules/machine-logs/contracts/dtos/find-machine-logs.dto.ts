@@ -6,6 +6,8 @@ export default interface FindMachineLogsDto {
   startDate?: Date;
   endDate?: Date;
   type?: MachineLogType;
+  populate?: string[];
+  fields?: string[];
   limit?: number;
   offset?: number;
 }
