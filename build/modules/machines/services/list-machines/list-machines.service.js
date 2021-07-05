@@ -20,16 +20,19 @@ const find_machines_dto_1 = __importDefault(require("../../contracts/dtos/find-m
 const machine_1 = __importDefault(require("../../contracts/models/machine"));
 const machines_repository_1 = __importDefault(require("../../contracts/repositories/machines.repository"));
 const routes_repository_1 = __importDefault(require("../../../routes/contracts/repositories/routes.repository"));
+const telemetry_logs_repository_1 = __importDefault(require("../../../telemetry-logs/contracts/repositories/telemetry-logs.repository"));
 const role_1 = __importDefault(require("../../../users/contracts/enums/role"));
 const users_repository_1 = __importDefault(require("../../../users/contracts/repositories/users.repository"));
 const app_error_1 = __importDefault(require("../../../../shared/errors/app-error"));
 const tsyringe_1 = require("tsyringe");
+const bluebird_1 = require("bluebird");
 let ListMachinesService = class ListMachinesService {
-    constructor(machinesRepository, usersRepository, groupsRepository, routesRepository) {
+    constructor(machinesRepository, usersRepository, groupsRepository, routesRepository, telemetryLogsRepository) {
         this.machinesRepository = machinesRepository;
         this.usersRepository = usersRepository;
         this.groupsRepository = groupsRepository;
         this.routesRepository = routesRepository;
+        this.telemetryLogsRepository = telemetryLogsRepository;
     }
     async execute({ lean, userId, categoryId, groupId, routeId, pointOfSaleId, serialNumber, telemetryStatus, isActive, limit, offset, }) {
         const filters = {};
@@ -83,6 +86,23 @@ let ListMachinesService = class ListMachinesService {
         filters.offset = offset;
         filters.isActive = isActive;
         const result = await this.machinesRepository.find(filters);
+        const machinesPromise = result.machines.map(async (machine) => {
+            const [givenPrizes,] = await this.telemetryLogsRepository.getPrizesPerMachine({
+                endDate: new Date(),
+                startDate: machine.lastCollection,
+                groupIds: [machine.groupId],
+                machineId: machine.id,
+            });
+            if (givenPrizes) {
+                machine.givenPrizes = givenPrizes.prizes;
+            }
+            else {
+                machine.givenPrizes = 0;
+            }
+            return machine;
+        });
+        const machines = await bluebird_1.Promise.all(machinesPromise);
+        result.machines = machines;
         return result;
     }
 };
@@ -92,6 +112,7 @@ ListMachinesService = __decorate([
     __param(1, tsyringe_1.inject('UsersRepository')),
     __param(2, tsyringe_1.inject('GroupsRepository')),
     __param(3, tsyringe_1.inject('RoutesRepository')),
-    __metadata("design:paramtypes", [Object, Object, Object, Object])
+    __param(4, tsyringe_1.inject('TelemetryLogsRepository')),
+    __metadata("design:paramtypes", [Object, Object, Object, Object, Object])
 ], ListMachinesService);
 exports.default = ListMachinesService;

@@ -153,8 +153,8 @@ let MikroTelemetryLogsRepository = class MikroTelemetryLogsRepository {
         ]);
         return incomePerMachine;
     }
-    async getPrizesPerMachine({ groupIds, startDate, endDate, }) {
-        const prizesPerMachine = await this.repository.aggregate([
+    async getPrizesPerMachine({ groupIds, machineId, startDate, endDate, }) {
+        const stages = [
             {
                 $match: {
                     groupId: {
@@ -186,7 +186,15 @@ let MikroTelemetryLogsRepository = class MikroTelemetryLogsRepository {
                     type: 1,
                 },
             },
-        ]);
+        ];
+        if (machineId) {
+            stages.unshift({
+                $match: {
+                    machineId,
+                },
+            });
+        }
+        const prizesPerMachine = await this.repository.aggregate(stages);
         return prizesPerMachine;
     }
     async getIncomePerGroup({ groupIds, startDate, endDate, }) {
