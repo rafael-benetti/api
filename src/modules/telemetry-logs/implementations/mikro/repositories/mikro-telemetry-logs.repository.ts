@@ -181,10 +181,11 @@ class MikroTelemetryLogsRepository implements TelemetryLogsRepository {
 
   async getPrizesPerMachine({
     groupIds,
+    machineId,
     startDate,
     endDate,
   }: GetIncomePerMachineDto): Promise<GetPrizesPerMachineResponseDto[]> {
-    const prizesPerMachine = await this.repository.aggregate([
+    const stages: unknown[] = [
       {
         $match: {
           groupId: {
@@ -216,7 +217,16 @@ class MikroTelemetryLogsRepository implements TelemetryLogsRepository {
           type: 1,
         },
       },
-    ]);
+    ];
+
+    if (machineId) {
+      stages.unshift({
+        $match: {
+          machineId,
+        },
+      });
+    }
+    const prizesPerMachine = await this.repository.aggregate(stages);
 
     return prizesPerMachine;
   }

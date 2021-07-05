@@ -3,10 +3,12 @@ import FindMachinesDto from '@modules/machines/contracts/dtos/find-machines.dto'
 import Machine from '@modules/machines/contracts/models/machine';
 import MachinesRepository from '@modules/machines/contracts/repositories/machines.repository';
 import RoutesRepository from '@modules/routes/contracts/repositories/routes.repository';
+import TelemetryLogsRepository from '@modules/telemetry-logs/contracts/repositories/telemetry-logs.repository';
 import Role from '@modules/users/contracts/enums/role';
 import UsersRepository from '@modules/users/contracts/repositories/users.repository';
 import AppError from '@shared/errors/app-error';
 import { inject, injectable } from 'tsyringe';
+import { Promise } from 'bluebird';
 
 interface Request {
   lean: boolean;
@@ -41,6 +43,9 @@ class ListMachinesService {
 
     @inject('RoutesRepository')
     private routesRepository: RoutesRepository,
+
+    @inject('TelemetryLogsRepository')
+    private telemetryLogsRepository: TelemetryLogsRepository,
   ) {}
 
   public async execute({
@@ -123,6 +128,29 @@ class ListMachinesService {
     filters.isActive = isActive;
 
     const result = await this.machinesRepository.find(filters);
+
+    const machinesPromise = result.machines.map(async machine => {
+      const [
+        givenPrizes,
+      ] = await this.telemetryLogsRepository.getPrizesPerMachine({
+        endDate: new Date(),
+        startDate: machine.lastCollection,
+        groupIds: [machine.groupId],
+        machineId: machine.id,
+      });
+
+      if (givenPrizes) {
+        machine.givenPrizes = givenPrizes.prizes;
+      } else {
+        machine.givenPrizes = 0;
+      }
+
+      return machine;
+    });
+
+    const machines = await Promise.all(machinesPromise);
+
+    result.machines = machines;
 
     return result;
   }

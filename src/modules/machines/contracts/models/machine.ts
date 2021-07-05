@@ -31,6 +31,8 @@ class Machine {
 
   minimumPrizeCount?: number;
 
+  givenPrizes?: number;
+
   ownerId: string;
 
   isActive: boolean;

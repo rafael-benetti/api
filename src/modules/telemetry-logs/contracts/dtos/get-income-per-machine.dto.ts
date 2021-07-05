@@ -1,5 +1,6 @@
 export default interface GetIncomePerMachineDto {
   groupIds: string[];
-  startDate: Date;
-  endDate: Date;
+  machineId?: string;
+  startDate?: Date;
+  endDate?: Date;
 }
