@@ -192,9 +192,9 @@ class GetMachineDetailsService {
       limit: 5,
       offset: 0,
       groupId: machine.groupId,
-      populate: ['createdByUser'],
+      populate: ['user'],
       fields: [
-        'createdByUser.name',
+        'user.name',
         'id',
         'machineId',
         'groupId',

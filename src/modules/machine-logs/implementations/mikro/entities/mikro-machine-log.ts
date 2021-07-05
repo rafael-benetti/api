@@ -29,7 +29,7 @@ class MikroMachineLog implements MachineLog {
   createdBy: string;
 
   @OneToOne({ name: 'createdBy' })
-  createdByUser?: MikroUser;
+  user?: MikroUser;
 
   @Property()
   quantity: number;
