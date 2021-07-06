@@ -8,7 +8,7 @@ const list_machines_service_1 = __importDefault(require("./list-machines.service
 class ListMachinesController {
     static async handle(req, res) {
         const { userId } = req;
-        const { lean, categoryId, groupId, routeId, pointOfSaleId, serialNumber, isActive, telemetryStatus, limit, offset,
+        const { lean, categoryId, groupId, routeId, operatorId, pointOfSaleId, serialNumber, isActive, telemetryStatus, limit, offset,
         // eslint-disable-next-line @typescript-eslint/no-explicit-any
          } = req.query;
         const listMachinesService = tsyringe_1.container.resolve(list_machines_service_1.default);
@@ -17,6 +17,7 @@ class ListMachinesController {
             categoryId: categoryId,
             groupId: groupId,
             pointOfSaleId: pointOfSaleId,
+            operatorId: operatorId,
             routeId: routeId,
             serialNumber: serialNumber,
             isActive: isActive?.toString() === 'true',

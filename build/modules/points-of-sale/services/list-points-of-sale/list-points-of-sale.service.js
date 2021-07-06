@@ -17,30 +17,41 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 Object.defineProperty(exports, "__esModule", { value: true });
 const point_of_sale_1 = __importDefault(require("../../contracts/models/point-of-sale"));
 const points_of_sale_repository_1 = __importDefault(require("../../contracts/repositories/points-of-sale.repository"));
+const routes_repository_1 = __importDefault(require("../../../routes/contracts/repositories/routes.repository"));
 const role_1 = __importDefault(require("../../../users/contracts/enums/role"));
 const users_repository_1 = __importDefault(require("../../../users/contracts/repositories/users.repository"));
 const app_error_1 = __importDefault(require("../../../../shared/errors/app-error"));
 const tsyringe_1 = require("tsyringe");
 let ListPointsOfSaleService = class ListPointsOfSaleService {
-    constructor(pointsOfSaleRepository, usersRepository) {
+    constructor(pointsOfSaleRepository, usersRepository, routesRepository) {
         this.pointsOfSaleRepository = pointsOfSaleRepository;
         this.usersRepository = usersRepository;
+        this.routesRepository = routesRepository;
     }
-    async execute({ userId, label, groupId, limit, offset, }) {
+    async execute({ userId, label, groupId, operatorId, routeId, limit, offset, }) {
         const user = await this.usersRepository.findOne({
             by: 'id',
             value: userId,
         });
         if (!user)
             throw app_error_1.default.userNotFound;
+        let pointsOfSaleIds;
+        if (operatorId || routeId) {
+            const routes = await this.routesRepository.find({
+                operatorId,
+                id: routeId,
+            });
+            pointsOfSaleIds = routes.flatMap(route => route.pointsOfSaleIds);
+        }
         if (user.role === role_1.default.OWNER) {
             const response = await this.pointsOfSaleRepository.find({
-                by: 'ownerId',
-                value: user.id,
+                ...(pointsOfSaleIds && { by: 'id' }),
+                ...(pointsOfSaleIds && { value: pointsOfSaleIds }),
                 filters: {
                     groupId,
-                    limit,
                     label,
+                    ownerId: user.id,
+                    limit,
                     offset,
                 },
             });
@@ -48,9 +59,10 @@ let ListPointsOfSaleService = class ListPointsOfSaleService {
         }
         if (user.groupIds) {
             const response = await this.pointsOfSaleRepository.find({
-                by: 'groupId',
-                value: groupId || user.groupIds,
+                by: 'id',
+                value: pointsOfSaleIds,
                 filters: {
+                    groupId: groupId || user.groupIds,
                     label,
                     limit,
                     offset,
@@ -65,6 +77,7 @@ ListPointsOfSaleService = __decorate([
     tsyringe_1.injectable(),
     __param(0, tsyringe_1.inject('PointsOfSaleRepository')),
     __param(1, tsyringe_1.inject('UsersRepository')),
-    __metadata("design:paramtypes", [Object, Object])
+    __param(2, tsyringe_1.inject('RoutesRepository')),
+    __metadata("design:paramtypes", [Object, Object, Object])
 ], ListPointsOfSaleService);
 exports.default = ListPointsOfSaleService;

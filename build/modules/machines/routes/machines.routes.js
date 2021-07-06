@@ -45,6 +45,7 @@ machinesRouter.get('/', celebrate_1.celebrate({
         serialNumber: celebrate_1.Joi.string(),
         isActive: celebrate_1.Joi.boolean().default(true),
         lean: celebrate_1.Joi.boolean().default(false),
+        operatorId: celebrate_1.Joi.string().uuid(),
         telemetryStatus: celebrate_1.Joi.string().valid('ONLINE', 'OFFLINE', 'VIRGIN', 'NO_TELEMETRY'),
         limit: celebrate_1.Joi.number(),
         offset: celebrate_1.Joi.number(),

@@ -134,8 +134,15 @@ let DetailRouteService = class DetailRouteService {
         const { machines } = await this.machinesRepository.find({
             pointOfSaleId: pointsOfSale.map(pointOfSale => pointOfSale.id),
             orderByLastCollection: true,
-            populate: ['pointOfSale'],
-            fields: ['pointOfSale', 'serialNumber', 'lastCollection', 'id'],
+            checkLastCollectionExists: false,
+            fields: [
+                'pointOfSale',
+                'pointOfSale.label',
+                'serialNumber',
+                'categoryLabel',
+                'lastCollection',
+                'id',
+            ],
         });
         // ? CHART DATA PARA PERIODO SEMANAL E MENSAL
         if (period === period_dto_1.default.MONTHLY || period === period_dto_1.default.WEEKLY) {

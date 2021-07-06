@@ -15,6 +15,7 @@ const points_of_sales_routes_1 = __importDefault(require("../../../modules/point
 const products_routes_1 = __importDefault(require("../../../modules/products/routes/products.routes"));
 const reports_routes_1 = __importDefault(require("../../../modules/reports/routes/reports.routes"));
 const routes_routes_1 = __importDefault(require("../../../modules/routes/routes/routes.routes"));
+const routes_routes_v2_1 = __importDefault(require("../../../modules/routes/routes/routes.routes.v2"));
 const telemetry_logs_router_1 = __importDefault(require("../../../modules/telemetry-logs/routes/telemetry-logs.router"));
 const telemetry_routes_1 = __importDefault(require("../../../modules/telemetry/routes/telemetry.routes"));
 const users_routes_1 = __importDefault(require("../../../modules/users/routes/users.routes"));
@@ -28,6 +29,7 @@ router.use('/products', products_routes_1.default);
 router.use('/categories', categories_routes_1.default);
 router.use('/machines', machines_routes_1.default);
 router.use('/routes', routes_routes_1.default);
+router.use('/v2/routes', routes_routes_v2_1.default);
 router.use('/counterTypes', counter_types_routes_1.default);
 router.use('/telemetry-boards', telemetry_routes_1.default);
 router.use('/telemetry-logs', telemetry_logs_router_1.default);

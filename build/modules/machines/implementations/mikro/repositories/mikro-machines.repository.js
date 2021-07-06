@@ -32,11 +32,11 @@ class MikroMachinesRepository {
         });
         return machine ? machine_mapper_1.default.toEntity(machine) : undefined;
     }
-    async find({ id, ownerId, groupIds, operatorId, categoryId, pointOfSaleId, serialNumber, isActive, telemetryBoardId, telemetryStatus, limit, offset, populate, orderByLastCollection, orderByLastConnection, fields, }) {
+    async find({ id, ownerId, groupIds, operatorId, categoryId, pointOfSaleId, serialNumber, isActive, telemetryBoardId, telemetryStatus, limit, offset, populate, orderByLastCollection, orderByLastConnection, checkLastCollectionExists, fields, }) {
         const telemetryStatusQuery = {};
         const lastCollectionQuery = {};
         const lastConnectionQuery = {};
-        if (orderByLastConnection) {
+        if (orderByLastConnection && checkLastCollectionExists) {
             telemetryStatusQuery.lastConnection = {
                 $exists: true,
                 $ne: null,

@@ -45,7 +45,16 @@ pointsOfSaleRoutes.patch('/:pointOfSaleId', celebrate_1.celebrate({
         }),
     },
 }), edit_point_of_sale_controller_1.default.handle);
-pointsOfSaleRoutes.get('/', list_points_of_sale_controller_1.default.handle);
+pointsOfSaleRoutes.get('/', celebrate_1.celebrate({
+    query: {
+        routeId: celebrate_1.Joi.string().uuid(),
+        groupId: celebrate_1.Joi.string().uuid(),
+        operatorId: celebrate_1.Joi.string().uuid(),
+        label: celebrate_1.Joi.string(),
+        limit: celebrate_1.Joi.number(),
+        offset: celebrate_1.Joi.number(),
+    },
+}), list_points_of_sale_controller_1.default.handle);
 pointsOfSaleRoutes.get('/:pointOfSaleId', celebrate_1.celebrate({
     query: {
         period: celebrate_1.Joi.string().valid('DAILY', 'WEEKLY', 'MONTHLY'),

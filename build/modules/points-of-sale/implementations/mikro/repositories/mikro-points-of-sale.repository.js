@@ -3,6 +3,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
+const logger_1 = __importDefault(require("../../../../../config/logger"));
 const create_point_of_sale_dto_1 = __importDefault(require("../../../contracts/dtos/create-point-of-sale.dto"));
 const find_point_of_sale_dto_1 = __importDefault(require("../../../contracts/dtos/find-point-of-sale.dto"));
 const point_of_sale_1 = __importDefault(require("../../../contracts/models/point-of-sale"));
@@ -24,13 +25,14 @@ class MikroPointsOfSaleRepository {
     }
     async findOne(data) {
         const pointOfSale = await this.repository.findOne({
-            [data.by]: data.value,
+            ...(data.by && { [data.by]: data.value }),
         }, data.populate);
         return pointOfSale ? point_of_sale_mapper_1.default.toApi(pointOfSale) : undefined;
     }
     async find(data) {
+        logger_1.default.info(data);
         const [pointsOfSale, count] = await this.repository.findAndCount({
-            [data.by]: data.value,
+            ...(data.by && { [data.by]: data.value }),
             ...(data.filters?.groupId && { groupId: data.filters.groupId }),
             ...(data.filters?.label && {
                 label: new RegExp(data.filters.label, 'i'),

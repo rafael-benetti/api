@@ -8,12 +8,14 @@ const list_points_of_sale_service_1 = __importDefault(require("./list-points-of-
 class ListPointsOfSaleController {
     static async handle(req, res) {
         const { userId } = req;
-        const { groupId, label, limit, offset } = req.query;
+        const { groupId, label, routeId, operatorId, limit, offset } = req.query;
         const listPointsOfSaleService = tsyringe_1.container.resolve(list_points_of_sale_service_1.default);
         const pointsOfSale = await listPointsOfSaleService.execute({
             userId,
             label: label,
             groupId: groupId,
+            operatorId: operatorId,
+            routeId: routeId,
             offset: Number(offset),
             limit: Number(limit),
         });

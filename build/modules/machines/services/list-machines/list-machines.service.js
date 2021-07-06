@@ -34,7 +34,7 @@ let ListMachinesService = class ListMachinesService {
         this.routesRepository = routesRepository;
         this.telemetryLogsRepository = telemetryLogsRepository;
     }
-    async execute({ lean, userId, categoryId, groupId, routeId, pointOfSaleId, serialNumber, telemetryStatus, isActive, limit, offset, }) {
+    async execute({ lean, userId, categoryId, groupId, routeId, pointOfSaleId, serialNumber, telemetryStatus, isActive, operatorId, limit, offset, }) {
         const filters = {};
         const user = await this.usersRepository.findOne({
             by: 'id',
@@ -61,10 +61,13 @@ let ListMachinesService = class ListMachinesService {
             const route = await this.routesRepository.findOne({
                 id: routeId,
             });
-            const machines = await this.machinesRepository.find({
-                pointOfSaleId: route?.pointsOfSaleIds,
-            });
-            filters.id = machines.machines.map(machine => machine.id);
+            if (!route) {
+                return {
+                    machines: [],
+                    count: 0,
+                };
+            }
+            filters.pointOfSaleId = route.pointsOfSaleIds;
         }
         if (groupId) {
             if (!user.groupIds?.includes(groupId) && user.role !== role_1.default.OWNER)
@@ -79,12 +82,14 @@ let ListMachinesService = class ListMachinesService {
                 throw app_error_1.default.authorizationError;
             filters.groupIds = [groupId];
         }
+        if (pointOfSaleId && !routeId)
+            filters.pointOfSaleId = pointOfSaleId;
         filters.categoryId = categoryId;
-        filters.pointOfSaleId = pointOfSaleId;
         filters.serialNumber = serialNumber;
         filters.limit = limit;
         filters.offset = offset;
         filters.isActive = isActive;
+        filters.operatorId = operatorId;
         filters.populate = ['operator'];
         const result = await this.machinesRepository.find(filters);
         const machinesPromise = result.machines.map(async (machine) => {

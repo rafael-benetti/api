@@ -30,15 +30,39 @@ class MikroRoutesRepository {
         });
         return route ? route_mapper_1.default.toEntity(route) : undefined;
     }
-    async find({ id, groupIds, operatorId, ownerId, pointsOfSaleId, }) {
+    async find({ id, groupIds, operatorId, ownerId, pointsOfSaleId, label, offset, limit, }) {
         const routes = await this.repository.find({
             ...(id && { id }),
             ...(operatorId && { operatorId }),
             ...(groupIds && { groupIds }),
             ...(ownerId && { ownerId }),
             ...(pointsOfSaleId && { pointsOfSaleIds: pointsOfSaleId }),
+            ...(label && {
+                label: new RegExp(label, 'i'),
+                offset,
+                limit,
+            }),
         });
         return routes.map(route => route_mapper_1.default.toEntity(route));
+    }
+    async findAndCount({ id, groupIds, operatorId, ownerId, pointsOfSaleId, label, offset, limit, }) {
+        const [routes, count] = await this.repository.findAndCount({
+            ...(id && { id }),
+            ...(operatorId && { operatorId }),
+            ...(groupIds && { groupIds }),
+            ...(ownerId && { ownerId }),
+            ...(pointsOfSaleId && { pointsOfSaleIds: pointsOfSaleId }),
+            ...(label && {
+                label: new RegExp(label, 'i'),
+            }),
+        }, {
+            limit,
+            offset,
+        });
+        return {
+            routes: routes.map(route => route_mapper_1.default.toEntity(route)),
+            count,
+        };
     }
     save(data) {
         this.repository.persist(route_mapper_1.default.toMikroEntity(data));

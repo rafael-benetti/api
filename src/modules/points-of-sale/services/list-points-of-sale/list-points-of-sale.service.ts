@@ -1,4 +1,3 @@
-import logger from '@config/logger';
 import PointOfSale from '@modules/points-of-sale/contracts/models/point-of-sale';
 import PointsOfSaleRepository from '@modules/points-of-sale/contracts/repositories/points-of-sale.repository';
 import RoutesRepository from '@modules/routes/contracts/repositories/routes.repository';

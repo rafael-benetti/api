@@ -75,6 +75,7 @@ let DashboardInfoService = class DashboardInfoService {
         })).machines;
         const machinesSortedByLastConnection = (await this.machinesRepository.find({
             orderByLastConnection: true,
+            checkLastCollectionExists: true,
             operatorId: isOperator ? user.id : undefined,
             groupIds: isOperator ? undefined : groupIds,
             telemetryStatus: 'OFFLINE',
