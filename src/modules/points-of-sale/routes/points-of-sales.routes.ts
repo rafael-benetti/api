@@ -56,7 +56,20 @@ pointsOfSaleRoutes.patch(
   EditPointOfSaleController.handle,
 );
 
-pointsOfSaleRoutes.get('/', ListPointsOfSaleController.handle);
+pointsOfSaleRoutes.get(
+  '/',
+  celebrate({
+    query: {
+      routeId: Joi.string().uuid(),
+      groupId: Joi.string().uuid(),
+      operatorId: Joi.string().uuid(),
+      label: Joi.string(),
+      limit: Joi.number(),
+      offset: Joi.number(),
+    },
+  }),
+  ListPointsOfSaleController.handle,
+);
 
 pointsOfSaleRoutes.get(
   '/:pointOfSaleId',

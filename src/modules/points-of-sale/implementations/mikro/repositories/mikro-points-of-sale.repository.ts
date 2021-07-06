@@ -1,3 +1,4 @@
+import logger from '@config/logger';
 import CreatePointOfSaleDto from '@modules/points-of-sale/contracts/dtos/create-point-of-sale.dto';
 import FindPointOfSaleDto from '@modules/points-of-sale/contracts/dtos/find-point-of-sale.dto';
 import PointOfSale from '@modules/points-of-sale/contracts/models/point-of-sale';
@@ -21,7 +22,7 @@ class MikroPointsOfSaleRepository implements PointsOfSaleRepository {
   async findOne(data: FindPointOfSaleDto): Promise<PointOfSale | undefined> {
     const pointOfSale = await this.repository.findOne(
       {
-        [data.by]: data.value,
+        ...(data.by && { [data.by]: data.value }),
       },
       data.populate,
     );
@@ -32,9 +33,10 @@ class MikroPointsOfSaleRepository implements PointsOfSaleRepository {
   async find(
     data: FindPointOfSaleDto,
   ): Promise<{ count: number; pointsOfSale: PointOfSale[] }> {
+    logger.info(data);
     const [pointsOfSale, count] = await this.repository.findAndCount(
       {
-        [data.by]: data.value,
+        ...(data.by && { [data.by]: data.value }),
         ...(data.filters?.groupId && { groupId: data.filters.groupId }),
         ...(data.filters?.label && {
           label: new RegExp(data.filters.label, 'i'),
