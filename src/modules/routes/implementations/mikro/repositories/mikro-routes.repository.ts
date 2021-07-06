@@ -38,6 +38,7 @@ class MikroRoutesRepository implements RoutesRepository {
     operatorId,
     ownerId,
     pointsOfSaleId,
+    label,
   }: FindRoutesDto): Promise<Route[]> {
     const routes = await this.repository.find({
       ...(id && { id }),
@@ -45,6 +46,9 @@ class MikroRoutesRepository implements RoutesRepository {
       ...(groupIds && { groupIds }),
       ...(ownerId && { ownerId }),
       ...(pointsOfSaleId && { pointsOfSaleIds: pointsOfSaleId }),
+      ...(label && {
+        label: new RegExp(label, 'i'),
+      }),
     });
 
     return routes.map(route => RouteMapper.toEntity(route));
