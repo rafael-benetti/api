@@ -10,6 +10,7 @@ import pointsOfSaleRoutes from '@modules/points-of-sale/routes/points-of-sales.r
 import productsRoutes from '@modules/products/routes/products.routes';
 import reportsRoutes from '@modules/reports/routes/reports.routes';
 import routesRoutes from '@modules/routes/routes/routes.routes';
+import routesRoutesV2 from '@modules/routes/routes/routes.routes.v2';
 import telemetryLogsRoutes from '@modules/telemetry-logs/routes/telemetry-logs.router';
 import telemetryRoutes from '@modules/telemetry/routes/telemetry.routes';
 import usersRoutes from '@modules/users/routes/users.routes';
@@ -25,6 +26,7 @@ router.use('/products', productsRoutes);
 router.use('/categories', categoriesRoutes);
 router.use('/machines', machinesRoutes);
 router.use('/routes', routesRoutes);
+router.use('/v2/routes', routesRoutesV2);
 router.use('/counterTypes', counterTypesRoutes);
 router.use('/telemetry-boards', telemetryRoutes);
 router.use('/telemetry-logs', telemetryLogsRoutes);

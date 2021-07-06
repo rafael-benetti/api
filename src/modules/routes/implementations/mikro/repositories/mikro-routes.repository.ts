@@ -50,6 +50,31 @@ class MikroRoutesRepository implements RoutesRepository {
     return routes.map(route => RouteMapper.toEntity(route));
   }
 
+  async findAndCount({
+    id,
+    groupIds,
+    operatorId,
+    ownerId,
+    pointsOfSaleId,
+    label,
+  }: FindRoutesDto): Promise<{ routes: Route[]; count: number }> {
+    const [routes, count] = await this.repository.findAndCount({
+      ...(id && { id }),
+      ...(operatorId && { operatorId }),
+      ...(groupIds && { groupIds }),
+      ...(ownerId && { ownerId }),
+      ...(pointsOfSaleId && { pointsOfSaleIds: pointsOfSaleId }),
+      ...(label && {
+        label: new RegExp(label, 'i'),
+      }),
+    });
+
+    return {
+      routes: routes.map(route => RouteMapper.toEntity(route)),
+      count,
+    };
+  }
+
   save(data: Route): void {
     this.repository.persist(RouteMapper.toMikroEntity(data));
   }

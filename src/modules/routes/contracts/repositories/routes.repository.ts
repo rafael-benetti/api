@@ -6,6 +6,12 @@ export default interface RoutesRepository {
   create(data: CreateRouteDto): Route;
   findOne(data: FindRoutesDto): Promise<Route | undefined>;
   find(data: FindRoutesDto): Promise<Route[]>;
+  findAndCount(
+    data: FindRoutesDto,
+  ): Promise<{
+    routes: Route[];
+    count: number;
+  }>;
   save(data: Route): void;
   delete(route: Route): void;
 }
