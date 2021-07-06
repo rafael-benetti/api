@@ -212,6 +212,7 @@ class DetailRouteService {
         'pointOfSale',
         'pointOfSale.label',
         'serialNumber',
+        'categoryLabel',
         'lastCollection',
         'id',
       ],

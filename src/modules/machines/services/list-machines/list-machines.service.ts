@@ -97,11 +97,14 @@ class ListMachinesService {
         id: routeId,
       });
 
-      const machines = await this.machinesRepository.find({
-        pointOfSaleId: route?.pointsOfSaleIds,
-      });
+      if (!route) {
+        return {
+          machines: [],
+          count: 0,
+        };
+      }
 
-      filters.id = machines.machines.map(machine => machine.id);
+      filters.pointOfSaleId = route.pointsOfSaleIds;
     }
 
     if (groupId) {
@@ -121,16 +124,13 @@ class ListMachinesService {
       filters.groupIds = [groupId];
     }
 
+    if (pointOfSaleId && !routeId) filters.pointOfSaleId = pointOfSaleId;
     filters.categoryId = categoryId;
-    filters.pointOfSaleId = pointOfSaleId;
     filters.serialNumber = serialNumber;
     filters.limit = limit;
     filters.offset = offset;
-
     filters.isActive = isActive;
-
     filters.operatorId = operatorId;
-
     filters.populate = ['operator'];
 
     const result = await this.machinesRepository.find(filters);
