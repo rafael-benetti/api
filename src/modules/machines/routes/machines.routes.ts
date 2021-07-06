@@ -52,6 +52,7 @@ machinesRouter.get(
       serialNumber: Joi.string(),
       isActive: Joi.boolean().default(true),
       lean: Joi.boolean().default(false),
+      operatorId: Joi.string().uuid(),
       telemetryStatus: Joi.string().valid(
         'ONLINE',
         'OFFLINE',

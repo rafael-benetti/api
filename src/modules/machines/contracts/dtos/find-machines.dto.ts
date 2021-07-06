@@ -5,6 +5,7 @@ export default interface FindMachinesDto {
   groupIds?: string[];
   categoryId?: string;
   routeId?: string;
+  checkLastCollectionExists?: boolean;
   telemetryBoardId?: number;
   telemetryStatus?: 'ONLINE' | 'OFFLINE' | 'VIRGIN' | 'NO_TELEMETRY';
   pointOfSaleId?: string | string[];

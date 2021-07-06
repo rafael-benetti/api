@@ -13,6 +13,7 @@ import { Promise } from 'bluebird';
 interface Request {
   lean: boolean;
   userId: string;
+  operatorId?: string;
   categoryId: string;
   groupId: string;
   routeId: string;
@@ -58,6 +59,7 @@ class ListMachinesService {
     serialNumber,
     telemetryStatus,
     isActive,
+    operatorId,
     limit,
     offset,
   }: Request): Promise<
@@ -126,6 +128,8 @@ class ListMachinesService {
     filters.offset = offset;
 
     filters.isActive = isActive;
+
+    filters.operatorId = operatorId;
 
     filters.populate = ['operator'];
 

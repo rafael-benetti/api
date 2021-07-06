@@ -49,13 +49,14 @@ class MikroMachinesRepository implements MachinesRepository {
     populate,
     orderByLastCollection,
     orderByLastConnection,
+    checkLastCollectionExists,
     fields,
   }: FindMachinesDto): Promise<{ machines: Machine[]; count: number }> {
     const telemetryStatusQuery: Record<string, unknown> = {};
     const lastCollectionQuery: Record<string, unknown> = {};
     const lastConnectionQuery: Record<string, unknown> = {};
 
-    if (orderByLastConnection) {
+    if (orderByLastConnection && checkLastCollectionExists) {
       telemetryStatusQuery.lastConnection = {
         $exists: true,
         $ne: null,

@@ -202,13 +202,19 @@ class DetailRouteService {
         };
       });
     }
-    // ? MACHINES ORDERED
 
+    // ? MACHINES ORDERED
     const { machines } = await this.machinesRepository.find({
       pointOfSaleId: pointsOfSale.map(pointOfSale => pointOfSale.id),
       orderByLastCollection: true,
-      populate: ['pointOfSale'],
-      fields: ['pointOfSale', 'serialNumber', 'lastCollection', 'id'],
+      checkLastCollectionExists: false,
+      fields: [
+        'pointOfSale',
+        'pointOfSale.label',
+        'serialNumber',
+        'lastCollection',
+        'id',
+      ],
     });
 
     // ? CHART DATA PARA PERIODO SEMANAL E MENSAL
