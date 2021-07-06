@@ -6,4 +6,6 @@ export default interface FindRoutesDto {
   pointsOfSaleId?: string;
   routeId?: string;
   groupIds?: string[];
+  offset?: number;
+  limit?: number;
 }

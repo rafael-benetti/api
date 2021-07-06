@@ -97,6 +97,8 @@ class ListRoutesServiceV2 {
         operatorId,
         pointsOfSaleId: pointOfSaleId,
         label,
+        offset,
+        limit,
       });
 
       return result;
@@ -111,6 +113,8 @@ class ListRoutesServiceV2 {
         operatorId: user.id,
         pointsOfSaleId: pointOfSaleId,
         label,
+        offset,
+        limit,
       });
 
       return result;

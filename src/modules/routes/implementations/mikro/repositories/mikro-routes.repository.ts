@@ -39,6 +39,8 @@ class MikroRoutesRepository implements RoutesRepository {
     ownerId,
     pointsOfSaleId,
     label,
+    offset,
+    limit,
   }: FindRoutesDto): Promise<Route[]> {
     const routes = await this.repository.find({
       ...(id && { id }),
@@ -48,6 +50,8 @@ class MikroRoutesRepository implements RoutesRepository {
       ...(pointsOfSaleId && { pointsOfSaleIds: pointsOfSaleId }),
       ...(label && {
         label: new RegExp(label, 'i'),
+        offset,
+        limit,
       }),
     });
 
@@ -61,17 +65,25 @@ class MikroRoutesRepository implements RoutesRepository {
     ownerId,
     pointsOfSaleId,
     label,
+    offset,
+    limit,
   }: FindRoutesDto): Promise<{ routes: Route[]; count: number }> {
-    const [routes, count] = await this.repository.findAndCount({
-      ...(id && { id }),
-      ...(operatorId && { operatorId }),
-      ...(groupIds && { groupIds }),
-      ...(ownerId && { ownerId }),
-      ...(pointsOfSaleId && { pointsOfSaleIds: pointsOfSaleId }),
-      ...(label && {
-        label: new RegExp(label, 'i'),
-      }),
-    });
+    const [routes, count] = await this.repository.findAndCount(
+      {
+        ...(id && { id }),
+        ...(operatorId && { operatorId }),
+        ...(groupIds && { groupIds }),
+        ...(ownerId && { ownerId }),
+        ...(pointsOfSaleId && { pointsOfSaleIds: pointsOfSaleId }),
+        ...(label && {
+          label: new RegExp(label, 'i'),
+        }),
+      },
+      {
+        limit,
+        offset,
+      },
+    );
 
     return {
       routes: routes.map(route => RouteMapper.toEntity(route)),
