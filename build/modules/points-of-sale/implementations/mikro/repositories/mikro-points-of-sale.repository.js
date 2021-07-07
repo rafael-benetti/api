@@ -34,6 +34,7 @@ class MikroPointsOfSaleRepository {
         const [pointsOfSale, count] = await this.repository.findAndCount({
             ...(data.by && { [data.by]: data.value }),
             ...(data.filters?.groupId && { groupId: data.filters.groupId }),
+            ...(data.filters?.ownerId && { ownerId: data.filters.ownerId }),
             ...(data.filters?.label && {
                 label: new RegExp(data.filters.label, 'i'),
             }),
