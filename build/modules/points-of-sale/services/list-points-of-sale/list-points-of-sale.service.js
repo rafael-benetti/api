@@ -59,8 +59,8 @@ let ListPointsOfSaleService = class ListPointsOfSaleService {
         }
         if (user.groupIds) {
             const response = await this.pointsOfSaleRepository.find({
-                by: 'id',
-                value: pointsOfSaleIds,
+                ...(pointsOfSaleIds && { by: 'id' }),
+                ...(pointsOfSaleIds && { value: pointsOfSaleIds }),
                 filters: {
                     groupId: groupId || user.groupIds,
                     label,
