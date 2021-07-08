@@ -30,14 +30,12 @@ export default class MikroCollection implements Collection {
   @Property()
   groupId: string;
 
-  // TODO: VERIFICAR O PORQUE QUANDO POPULAR VAI COMPLETÃO
   @OneToOne({ name: 'groupId' })
   group: MikroGroup;
 
   @Property()
   userId: string;
 
-  // TODO: VERIFICAR O PORQUE QUANDO POPULAR VAI COMPLETÃO
   @OneToOne({ name: 'userId' })
   user: MikroUser;
 
