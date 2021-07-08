@@ -14,12 +14,14 @@ import routesRoutesV2 from '@modules/routes/routes/routes.routes.v2';
 import telemetryLogsRoutes from '@modules/telemetry-logs/routes/telemetry-logs.router';
 import telemetryRoutes from '@modules/telemetry/routes/telemetry.routes';
 import usersRoutes from '@modules/users/routes/users.routes';
+import usersRoutesV2 from '@modules/users/routes/users.routes.v2';
 import { Router } from 'express';
 
 const router = Router();
 
 router.use('/admins', adminsRoutes);
 router.use('/users', usersRoutes);
+router.use('/v2/users', usersRoutesV2);
 router.use('/groups', groupsRoutes);
 router.use('/pointsOfSale', pointsOfSaleRoutes);
 router.use('/products', productsRoutes);

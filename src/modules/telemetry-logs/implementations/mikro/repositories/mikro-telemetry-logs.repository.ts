@@ -1,5 +1,7 @@
 import CreateTelemetryLogDto from '@modules/telemetry-logs/contracts/dtos/create-telemetry-log.dto';
 import FindTelemetryLogsDto from '@modules/telemetry-logs/contracts/dtos/find-telemetry-logs.dto';
+import GetGroupIncomePerPeriodDto from '@modules/telemetry-logs/contracts/dtos/get-group-income-per-period.dto';
+import GetIncomePerCounterTypeDto from '@modules/telemetry-logs/contracts/dtos/get-income-per-counter-type.dto';
 import GetIncomePerMachineResponseDto from '@modules/telemetry-logs/contracts/dtos/get-income-per-machine-response.dto';
 import GetIncomePerMachineDto from '@modules/telemetry-logs/contracts/dtos/get-income-per-machine.dto';
 import GetIncomePerPointOfSaleDto from '@modules/telemetry-logs/contracts/dtos/get-income-per-point-of-sale.dto';
@@ -515,6 +517,127 @@ class MikroTelemetryLogsRepository implements TelemetryLogsRepository {
       total: number;
       id: { date: string; type: 'IN' | 'OUT'; machineId: string };
     }[];
+  }
+
+  async getGroupIncomePerPeriod({
+    groupIds,
+    pointsOfSaleIds,
+    startDate,
+    endDate,
+    withHours,
+    type,
+  }: GetGroupIncomePerPeriodDto): Promise<
+    { total: number; id: string; date: Date }[]
+  > {
+    const stages: unknown[] = [
+      {
+        $match: {
+          groupId: {
+            $in: groupIds,
+          },
+          maintenance: false,
+          pin: {
+            $exists: true,
+            $ne: null,
+          },
+          date: {
+            $exists: true,
+            $ne: null,
+            $gte: startDate,
+            $lt: endDate,
+          },
+          type,
+        },
+      },
+      {
+        $group: {
+          _id: {
+            $dateToString: {
+              format: `%Y-%m-%d${withHours ? 'T%H:00:00' : 'T04:00:00'}`,
+              date: '$date',
+            },
+          },
+
+          total: {
+            $sum: '$value',
+          },
+        },
+      },
+      {
+        $project: {
+          _id: 0,
+          id: '$_id',
+          total: 1,
+        },
+      },
+    ];
+
+    if (pointsOfSaleIds) {
+      stages.unshift({
+        $match: {
+          pointOfSaleId: {
+            $in: pointsOfSaleIds,
+          },
+        },
+      });
+    }
+
+    const response = await this.repository.aggregate(stages);
+
+    return response as { total: number; id: string; date: Date }[];
+  }
+
+  async getIncomePerCounterType({
+    groupIds,
+    pointsOfSaleIds,
+  }: GetIncomePerCounterTypeDto): Promise<
+    { total: number; counterLabel: string }[]
+  > {
+    const stages: unknown[] = [
+      {
+        $match: {
+          groupId: {
+            $in: groupIds,
+          },
+          maintenance: false,
+          pin: {
+            $exists: true,
+            $ne: null,
+          },
+
+          type: 'IN',
+        },
+      },
+      {
+        $group: {
+          _id: '$counterLabel',
+          total: {
+            $sum: '$value',
+          },
+        },
+      },
+      {
+        $project: {
+          _id: 0,
+          counterLabel: '$_id',
+          total: 1,
+        },
+      },
+    ];
+
+    if (pointsOfSaleIds) {
+      stages.unshift({
+        $match: {
+          pointOfSaleId: {
+            $in: pointsOfSaleIds,
+          },
+        },
+      });
+    }
+
+    const response = await this.repository.aggregate(stages);
+
+    return response as { total: number; counterLabel: string }[];
   }
 
   save(data: TelemetryLog): void {

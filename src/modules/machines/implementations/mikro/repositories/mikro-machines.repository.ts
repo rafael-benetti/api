@@ -140,6 +140,7 @@ class MikroMachinesRepository implements MachinesRepository {
   async machineSortedByStock({
     groupIds,
     operatorId,
+    pointOfSaleId,
   }: FindMachinesDto): Promise<
     {
       id: string;
@@ -207,6 +208,16 @@ class MikroMachinesRepository implements MachinesRepository {
         $match: {
           groupId: {
             $in: groupIds,
+          },
+        },
+      });
+    }
+
+    if (pointOfSaleId) {
+      stages.unshift({
+        $match: {
+          locationId: {
+            $in: pointOfSaleId,
           },
         },
       });

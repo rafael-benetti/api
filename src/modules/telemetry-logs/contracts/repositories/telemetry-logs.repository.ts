@@ -1,5 +1,7 @@
 import CreateTelemetryLogDto from '../dtos/create-telemetry-log.dto';
 import FindTelemetryLogsDto from '../dtos/find-telemetry-logs.dto';
+import GetGroupIncomePerPeriodDto from '../dtos/get-group-income-per-period.dto';
+import GetIncomePerCounterTypeDto from '../dtos/get-income-per-counter-type.dto';
 import GetIncomePerMachineResponseDto from '../dtos/get-income-per-machine-response.dto';
 import GetIncomePerMachineDto from '../dtos/get-income-per-machine.dto';
 import GetIncomePerPointOfSaleDto from '../dtos/get-income-per-point-of-sale.dto';
@@ -57,6 +59,14 @@ interface TelemetryLogsRepository {
   }: GetMachineIncomePerDay): Promise<
     { givenPrizes: number; id: { date: string; pin: number }; date: Date }[]
   >;
+
+  getGroupIncomePerPeriod(
+    data: GetGroupIncomePerPeriodDto,
+  ): Promise<{ total: number; id: string; date: Date }[]>;
+
+  getIncomePerCounterType(
+    data: GetIncomePerCounterTypeDto,
+  ): Promise<{ total: number; counterLabel: string }[]>;
 
   save(data: TelemetryLog): void;
 }
