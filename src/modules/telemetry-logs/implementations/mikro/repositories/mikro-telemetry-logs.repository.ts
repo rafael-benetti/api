@@ -553,7 +553,7 @@ class MikroTelemetryLogsRepository implements TelemetryLogsRepository {
         $group: {
           _id: {
             $dateToString: {
-              format: `%Y-%m-%d${withHours ? 'T%H:00:00' : 'T04:00:00'}`,
+              format: `%Y-%m-%d${withHours ? 'T%H:00:00Z' : 'T04:00:00'}`,
               date: '$date',
             },
           },

@@ -2,9 +2,9 @@ import Period from '@modules/machines/contracts/dtos/period.dto';
 import { celebrate, Joi } from 'celebrate';
 import { Request, Response } from 'express';
 import { container } from 'tsyringe';
-import DetailGroupService from './detail-group.service';
+import DetailGroupServiceV2 from './detail-group.service.v2';
 
-abstract class DetailGroupController {
+export default abstract class DetailGroupControllerV2 {
   static validate = celebrate({
     query: {
       startDate: Joi.date(),
@@ -20,7 +20,7 @@ abstract class DetailGroupController {
 
     const { startDate, endDate, period } = req.query;
 
-    const detailGroupService = container.resolve(DetailGroupService);
+    const detailGroupService = container.resolve(DetailGroupServiceV2);
 
     const groupDetail = await detailGroupService.execute({
       userId,
@@ -33,5 +33,3 @@ abstract class DetailGroupController {
     return res.json(groupDetail);
   }
 }
-
-export default DetailGroupController;

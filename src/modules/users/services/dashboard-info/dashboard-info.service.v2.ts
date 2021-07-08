@@ -10,6 +10,7 @@ import {
   eachHourOfInterval,
   isSameDay,
   isSameHour,
+  startOfHour,
   subDays,
   subMonths,
   subWeeks,
@@ -251,6 +252,8 @@ export default class DashboardInfoServiceV2 {
 
     if (!startDate) throw AppError.unknownError;
     if (!endDate) throw AppError.unknownError;
+
+    startDate = startOfHour(startDate);
 
     let chartData1: ChartData1[] = [];
     let income: number = 0;

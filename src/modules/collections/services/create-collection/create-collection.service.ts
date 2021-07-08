@@ -1,5 +1,4 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
-import logger from '@config/logger';
 import Collection from '@modules/collections/contracts/entities/collection';
 import CollectionsRepository from '@modules/collections/contracts/repositories/collections.repository';
 import MachinesRepository from '@modules/machines/contracts/repositories/machines.repository';
@@ -157,8 +156,6 @@ class CreateCollectionService {
         maintenance: false,
       },
     });
-
-    logger.info(telemetryLogs);
 
     await Promise.all(
       boxCollections.map(async boxCollection => {

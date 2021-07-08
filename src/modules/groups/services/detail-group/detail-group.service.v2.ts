@@ -7,19 +7,18 @@ import PointOfSale from '@modules/points-of-sale/contracts/models/point-of-sale'
 import PointsOfSaleRepository from '@modules/points-of-sale/contracts/repositories/points-of-sale.repository';
 import ProductLogsRepository from '@modules/products/contracts/repositories/product-logs.repository';
 import TelemetryLogsRepository from '@modules/telemetry-logs/contracts/repositories/telemetry-logs.repository';
-import UniversalFinancialRepository from '@modules/universal-financial/contracts/repositories/universal-financial.repository';
 import Role from '@modules/users/contracts/enums/role';
 import UsersRepository from '@modules/users/contracts/repositories/users.repository';
 import AppError from '@shared/errors/app-error';
 import { Promise } from 'bluebird';
 import {
-  addHours,
   eachDayOfInterval,
   eachHourOfInterval,
   endOfDay,
   isSameDay,
   isSameHour,
   startOfDay,
+  startOfHour,
   subDays,
   subMonths,
   subWeeks,
@@ -40,17 +39,15 @@ interface ChartData1 {
 }
 
 interface ChartData2 {
-  cashIncome: number;
-  coinIncome: number;
-  creditCardIncome: number;
-  others: number;
+  total: number;
+  counterLabel: string;
 }
 
 interface Response {
   machinesSortedByLastCollection: Machine[];
   machinesSortedByLastConnection: Machine[];
   chartData1?: ChartData1[];
-  chartData2?: ChartData2;
+  chartData2?: ChartData2[];
   machinesSortedByStock: {
     id: string;
     serialNumber: string;
@@ -72,7 +69,7 @@ interface Response {
 }
 
 @injectable()
-export default class DetailGroupService {
+export default class DetailGroupServiceV2 {
   constructor(
     @inject('UsersRepository')
     private usersRepository: UsersRepository,
@@ -85,9 +82,6 @@ export default class DetailGroupService {
 
     @inject('TelemetryLogsRepository')
     private telemetryLogsRepository: TelemetryLogsRepository,
-
-    @inject('UniversalFinancialRepository')
-    private universalFinancialRepository: UniversalFinancialRepository,
 
     @inject('PointsOfSaleRepository')
     private pointsOfSaleRepository: PointsOfSaleRepository,
@@ -109,6 +103,8 @@ export default class DetailGroupService {
     });
 
     if (!user) throw AppError.userNotFound;
+
+    if (user.role === Role.OPERATOR) throw AppError.authorizationError;
 
     const group = await this.groupsRepository.findOne({
       by: 'id',
@@ -195,10 +191,6 @@ export default class DetailGroupService {
       telemetryStatus: 'NO_TELEMETRY',
     });
 
-    const universalFinancialPromise = this.universalFinancialRepository.find({
-      groupId: [groupId],
-    });
-
     const [
       machinesSortedByLastConnection,
       machinesSortedByStock,
@@ -216,11 +208,9 @@ export default class DetailGroupService {
     const [
       machinesWithoutTelemetryBoard,
       machinesSortedByLastCollection,
-      universalFinancial,
     ] = await Promise.all([
       machinesWithoutTelemetryBoardPromise,
       machinesSortedByLastCollectionPromise,
-      universalFinancialPromise,
     ]);
 
     if (!startDate && !endDate && !period) period = Period.DAILY;
@@ -240,139 +230,87 @@ export default class DetailGroupService {
       endDate = endOfDay(endDate);
     }
 
-    let chartData1: ChartData1[] = [];
-    let income: number = 0;
-    let givenPrizesCount: number = 0;
+    startDate = startOfHour(startDate);
 
-    if (period && period === Period.DAILY) {
-      const telemetryLogsInPromise = this.telemetryLogsRepository.find({
-        filters: {
-          date: {
-            startDate,
-            endDate,
-          },
-          groupId: [groupId],
-          maintenance: false,
-          type: 'IN',
-        },
-      });
+    const incomeOfPeriodPromise = await this.telemetryLogsRepository.getGroupIncomePerPeriod(
+      {
+        groupIds: [groupId],
+        type: 'IN',
+        withHours: period === Period.DAILY,
+        startDate,
+        endDate,
+      },
+    );
 
-      const telemetryLogsOutPromise = this.telemetryLogsRepository.find({
-        filters: {
-          date: {
-            startDate,
-            endDate,
-          },
-          groupId: [groupId],
-          maintenance: false,
-          type: 'OUT',
-        },
-      });
+    const prizesOfPeriodPromise = await this.telemetryLogsRepository.getGroupIncomePerPeriod(
+      {
+        groupIds: [groupId],
+        type: 'OUT',
+        withHours: period === Period.DAILY,
+        startDate,
+        endDate,
+      },
+    );
 
-      const [telemetryLogsIn, telemetryLogsOut] = await Promise.all([
-        telemetryLogsInPromise,
-        telemetryLogsOutPromise,
-      ]);
+    const chartData2Promise = this.telemetryLogsRepository.getIncomePerCounterType(
+      {
+        groupIds: [groupId],
+      },
+    );
 
-      const hoursOfInterval = eachHourOfInterval({
-        start: startDate,
-        end: endDate,
-      });
-
-      // ? FATURAMENTO
-      income = telemetryLogsIn.reduce((a, b) => a + b.value, 0);
-
-      // ? PREMIOS ENTREGUES
-      givenPrizesCount = telemetryLogsOut.reduce((a, b) => a + b.value, 0);
-
-      chartData1 = hoursOfInterval.map(hour => {
-        const incomeInHour = telemetryLogsIn
-          .filter(telemetry => isSameHour(hour, telemetry.date))
-          .reduce(
-            (accumulator, currentValue) => accumulator + currentValue.value,
-            0,
-          );
-
-        const prizesCountInHour = telemetryLogsOut
-          .filter(telemetry => isSameHour(hour, telemetry.date))
-          .reduce(
-            (accumulator, currentValue) => accumulator + currentValue.value,
-            0,
-          );
-
-        return {
-          date: hour.toISOString(),
-          prizeCount: prizesCountInHour,
-          income: incomeInHour,
-        };
-      });
-    }
-
-    if (period !== Period.DAILY) {
-      // ? FATURAMENTO
-      income = universalFinancial.reduce(
-        (a, b) =>
-          a + (b.cashIncome + b.coinIncome + b.creditCardIncome + b.others),
-        0,
-      );
-
-      // ? PREMIOS ENTREGUES
-      givenPrizesCount = universalFinancial.reduce(
-        (a, b) => a + b.givenPrizes,
-        0,
-      );
-
-      const daysOfInterval = eachDayOfInterval({
-        start: startDate,
-        end: endDate,
-      }).map(day => addHours(day, 4));
-
-      chartData1 = daysOfInterval.map(day => {
-        const incomeInDay = universalFinancial
-          .filter(item => isSameDay(day, item.date))
-          .reduce(
-            (accumulator, currentValue) =>
-              accumulator +
-              (currentValue.cashIncome +
-                currentValue.coinIncome +
-                currentValue.creditCardIncome +
-                currentValue.others),
-            0,
-          );
-
-        const prizesCountInDay = universalFinancial
-          .filter(item => isSameDay(day, item.date))
-          .reduce(
-            (accumulator, currentValue) =>
-              accumulator + currentValue.givenPrizes,
-            0,
-          );
-
-        return {
-          date: day.toISOString(),
-          prizeCount: prizesCountInDay,
-          income: incomeInDay,
-        };
-      });
-    }
-
-    let cashIncome = 0;
-    let coinIncome = 0;
-    let creditCardIncome = 0;
-    let others = 0;
-
-    universalFinancial.forEach(item => {
-      cashIncome += item.cashIncome;
-      coinIncome += item.coinIncome;
-      creditCardIncome += item.creditCardIncome;
-      others += item.others;
-    });
+    const [incomeOfPeriod, prizesOfPeriod, chartData2] = await Promise.all([
+      incomeOfPeriodPromise,
+      prizesOfPeriodPromise,
+      chartData2Promise,
+    ]);
 
     const lastPurchasePromise = this.productLogsRepository.findOne({
       filters: {
         logType: 'IN',
         groupId,
       },
+    });
+
+    // ? FATURAMENTO
+    const income = incomeOfPeriod.reduce((a, b) => a + b.total, 0);
+
+    // ? PREMIOS ENTREGUES
+    const givenPrizesCount = prizesOfPeriod.reduce((a, b) => a + b.total, 0);
+
+    let interval: Date[];
+
+    if (period === Period.DAILY) {
+      interval = eachHourOfInterval({
+        start: startDate,
+        end: endDate,
+      });
+    } else {
+      interval = eachDayOfInterval({
+        start: startDate,
+        end: endDate,
+      });
+    }
+
+    const chartData1 = interval.map(item => {
+      const incomeInHour =
+        incomeOfPeriod.find(total =>
+          period === Period.DAILY
+            ? isSameHour(item, new Date(total.id))
+            : isSameDay(item, new Date(total.id)),
+        )?.total || 0;
+
+      const prizesCountInHour =
+        prizesOfPeriod.find(total =>
+          period === Period.DAILY
+            ? isSameHour(item, new Date(total.id))
+            : isSameDay(item, new Date(total.id)),
+        )?.total || 0;
+
+      return {
+        date: item.toISOString(),
+        prizeCount: prizesCountInHour,
+        income: incomeInHour,
+      };
     });
 
     const incomePerPointOfSalePromise = this.telemetryLogsRepository.incomePerPointOfSale(
@@ -418,13 +356,6 @@ export default class DetailGroupService {
     const pointsOfSaleSortedByIncomeResponse = await Promise.all(
       pointsOfSaleSortedByIncomePromises,
     );
-
-    const chartData2 = {
-      cashIncome,
-      coinIncome,
-      creditCardIncome,
-      others,
-    };
 
     return {
       machinesNeverConnected,
