@@ -130,7 +130,7 @@ class ListMachinesService {
     filters.limit = limit;
     filters.offset = offset;
     filters.isActive = isActive;
-    filters.operatorId = operatorId;
+    if (user.role !== Role.OPERATOR) filters.operatorId = operatorId;
     filters.populate = ['operator'];
 
     const result = await this.machinesRepository.find(filters);

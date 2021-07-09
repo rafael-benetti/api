@@ -1,3 +1,4 @@
+import logger from '@config/logger';
 import Collection from '@modules/collections/contracts/entities/collection';
 import CollectionsRepository from '@modules/collections/contracts/repositories/collections.repository';
 import MachinesRepository from '@modules/machines/contracts/repositories/machines.repository';
@@ -60,6 +61,10 @@ export default class GetCollectionsService {
     });
 
     const machineIds = machines.map(machine => machine.id);
+    logger.info(machineSerialNumber);
+    logger.info(routeId);
+    logger.info(operatorId);
+    logger.info(machineIds);
 
     const { collections, count } = await this.collectionsRepository.find({
       groupIds,
