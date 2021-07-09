@@ -47,11 +47,27 @@ class ListPointsOfSaleService {
 
     let pointsOfSaleIds: string[] | undefined;
 
-    if (operatorId || routeId) {
+    if ((operatorId || routeId) && user.role === Role.OPERATOR) {
       const routes = await this.routesRepository.find({
-        operatorId: user.role === Role.OPERATOR ? user.id : operatorId,
+        operatorId,
         id: routeId,
       });
+
+      pointsOfSaleIds = routes.flatMap(route => route.pointsOfSaleIds);
+    }
+
+    if (user.role === Role.OPERATOR) {
+      let routes;
+
+      if (routeId) {
+        routes = await this.routesRepository.find({
+          id: routeId,
+        });
+      } else {
+        routes = await this.routesRepository.find({
+          operatorId: user.role === Role.OPERATOR ? user.id : operatorId,
+        });
+      }
 
       pointsOfSaleIds = routes.flatMap(route => route.pointsOfSaleIds);
     }
