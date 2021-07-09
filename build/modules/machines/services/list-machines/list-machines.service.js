@@ -89,7 +89,8 @@ let ListMachinesService = class ListMachinesService {
         filters.limit = limit;
         filters.offset = offset;
         filters.isActive = isActive;
-        filters.operatorId = operatorId;
+        if (user.role !== role_1.default.OPERATOR)
+            filters.operatorId = operatorId;
         filters.populate = ['operator'];
         const result = await this.machinesRepository.find(filters);
         const machinesPromise = result.machines.map(async (machine) => {

@@ -55,6 +55,8 @@ class MikroCollectionsRepository {
                 },
             }),
             ...(data.machineId && { machineId: data.machineId }),
+            ...(data.routeId && { routeId: data.routeId }),
+            ...(data.userId && { userId: data.userId }),
             ...(data.pointOfSaleId && { pointOfSaleId: data.pointOfSaleId }),
             ...(data.startDate && {
                 date: {

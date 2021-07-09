@@ -17,6 +17,8 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 Object.defineProperty(exports, "__esModule", { value: true });
 const create_telemetry_log_dto_1 = __importDefault(require("../../../contracts/dtos/create-telemetry-log.dto"));
 const find_telemetry_logs_dto_1 = __importDefault(require("../../../contracts/dtos/find-telemetry-logs.dto"));
+const get_group_income_per_period_dto_1 = __importDefault(require("../../../contracts/dtos/get-group-income-per-period.dto"));
+const get_income_per_counter_type_dto_1 = __importDefault(require("../../../contracts/dtos/get-income-per-counter-type.dto"));
 const get_income_per_machine_response_dto_1 = __importDefault(require("../../../contracts/dtos/get-income-per-machine-response.dto"));
 const get_income_per_machine_dto_1 = __importDefault(require("../../../contracts/dtos/get-income-per-machine.dto"));
 const get_income_per_point_of_sale_dto_1 = __importDefault(require("../../../contracts/dtos/get-income-per-point-of-sale.dto"));
@@ -429,6 +431,103 @@ let MikroTelemetryLogsRepository = class MikroTelemetryLogsRepository {
                 },
             },
         ]);
+        return response;
+    }
+    async getGroupIncomePerPeriod({ groupIds, pointsOfSaleIds, startDate, endDate, withHours, type, }) {
+        const stages = [
+            {
+                $match: {
+                    groupId: {
+                        $in: groupIds,
+                    },
+                    maintenance: false,
+                    pin: {
+                        $exists: true,
+                        $ne: null,
+                    },
+                    date: {
+                        $exists: true,
+                        $ne: null,
+                        $gte: startDate,
+                        $lt: endDate,
+                    },
+                    type,
+                },
+            },
+            {
+                $group: {
+                    _id: {
+                        $dateToString: {
+                            format: `%Y-%m-%d${withHours ? 'T%H:00:00Z' : 'T04:00:00'}`,
+                            date: '$date',
+                        },
+                    },
+                    total: {
+                        $sum: '$value',
+                    },
+                },
+            },
+            {
+                $project: {
+                    _id: 0,
+                    id: '$_id',
+                    total: 1,
+                },
+            },
+        ];
+        if (pointsOfSaleIds) {
+            stages.unshift({
+                $match: {
+                    pointOfSaleId: {
+                        $in: pointsOfSaleIds,
+                    },
+                },
+            });
+        }
+        const response = await this.repository.aggregate(stages);
+        return response;
+    }
+    async getIncomePerCounterType({ groupIds, pointsOfSaleIds, }) {
+        const stages = [
+            {
+                $match: {
+                    groupId: {
+                        $in: groupIds,
+                    },
+                    maintenance: false,
+                    pin: {
+                        $exists: true,
+                        $ne: null,
+                    },
+                    type: 'IN',
+                },
+            },
+            {
+                $group: {
+                    _id: '$counterLabel',
+                    total: {
+                        $sum: '$value',
+                    },
+                },
+            },
+            {
+                $project: {
+                    _id: 0,
+                    counterLabel: '$_id',
+                    total: 1,
+                },
+            },
+        ];
+        if (pointsOfSaleIds) {
+            stages.unshift({
+                $match: {
+                    pointOfSaleId: {
+                        $in: pointsOfSaleIds,
+                    },
+                },
+            });
+        }
+        const response = await this.repository.aggregate(stages);
         return response;
     }
     save(data) {

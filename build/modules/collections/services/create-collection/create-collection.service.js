@@ -16,7 +16,6 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 /* eslint-disable @typescript-eslint/no-explicit-any */
-const logger_1 = __importDefault(require("../../../../config/logger"));
 const collection_1 = __importDefault(require("../../contracts/entities/collection"));
 const collections_repository_1 = __importDefault(require("../../contracts/repositories/collections.repository"));
 const machines_repository_1 = __importDefault(require("../../../machines/contracts/repositories/machines.repository"));
@@ -106,7 +105,6 @@ let CreateCollectionService = class CreateCollectionService {
                 maintenance: false,
             },
         });
-        logger_1.default.info(telemetryLogs);
         await Promise.all(boxCollections.map(async (boxCollection) => {
             const box = machine.boxes.find(box => box.id === boxCollection.boxId);
             if (!box)

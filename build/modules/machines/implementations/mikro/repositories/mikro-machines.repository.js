@@ -105,7 +105,7 @@ class MikroMachinesRepository {
         const machines = result.map(machine => machine_mapper_1.default.toEntity(machine));
         return { machines, count };
     }
-    async machineSortedByStock({ groupIds, operatorId, }) {
+    async machineSortedByStock({ groupIds, operatorId, pointOfSaleId, }) {
         const stages = [
             {
                 $match: {
@@ -163,6 +163,15 @@ class MikroMachinesRepository {
                 $match: {
                     groupId: {
                         $in: groupIds,
+                    },
+                },
+            });
+        }
+        if (pointOfSaleId) {
+            stages.unshift({
+                $match: {
+                    locationId: {
+                        $in: pointOfSaleId,
                     },
                 },
             });

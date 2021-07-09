@@ -39,7 +39,7 @@ let ListTelemetryBoardsService = class ListTelemetryBoardsService {
             throw app_error_1.default.userNotFound;
         let groupIds;
         let telemetryBoardIds;
-        if (groupId) {
+        if (groupId && user.role !== role_1.default.OPERATOR) {
             groupIds = [groupId];
         }
         else if (user.role === role_1.default.MANAGER) {
@@ -61,7 +61,7 @@ let ListTelemetryBoardsService = class ListTelemetryBoardsService {
                 },
             })).map(group => group.id);
         }
-        if (telemetryBoardId)
+        if (telemetryBoardId !== undefined)
             telemetryBoardIds = [telemetryBoardId];
         const { telemetryBoards, count, } = await this.telemetryBoardsRepository.find({
             filters: {

@@ -8,6 +8,7 @@ const categories_routes_1 = __importDefault(require("../../../modules/categories
 const collections_routes_1 = __importDefault(require("../../../modules/collections/routes/collections.routes"));
 const counter_types_routes_1 = __importDefault(require("../../../modules/counter-types/routes/counter-types.routes"));
 const groups_routes_1 = __importDefault(require("../../../modules/groups/routes/groups.routes"));
+const groups_routes_v2_1 = __importDefault(require("../../../modules/groups/routes/groups.routes.v2"));
 const machine_logs_router_1 = __importDefault(require("../../../modules/machine-logs/routes/machine-logs.router"));
 const machines_routes_1 = __importDefault(require("../../../modules/machines/routes/machines.routes"));
 const notifications_router_1 = __importDefault(require("../../../modules/notifications/routes/notifications.router"));
@@ -19,11 +20,14 @@ const routes_routes_v2_1 = __importDefault(require("../../../modules/routes/rout
 const telemetry_logs_router_1 = __importDefault(require("../../../modules/telemetry-logs/routes/telemetry-logs.router"));
 const telemetry_routes_1 = __importDefault(require("../../../modules/telemetry/routes/telemetry.routes"));
 const users_routes_1 = __importDefault(require("../../../modules/users/routes/users.routes"));
+const users_routes_v2_1 = __importDefault(require("../../../modules/users/routes/users.routes.v2"));
 const express_1 = require("express");
 const router = express_1.Router();
 router.use('/admins', admins_routes_1.default);
 router.use('/users', users_routes_1.default);
+router.use('/v2/users', users_routes_v2_1.default);
 router.use('/groups', groups_routes_1.default);
+router.use('/v2/groups', groups_routes_v2_1.default);
 router.use('/pointsOfSale', points_of_sales_routes_1.default);
 router.use('/products', products_routes_1.default);
 router.use('/categories', categories_routes_1.default);
