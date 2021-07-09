@@ -83,7 +83,7 @@ class ListTelemetryBoardsService {
     } = await this.telemetryBoardsRepository.find({
       filters: {
         id: telemetryBoardIds,
-        groupIds,
+        groupIds: user.role === Role.OPERATOR ? undefined : groupIds,
       },
       limit,
       offset,
