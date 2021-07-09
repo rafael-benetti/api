@@ -52,7 +52,7 @@ class ListTelemetryBoardsService {
 
     let telemetryBoardIds: number[] | undefined;
 
-    if (groupId) {
+    if (groupId && user.role !== Role.OPERATOR) {
       groupIds = [groupId];
     } else if (user.role === Role.MANAGER) {
       groupIds = user.groupIds;

@@ -1,3 +1,4 @@
+import MachinesRepository from '@modules/machines/contracts/repositories/machines.repository';
 import PointOfSale from '@modules/points-of-sale/contracts/models/point-of-sale';
 import PointsOfSaleRepository from '@modules/points-of-sale/contracts/repositories/points-of-sale.repository';
 import RoutesRepository from '@modules/routes/contracts/repositories/routes.repository';
@@ -24,6 +25,9 @@ class ListPointsOfSaleService {
 
     @inject('UsersRepository')
     private usersRepository: UsersRepository,
+
+    @inject('MachinesRepository')
+    private machinesRepository: MachinesRepository,
 
     @inject('RoutesRepository')
     private routesRepository: RoutesRepository,
@@ -57,19 +61,13 @@ class ListPointsOfSaleService {
     }
 
     if (user.role === Role.OPERATOR) {
-      let routes;
-
-      if (routeId) {
-        routes = await this.routesRepository.find({
-          id: routeId,
-        });
-      } else {
-        routes = await this.routesRepository.find({
-          operatorId: user.role === Role.OPERATOR ? user.id : operatorId,
-        });
-      }
-
-      pointsOfSaleIds = routes.flatMap(route => route.pointsOfSaleIds);
+      pointsOfSaleIds = (
+        await this.machinesRepository.find({
+          operatorId: user.id,
+        })
+      ).machines
+        .filter(machine => machine.locationId !== undefined)
+        .map(item => item.locationId) as string[];
     }
 
     if (user.role === Role.OWNER) {
