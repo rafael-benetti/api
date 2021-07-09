@@ -75,7 +75,7 @@ class ListTelemetryBoardsService {
       ).map(group => group.id);
     }
 
-    if (telemetryBoardId) telemetryBoardIds = [telemetryBoardId];
+    if (telemetryBoardId !== undefined) telemetryBoardIds = [telemetryBoardId];
 
     const {
       telemetryBoards,
@@ -83,7 +83,7 @@ class ListTelemetryBoardsService {
     } = await this.telemetryBoardsRepository.find({
       filters: {
         id: telemetryBoardIds,
-        groupIds: user.role === Role.OPERATOR ? undefined : groupIds,
+        groupIds,
       },
       limit,
       offset,
