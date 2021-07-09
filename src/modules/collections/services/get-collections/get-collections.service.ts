@@ -3,6 +3,7 @@ import Collection from '@modules/collections/contracts/entities/collection';
 import CollectionsRepository from '@modules/collections/contracts/repositories/collections.repository';
 import MachinesRepository from '@modules/machines/contracts/repositories/machines.repository';
 import PointsOfSaleRepository from '@modules/points-of-sale/contracts/repositories/points-of-sale.repository';
+import Role from '@modules/users/contracts/enums/role';
 import UsersRepository from '@modules/users/contracts/repositories/users.repository';
 import AppError from '@shared/errors/app-error';
 import getGroupUniverse from '@shared/utils/get-group-universe';
@@ -69,7 +70,7 @@ export default class GetCollectionsService {
     const { collections, count } = await this.collectionsRepository.find({
       groupIds,
       machineId: machineIds,
-      userId: operatorId,
+      userId: user.role === Role.OPERATOR ? user.id : operatorId,
       routeId,
       limit,
       offset,
