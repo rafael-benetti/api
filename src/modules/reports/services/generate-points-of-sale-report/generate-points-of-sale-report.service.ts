@@ -198,26 +198,13 @@ class GeneratePointsOfSaleReportService {
       );
 
       const machineAnalyticsPromises = machines.map(async machine => {
-        const telemetryLogs = await this.telemetryLogsRepository.find({
-          filters: {
-            date: {
-              startDate,
-              endDate,
-            },
-            groupId: pointOfSale.groupId,
-            machineId: machine.id,
-            maintenance: false,
-            pointOfSaleId: pointOfSale.id,
-          },
-        });
-
         const remoteCreditAmount = machinesLogs
           .filter(machineLog => machineLog.machineId === machine.id)
           .reduce((a, b) => a + b.quantity, 0);
 
-        const income = telemetryLogs
-          .filter(telemetryLog => telemetryLog.type === 'IN')
-          .reduce((a, b) => a + b.value, 0);
+        const income =
+          incomePerMachine.find(income => income.id === machine.id)?.income ||
+          0;
 
         const prizes = prizesPerMachine.find(prizes => prizes.id === machine.id)
           ?.prizes;
