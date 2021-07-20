@@ -126,26 +126,24 @@ class GenerateMachinesReportService {
     let machines;
 
     if (machineIds) {
-      machines = (
-        await this.machinesRepository.find({
-          id: machineIds,
-          populate: ['pointOfSale'],
-          fields: [
-            'id',
-            'serialNumber',
-            'categoryLabel',
-            'gameValue',
-            'locationId',
-            'incomePerPrizeGoal',
-            'incomePerMonthGoal',
-            'pointOfSale',
-            'pointOfSale.id',
-            'pointOfSale.label',
-            'groupId',
-            'ownerId',
-          ],
-        })
-      ).machines;
+      machines = await this.machinesRepository.find({
+        id: machineIds,
+        populate: ['pointOfSale'],
+        fields: [
+          'id',
+          'serialNumber',
+          'categoryLabel',
+          'gameValue',
+          'locationId',
+          'incomePerPrizeGoal',
+          'incomePerMonthGoal',
+          'pointOfSale',
+          'pointOfSale.id',
+          'pointOfSale.label',
+          'groupId',
+          'ownerId',
+        ],
+      });
 
       if (user.role === Role.OWNER)
         if (machines.some(machine => machine.ownerId !== user.id))
@@ -155,25 +153,23 @@ class GenerateMachinesReportService {
         if (machines.some(machine => !user.groupIds?.includes(machine.groupId)))
           throw AppError.authorizationError;
     } else {
-      machines = (
-        await this.machinesRepository.find({
-          groupIds,
-          populate: ['pointOfSale'],
-          fields: [
-            'id',
-            'serialNumber',
-            'categoryLabel',
-            'gameValue',
-            'locationId',
-            'incomePerPrizeGoal',
-            'incomePerMonthGoal',
-            'pointOfSale',
-            'pointOfSale.id',
-            'pointOfSale.label',
-            'groupId',
-          ],
-        })
-      ).machines;
+      machines = await this.machinesRepository.find({
+        groupIds,
+        populate: ['pointOfSale'],
+        fields: [
+          'id',
+          'serialNumber',
+          'categoryLabel',
+          'gameValue',
+          'locationId',
+          'incomePerPrizeGoal',
+          'incomePerMonthGoal',
+          'pointOfSale',
+          'pointOfSale.id',
+          'pointOfSale.label',
+          'groupId',
+        ],
+      });
     }
 
     startDate = startOfDay(startDate);
@@ -191,15 +187,13 @@ class GenerateMachinesReportService {
       },
     );
 
-    const { machineLogs: machinesLogs } = await this.machineLogsRepository.find(
-      {
-        groupId: groupIds,
-        machineId: machines.map(machine => machine.id),
-        endDate,
-        startDate,
-        type: MachineLogType.REMOTE_CREDIT,
-      },
-    );
+    const machineLogs = await this.machineLogsRepository.find({
+      groupId: groupIds,
+      machineId: machines.map(machine => machine.id),
+      endDate,
+      startDate,
+      type: MachineLogType.REMOTE_CREDIT,
+    });
 
     const numberOfDays =
       differenceInDays(endDate, startDate) !== 0
@@ -207,7 +201,7 @@ class GenerateMachinesReportService {
         : 1;
 
     const machineAnalytics = machines.map(machine => {
-      const remoteCreditAmount = machinesLogs
+      const remoteCreditAmount = machineLogs
         .filter(machineLog => machineLog.machineId === machine.id)
         .reduce((a, b) => a + b.quantity, 0);
 

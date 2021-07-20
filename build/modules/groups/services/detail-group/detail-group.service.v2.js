@@ -238,8 +238,8 @@ let DetailGroupServiceV2 = class DetailGroupServiceV2 {
         const pointsOfSaleSortedByIncomeResponse = await bluebird_1.Promise.all(pointsOfSaleSortedByIncomePromises);
         return {
             machinesNeverConnected,
-            machinesSortedByLastCollection: machinesSortedByLastCollection.machines,
-            machinesSortedByLastConnection: machinesSortedByLastConnection.machines,
+            machinesSortedByLastCollection,
+            machinesSortedByLastConnection,
             machinesSortedByStock,
             machinesWithoutTelemetryBoard,
             offlineMachines,

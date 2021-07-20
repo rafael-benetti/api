@@ -104,7 +104,7 @@ let CreateRouteService = class CreateRouteService {
             pointOfSale.routeId = route.id;
             this.pointsOfSaleRepository.save(pointOfSale);
         });
-        const { machines } = await this.machinesRepository.find({
+        const machines = await this.machinesRepository.find({
             pointOfSaleId: pointsOfSaleIds,
         });
         machines.forEach(machine => {

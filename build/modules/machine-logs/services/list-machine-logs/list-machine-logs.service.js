@@ -61,7 +61,7 @@ let ListMachineLogsService = class ListMachineLogsService {
             if (!groupIds.includes(machine.groupId))
                 throw app_error_1.default.authorizationError;
         }
-        const machineLogs = await this.machineLogsRepository.find({
+        const { machineLogs, count, } = await this.machineLogsRepository.findAndCount({
             startDate,
             endDate,
             groupId: machine.groupId,
@@ -81,7 +81,7 @@ let ListMachineLogsService = class ListMachineLogsService {
             offset,
             limit,
         });
-        return machineLogs;
+        return { machineLogs, count };
     }
 };
 ListMachineLogsService = __decorate([

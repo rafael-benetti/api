@@ -65,7 +65,7 @@ class ListPointsOfSaleService {
         await this.machinesRepository.find({
           operatorId: user.id,
         })
-      ).machines
+      )
         .filter(machine => machine.locationId !== undefined)
         .map(item => item.locationId) as string[];
     }

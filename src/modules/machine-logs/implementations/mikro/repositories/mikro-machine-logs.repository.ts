@@ -28,6 +28,47 @@ class MikroMachineLogsRepository implements MachineLogsRepository {
     populate,
     limit,
     offset,
+  }: FindMachineLogsDto): Promise<MachineLog[]> {
+    const machineLogs = await this.repository.find(
+      {
+        machineId,
+        groupId,
+        ...(type && { type }),
+        ...(startDate && {
+          createdAt: {
+            $gte: startDate,
+          },
+        }),
+        ...(endDate && {
+          createdAt: {
+            $lte: endDate,
+          },
+        }),
+      },
+      {
+        limit,
+        offset,
+        orderBy: {
+          createdAt: 'DESC',
+        },
+        populate,
+        fields,
+      },
+    );
+
+    return machineLogs;
+  }
+
+  async findAndCount({
+    machineId,
+    groupId,
+    type,
+    startDate,
+    endDate,
+    fields,
+    populate,
+    limit,
+    offset,
   }: FindMachineLogsDto): Promise<{
     machineLogs: MachineLog[];
     count: number;

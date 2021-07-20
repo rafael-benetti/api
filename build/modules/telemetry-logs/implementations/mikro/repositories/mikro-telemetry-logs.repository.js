@@ -155,6 +155,37 @@ let MikroTelemetryLogsRepository = class MikroTelemetryLogsRepository {
         ]);
         return incomePerMachine;
     }
+    async getIncomeAndPrizesPerMachine({ pointOfSaleId, startDate, endDate, }) {
+        const incomePerMachine = await this.repository.aggregate([
+            {
+                $match: {
+                    pointOfSaleId,
+                    maintenance: false,
+                    date: {
+                        $gte: startDate,
+                        $lt: endDate,
+                    },
+                },
+            },
+            {
+                $group: {
+                    _id: '$machineId',
+                    income: {
+                        $sum: {
+                            $cond: [{ $eq: ['$type', 'IN'] }, '$value', 0],
+                        },
+                    },
+                    numberOfPrizes: {
+                        $sum: {
+                            $cond: [{ $eq: ['$type', 'OUT'] }, '$value', 0],
+                        },
+                    },
+                    count: { $sum: 1 },
+                },
+            },
+        ]);
+        return incomePerMachine;
+    }
     async getPrizesPerMachine({ groupIds, machineId, startDate, endDate, }) {
         const stages = [
             {

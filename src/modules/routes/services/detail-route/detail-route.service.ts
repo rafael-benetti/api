@@ -204,7 +204,7 @@ class DetailRouteService {
     }
 
     // ? MACHINES ORDERED
-    const { machines } = await this.machinesRepository.find({
+    const machines = await this.machinesRepository.find({
       pointOfSaleId: pointsOfSale.map(pointOfSale => pointOfSale.id),
       orderByLastCollection: true,
       checkLastCollectionExists: false,

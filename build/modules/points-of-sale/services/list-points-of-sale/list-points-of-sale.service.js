@@ -48,7 +48,7 @@ let ListPointsOfSaleService = class ListPointsOfSaleService {
         if (user.role === role_1.default.OPERATOR) {
             pointsOfSaleIds = (await this.machinesRepository.find({
                 operatorId: user.id,
-            })).machines
+            }))
                 .filter(machine => machine.locationId !== undefined)
                 .map(item => item.locationId);
         }

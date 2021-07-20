@@ -209,7 +209,7 @@ class GetMachineDetailsService {
     const [
       machineIncomePerDay,
       machineGivenPrizesPerDay,
-      { machineLogs },
+      machineLogs,
       transactionHistory,
       machineGivenPrizesPerPin,
     ] = await Promise.all([

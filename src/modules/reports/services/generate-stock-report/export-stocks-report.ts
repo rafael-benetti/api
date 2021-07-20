@@ -1,4 +1,5 @@
 /* eslint-disable import/no-duplicates */
+import logger from '@config/logger';
 import Product from '@modules/users/contracts/models/product';
 
 import ExcelJS, { Column } from 'exceljs';
@@ -33,7 +34,7 @@ export default async function exportGroupsReport({
   const columnsSupliersLabel = columnsSupliers.map(suplie => suplie.label);
 
   const values = [
-    'Operador',
+    'Usuário',
     'Parceria',
     ...columnsPrizesLabel,
     ...columnsSupliersLabel,
@@ -57,9 +58,13 @@ export default async function exportGroupsReport({
     const groupLabels = `${item.groupLabels}`;
 
     const row: { [key: string]: unknown } = {
-      Operador: item.name,
+      Usuário: item.name,
       Parceria: groupLabels,
     };
+
+    logger.info(sheet.columns);
+    // logger.info('item.prizes');
+    // logger.info(item.prizes);
 
     columnsPrizes.forEach(value => {
       row[value.label] =
@@ -68,7 +73,7 @@ export default async function exportGroupsReport({
 
     columnsSupliers.forEach(value => {
       row[value.label] =
-        item.prizes?.find(suplie => suplie.id === value.id)?.quantity || 0;
+        item.prizes?.find(suplie => suplie.label === value.id)?.quantity || 0;
     });
 
     sheet.addRow(row);

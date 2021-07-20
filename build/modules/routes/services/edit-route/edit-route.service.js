@@ -102,7 +102,7 @@ let EditRouteService = class EditRouteService {
         }
         if (operatorId !== undefined) {
             if (operatorId === null && route.operatorId !== null) {
-                const { machines } = await this.machinesRepository.find({
+                const machines = await this.machinesRepository.find({
                     operatorId: route.operatorId,
                     routeId: route.id,
                 });
@@ -129,7 +129,7 @@ let EditRouteService = class EditRouteService {
                 pointOfSale.routeId = route.id;
                 this.pointsOfSaleRepository.save(pointOfSale);
             });
-            const { machines } = await this.machinesRepository.find({
+            const machines = await this.machinesRepository.find({
                 pointOfSaleId: pointsOfSaleIds,
             });
             machines.forEach(machine => {

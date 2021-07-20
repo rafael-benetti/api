@@ -109,47 +109,43 @@ export default class DashboardInfoService {
       if (user.groupIds) groupIds = user.groupIds as string[];
       else throw AppError.missingGroupId;
 
-    const machinesSortedByLastCollection = (
-      await this.machinesRepository.find({
-        orderByLastCollection: true,
-        operatorId: isOperator ? user.id : undefined,
-        groupIds,
-        limit: 5,
-        offset: 0,
-        fields: [
-          'id',
-          'serialNumber',
-          'categoryLabel',
-          'lastCollection',
-          'lastConnection',
-          'pointOfSaleId',
-          'pointOfSale',
-        ],
-        populate: ['pointOfSale'],
-      })
-    ).machines;
+    const machinesSortedByLastCollection = await this.machinesRepository.find({
+      orderByLastCollection: true,
+      operatorId: isOperator ? user.id : undefined,
+      groupIds,
+      limit: 5,
+      offset: 0,
+      fields: [
+        'id',
+        'serialNumber',
+        'categoryLabel',
+        'lastCollection',
+        'lastConnection',
+        'pointOfSaleId',
+        'pointOfSale',
+      ],
+      populate: ['pointOfSale'],
+    });
 
-    const machinesSortedByLastConnection = (
-      await this.machinesRepository.find({
-        orderByLastConnection: true,
-        checkLastCollectionExists: true,
-        operatorId: isOperator ? user.id : undefined,
-        groupIds: isOperator ? undefined : groupIds,
-        telemetryStatus: 'OFFLINE',
-        limit: 5,
-        offset: 0,
-        fields: [
-          'id',
-          'serialNumber',
-          'categoryLabel',
-          'lastConnection',
-          'lastCollection',
-          'pointOfSaleId',
-          'pointOfSale',
-        ],
-        populate: ['pointOfSale'],
-      })
-    ).machines;
+    const machinesSortedByLastConnection = await this.machinesRepository.find({
+      orderByLastConnection: true,
+      checkLastCollectionExists: true,
+      operatorId: isOperator ? user.id : undefined,
+      groupIds: isOperator ? undefined : groupIds,
+      telemetryStatus: 'OFFLINE',
+      limit: 5,
+      offset: 0,
+      fields: [
+        'id',
+        'serialNumber',
+        'categoryLabel',
+        'lastConnection',
+        'lastCollection',
+        'pointOfSaleId',
+        'pointOfSale',
+      ],
+      populate: ['pointOfSale'],
+    });
 
     const machinesSortedByStock = await this.machinesRepository.machineSortedByStock(
       {

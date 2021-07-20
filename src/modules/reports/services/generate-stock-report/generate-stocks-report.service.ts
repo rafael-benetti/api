@@ -105,8 +105,9 @@ export default class GenerateStockReportService {
 
     users.forEach(user =>
       user.stock?.prizes.forEach(prize => {
-        if (!columnsPrizes.map(cp => cp.id).includes(prize.id))
+        if (!columnsPrizes.map(cp => cp.id).includes(prize.id)) {
           columnsPrizes.push({ id: prize.id, label: prize.label });
+        }
       }),
     );
 

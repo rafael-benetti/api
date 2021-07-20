@@ -136,7 +136,7 @@ let GetMachineDetailsService = class GetMachineDetailsService {
                 'quantity',
             ],
         });
-        const [machineIncomePerDay, machineGivenPrizesPerDay, { machineLogs }, transactionHistory, machineGivenPrizesPerPin,] = await bluebird_1.Promise.all([
+        const [machineIncomePerDay, machineGivenPrizesPerDay, machineLogs, transactionHistory, machineGivenPrizesPerPin,] = await bluebird_1.Promise.all([
             machineIncomePerDayPromise,
             machineGivenPrizesPerDayPromise,
             machineLogsPromise,

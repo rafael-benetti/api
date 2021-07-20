@@ -51,6 +51,110 @@ class MikroMachinesRepository implements MachinesRepository {
     orderByLastConnection,
     checkLastCollectionExists,
     fields,
+  }: FindMachinesDto): Promise<Machine[]> {
+    const telemetryStatusQuery: Record<string, unknown> = {};
+    const lastCollectionQuery: Record<string, unknown> = {};
+    const lastConnectionQuery: Record<string, unknown> = {};
+
+    if (orderByLastConnection && checkLastCollectionExists) {
+      telemetryStatusQuery.lastConnection = {
+        $exists: true,
+        $ne: null,
+      };
+    }
+
+    if (orderByLastCollection) {
+      lastCollectionQuery.lastCollection = {
+        $exists: true,
+        $ne: null,
+      };
+    }
+
+    if (telemetryStatus) {
+      if (telemetryStatus === 'ONLINE') {
+        telemetryStatusQuery.lastConnection = {
+          $gte: addMinutes(new Date(), -10),
+        };
+      }
+
+      if (telemetryStatus === 'OFFLINE') {
+        telemetryStatusQuery.lastConnection = {
+          $lt: addMinutes(new Date(), -10),
+        };
+      }
+
+      if (telemetryStatus === 'VIRGIN') {
+        telemetryStatusQuery.telemetryBoardId = {
+          $ne: null,
+        };
+        telemetryStatusQuery.lastConnection = null;
+      }
+
+      if (telemetryStatus === 'NO_TELEMETRY') {
+        telemetryStatusQuery.telemetryBoardId = null;
+      }
+    }
+
+    const result = await this.repository.find(
+      {
+        ...(id && { id }),
+        ...(operatorId && { operatorId }),
+        ...(ownerId && { ownerId }),
+        ...(groupIds && { groupId: groupIds }),
+        ...(telemetryBoardId && { telemetryBoardId }),
+        ...(categoryId && { categoryId }),
+        ...(pointOfSaleId !== undefined && {
+          locationId: pointOfSaleId === 'null' ? null : pointOfSaleId,
+        }),
+        ...(serialNumber && {
+          serialNumber: new RegExp(serialNumber, 'i'),
+        }),
+        ...(isActive !== undefined && { isActive }),
+        ...telemetryStatusQuery,
+        ...lastCollectionQuery,
+        ...lastConnectionQuery,
+      },
+      {
+        ...(orderByLastCollection && {
+          orderBy: {
+            lastCollection: 'ASC',
+          },
+        }),
+        ...(orderByLastConnection && {
+          orderBy: {
+            lastConnection: 'ASC',
+          },
+        }),
+        limit,
+        offset,
+        fields,
+        populate,
+      },
+    );
+
+    const machines = result.map(machine => MachineMapper.toEntity(machine));
+
+    return machines;
+  }
+
+  async findAndCount({
+    id,
+    ownerId,
+    groupIds,
+    operatorId,
+    categoryId,
+    pointOfSaleId,
+    serialNumber,
+    isActive,
+    telemetryBoardId,
+    telemetryStatus,
+    limit,
+    offset,
+    populate,
+    orderByLastCollection,
+    orderByLastConnection,
+    checkLastCollectionExists,
+    fields,
   }: FindMachinesDto): Promise<{ machines: Machine[]; count: number }> {
     const telemetryStatusQuery: Record<string, unknown> = {};
     const lastCollectionQuery: Record<string, unknown> = {};

@@ -56,7 +56,7 @@ let DashboardInfoService = class DashboardInfoService {
                 groupIds = user.groupIds;
             else
                 throw app_error_1.default.missingGroupId;
-        const machinesSortedByLastCollection = (await this.machinesRepository.find({
+        const machinesSortedByLastCollection = await this.machinesRepository.find({
             orderByLastCollection: true,
             operatorId: isOperator ? user.id : undefined,
             groupIds,
@@ -72,8 +72,8 @@ let DashboardInfoService = class DashboardInfoService {
                 'pointOfSale',
             ],
             populate: ['pointOfSale'],
-        })).machines;
-        const machinesSortedByLastConnection = (await this.machinesRepository.find({
+        });
+        const machinesSortedByLastConnection = await this.machinesRepository.find({
             orderByLastConnection: true,
             checkLastCollectionExists: true,
             operatorId: isOperator ? user.id : undefined,
@@ -91,7 +91,7 @@ let DashboardInfoService = class DashboardInfoService {
                 'pointOfSale',
             ],
             populate: ['pointOfSale'],
-        })).machines;
+        });
         const machinesSortedByStock = await this.machinesRepository.machineSortedByStock({
             groupIds: isOperator ? undefined : groupIds,
             operatorId: isOperator ? user.id : undefined,

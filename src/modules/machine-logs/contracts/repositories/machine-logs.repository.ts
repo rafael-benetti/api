@@ -4,7 +4,8 @@ import MachineLog from '../entities/machine-log';
 
 export default interface MachineLogsRepository {
   create(data: CreateMachineLogDto): MachineLog;
-  find(
+  find(data: FindMachineLogsDto): Promise<MachineLog[]>;
+  findAndCount(
     data: FindMachineLogsDto,
   ): Promise<{
     machineLogs: MachineLog[];

@@ -23,6 +23,32 @@ class MikroMachineLogsRepository {
         return machine_log_mapper_1.default.toEntity(mikroMachineLog);
     }
     async find({ machineId, groupId, type, startDate, endDate, fields, populate, limit, offset, }) {
+        const machineLogs = await this.repository.find({
+            machineId,
+            groupId,
+            ...(type && { type }),
+            ...(startDate && {
+                createdAt: {
+                    $gte: startDate,
+                },
+            }),
+            ...(endDate && {
+                createdAt: {
+                    $lte: endDate,
+                },
+            }),
+        }, {
+            limit,
+            offset,
+            orderBy: {
+                createdAt: 'DESC',
+            },
+            populate,
+            fields,
+        });
+        return machineLogs;
+    }
+    async findAndCount({ machineId, groupId, type, startDate, endDate, fields, populate, limit, offset, }) {
         const [machineLogs, count] = await this.repository.findAndCount({
             machineId,
             groupId,

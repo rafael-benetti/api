@@ -127,7 +127,7 @@ class CreateRouteService {
       this.pointsOfSaleRepository.save(pointOfSale);
     });
 
-    const { machines } = await this.machinesRepository.find({
+    const machines = await this.machinesRepository.find({
       pointOfSaleId: pointsOfSaleIds,
     });
 

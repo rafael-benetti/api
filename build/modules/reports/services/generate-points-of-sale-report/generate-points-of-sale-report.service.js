@@ -106,7 +106,7 @@ let GeneratePointsOfSaleReportService = class GeneratePointsOfSaleReportService 
             ? date_fns_1.differenceInDays(endDate, startDate)
             : 1;
         const reportsPromises = pointsOfSale.map(async (pointOfSale) => {
-            const { machines } = await this.machinesRepository.find({
+            const machines = await this.machinesRepository.find({
                 pointOfSaleId: pointOfSale.id,
                 fields: [
                     'id',
@@ -117,41 +117,30 @@ let GeneratePointsOfSaleReportService = class GeneratePointsOfSaleReportService 
                     'categoryLabel',
                 ],
             });
-            const { machineLogs: machinesLogs, } = await this.machineLogsRepository.find({
+            const machineLogsPromise = await this.machineLogsRepository.find({
                 groupId: groupIds,
                 machineId: machines.map(machine => machine.id),
                 endDate,
                 startDate,
                 type: machine_log_type_1.default.REMOTE_CREDIT,
             });
-            const incomePerMachine = await this.telemetryLogsRepository.getIncomePerMachine({ groupIds, endDate, startDate });
-            const prizesPerMachine = await this.telemetryLogsRepository.getPrizesPerMachine({
+            const resultPromise = await this.telemetryLogsRepository.getIncomeAndPrizesPerMachine({
+                groupIds: [],
+                pointOfSaleId: pointOfSale.id,
                 endDate,
-                groupIds,
                 startDate,
             });
+            const [machineLogs, result] = await bluebird_1.Promise.all([
+                machineLogsPromise,
+                resultPromise,
+            ]);
             const machineAnalyticsPromises = machines.map(async (machine) => {
-                const telemetryLogs = await this.telemetryLogsRepository.find({
-                    filters: {
-                        date: {
-                            startDate,
-                            endDate,
-                        },
-                        groupId: pointOfSale.groupId,
-                        machineId: machine.id,
-                        maintenance: false,
-                        pointOfSaleId: pointOfSale.id,
-                    },
-                });
-                const remoteCreditAmount = machinesLogs
+                const remoteCreditAmount = machineLogs
                     .filter(machineLog => machineLog.machineId === machine.id)
                     .reduce((a, b) => a + b.quantity, 0);
-                const income = telemetryLogs
-                    .filter(telemetryLog => telemetryLog.type === 'IN')
-                    .reduce((a, b) => a + b.value, 0);
-                const prizes = prizesPerMachine.find(prizes => prizes.id === machine.id)
-                    ?.prizes;
-                const numberOfPlays = Math.floor((incomePerMachine.find(machineIncome => machineIncome.id === machine.id)?.income || 0) / machine.gameValue);
+                const income = result.find(income => income._id === machine.id)?.income || 0;
+                const prizes = result.find(prizes => prizes._id === machine.id)?.numberOfPrizes || 0;
+                const numberOfPlays = income / machine.gameValue;
                 const averagePerDay = Number((income / days).toFixed(2));
                 const { incomePerMonthGoal } = machine;
                 const { incomePerPrizeGoal } = machine;

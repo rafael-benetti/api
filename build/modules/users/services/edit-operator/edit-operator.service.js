@@ -75,7 +75,7 @@ let EditOperatorService = class EditOperatorService {
                 delete route.operatorId;
                 this.routesRepository.save(route);
             });
-            const { machines: machinesToDelete } = await this.machinesRepository.find({
+            const machinesToDelete = await this.machinesRepository.find({
                 operatorId: operator.id,
                 groupIds: deletedGroups,
             });

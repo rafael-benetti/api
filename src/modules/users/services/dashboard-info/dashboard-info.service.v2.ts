@@ -212,8 +212,8 @@ export default class DashboardInfoServiceV2 {
     });
 
     const [
-      { machines: machinesSortedByLastCollection },
-      { machines: machinesSortedByLastConnection },
+      machinesSortedByLastCollection,
+      machinesSortedByLastConnection,
       machinesSortedByStock,
       offlineMachines,
       machinesNeverConnected,

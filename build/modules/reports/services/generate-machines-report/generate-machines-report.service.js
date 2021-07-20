@@ -83,7 +83,7 @@ let GenerateMachinesReportService = class GenerateMachinesReportService {
         }
         let machines;
         if (machineIds) {
-            machines = (await this.machinesRepository.find({
+            machines = await this.machinesRepository.find({
                 id: machineIds,
                 populate: ['pointOfSale'],
                 fields: [
@@ -100,7 +100,7 @@ let GenerateMachinesReportService = class GenerateMachinesReportService {
                     'groupId',
                     'ownerId',
                 ],
-            })).machines;
+            });
             if (user.role === role_1.default.OWNER)
                 if (machines.some(machine => machine.ownerId !== user.id))
                     throw app_error_1.default.authorizationError;
@@ -109,7 +109,7 @@ let GenerateMachinesReportService = class GenerateMachinesReportService {
                     throw app_error_1.default.authorizationError;
         }
         else {
-            machines = (await this.machinesRepository.find({
+            machines = await this.machinesRepository.find({
                 groupIds,
                 populate: ['pointOfSale'],
                 fields: [
@@ -125,7 +125,7 @@ let GenerateMachinesReportService = class GenerateMachinesReportService {
                     'pointOfSale.label',
                     'groupId',
                 ],
-            })).machines;
+            });
         }
         startDate = date_fns_1.startOfDay(startDate);
         endDate = date_fns_1.endOfDay(endDate);
@@ -135,7 +135,7 @@ let GenerateMachinesReportService = class GenerateMachinesReportService {
             groupIds,
             startDate,
         });
-        const { machineLogs: machinesLogs } = await this.machineLogsRepository.find({
+        const machineLogs = await this.machineLogsRepository.find({
             groupId: groupIds,
             machineId: machines.map(machine => machine.id),
             endDate,
@@ -146,7 +146,7 @@ let GenerateMachinesReportService = class GenerateMachinesReportService {
             ? date_fns_1.differenceInDays(endDate, startDate)
             : 1;
         const machineAnalytics = machines.map(machine => {
-            const remoteCreditAmount = machinesLogs
+            const remoteCreditAmount = machineLogs
                 .filter(machineLog => machineLog.machineId === machine.id)
                 .reduce((a, b) => a + b.quantity, 0);
             const numberOfPlays = Math.floor((incomePerMachine.find(machineIncome => machineIncome.id === machine.id)

@@ -83,8 +83,9 @@ let GenerateStockReportService = class GenerateStockReportService {
         const columnsPrizes = [];
         const columnsSupliers = [];
         users.forEach(user => user.stock?.prizes.forEach(prize => {
-            if (!columnsPrizes.map(cp => cp.id).includes(prize.id))
+            if (!columnsPrizes.map(cp => cp.id).includes(prize.id)) {
                 columnsPrizes.push({ id: prize.id, label: prize.label });
+            }
         }));
         users.forEach(user => user.stock?.supplies.forEach(supplier => {
             if (!columnsSupliers.map(cp => cp.id).includes(supplier.id))

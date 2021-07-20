@@ -33,15 +33,19 @@ interface TelemetryLogsRepository {
   getIncomePerMachine(
     data: GetIncomePerMachineDto,
   ): Promise<GetIncomePerMachineResponseDto[]>;
+
   getPrizesPerMachine(
     data: GetIncomePerMachineDto,
   ): Promise<GetPrizesPerMachineResponseDto[]>;
+
   getIncomePerGroup(
     data: GetIncomePerMachineDto,
   ): Promise<GetIncomePerMachineResponseDto[]>;
+
   incomePerPointOfSale(
     data: GetIncomePerPointOfSaleDto,
   ): Promise<[{ income: number; id: string }]>;
+
   getMachineIncomePerDay({
     groupIds,
     startDate,
@@ -63,6 +67,16 @@ interface TelemetryLogsRepository {
   getGroupIncomePerPeriod(
     data: GetGroupIncomePerPeriodDto,
   ): Promise<{ total: number; id: string; date: Date }[]>;
+
+  getIncomeAndPrizesPerMachine(
+    data: GetIncomePerMachineDto,
+  ): Promise<
+    {
+      _id: string;
+      income: number;
+      numberOfPrizes: number;
+    }[]
+  >;
 
   getIncomePerCounterType(
     data: GetIncomePerCounterTypeDto,

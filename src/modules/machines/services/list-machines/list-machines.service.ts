@@ -86,7 +86,7 @@ class ListMachinesService {
     if (lean) {
       filters.isActive = true;
       filters.fields = ['id', 'serialNumber', 'locationId'];
-      const leanMachines = await this.machinesRepository.find(filters);
+      const leanMachines = await this.machinesRepository.findAndCount(filters);
 
       return leanMachines;
     }
@@ -133,7 +133,7 @@ class ListMachinesService {
     if (user.role !== Role.OPERATOR) filters.operatorId = operatorId;
     filters.populate = ['operator'];
 
-    const result = await this.machinesRepository.find(filters);
+    const result = await this.machinesRepository.findAndCount(filters);
 
     const machinesPromise = result.machines.map(async machine => {
       const [

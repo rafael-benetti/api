@@ -57,7 +57,7 @@ class ListTelemetryBoardsService {
     } else if (user.role === Role.MANAGER) {
       groupIds = user.groupIds;
     } else if (user.role === Role.OPERATOR) {
-      const { machines } = await this.machinesRepository.find({
+      const machines = await this.machinesRepository.find({
         operatorId: user.id,
       });
       telemetryBoardIds = machines

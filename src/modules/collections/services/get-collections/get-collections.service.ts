@@ -56,7 +56,7 @@ export default class GetCollectionsService {
 
     const groupIds = await getGroupUniverse(user);
 
-    const { machines } = await this.machinesRepository.find({
+    const machines = await this.machinesRepository.find({
       serialNumber: machineSerialNumber,
       groupIds,
     });

@@ -149,7 +149,7 @@ let DashboardInfoServiceV2 = class DashboardInfoServiceV2 {
             telemetryStatus: 'NO_TELEMETRY',
             pointOfSaleId: locations,
         });
-        const [{ machines: machinesSortedByLastCollection }, { machines: machinesSortedByLastConnection }, machinesSortedByStock, offlineMachines, machinesNeverConnected,] = await bluebird_1.Promise.all([
+        const [machinesSortedByLastCollection, machinesSortedByLastConnection, machinesSortedByStock, offlineMachines, machinesNeverConnected,] = await bluebird_1.Promise.all([
             machinesSortedByLastCollectionPromise,
             machinesSortedByLastConnectionPromise,
             machinesSortedByStockPromise,

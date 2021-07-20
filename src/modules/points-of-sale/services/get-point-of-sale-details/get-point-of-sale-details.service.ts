@@ -102,7 +102,7 @@ class GetPointOfSaleDetailsService {
     )
       throw AppError.authorizationError;
 
-    const { machines } = await this.machinesRepository.find({
+    const machines = await this.machinesRepository.find({
       pointOfSaleId,
       isActive: true,
     });

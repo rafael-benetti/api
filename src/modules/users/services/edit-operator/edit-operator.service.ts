@@ -102,12 +102,10 @@ class EditOperatorService {
         this.routesRepository.save(route);
       });
 
-      const { machines: machinesToDelete } = await this.machinesRepository.find(
-        {
-          operatorId: operator.id,
-          groupIds: deletedGroups,
-        },
-      );
+      const machinesToDelete = await this.machinesRepository.find({
+        operatorId: operator.id,
+        groupIds: deletedGroups,
+      });
 
       machinesToDelete.forEach(machine => {
         delete machine.operatorId;

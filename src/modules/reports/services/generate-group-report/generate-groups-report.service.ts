@@ -154,7 +154,7 @@ export default class GenerateGroupReportService {
           incomePerPointOfSale,
           { pointsOfSale },
           productLogs,
-          { machineLogs },
+          machineLogs,
         ] = await Promise.all([
           numberOfMachinesPromise,
           incomePerPointOfSalePromise,

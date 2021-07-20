@@ -4,6 +4,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 /* eslint-disable import/no-duplicates */
+const logger_1 = __importDefault(require("../../../../config/logger"));
 const product_1 = __importDefault(require("../../../users/contracts/models/product"));
 const exceljs_1 = __importDefault(require("exceljs"));
 async function exportGroupsReport({ columnsPrizes, columnsSupliers, users, }) {
@@ -15,7 +16,7 @@ async function exportGroupsReport({ columnsPrizes, columnsSupliers, users, }) {
     const columnsPrizesLabel = columnsPrizes.map(prize => prize.label);
     const columnsSupliersLabel = columnsSupliers.map(suplie => suplie.label);
     const values = [
-        'Operador',
+        'Usuário',
         'Parceria',
         ...columnsPrizesLabel,
         ...columnsSupliersLabel,
@@ -34,16 +35,19 @@ async function exportGroupsReport({ columnsPrizes, columnsSupliers, users, }) {
     users.forEach(item => {
         const groupLabels = `${item.groupLabels}`;
         const row = {
-            Operador: item.name,
+            Usuário: item.name,
             Parceria: groupLabels,
         };
+        logger_1.default.info(sheet.columns);
+        // logger.info('item.prizes');
+        // logger.info(item.prizes);
         columnsPrizes.forEach(value => {
             row[value.label] =
                 item.prizes?.find(prize => prize.id === value.id)?.quantity || 0;
         });
         columnsSupliers.forEach(value => {
             row[value.label] =
-                item.prizes?.find(suplie => suplie.id === value.id)?.quantity || 0;
+                item.prizes?.find(suplie => suplie.label === value.id)?.quantity || 0;
         });
         sheet.addRow(row);
     });

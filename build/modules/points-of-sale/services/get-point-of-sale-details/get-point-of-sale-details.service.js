@@ -55,7 +55,7 @@ let GetPointOfSaleDetailsService = class GetPointOfSaleDetailsService {
         if ((user.role === role_1.default.MANAGER || user.role === role_1.default.OPERATOR) &&
             !user.groupIds?.includes(pointOfSale.groupId))
             throw app_error_1.default.authorizationError;
-        const { machines } = await this.machinesRepository.find({
+        const machines = await this.machinesRepository.find({
             pointOfSaleId,
             isActive: true,
         });

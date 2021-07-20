@@ -40,7 +40,7 @@ let GetCollectionsService = class GetCollectionsService {
         if (!user)
             throw app_error_1.default.userNotFound;
         const groupIds = await get_group_universe_1.default(user);
-        const { machines } = await this.machinesRepository.find({
+        const machines = await this.machinesRepository.find({
             serialNumber: machineSerialNumber,
             groupIds,
         });

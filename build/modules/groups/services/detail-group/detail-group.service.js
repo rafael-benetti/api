@@ -284,8 +284,8 @@ let DetailGroupService = class DetailGroupService {
         };
         return {
             machinesNeverConnected,
-            machinesSortedByLastCollection: machinesSortedByLastCollection.machines,
-            machinesSortedByLastConnection: machinesSortedByLastConnection.machines,
+            machinesSortedByLastCollection,
+            machinesSortedByLastConnection,
             machinesSortedByStock,
             machinesWithoutTelemetryBoard,
             offlineMachines,

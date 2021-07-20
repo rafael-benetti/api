@@ -85,7 +85,10 @@ class ListMachineLogsService {
         throw AppError.authorizationError;
     }
 
-    const machineLogs = await this.machineLogsRepository.find({
+    const {
+      machineLogs,
+      count,
+    } = await this.machineLogsRepository.findAndCount({
       startDate,
       endDate,
       groupId: machine.groupId,
@@ -106,7 +109,7 @@ class ListMachineLogsService {
       limit,
     });
 
-    return machineLogs;
+    return { machineLogs, count };
   }
 }
 

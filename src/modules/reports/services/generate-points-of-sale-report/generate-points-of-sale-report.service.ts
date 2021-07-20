@@ -163,7 +163,7 @@ class GeneratePointsOfSaleReportService {
         : 1;
 
     const reportsPromises = pointsOfSale.map(async pointOfSale => {
-      const { machines } = await this.machinesRepository.find({
+      const machines = await this.machinesRepository.find({
         pointOfSaleId: pointOfSale.id,
         fields: [
           'id',
@@ -175,9 +175,7 @@ class GeneratePointsOfSaleReportService {
         ],
       });
 
-      const {
-        machineLogs: machinesLogs,
-      } = await this.machineLogsRepository.find({
+      const machineLogsPromise = await this.machineLogsRepository.find({
         groupId: groupIds,
         machineId: machines.map(machine => machine.id),
         endDate,
@@ -185,35 +183,32 @@ class GeneratePointsOfSaleReportService {
         type: MachineLogType.REMOTE_CREDIT,
       });
 
-      const incomePerMachine = await this.telemetryLogsRepository.getIncomePerMachine(
-        { groupIds, endDate, startDate },
-      );
-
-      const prizesPerMachine = await this.telemetryLogsRepository.getPrizesPerMachine(
+      const resultPromise = await this.telemetryLogsRepository.getIncomeAndPrizesPerMachine(
         {
+          groupIds: [],
+          pointOfSaleId: pointOfSale.id,
           endDate,
-          groupIds,
           startDate,
         },
       );
 
+      const [machineLogs, result] = await Promise.all([
+        machineLogsPromise,
+        resultPromise,
+      ]);
+
       const machineAnalyticsPromises = machines.map(async machine => {
-        const remoteCreditAmount = machinesLogs
+        const remoteCreditAmount = machineLogs
           .filter(machineLog => machineLog.machineId === machine.id)
           .reduce((a, b) => a + b.quantity, 0);
 
         const income =
-          incomePerMachine.find(income => income.id === machine.id)?.income ||
-          0;
+          result.find(income => income._id === machine.id)?.income || 0;
 
-        const prizes = prizesPerMachine.find(prizes => prizes.id === machine.id)
-          ?.prizes;
+        const prizes =
+          result.find(prizes => prizes._id === machine.id)?.numberOfPrizes || 0;
 
-        const numberOfPlays = Math.floor(
-          (incomePerMachine.find(
-            machineIncome => machineIncome.id === machine.id,
-          )?.income || 0) / machine.gameValue,
-        );
+        const numberOfPlays = income / machine.gameValue;
 
         const averagePerDay = Number((income / days).toFixed(2));
 

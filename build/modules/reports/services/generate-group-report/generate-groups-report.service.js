@@ -100,7 +100,7 @@ let GenerateGroupReportService = class GenerateGroupReportService {
                 groupId: group.id,
                 type: machine_log_type_1.default.REMOTE_CREDIT,
             });
-            const [numberOfMachines, incomePerPointOfSale, { pointsOfSale }, productLogs, { machineLogs },] = await bluebird_1.Promise.all([
+            const [numberOfMachines, incomePerPointOfSale, { pointsOfSale }, productLogs, machineLogs,] = await bluebird_1.Promise.all([
                 numberOfMachinesPromise,
                 incomePerPointOfSalePromise,
                 pointsOfSalePromise,

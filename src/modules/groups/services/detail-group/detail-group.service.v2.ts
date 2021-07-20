@@ -359,8 +359,8 @@ export default class DetailGroupServiceV2 {
 
     return {
       machinesNeverConnected,
-      machinesSortedByLastCollection: machinesSortedByLastCollection.machines,
-      machinesSortedByLastConnection: machinesSortedByLastConnection.machines,
+      machinesSortedByLastCollection,
+      machinesSortedByLastConnection,
       machinesSortedByStock,
       machinesWithoutTelemetryBoard,
       offlineMachines,
