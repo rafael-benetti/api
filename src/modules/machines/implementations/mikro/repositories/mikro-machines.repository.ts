@@ -378,6 +378,121 @@ class MikroMachinesRepository implements MachinesRepository {
     return count;
   }
 
+  async machinePerCategory({
+    groupIds,
+  }: FindMachinesDto): Promise<
+    {
+      categoryLabel: string;
+      totalInStock: number;
+      totalInOperation: number;
+    }[]
+  > {
+    const stages: unknown[] = [
+      {
+        $match: {
+          groupId: {
+            $in: groupIds,
+          },
+        },
+      },
+      {
+        $group: {
+          _id: '$categoryLabel',
+          totalInStock: {
+            $sum: {
+              $cond: [{ $eq: ['$locationId', null] }, 1, 0],
+            },
+          },
+          totalInOperation: {
+            $sum: {
+              $cond: [{ $eq: ['$locationId', null] }, 0, 1],
+            },
+          },
+        },
+      },
+      {
+        $project: {
+          categoryLabel: '$_id',
+          _id: 0,
+          totalInStock: 1,
+          totalInOperation: 1,
+        },
+      },
+    ];
+
+    const response = await this.repository.aggregate(stages);
+
+    return response;
+  }
+
+  async machinesInventoryByProduct({
+    groupIds,
+  }: FindMachinesDto): Promise<
+    {
+      prizeId: string;
+      prizeLabel: string;
+      totalPrizes: string;
+      count: number;
+    }[]
+  > {
+    const stages: unknown[] = [
+      {
+        $match: {
+          groupId: {
+            $in: groupIds,
+          },
+        },
+      },
+      {
+        $group: {
+          _id: '$typeOfPrize',
+          arrayOfValues: {
+            $push: '$boxes.numberOfPrizes',
+          },
+          count: {
+            $sum: 1,
+          },
+        },
+      },
+      {
+        $project: {
+          count: 1,
+          prizesArray: {
+            $reduce: {
+              input: {
+                $map: {
+                  input: '$arrayOfValues',
+                  in: '$$this',
+                },
+              },
+              initialValue: [],
+              in: { $concatArrays: ['$$value', '$$this'] },
+            },
+          },
+        },
+      },
+      {
+        $project: {
+          count: 1,
+          prizeId: '$_id.id',
+          prizeLabel: '$_id.label',
+          totalPrizes: {
+            $reduce: {
+              input: '$prizesArray',
+              initialValue: 0,
+              in: { $add: ['$$value', '$$this'] },
+            },
+          },
+          _id: 0,
+        },
+      },
+    ];
+
+    const response = await this.repository.aggregate(stages);
+
+    return response;
+  }
+
   save(data: Machine): void {
     this.repository.persist(MachineMapper.toMikroEntity(data));
   }

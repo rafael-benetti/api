@@ -10,6 +10,7 @@ import CreateOperatorController from '../services/create-operator/create-operato
 import DashboardInfoController from '../services/dashboard-info/dashboard-info.controller';
 import EditManagerController from '../services/edit-manager/edit-manager.controller';
 import EditOperatorController from '../services/edit-operator/edit-operator.controller';
+import GetInvetoryController from '../services/get-inventory/get-inventory.controller';
 import GetUserProfileController from '../services/get-user-profile/get-user-profile.controller';
 import ListManagersController from '../services/list-managers/list-managers.controller';
 import ListOperatorsController from '../services/list-operators/list-operators.controller';
@@ -54,6 +55,8 @@ usersRoutes.post(
 );
 
 usersRoutes.use(authHandler);
+
+usersRoutes.get('/inventory', GetInvetoryController.handle);
 
 usersRoutes.get('/me', GetUserProfileController.handle);
 

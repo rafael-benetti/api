@@ -21,5 +21,24 @@ export default interface MachinesRepository {
     data: FindMachinesDto,
   ): Promise<{ machines: Machine[]; count: number }>;
   count(data: FindMachinesDto): Promise<number>;
+  machinePerCategory({
+    groupIds,
+  }: FindMachinesDto): Promise<
+    {
+      categoryLabel: string;
+      totalInStock: number;
+      totalInOperation: number;
+    }[]
+  >;
+  machinesInventoryByProduct({
+    groupIds,
+  }: FindMachinesDto): Promise<
+    {
+      prizeId: string;
+      prizeLabel: string;
+      totalPrizes: string;
+      count: number;
+    }[]
+  >;
   save(data: Machine): void;
 }
