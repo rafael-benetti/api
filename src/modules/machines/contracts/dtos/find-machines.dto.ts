@@ -1,5 +1,6 @@
 export default interface FindMachinesDto {
   id?: string | string[];
+  checkLocationExists?: boolean;
   ownerId?: string;
   operatorId?: string;
   groupIds?: string[];

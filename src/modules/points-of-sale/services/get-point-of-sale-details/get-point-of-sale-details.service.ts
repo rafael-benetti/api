@@ -183,9 +183,9 @@ class GetPointOfSaleDetailsService {
     // ? CHART DATA PARA PERIODO SEMANAL E MENSAL
     if (period !== Period.DAILY) {
       const daysOfInterval = eachDayOfInterval({
-        start: startDate,
-        end: endDate,
-      }).map(day => addHours(day, 4));
+        start: addHours(startDate, 3),
+        end: addHours(endDate, 3),
+      });
 
       chartData = daysOfInterval.map(day => {
         const incomeInDay =

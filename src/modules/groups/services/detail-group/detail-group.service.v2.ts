@@ -12,6 +12,7 @@ import UsersRepository from '@modules/users/contracts/repositories/users.reposit
 import AppError from '@shared/errors/app-error';
 import { Promise } from 'bluebird';
 import {
+  addHours,
   eachDayOfInterval,
   eachHourOfInterval,
   endOfDay,
@@ -286,8 +287,8 @@ export default class DetailGroupServiceV2 {
       });
     } else {
       interval = eachDayOfInterval({
-        start: startDate,
-        end: endDate,
+        start: addHours(startDate, 3),
+        end: addHours(endDate, 3),
       });
     }
 

@@ -6,11 +6,11 @@ import Role from '@modules/users/contracts/enums/role';
 import UsersRepository from '@modules/users/contracts/repositories/users.repository';
 import AppError from '@shared/errors/app-error';
 import {
+  addHours,
   eachDayOfInterval,
   eachHourOfInterval,
   isSameDay,
   isSameHour,
-  startOfHour,
   subDays,
   subMonths,
   subWeeks,
@@ -137,6 +137,7 @@ export default class DashboardInfoServiceV2 {
     if (pointOfSaleId) locations = [pointOfSaleId];
 
     const machinesSortedByLastCollectionPromise = this.machinesRepository.find({
+      checkLocationExists: true,
       orderByLastCollection: true,
       operatorId: isOperator ? user.id : undefined,
       groupIds,
@@ -156,6 +157,7 @@ export default class DashboardInfoServiceV2 {
     });
 
     const machinesSortedByLastConnectionPromise = this.machinesRepository.find({
+      checkLocationExists: true,
       orderByLastConnection: true,
       pointOfSaleId: locations,
       operatorId: isOperator ? user.id : undefined,
@@ -253,8 +255,6 @@ export default class DashboardInfoServiceV2 {
     if (!startDate) throw AppError.unknownError;
     if (!endDate) throw AppError.unknownError;
 
-    startDate = startOfHour(startDate);
-
     let chartData1: ChartData1[] = [];
     let income: number = 0;
     let givenPrizesCount: number = 0;
@@ -309,8 +309,8 @@ export default class DashboardInfoServiceV2 {
       });
     } else {
       interval = eachDayOfInterval({
-        start: startDate,
-        end: endDate,
+        start: addHours(startDate, 3),
+        end: addHours(endDate, 3),
       });
     }
 

@@ -51,6 +51,7 @@ class MikroMachinesRepository implements MachinesRepository {
     orderByLastConnection,
     checkLastCollectionExists,
     fields,
+    checkLocationExists,
   }: FindMachinesDto): Promise<Machine[]> {
     const telemetryStatusQuery: Record<string, unknown> = {};
     const lastCollectionQuery: Record<string, unknown> = {};
@@ -106,6 +107,7 @@ class MikroMachinesRepository implements MachinesRepository {
         ...(pointOfSaleId !== undefined && {
           locationId: pointOfSaleId === 'null' ? null : pointOfSaleId,
         }),
+        ...(checkLocationExists && { locationId: { $ne: null } }),
         ...(serialNumber && {
           serialNumber: new RegExp(serialNumber, 'i'),
         }),
@@ -254,6 +256,14 @@ class MikroMachinesRepository implements MachinesRepository {
     }[]
   > {
     const stages: unknown[] = [
+      {
+        $match: {
+          locationId: {
+            $exists: true,
+            $ne: null,
+          },
+        },
+      },
       {
         $match: {
           lastConnection: {

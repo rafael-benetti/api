@@ -323,9 +323,9 @@ export default class DetailGroupService {
       );
 
       const daysOfInterval = eachDayOfInterval({
-        start: startDate,
-        end: endDate,
-      }).map(day => addHours(day, 4));
+        start: addHours(startDate, 3),
+        end: addHours(endDate, 3),
+      });
 
       chartData1 = daysOfInterval.map(day => {
         const incomeInDay = universalFinancial
