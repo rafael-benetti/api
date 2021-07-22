@@ -5,6 +5,9 @@ import MachineLog from '../entities/machine-log';
 export default interface MachineLogsRepository {
   create(data: CreateMachineLogDto): MachineLog;
   find(data: FindMachineLogsDto): Promise<MachineLog[]>;
+  remoteCreditAmount(
+    data: FindMachineLogsDto,
+  ): Promise<[{ remoteCreditAmount: number; machineId: string }]>;
   findAndCount(
     data: FindMachineLogsDto,
   ): Promise<{

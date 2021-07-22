@@ -10,7 +10,6 @@ import { inject, injectable } from 'tsyringe';
 import { Promise } from 'bluebird';
 import Group from '@modules/groups/contracts/models/group';
 import Address from '@modules/points-of-sale/contracts/models/address';
-import MachineLogType from '@modules/machine-logs/contracts/enums/machine-log-type';
 import MachineLogsRepository from '@modules/machine-logs/contracts/repositories/machine-logs.repository';
 import ExcelJS from 'exceljs';
 import exportPointsOfSaleReport from './export-points-of-sale-report';
@@ -162,28 +161,29 @@ class GeneratePointsOfSaleReportService {
         ? differenceInDays(endDate, startDate)
         : 1;
 
-    const reportsPromises = pointsOfSale.map(async pointOfSale => {
-      const machines = await this.machinesRepository.find({
-        pointOfSaleId: pointOfSale.id,
-        fields: [
-          'id',
-          'serialNumber',
-          'incomePerMonthGoal',
-          'incomePerPrizeGoal',
-          'gameValue',
-          'categoryLabel',
-        ],
-      });
+    const machines = await this.machinesRepository.find({
+      pointOfSaleId: pointsOfSaleIds,
+      fields: [
+        'id',
+        'serialNumber',
+        'incomePerMonthGoal',
+        'incomePerPrizeGoal',
+        'gameValue',
+        'categoryLabel',
+      ],
+    });
 
-      const machineLogsPromise = await this.machineLogsRepository.find({
+    const reportsPromises = pointsOfSale.map(async pointOfSale => {
+      const machineLogsPromise = this.machineLogsRepository.remoteCreditAmount({
         groupId: groupIds,
-        machineId: machines.map(machine => machine.id),
+        machineId: machines
+          .filter(machine => machine.locationId === pointOfSale.id)
+          .map(machine => machine.id),
         endDate,
         startDate,
-        type: MachineLogType.REMOTE_CREDIT,
       });
 
-      const resultPromise = await this.telemetryLogsRepository.getIncomeAndPrizesPerMachine(
+      const resultPromise = this.telemetryLogsRepository.getIncomeAndPrizesPerMachine(
         {
           groupIds: [],
           pointOfSaleId: pointOfSale.id,
@@ -198,9 +198,9 @@ class GeneratePointsOfSaleReportService {
       ]);
 
       const machineAnalyticsPromises = machines.map(async machine => {
-        const remoteCreditAmount = machineLogs
-          .filter(machineLog => machineLog.machineId === machine.id)
-          .reduce((a, b) => a + b.quantity, 0);
+        const remoteCreditAmount = machineLogs.find(
+          machineLog => machineLog.machineId === machine.id,
+        )?.remoteCreditAmount;
 
         const income =
           result.find(income => income._id === machine.id)?.income || 0;

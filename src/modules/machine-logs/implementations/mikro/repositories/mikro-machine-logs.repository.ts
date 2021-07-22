@@ -59,6 +59,52 @@ class MikroMachineLogsRepository implements MachineLogsRepository {
     return machineLogs;
   }
 
+  async remoteCreditAmount({
+    startDate,
+    endDate,
+    machineId,
+    groupId,
+  }: FindMachineLogsDto): Promise<
+    [{ remoteCreditAmount: number; machineId: string }]
+  > {
+    const remoteCreditAmount = await this.repository.aggregate([
+      {
+        $match: {
+          _id: {
+            $in: machineId,
+          },
+          groupId: {
+            $in: groupId,
+          },
+          date: {
+            $gte: startDate,
+            $lt: endDate,
+          },
+          type: 'REMOTE_CREDIT',
+        },
+      },
+      {
+        $group: {
+          _id: '$machineId',
+          remoteCreditAmount: {
+            $sum: '$quantity',
+          },
+        },
+      },
+      {
+        $project: {
+          _id: 0,
+          machineId: '$_id',
+          remoteCreditAmount: 1,
+        },
+      },
+    ]);
+
+    return remoteCreditAmount as [
+      { remoteCreditAmount: number; machineId: string },
+    ];
+  }
+
   async findAndCount({
     machineId,
     groupId,
