@@ -212,9 +212,9 @@ let DetailGroupService = class DetailGroupService {
             // ? PREMIOS ENTREGUES
             givenPrizesCount = universalFinancial.reduce((a, b) => a + b.givenPrizes, 0);
             const daysOfInterval = date_fns_1.eachDayOfInterval({
-                start: startDate,
-                end: endDate,
-            }).map(day => date_fns_1.addHours(day, 4));
+                start: date_fns_1.addHours(startDate, 3),
+                end: date_fns_1.addHours(endDate, 3),
+            });
             chartData1 = daysOfInterval.map(day => {
                 const incomeInDay = universalFinancial
                     .filter(item => date_fns_1.isSameDay(day, item.date))

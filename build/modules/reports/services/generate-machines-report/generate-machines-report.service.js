@@ -107,6 +107,7 @@ let GenerateMachinesReportService = class GenerateMachinesReportService {
             if (user.role === role_1.default.MANAGER)
                 if (machines.some(machine => !user.groupIds?.includes(machine.groupId)))
                     throw app_error_1.default.authorizationError;
+            groupIds = machines.map(machine => machine.groupId);
         }
         else {
             machines = await this.machinesRepository.find({

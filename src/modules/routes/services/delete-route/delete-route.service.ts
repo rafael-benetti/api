@@ -52,7 +52,7 @@ class DeleteRouteService {
     if (user.role === Role.MANAGER) {
       if (!user.permissions?.deleteRoutes) throw AppError.authorizationError;
 
-      if (user.groupIds?.some(groupId => !route.groupIds.includes(groupId)))
+      if (route.groupIds?.some(groupId => !user.groupIds?.includes(groupId)))
         throw AppError.authorizationError;
     }
 

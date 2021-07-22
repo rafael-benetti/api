@@ -24,7 +24,7 @@ class MikroMachineLogsRepository {
     }
     async find({ machineId, groupId, type, startDate, endDate, fields, populate, limit, offset, }) {
         const machineLogs = await this.repository.find({
-            machineId,
+            ...(machineId && { machineId }),
             groupId,
             ...(type && { type }),
             ...(startDate && {

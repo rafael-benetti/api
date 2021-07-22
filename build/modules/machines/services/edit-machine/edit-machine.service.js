@@ -174,6 +174,11 @@ let EditMachineService = class EditMachineService {
             });
             if (!pointOfSale)
                 throw app_error_1.default.pointOfSaleNotFound;
+            const route = await this.routesRepository.findOne({
+                pointsOfSaleId: pointOfSale.id,
+            });
+            if (route)
+                machine.operatorId = route.operatorId;
             machine.locationId = locationId;
         }
         else if (locationId === null)

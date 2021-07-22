@@ -48,6 +48,76 @@ class MikroGroupsRepository {
         });
         return groups.map(group => group_mapper_1.default.toApi(group));
     }
+    async groupsInvertoryByProduct({ filters, }) {
+        const stages = [
+            {
+                $match: {
+                    _id: {
+                        $in: filters.ids,
+                    },
+                },
+            },
+            {
+                $unwind: '$stock.prizes',
+            },
+            {
+                $group: {
+                    _id: {
+                        id: '$stock.prizes.id',
+                        label: '$stock.prizes.label',
+                    },
+                    totalPrizes: {
+                        $sum: '$stock.prizes.quantity',
+                    },
+                },
+            },
+            {
+                $project: {
+                    prizeId: '$_id.id',
+                    prizeLabel: '$_id.label',
+                    totalPrizes: 1,
+                    _id: 0,
+                },
+            },
+        ];
+        const response = await this.repository.aggregate(stages);
+        return response;
+    }
+    async groupsInvertoryBySupplies({ filters, }) {
+        const stages = [
+            {
+                $match: {
+                    _id: {
+                        $in: filters.ids,
+                    },
+                },
+            },
+            {
+                $unwind: '$stock.supplies',
+            },
+            {
+                $group: {
+                    _id: {
+                        id: '$stock.supplies.id',
+                        label: '$stock.supplies.label',
+                    },
+                    totalSupplies: {
+                        $sum: '$stock.supplies.quantity',
+                    },
+                },
+            },
+            {
+                $project: {
+                    supplieId: '$_id.id',
+                    supplieLabel: '$_id.label',
+                    totalSupplies: 1,
+                    _id: 0,
+                },
+            },
+        ];
+        const response = await this.repository.aggregate(stages);
+        return response;
+    }
     save(data) {
         const group = group_mapper_1.default.toOrm(data);
         this.repository.persist(group);
