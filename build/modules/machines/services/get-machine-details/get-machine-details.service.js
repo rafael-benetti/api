@@ -15,6 +15,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
+const logger_1 = __importDefault(require("../../../../config/logger"));
 const collections_repository_1 = __importDefault(require("../../../collections/contracts/repositories/collections.repository"));
 const couter_types_repository_1 = __importDefault(require("../../../counter-types/contracts/repositories/couter-types.repository"));
 const machine_log_1 = __importDefault(require("../../../machine-logs/contracts/entities/machine-log"));
@@ -104,11 +105,14 @@ let GetMachineDetailsService = class GetMachineDetailsService {
         });
         const machineGivenPrizesPerPinPromise = this.telemetryLogsRepository.getMachineGivenPrizesPerDay({
             machineId,
-            startDate: lastCollection,
+            startDate: machine.lastCollection,
             endDate: new Date(),
             groupIds: [machine.groupId],
             withHours: false,
         });
+        logger_1.default.info(new Date());
+        logger_1.default.info(machine.lastCollection);
+        logger_1.default.info(lastCollection);
         // ? HISTORICO DE JOGADAS
         const transactionHistoryPromise = await this.telemetryLogsRepository.find({
             filters: {
@@ -159,12 +163,14 @@ let GetMachineDetailsService = class GetMachineDetailsService {
             boxe.counters.forEach(counter => {
                 const counterType = counterTypes.find(counterType => counterType.id === counter.counterTypeId)?.type;
                 if (counterType === 'OUT') {
+                    logger_1.default.info(machineGivenPrizesPerPin);
                     givenPrizesCount = machineGivenPrizesPerPin
                         .filter(givenPrizeOfDay => {
                         return (givenPrizeOfDay.id.pin?.toString() ===
                             counter.pin?.replace('Pino ', ''));
                     })
                         .reduce((a, b) => a + b.givenPrizes, 0);
+                    logger_1.default.info(givenPrizesCount);
                 }
             });
             return {
@@ -194,9 +200,9 @@ let GetMachineDetailsService = class GetMachineDetailsService {
         // ? CHART DATA PARA PERIODO SEMANAL E MENSAL
         if (period !== period_dto_1.default.DAILY) {
             const daysOfInterval = date_fns_1.eachDayOfInterval({
-                start: startDate,
-                end: endDate,
-            }).map(day => date_fns_1.addHours(day, 4));
+                start: date_fns_1.addHours(startDate, 3),
+                end: date_fns_1.addHours(endDate, 3),
+            });
             chartData = daysOfInterval.map(day => {
                 const incomeInDay = machineIncomePerDay.find(telemetry => date_fns_1.isSameDay(day, new Date(telemetry.id).setUTCHours(3)))?.income || 0;
                 const prizesCountInDay = machineGivenPrizesPerDay.find(telemetry => date_fns_1.isSameDay(day, new Date(telemetry.id.date).setUTCHours(3)))?.givenPrizes || 0;

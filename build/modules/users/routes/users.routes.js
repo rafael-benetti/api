@@ -15,6 +15,7 @@ const create_operator_controller_1 = __importDefault(require("../services/create
 const dashboard_info_controller_1 = __importDefault(require("../services/dashboard-info/dashboard-info.controller"));
 const edit_manager_controller_1 = __importDefault(require("../services/edit-manager/edit-manager.controller"));
 const edit_operator_controller_1 = __importDefault(require("../services/edit-operator/edit-operator.controller"));
+const get_inventory_controller_1 = __importDefault(require("../services/get-inventory/get-inventory.controller"));
 const get_user_profile_controller_1 = __importDefault(require("../services/get-user-profile/get-user-profile.controller"));
 const list_managers_controller_1 = __importDefault(require("../services/list-managers/list-managers.controller"));
 const list_operators_controller_1 = __importDefault(require("../services/list-operators/list-operators.controller"));
@@ -39,6 +40,7 @@ usersRoutes.post('/reset-password', celebrate_1.celebrate({
     },
 }), reset_password_controller_1.default.handle);
 usersRoutes.use(auth_handler_1.default);
+usersRoutes.get('/inventory', get_inventory_controller_1.default.handle);
 usersRoutes.get('/me', get_user_profile_controller_1.default.handle);
 usersRoutes.patch('/me', multer_1.default({
     storage: multer_1.default.memoryStorage(),

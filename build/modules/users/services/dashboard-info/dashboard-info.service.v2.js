@@ -84,6 +84,7 @@ let DashboardInfoServiceV2 = class DashboardInfoServiceV2 {
         if (pointOfSaleId)
             locations = [pointOfSaleId];
         const machinesSortedByLastCollectionPromise = this.machinesRepository.find({
+            checkLocationExists: true,
             orderByLastCollection: true,
             operatorId: isOperator ? user.id : undefined,
             groupIds,
@@ -102,6 +103,7 @@ let DashboardInfoServiceV2 = class DashboardInfoServiceV2 {
             populate: ['pointOfSale'],
         });
         const machinesSortedByLastConnectionPromise = this.machinesRepository.find({
+            checkLocationExists: true,
             orderByLastConnection: true,
             pointOfSaleId: locations,
             operatorId: isOperator ? user.id : undefined,
@@ -185,7 +187,6 @@ let DashboardInfoServiceV2 = class DashboardInfoServiceV2 {
             throw app_error_1.default.unknownError;
         if (!endDate)
             throw app_error_1.default.unknownError;
-        startDate = date_fns_1.startOfHour(startDate);
         let chartData1 = [];
         let income = 0;
         let givenPrizesCount = 0;
@@ -227,8 +228,8 @@ let DashboardInfoServiceV2 = class DashboardInfoServiceV2 {
         }
         else {
             interval = date_fns_1.eachDayOfInterval({
-                start: startDate,
-                end: endDate,
+                start: date_fns_1.addHours(startDate, 3),
+                end: date_fns_1.addHours(endDate, 3),
             });
         }
         chartData1 = interval.map(item => {

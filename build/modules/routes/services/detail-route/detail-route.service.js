@@ -147,9 +147,9 @@ let DetailRouteService = class DetailRouteService {
         // ? CHART DATA PARA PERIODO SEMANAL E MENSAL
         if (period === period_dto_1.default.MONTHLY || period === period_dto_1.default.WEEKLY) {
             const daysOfInterval = date_fns_1.eachDayOfInterval({
-                start: startDate,
-                end: endDate,
-            }).map(day => date_fns_1.addHours(day, 4));
+                start: date_fns_1.addHours(startDate, 3),
+                end: date_fns_1.addHours(endDate, 3),
+            });
             chartData1 = daysOfInterval.map(day => {
                 const incomeInDay = telemetryLogsIn
                     .filter(telemetry => date_fns_1.isSameDay(day, telemetry.date))

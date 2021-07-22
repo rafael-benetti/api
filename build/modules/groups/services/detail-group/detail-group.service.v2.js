@@ -192,8 +192,8 @@ let DetailGroupServiceV2 = class DetailGroupServiceV2 {
         }
         else {
             interval = date_fns_1.eachDayOfInterval({
-                start: startDate,
-                end: endDate,
+                start: date_fns_1.addHours(startDate, 3),
+                end: date_fns_1.addHours(endDate, 3),
             });
         }
         const chartData1 = interval.map(item => {
