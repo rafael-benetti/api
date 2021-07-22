@@ -31,7 +31,7 @@ class MikroMachineLogsRepository implements MachineLogsRepository {
   }: FindMachineLogsDto): Promise<MachineLog[]> {
     const machineLogs = await this.repository.find(
       {
-        machineId,
+        ...(machineId && { machineId }),
         groupId,
         ...(type && { type }),
         ...(startDate && {

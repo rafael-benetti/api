@@ -243,6 +243,12 @@ class EditMachineService {
 
       if (!pointOfSale) throw AppError.pointOfSaleNotFound;
 
+      const route = await this.routesRepository.findOne({
+        pointsOfSaleId: pointOfSale.id,
+      });
+
+      if (route) machine.operatorId = route.operatorId;
+
       machine.locationId = locationId;
     } else if (locationId === null) machine.locationId = locationId;
 

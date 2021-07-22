@@ -152,6 +152,7 @@ class GenerateMachinesReportService {
       if (user.role === Role.MANAGER)
         if (machines.some(machine => !user.groupIds?.includes(machine.groupId)))
           throw AppError.authorizationError;
+      groupIds = machines.map(machine => machine.groupId);
     } else {
       machines = await this.machinesRepository.find({
         groupIds,

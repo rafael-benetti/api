@@ -1,3 +1,4 @@
+import logger from '@config/logger';
 import CollectionsRepository from '@modules/collections/contracts/repositories/collections.repository';
 import CounterTypesRepository from '@modules/counter-types/contracts/repositories/couter-types.repository';
 import MachineLog from '@modules/machine-logs/contracts/entities/machine-log';
@@ -170,12 +171,16 @@ class GetMachineDetailsService {
     const machineGivenPrizesPerPinPromise = this.telemetryLogsRepository.getMachineGivenPrizesPerDay(
       {
         machineId,
-        startDate: lastCollection,
+        startDate: machine.lastCollection,
         endDate: new Date(),
         groupIds: [machine.groupId],
         withHours: false,
       },
     );
+
+    logger.info(new Date());
+    logger.info(machine.lastCollection);
+    logger.info(lastCollection);
 
     // ? HISTORICO DE JOGADAS
     const transactionHistoryPromise = await this.telemetryLogsRepository.find({
@@ -246,6 +251,7 @@ class GetMachineDetailsService {
         )?.type;
 
         if (counterType === 'OUT') {
+          logger.info(machineGivenPrizesPerPin);
           givenPrizesCount = machineGivenPrizesPerPin
             .filter(givenPrizeOfDay => {
               return (
@@ -254,6 +260,8 @@ class GetMachineDetailsService {
               );
             })
             .reduce((a, b) => a + b.givenPrizes, 0);
+
+          logger.info(givenPrizesCount);
         }
       });
 
