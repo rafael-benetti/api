@@ -48,6 +48,41 @@ class MikroMachineLogsRepository {
         });
         return machineLogs;
     }
+    async remoteCreditAmount({ startDate, endDate, machineId, groupId, }) {
+        const remoteCreditAmount = await this.repository.aggregate([
+            {
+                $match: {
+                    _id: {
+                        $in: machineId,
+                    },
+                    groupId: {
+                        $in: groupId,
+                    },
+                    date: {
+                        $gte: startDate,
+                        $lt: endDate,
+                    },
+                    type: 'REMOTE_CREDIT',
+                },
+            },
+            {
+                $group: {
+                    _id: '$machineId',
+                    remoteCreditAmount: {
+                        $sum: '$quantity',
+                    },
+                },
+            },
+            {
+                $project: {
+                    _id: 0,
+                    machineId: '$_id',
+                    remoteCreditAmount: 1,
+                },
+            },
+        ]);
+        return remoteCreditAmount;
+    }
     async findAndCount({ machineId, groupId, type, startDate, endDate, fields, populate, limit, offset, }) {
         const [machineLogs, count] = await this.repository.findAndCount({
             machineId,

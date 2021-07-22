@@ -27,7 +27,6 @@ const tsyringe_1 = require("tsyringe");
 const bluebird_1 = require("bluebird");
 const group_1 = __importDefault(require("../../../groups/contracts/models/group"));
 const address_1 = __importDefault(require("../../../points-of-sale/contracts/models/address"));
-const machine_log_type_1 = __importDefault(require("../../../machine-logs/contracts/enums/machine-log-type"));
 const machine_logs_repository_1 = __importDefault(require("../../../machine-logs/contracts/repositories/machine-logs.repository"));
 const export_points_of_sale_report_1 = __importDefault(require("./export-points-of-sale-report"));
 let GeneratePointsOfSaleReportService = class GeneratePointsOfSaleReportService {
@@ -105,26 +104,27 @@ let GeneratePointsOfSaleReportService = class GeneratePointsOfSaleReportService 
         const days = date_fns_1.differenceInDays(endDate, startDate) !== 0
             ? date_fns_1.differenceInDays(endDate, startDate)
             : 1;
+        const machines = await this.machinesRepository.find({
+            pointOfSaleId: pointsOfSaleIds,
+            fields: [
+                'id',
+                'serialNumber',
+                'incomePerMonthGoal',
+                'incomePerPrizeGoal',
+                'gameValue',
+                'categoryLabel',
+            ],
+        });
         const reportsPromises = pointsOfSale.map(async (pointOfSale) => {
-            const machines = await this.machinesRepository.find({
-                pointOfSaleId: pointOfSale.id,
-                fields: [
-                    'id',
-                    'serialNumber',
-                    'incomePerMonthGoal',
-                    'incomePerPrizeGoal',
-                    'gameValue',
-                    'categoryLabel',
-                ],
-            });
-            const machineLogsPromise = await this.machineLogsRepository.find({
+            const machineLogsPromise = this.machineLogsRepository.remoteCreditAmount({
                 groupId: groupIds,
-                machineId: machines.map(machine => machine.id),
+                machineId: machines
+                    .filter(machine => machine.locationId === pointOfSale.id)
+                    .map(machine => machine.id),
                 endDate,
                 startDate,
-                type: machine_log_type_1.default.REMOTE_CREDIT,
             });
-            const resultPromise = await this.telemetryLogsRepository.getIncomeAndPrizesPerMachine({
+            const resultPromise = this.telemetryLogsRepository.getIncomeAndPrizesPerMachine({
                 groupIds: [],
                 pointOfSaleId: pointOfSale.id,
                 endDate,
@@ -135,9 +135,7 @@ let GeneratePointsOfSaleReportService = class GeneratePointsOfSaleReportService 
                 resultPromise,
             ]);
             const machineAnalyticsPromises = machines.map(async (machine) => {
-                const remoteCreditAmount = machineLogs
-                    .filter(machineLog => machineLog.machineId === machine.id)
-                    .reduce((a, b) => a + b.quantity, 0);
+                const remoteCreditAmount = machineLogs.find(machineLog => machineLog.machineId === machine.id)?.remoteCreditAmount;
                 const income = result.find(income => income._id === machine.id)?.income || 0;
                 const prizes = result.find(prizes => prizes._id === machine.id)?.numberOfPrizes || 0;
                 const numberOfPlays = income / machine.gameValue;

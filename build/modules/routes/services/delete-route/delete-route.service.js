@@ -48,7 +48,7 @@ let DeleteRouteService = class DeleteRouteService {
         if (user.role === role_1.default.MANAGER) {
             if (!user.permissions?.deleteRoutes)
                 throw app_error_1.default.authorizationError;
-            if (user.groupIds?.some(groupId => !route.groupIds.includes(groupId)))
+            if (route.groupIds?.some(groupId => !user.groupIds?.includes(groupId)))
                 throw app_error_1.default.authorizationError;
         }
         if (user.role === role_1.default.OWNER) {
