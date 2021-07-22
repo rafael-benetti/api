@@ -13,6 +13,7 @@ import Address from '@modules/points-of-sale/contracts/models/address';
 import MachineLogType from '@modules/machine-logs/contracts/enums/machine-log-type';
 import MachineLogsRepository from '@modules/machine-logs/contracts/repositories/machine-logs.repository';
 import ExcelJS from 'exceljs';
+import logger from '@config/logger';
 import exportPointsOfSaleReport from './export-points-of-sale-report';
 
 interface Response {
@@ -175,7 +176,7 @@ class GeneratePointsOfSaleReportService {
         ],
       });
 
-      const machineLogsPromise = await this.machineLogsRepository.find({
+      const machineLogsPromise = this.machineLogsRepository.find({
         groupId: groupIds,
         machineId: machines.map(machine => machine.id),
         endDate,
@@ -183,7 +184,7 @@ class GeneratePointsOfSaleReportService {
         type: MachineLogType.REMOTE_CREDIT,
       });
 
-      const resultPromise = await this.telemetryLogsRepository.getIncomeAndPrizesPerMachine(
+      const resultPromise = this.telemetryLogsRepository.getIncomeAndPrizesPerMachine(
         {
           groupIds: [],
           pointOfSaleId: pointOfSale.id,
