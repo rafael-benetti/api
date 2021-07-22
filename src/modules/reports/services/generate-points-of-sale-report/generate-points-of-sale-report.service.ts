@@ -12,7 +12,6 @@ import Group from '@modules/groups/contracts/models/group';
 import Address from '@modules/points-of-sale/contracts/models/address';
 import MachineLogsRepository from '@modules/machine-logs/contracts/repositories/machine-logs.repository';
 import ExcelJS from 'exceljs';
-import logger from '@config/logger';
 import exportPointsOfSaleReport from './export-points-of-sale-report';
 
 interface Response {
@@ -162,8 +161,17 @@ class GeneratePointsOfSaleReportService {
         ? differenceInDays(endDate, startDate)
         : 1;
 
+    if (!pointsOfSale) {
+      return {
+        date: {
+          startDate,
+          endDate,
+        },
+        pointsOfSaleAnalytics: [],
+      };
+    }
     const machines = await this.machinesRepository.find({
-      pointOfSaleId: pointsOfSaleIds,
+      pointOfSaleId: pointsOfSale.map(pos => pos.id),
       fields: [
         'id',
         'serialNumber',

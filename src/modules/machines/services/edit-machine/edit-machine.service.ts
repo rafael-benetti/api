@@ -250,7 +250,10 @@ class EditMachineService {
       if (route) machine.operatorId = route.operatorId;
 
       machine.locationId = locationId;
-    } else if (locationId === null) machine.locationId = locationId;
+    } else if (locationId === null) {
+      machine.locationId = locationId;
+      machine.operator = undefined;
+    }
 
     if (categoryId) {
       const category = await this.categoriesRepository.findOne({
