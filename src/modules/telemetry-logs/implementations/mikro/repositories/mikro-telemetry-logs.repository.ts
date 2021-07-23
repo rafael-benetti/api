@@ -441,7 +441,7 @@ class MikroTelemetryLogsRepository implements TelemetryLogsRepository {
   }: GetMachineIncomePerDay): Promise<
     { givenPrizes: number; id: { date: string; pin: number }; date: Date }[]
   > {
-    const response = await this.repository.aggregate([
+    const stages: any = [
       {
         $match: {
           groupId: {
@@ -452,12 +452,6 @@ class MikroTelemetryLogsRepository implements TelemetryLogsRepository {
           pin: {
             $exists: true,
             $ne: null,
-          },
-          date: {
-            $exists: true,
-            $ne: null,
-            $gte: startDate,
-            $lt: endDate,
           },
           type: 'OUT',
         },
@@ -490,7 +484,28 @@ class MikroTelemetryLogsRepository implements TelemetryLogsRepository {
           givenPrizes: 1,
         },
       },
-    ]);
+    ];
+
+    if (!startDate) {
+      stages.unshift({
+        $match: {
+          date: {
+            $lt: endDate,
+          },
+        },
+      });
+    } else {
+      stages.unshift({
+        $match: {
+          date: {
+            $gte: startDate,
+            $lt: endDate,
+          },
+        },
+      });
+    }
+
+    const response = await this.repository.aggregate(stages);
 
     return response as {
       id: { date: string; pin: number };
