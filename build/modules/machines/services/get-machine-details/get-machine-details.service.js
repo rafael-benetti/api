@@ -15,7 +15,6 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-const logger_1 = __importDefault(require("../../../../config/logger"));
 const collections_repository_1 = __importDefault(require("../../../collections/contracts/repositories/collections.repository"));
 const couter_types_repository_1 = __importDefault(require("../../../counter-types/contracts/repositories/couter-types.repository"));
 const machine_log_1 = __importDefault(require("../../../machine-logs/contracts/entities/machine-log"));
@@ -110,9 +109,6 @@ let GetMachineDetailsService = class GetMachineDetailsService {
             groupIds: [machine.groupId],
             withHours: false,
         });
-        logger_1.default.info(new Date());
-        logger_1.default.info(machine.lastCollection);
-        logger_1.default.info(lastCollection);
         // ? HISTORICO DE JOGADAS
         const transactionHistoryPromise = await this.telemetryLogsRepository.find({
             filters: {
@@ -163,14 +159,12 @@ let GetMachineDetailsService = class GetMachineDetailsService {
             boxe.counters.forEach(counter => {
                 const counterType = counterTypes.find(counterType => counterType.id === counter.counterTypeId)?.type;
                 if (counterType === 'OUT') {
-                    logger_1.default.info(machineGivenPrizesPerPin);
                     givenPrizesCount = machineGivenPrizesPerPin
                         .filter(givenPrizeOfDay => {
                         return (givenPrizeOfDay.id.pin?.toString() ===
                             counter.pin?.replace('Pino ', ''));
                     })
                         .reduce((a, b) => a + b.givenPrizes, 0);
-                    logger_1.default.info(givenPrizesCount);
                 }
             });
             return {

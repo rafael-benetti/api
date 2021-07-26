@@ -104,8 +104,17 @@ let GeneratePointsOfSaleReportService = class GeneratePointsOfSaleReportService 
         const days = date_fns_1.differenceInDays(endDate, startDate) !== 0
             ? date_fns_1.differenceInDays(endDate, startDate)
             : 1;
+        if (!pointsOfSale) {
+            return {
+                date: {
+                    startDate,
+                    endDate,
+                },
+                pointsOfSaleAnalytics: [],
+            };
+        }
         const machines = await this.machinesRepository.find({
-            pointOfSaleId: pointsOfSaleIds,
+            pointOfSaleId: pointsOfSale.map(pos => pos.id),
             fields: [
                 'id',
                 'serialNumber',
