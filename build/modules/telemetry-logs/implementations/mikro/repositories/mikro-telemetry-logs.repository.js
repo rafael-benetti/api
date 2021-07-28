@@ -364,7 +364,7 @@ let MikroTelemetryLogsRepository = class MikroTelemetryLogsRepository {
         return response;
     }
     async getMachineGivenPrizesPerDay({ groupIds, startDate, endDate, machineId, withHours, }) {
-        const response = await this.repository.aggregate([
+        const stages = [
             {
                 $match: {
                     groupId: {
@@ -375,12 +375,6 @@ let MikroTelemetryLogsRepository = class MikroTelemetryLogsRepository {
                     pin: {
                         $exists: true,
                         $ne: null,
-                    },
-                    date: {
-                        $exists: true,
-                        $ne: null,
-                        $gte: startDate,
-                        $lt: endDate,
                     },
                     type: 'OUT',
                 },
@@ -413,7 +407,27 @@ let MikroTelemetryLogsRepository = class MikroTelemetryLogsRepository {
                     givenPrizes: 1,
                 },
             },
-        ]);
+        ];
+        if (!startDate) {
+            stages.unshift({
+                $match: {
+                    date: {
+                        $lt: endDate,
+                    },
+                },
+            });
+        }
+        else {
+            stages.unshift({
+                $match: {
+                    date: {
+                        $gte: startDate,
+                        $lt: endDate,
+                    },
+                },
+            });
+        }
+        const response = await this.repository.aggregate(stages);
         return response;
     }
     async getPointOfSaleIncomePerDate({ startDate, endDate, pointOfSaleId, withHours, }) {
