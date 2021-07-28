@@ -64,7 +64,7 @@ class GeneratePointsOfSaleReportService {
 
     @inject('MachineLogsRepository')
     private machineLogsRepository: MachineLogsRepository,
-  ) { }
+  ) {}
 
   async execute({
     userId,
@@ -75,12 +75,12 @@ class GeneratePointsOfSaleReportService {
     pointsOfSaleIds,
   }: Request): Promise<
     | {
-      date: {
-        startDate: Date;
-        endDate: Date;
-      };
-      pointsOfSaleAnalytics: Response[];
-    }
+        date: {
+          startDate: Date;
+          endDate: Date;
+        };
+        pointsOfSaleAnalytics: Response[];
+      }
     | ExcelJS.Workbook
   > {
     const user = await this.usersRepository.findOne({
@@ -190,16 +190,7 @@ class GeneratePointsOfSaleReportService {
     });
 
     const reportsPromises = pointsOfSale.map(async pointOfSale => {
-      const machineLogsPromise = this.machineLogsRepository.remoteCreditAmount({
-        groupId: groupIds,
-        machineId: machines
-          .filter(machine => machine.locationId === pointOfSale.id)
-          .map(machine => machine.id),
-        endDate,
-        startDate,
-      });
-
-      const resultPromise = this.telemetryLogsRepository.getIncomeAndPrizesPerMachine(
+      const result = await this.telemetryLogsRepository.getIncomeAndPrizesPerMachine(
         {
           groupIds,
           pointOfSaleId: pointOfSale.id,
@@ -208,14 +199,18 @@ class GeneratePointsOfSaleReportService {
         },
       );
 
-      const [machineLogs, result] = await Promise.all([
-        machineLogsPromise,
-        resultPromise,
-      ]);
-
       const machineAnalyticsPromises = machines
         .filter(machines => machines.locationId === pointOfSale.id)
         .map(async machine => {
+          const machineLogs = await this.machineLogsRepository.remoteCreditAmount(
+            {
+              groupId: groupIds,
+              machineId: machines.map(machine => machine.id),
+              startDate,
+              endDate,
+            },
+          );
+
           const remoteCreditAmount = machineLogs.find(
             machineLog => machineLog.machineId === machine.id,
           )?.remoteCreditAmount;
@@ -262,8 +257,8 @@ class GeneratePointsOfSaleReportService {
 
       const rent = pointOfSale.isPercentage
         ? (machineAnalytics.reduce((a, b) => a + b.income, 0) *
-          pointOfSale.rent) /
-        100
+            pointOfSale.rent) /
+          100
         : pointOfSale.rent;
 
       return {

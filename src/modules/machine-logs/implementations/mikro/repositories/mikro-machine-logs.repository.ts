@@ -1,3 +1,4 @@
+import logger from '@config/logger';
 import CreateMachineLogDto from '@modules/machine-logs/contracts/dtos/create-machine-log.dto';
 import FindMachineLogsDto from '@modules/machine-logs/contracts/dtos/find-machine-logs.dto';
 import MachineLog from '@modules/machine-logs/contracts/entities/machine-log';
@@ -70,15 +71,15 @@ class MikroMachineLogsRepository implements MachineLogsRepository {
     const remoteCreditAmount = await this.repository.aggregate([
       {
         $match: {
-          _id: {
+          machineId: {
             $in: machineId,
           },
           groupId: {
             $in: groupId,
           },
-          date: {
+          createdAt: {
             $gte: startDate,
-            $lt: endDate,
+            $lte: endDate,
           },
           type: 'REMOTE_CREDIT',
         },
@@ -87,18 +88,20 @@ class MikroMachineLogsRepository implements MachineLogsRepository {
         $group: {
           _id: '$machineId',
           remoteCreditAmount: {
-            $sum: '$quantity',
+            $sum: { $toInt: '$quantity' },
           },
         },
       },
       {
         $project: {
-          _id: 0,
           machineId: '$_id',
           remoteCreditAmount: 1,
+          _id: 0,
         },
       },
     ]);
+
+    logger.info(remoteCreditAmount);
 
     return remoteCreditAmount as [
       { remoteCreditAmount: number; machineId: string },
