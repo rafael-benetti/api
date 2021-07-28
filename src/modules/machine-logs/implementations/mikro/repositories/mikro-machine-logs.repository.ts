@@ -1,4 +1,3 @@
-import logger from '@config/logger';
 import CreateMachineLogDto from '@modules/machine-logs/contracts/dtos/create-machine-log.dto';
 import FindMachineLogsDto from '@modules/machine-logs/contracts/dtos/find-machine-logs.dto';
 import MachineLog from '@modules/machine-logs/contracts/entities/machine-log';
@@ -100,8 +99,6 @@ class MikroMachineLogsRepository implements MachineLogsRepository {
         },
       },
     ]);
-
-    logger.info(remoteCreditAmount);
 
     return remoteCreditAmount as [
       { remoteCreditAmount: number; machineId: string },

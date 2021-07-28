@@ -132,27 +132,21 @@ let GeneratePointsOfSaleReportService = class GeneratePointsOfSaleReportService 
             ],
         });
         const reportsPromises = pointsOfSale.map(async (pointOfSale) => {
-            const machineLogsPromise = this.machineLogsRepository.remoteCreditAmount({
-                groupId: groupIds,
-                machineId: machines
-                    .filter(machine => machine.locationId === pointOfSale.id)
-                    .map(machine => machine.id),
-                endDate,
-                startDate,
-            });
-            const resultPromise = this.telemetryLogsRepository.getIncomeAndPrizesPerMachine({
+            const result = await this.telemetryLogsRepository.getIncomeAndPrizesPerMachine({
                 groupIds,
                 pointOfSaleId: pointOfSale.id,
                 endDate,
                 startDate,
             });
-            const [machineLogs, result] = await bluebird_1.Promise.all([
-                machineLogsPromise,
-                resultPromise,
-            ]);
             const machineAnalyticsPromises = machines
                 .filter(machines => machines.locationId === pointOfSale.id)
                 .map(async (machine) => {
+                const machineLogs = await this.machineLogsRepository.remoteCreditAmount({
+                    groupId: groupIds,
+                    machineId: machines.map(machine => machine.id),
+                    startDate,
+                    endDate,
+                });
                 const remoteCreditAmount = machineLogs.find(machineLog => machineLog.machineId === machine.id)?.remoteCreditAmount;
                 const income = result.find(income => income._id === machine.id)?.income || 0;
                 const prizes = result.find(prizes => prizes._id === machine.id)?.numberOfPrizes ||
