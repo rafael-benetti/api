@@ -40,7 +40,7 @@ let ListPointsOfSaleService = class ListPointsOfSaleService {
         let pointsOfSaleIds;
         if (operatorId || routeId) {
             const routes = await this.routesRepository.find({
-                operatorId: user.role === role_1.default.OPERATOR ? user.id : undefined,
+                operatorId: user.role === role_1.default.OPERATOR ? user.id : operatorId,
                 id: routeId,
             });
             pointsOfSaleIds = routes.flatMap(route => route.pointsOfSaleIds);
