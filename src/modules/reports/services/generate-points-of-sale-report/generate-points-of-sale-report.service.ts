@@ -64,7 +64,7 @@ class GeneratePointsOfSaleReportService {
 
     @inject('MachineLogsRepository')
     private machineLogsRepository: MachineLogsRepository,
-  ) {}
+  ) { }
 
   async execute({
     userId,
@@ -75,12 +75,12 @@ class GeneratePointsOfSaleReportService {
     pointsOfSaleIds,
   }: Request): Promise<
     | {
-        date: {
-          startDate: Date;
-          endDate: Date;
-        };
-        pointsOfSaleAnalytics: Response[];
-      }
+      date: {
+        startDate: Date;
+        endDate: Date;
+      };
+      pointsOfSaleAnalytics: Response[];
+    }
     | ExcelJS.Workbook
   > {
     const user = await this.usersRepository.findOne({
@@ -143,6 +143,9 @@ class GeneratePointsOfSaleReportService {
           fields: ['id', 'label', 'address', 'groupId', 'isPercentage', 'rent'],
         })
       ).pointsOfSale;
+      groupIds = [
+        ...new Set(pointsOfSale.map(pointOfSale => pointOfSale.groupId)),
+      ];
     } else {
       pointsOfSale = (
         await this.pointsOfSaleRepository.find({
@@ -151,6 +154,9 @@ class GeneratePointsOfSaleReportService {
           fields: ['id', 'label', 'address', 'groupId', 'isPercentage', 'rent'],
         })
       ).pointsOfSale;
+      groupIds = [
+        ...new Set(pointsOfSale.map(pointOfSale => pointOfSale.groupId)),
+      ];
     }
 
     startDate = startOfDay(startDate);
@@ -179,6 +185,7 @@ class GeneratePointsOfSaleReportService {
         'incomePerPrizeGoal',
         'gameValue',
         'categoryLabel',
+        'locationId',
       ],
     });
 
@@ -194,7 +201,7 @@ class GeneratePointsOfSaleReportService {
 
       const resultPromise = this.telemetryLogsRepository.getIncomeAndPrizesPerMachine(
         {
-          groupIds: [],
+          groupIds,
           pointOfSaleId: pointOfSale.id,
           endDate,
           startDate,
@@ -206,44 +213,47 @@ class GeneratePointsOfSaleReportService {
         resultPromise,
       ]);
 
-      const machineAnalyticsPromises = machines.map(async machine => {
-        const remoteCreditAmount = machineLogs.find(
-          machineLog => machineLog.machineId === machine.id,
-        )?.remoteCreditAmount;
+      const machineAnalyticsPromises = machines
+        .filter(machines => machines.locationId === pointOfSale.id)
+        .map(async machine => {
+          const remoteCreditAmount = machineLogs.find(
+            machineLog => machineLog.machineId === machine.id,
+          )?.remoteCreditAmount;
 
-        const income =
-          result.find(income => income._id === machine.id)?.income || 0;
+          const income =
+            result.find(income => income._id === machine.id)?.income || 0;
 
-        const prizes =
-          result.find(prizes => prizes._id === machine.id)?.numberOfPrizes || 0;
+          const prizes =
+            result.find(prizes => prizes._id === machine.id)?.numberOfPrizes ||
+            0;
 
-        const numberOfPlays = income / machine.gameValue;
+          const numberOfPlays = income / machine.gameValue;
 
-        const averagePerDay = Number((income / days).toFixed(2));
+          const averagePerDay = Number((income / days).toFixed(2));
 
-        const { incomePerMonthGoal } = machine;
+          const { incomePerMonthGoal } = machine;
 
-        const { incomePerPrizeGoal } = machine;
+          const { incomePerPrizeGoal } = machine;
 
-        return {
-          serialNumber: machine.serialNumber,
-          category: machine.categoryLabel,
-          income: income || 0,
-          prizes: prizes || 0,
-          remoteCreditAmount: remoteCreditAmount || 0,
-          numberOfPlays: numberOfPlays
-            ? Number(numberOfPlays.toFixed(2))
-            : numberOfPlays,
-          gameValue: machine.gameValue,
-          playsPerPrize:
-            numberOfPlays && prizes
-              ? Number((numberOfPlays / prizes).toFixed(2))
-              : 0,
-          incomePerMonthGoal,
-          incomePerPrizeGoal,
-          averagePerDay: averagePerDay || 0,
-        };
-      });
+          return {
+            serialNumber: machine.serialNumber,
+            category: machine.categoryLabel,
+            income: income || 0,
+            prizes: prizes || 0,
+            remoteCreditAmount: remoteCreditAmount || 0,
+            numberOfPlays: numberOfPlays
+              ? Number(numberOfPlays.toFixed(2))
+              : numberOfPlays,
+            gameValue: machine.gameValue,
+            playsPerPrize:
+              numberOfPlays && prizes
+                ? Number((numberOfPlays / prizes).toFixed(2))
+                : 0,
+            incomePerMonthGoal,
+            incomePerPrizeGoal,
+            averagePerDay: averagePerDay || 0,
+          };
+        });
 
       const machineAnalytics = await Promise.all(machineAnalyticsPromises);
 
@@ -252,8 +262,8 @@ class GeneratePointsOfSaleReportService {
 
       const rent = pointOfSale.isPercentage
         ? (machineAnalytics.reduce((a, b) => a + b.income, 0) *
-            pointOfSale.rent) /
-          100
+          pointOfSale.rent) /
+        100
         : pointOfSale.rent;
 
       return {
