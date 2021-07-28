@@ -128,6 +128,7 @@ class GenerateMachinesReportService {
     if (machineIds) {
       machines = await this.machinesRepository.find({
         id: machineIds,
+        isActive: false,
         populate: ['pointOfSale'],
         fields: [
           'id',
@@ -156,6 +157,7 @@ class GenerateMachinesReportService {
     } else {
       machines = await this.machinesRepository.find({
         groupIds,
+        isActive: false,
         populate: ['pointOfSale'],
         fields: [
           'id',
