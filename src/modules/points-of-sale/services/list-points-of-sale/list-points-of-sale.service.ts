@@ -53,7 +53,7 @@ class ListPointsOfSaleService {
 
     if (operatorId || routeId) {
       const routes = await this.routesRepository.find({
-        operatorId: user.role === Role.OPERATOR ? user.id : undefined,
+        operatorId: user.role === Role.OPERATOR ? user.id : operatorId,
         id: routeId,
       });
 
