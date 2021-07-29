@@ -6,6 +6,7 @@ import Role from '@modules/users/contracts/enums/role';
 import UsersRepository from '@modules/users/contracts/repositories/users.repository';
 import AppError from '@shared/errors/app-error';
 import {
+  addHours,
   eachDayOfInterval,
   eachHourOfInterval,
   isSameDay,
@@ -315,7 +316,7 @@ export default class DashboardInfoServiceV2 {
       interval = eachDayOfInterval({
         start: startDate,
         end: subHours(endDate, 4),
-      });
+      }).map(item => addHours(item, 4));
     }
 
     logger.info(interval);
