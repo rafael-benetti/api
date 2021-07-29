@@ -15,7 +15,6 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-const logger_1 = __importDefault(require("../../../../../config/logger"));
 const create_telemetry_log_dto_1 = __importDefault(require("../../../contracts/dtos/create-telemetry-log.dto"));
 const find_telemetry_logs_dto_1 = __importDefault(require("../../../contracts/dtos/find-telemetry-logs.dto"));
 const get_group_income_per_period_dto_1 = __importDefault(require("../../../contracts/dtos/get-group-income-per-period.dto"));
@@ -337,9 +336,8 @@ let MikroTelemetryLogsRepository = class MikroTelemetryLogsRepository {
                 $group: {
                     _id: {
                         $dateToString: {
-                            format: `%Y-%m-%d${withHours ? 'T%H:00:00' : 'T12:00:00Z'}`,
+                            format: `%Y-%m-%d${withHours ? 'T%H:00:00' : ''}`,
                             date: '$date',
-                            timezone: '-03:00',
                         },
                     },
                     income: {
@@ -387,9 +385,8 @@ let MikroTelemetryLogsRepository = class MikroTelemetryLogsRepository {
                         pin: '$pin',
                         date: {
                             $dateToString: {
-                                format: `%Y-%m-%d${withHours ? 'T%H:00:00' : 'T12:00:00Z'}`,
+                                format: `%Y-%m-%d${withHours ? 'T%H:00:00' : ''}`,
                                 date: '$date',
-                                timezone: '-03:00',
                             },
                         },
                     },
@@ -452,9 +449,8 @@ let MikroTelemetryLogsRepository = class MikroTelemetryLogsRepository {
                     _id: {
                         date: {
                             $dateToString: {
-                                format: `%Y-%m-%d${withHours ? 'T%H:00:00' : 'T12:00:00Z'}`,
+                                format: `%Y-%m-%d${withHours ? 'T%H:00:00' : ''}`,
                                 date: '$date',
-                                timezone: '-03:00',
                             },
                         },
                         type: '$type',
@@ -483,8 +479,6 @@ let MikroTelemetryLogsRepository = class MikroTelemetryLogsRepository {
         return response;
     }
     async getGroupIncomePerPeriod({ groupIds, pointsOfSaleIds, startDate, endDate, withHours, type, }) {
-        logger_1.default.info(startDate);
-        logger_1.default.info(endDate);
         const stages = [
             {
                 $match: {
@@ -511,7 +505,7 @@ let MikroTelemetryLogsRepository = class MikroTelemetryLogsRepository {
                         $dateToString: {
                             format: `%Y-%m-%d${withHours ? 'T%H:00:00Z' : 'T12:00:00Z'}`,
                             date: '$date',
-                            timezone: '-03:00',
+                            timezone: withHours ? '+00:00' : '-03:00',
                         },
                     },
                     total: {

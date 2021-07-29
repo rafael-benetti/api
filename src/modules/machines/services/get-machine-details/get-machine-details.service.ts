@@ -303,12 +303,12 @@ class GetMachineDetailsService {
       chartData = daysOfInterval.map(day => {
         const incomeInDay =
           machineIncomePerDay.find(telemetry =>
-            isSameDay(day, new Date(telemetry.id)),
+            isSameDay(day, new Date(telemetry.id).setUTCHours(3)),
           )?.income || 0;
 
         const prizesCountInDay =
           machineGivenPrizesPerDay.find(telemetry =>
-            isSameDay(day, new Date(telemetry.id.date)),
+            isSameDay(day, new Date(telemetry.id.date).setUTCHours(3)),
           )?.givenPrizes || 0;
 
         return {
