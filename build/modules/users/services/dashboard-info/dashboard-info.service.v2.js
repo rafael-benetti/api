@@ -234,7 +234,7 @@ let DashboardInfoServiceV2 = class DashboardInfoServiceV2 {
         else {
             interval = date_fns_1.eachDayOfInterval({
                 start: startDate,
-                end: endDate,
+                end: new Date(endDate),
             });
         }
         logger_1.default.info(interval);
