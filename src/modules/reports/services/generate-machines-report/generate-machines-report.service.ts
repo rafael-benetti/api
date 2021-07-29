@@ -128,7 +128,7 @@ class GenerateMachinesReportService {
     if (machineIds) {
       machines = await this.machinesRepository.find({
         id: machineIds,
-        isActive: false,
+        isActive: true,
         populate: ['pointOfSale'],
         fields: [
           'id',

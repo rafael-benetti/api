@@ -200,7 +200,7 @@ export default class GenerateGroupReportService {
           .reduce((a, b) => a + b, 0);
 
         const remoteCreditCost = machineLogs.reduce(
-          (a, b) => a + b.quantity,
+          (a, b) => a + (Number(b.quantity) || 0),
           0,
         );
 

@@ -58,13 +58,14 @@ export default async function exportCollectionsReport({
 
   sheet.getCell('B2').value = `${pointOfSale.label}`;
 
-  sheet.getCell('B3').value = `${(pointOfSale.address.street,
-      pointOfSale.address.neighborhood,
-      pointOfSale.address.city)
-    }-${pointOfSale.address.state}`;
-  sheet.getCell('B4').value = `${format(date.startDate, "dd 'de' MMMM", {
+  sheet.getCell('B3').value = `${
+    (pointOfSale.address.street,
+    pointOfSale.address.neighborhood,
+    pointOfSale.address.city)
+  }-${pointOfSale.address.state}`;
+  sheet.getCell('B4').value = `${format(date.startDate, "dd 'MM' MMMM", {
     locale: ptBR,
-  })} - ${format(date.endDate, "dd 'de' MMMM", {
+  })} - ${format(date.endDate, "dd 'MM' MMMM", {
     locale: ptBR,
   })})`;
   sheet.getCell('B5').value = pointOfSale.isPercentage

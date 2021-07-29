@@ -1,3 +1,4 @@
+import logger from '@config/logger';
 import CreateTelemetryLogDto from '@modules/telemetry-logs/contracts/dtos/create-telemetry-log.dto';
 import FindTelemetryLogsDto from '@modules/telemetry-logs/contracts/dtos/find-telemetry-logs.dto';
 import GetGroupIncomePerPeriodDto from '@modules/telemetry-logs/contracts/dtos/get-group-income-per-period.dto';
@@ -402,8 +403,9 @@ class MikroTelemetryLogsRepository implements TelemetryLogsRepository {
         $group: {
           _id: {
             $dateToString: {
-              format: `%Y-%m-%d${withHours ? 'T%H:00:00' : ''}`,
+              format: `%Y-%m-%d${withHours ? 'T%H:00:00' : 'T12:00:00Z'}`,
               date: '$date',
+              timezone: '-03:00',
             },
           },
 
@@ -462,8 +464,9 @@ class MikroTelemetryLogsRepository implements TelemetryLogsRepository {
             pin: '$pin',
             date: {
               $dateToString: {
-                format: `%Y-%m-%d${withHours ? 'T%H:00:00' : ''}`,
+                format: `%Y-%m-%d${withHours ? 'T%H:00:00' : 'T12:00:00Z'}`,
                 date: '$date',
+                timezone: '-03:00',
               },
             },
           },
@@ -543,8 +546,9 @@ class MikroTelemetryLogsRepository implements TelemetryLogsRepository {
           _id: {
             date: {
               $dateToString: {
-                format: `%Y-%m-%d${withHours ? 'T%H:00:00' : ''}`,
+                format: `%Y-%m-%d${withHours ? 'T%H:00:00' : 'T12:00:00Z'}`,
                 date: '$date',
+                timezone: '-03:00',
               },
             },
             type: '$type',
@@ -587,6 +591,8 @@ class MikroTelemetryLogsRepository implements TelemetryLogsRepository {
   }: GetGroupIncomePerPeriodDto): Promise<
     { total: number; id: string; date: Date }[]
   > {
+    logger.info(startDate);
+    logger.info(endDate);
     const stages: unknown[] = [
       {
         $match: {
@@ -611,8 +617,9 @@ class MikroTelemetryLogsRepository implements TelemetryLogsRepository {
         $group: {
           _id: {
             $dateToString: {
-              format: `%Y-%m-%d${withHours ? 'T%H:00:00Z' : 'T04:00:00'}`,
+              format: `%Y-%m-%d${withHours ? 'T%H:00:00Z' : 'T12:00:00Z'}`,
               date: '$date',
+              timezone: '-03:00',
             },
           },
 
