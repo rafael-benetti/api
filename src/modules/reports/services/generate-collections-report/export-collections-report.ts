@@ -1,7 +1,7 @@
 /* eslint-disable import/no-duplicates */
 
 import PointOfSale from '@modules/points-of-sale/contracts/models/point-of-sale';
-import { addHours, format } from 'date-fns';
+import { format, subHours } from 'date-fns';
 import { ptBR } from 'date-fns/locale';
 import ExcelJS from 'exceljs';
 
@@ -64,12 +64,12 @@ export default async function exportCollectionsReport({
     pointOfSale.address.city)
   }-${pointOfSale.address.state}`;
   sheet.getCell('B4').value = `${format(
-    addHours(date.startDate, 3),
+    subHours(date.startDate, 3),
     "dd 'de' MMMM",
     {
       locale: ptBR,
     },
-  )} - ${format(addHours(date.endDate, 3), "dd 'de' MMMM", {
+  )} - ${format(subHours(date.endDate, 3), "dd 'de' MMMM", {
     locale: ptBR,
   })}`;
   sheet.getCell('B5').value = pointOfSale.isPercentage
@@ -222,8 +222,8 @@ export default async function exportCollectionsReport({
   collectionsAnalytics.forEach(item => {
     sheet.addRow({
       'Número de série': item.serialNumber,
-      'Data Inicial': addHours(item.initialDate, 3),
-      'Data Final': addHours(item.finalDate, 3),
+      'Data Inicial': subHours(item.initialDate, 3),
+      'Data Final': subHours(item.finalDate, 3),
       'Qntd. de Dias': item.numberOfDays,
       'Inicial Mecânico Entrada': item.initialMechanicalCountIn,
       'Final Mecânico Entrada': item.finalMechanicalCountIn,

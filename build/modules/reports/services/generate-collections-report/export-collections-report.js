@@ -26,9 +26,9 @@ async function exportCollectionsReport({ collectionsAnalytics, pointOfSale, date
     sheet.getCell('B3').value = `${(pointOfSale.address.street,
         pointOfSale.address.neighborhood,
         pointOfSale.address.city)}-${pointOfSale.address.state}`;
-    sheet.getCell('B4').value = `${date_fns_1.format(date_fns_1.addHours(date.startDate, 3), "dd 'de' MMMM", {
+    sheet.getCell('B4').value = `${date_fns_1.format(date_fns_1.subHours(date.startDate, 3), "dd 'de' MMMM", {
         locale: locale_1.ptBR,
-    })} - ${date_fns_1.format(date_fns_1.addHours(date.endDate, 3), "dd 'de' MMMM", {
+    })} - ${date_fns_1.format(date_fns_1.subHours(date.endDate, 3), "dd 'de' MMMM", {
         locale: locale_1.ptBR,
     })}`;
     sheet.getCell('B5').value = pointOfSale.isPercentage
@@ -178,8 +178,8 @@ async function exportCollectionsReport({ collectionsAnalytics, pointOfSale, date
     collectionsAnalytics.forEach(item => {
         sheet.addRow({
             'Número de série': item.serialNumber,
-            'Data Inicial': date_fns_1.addHours(item.initialDate, 3),
-            'Data Final': date_fns_1.addHours(item.finalDate, 3),
+            'Data Inicial': date_fns_1.subHours(item.initialDate, 3),
+            'Data Final': date_fns_1.subHours(item.finalDate, 3),
             'Qntd. de Dias': item.numberOfDays,
             'Inicial Mecânico Entrada': item.initialMechanicalCountIn,
             'Final Mecânico Entrada': item.finalMechanicalCountIn,
