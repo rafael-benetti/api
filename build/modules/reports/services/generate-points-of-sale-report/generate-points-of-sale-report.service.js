@@ -174,8 +174,7 @@ let GeneratePointsOfSaleReportService = class GeneratePointsOfSaleReportService 
                 };
             });
             const machineAnalytics = await bluebird_1.Promise.all(machineAnalyticsPromises);
-            const groupLabel = groups.find(group => group.id === pointOfSale.groupId)
-                ?.label;
+            const groupLabel = groups.find(group => group.id === pointOfSale.groupId)?.label;
             const rent = pointOfSale.isPercentage
                 ? (machineAnalytics.reduce((a, b) => a + b.income, 0) *
                     pointOfSale.rent) /

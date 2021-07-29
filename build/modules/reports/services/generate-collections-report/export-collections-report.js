@@ -26,19 +26,19 @@ async function exportCollectionsReport({ collectionsAnalytics, pointOfSale, date
     sheet.getCell('B3').value = `${(pointOfSale.address.street,
         pointOfSale.address.neighborhood,
         pointOfSale.address.city)}-${pointOfSale.address.state}`;
-    sheet.getCell('B4').value = `${date_fns_1.format(date.startDate, "dd 'MM' MMMM", {
+    sheet.getCell('B4').value = `${date_fns_1.format(date_fns_1.addHours(date.startDate, 3), "dd 'de' MMMM", {
         locale: locale_1.ptBR,
-    })} - ${date_fns_1.format(date.endDate, "dd 'MM' MMMM", {
+    })} - ${date_fns_1.format(date_fns_1.addHours(date.endDate, 3), "dd 'de' MMMM", {
         locale: locale_1.ptBR,
-    })})`;
+    })}`;
     sheet.getCell('B5').value = pointOfSale.isPercentage
         ? `${pointOfSale.rent} %`
         : pointOfSale.rent;
     sheet.getRow(8).values = [
         'Número de série',
-        'Inicial',
-        'Final',
-        'Dias',
+        'Data Inicial',
+        'Data Final',
+        'Qntd. de Dias',
         'Inicial Mecânico Entrada',
         'Final Mecânico Entrada',
         'Diferença Mecânico Entrada',
@@ -62,21 +62,21 @@ async function exportCollectionsReport({ collectionsAnalytics, pointOfSale, date
             width: 15,
         },
         {
-            key: 'Inicial',
+            key: 'Data Inicial',
             style: {
                 alignment: { horizontal: 'center', vertical: 'middle' },
             },
             width: 15,
         },
         {
-            key: 'Final',
+            key: 'Data Final',
             style: {
                 alignment: { horizontal: 'center', vertical: 'middle' },
             },
             width: 15,
         },
         {
-            key: 'Dias',
+            key: 'Qntd. de Dias',
             style: {
                 alignment: { horizontal: 'center', vertical: 'middle' },
             },
@@ -178,9 +178,9 @@ async function exportCollectionsReport({ collectionsAnalytics, pointOfSale, date
     collectionsAnalytics.forEach(item => {
         sheet.addRow({
             'Número de série': item.serialNumber,
-            Inicial: item.initialDate,
-            Final: item.finalDate,
-            Dias: item.numberOfDays,
+            'Data Inicial': date_fns_1.addHours(item.initialDate, 3),
+            'Data Final': date_fns_1.addHours(item.finalDate, 3),
+            'Qntd. de Dias': item.numberOfDays,
             'Inicial Mecânico Entrada': item.initialMechanicalCountIn,
             'Final Mecânico Entrada': item.finalMechanicalCountIn,
             'Diferença Mecânico Entrada': item.mechanicalDiffenceIn,

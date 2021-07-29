@@ -43,7 +43,7 @@ let MikroTelemetryLogsRepository = class MikroTelemetryLogsRepository {
     }
     async findAndCount(data) {
         const query = {};
-        const { groupId, pointOfSaleId, machineId, date, maintenance, type, } = data.filters;
+        const { groupId, pointOfSaleId, machineId, date, maintenance, type } = data.filters;
         if (groupId)
             query.groupId = groupId;
         if (machineId)
