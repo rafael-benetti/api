@@ -26,9 +26,9 @@ async function exportCollectionsReport({ collectionsAnalytics, pointOfSale, date
     sheet.getCell('B3').value = `${(pointOfSale.address.street,
         pointOfSale.address.neighborhood,
         pointOfSale.address.city)}-${pointOfSale.address.state}`;
-    sheet.getCell('B4').value = `${date_fns_1.format(date.startDate, "dd 'de' MMMM", {
+    sheet.getCell('B4').value = `${date_fns_1.format(date.startDate, "dd 'MM' MMMM", {
         locale: locale_1.ptBR,
-    })} - ${date_fns_1.format(date.endDate, "dd 'de' MMMM", {
+    })} - ${date_fns_1.format(date.endDate, "dd 'MM' MMMM", {
         locale: locale_1.ptBR,
     })})`;
     sheet.getCell('B5').value = pointOfSale.isPercentage

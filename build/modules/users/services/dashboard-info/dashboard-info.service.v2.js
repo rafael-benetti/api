@@ -27,6 +27,7 @@ const bluebird_1 = require("bluebird");
 const tsyringe_1 = require("tsyringe");
 const period_dto_1 = __importDefault(require("../../../machines/contracts/dtos/period.dto"));
 const routes_repository_1 = __importDefault(require("../../../routes/contracts/repositories/routes.repository"));
+const logger_1 = __importDefault(require("../../../../config/logger"));
 let DashboardInfoServiceV2 = class DashboardInfoServiceV2 {
     constructor(usersRepository, machinesRepository, groupsRepository, telemetryLogsRepository, routesRepository) {
         this.usersRepository = usersRepository;
@@ -83,6 +84,8 @@ let DashboardInfoServiceV2 = class DashboardInfoServiceV2 {
         }
         if (pointOfSaleId)
             locations = [pointOfSaleId];
+        logger_1.default.info(startDate);
+        logger_1.default.info(endDate);
         const machinesSortedByLastCollectionPromise = this.machinesRepository.find({
             checkLocationExists: true,
             orderByLastCollection: true,
@@ -190,6 +193,8 @@ let DashboardInfoServiceV2 = class DashboardInfoServiceV2 {
         let chartData1 = [];
         let income = 0;
         let givenPrizesCount = 0;
+        logger_1.default.info(startDate);
+        logger_1.default.info(endDate);
         const incomeOfPeriodPromise = this.telemetryLogsRepository.getGroupIncomePerPeriod({
             groupIds,
             pointsOfSaleIds: locations,
@@ -228,10 +233,12 @@ let DashboardInfoServiceV2 = class DashboardInfoServiceV2 {
         }
         else {
             interval = date_fns_1.eachDayOfInterval({
-                start: date_fns_1.addHours(startDate, 3),
-                end: date_fns_1.addHours(endDate, 3),
+                start: startDate,
+                end: endDate,
             });
         }
+        logger_1.default.info(interval);
+        logger_1.default.info(incomeOfPeriod);
         chartData1 = interval.map(item => {
             const incomeInHour = incomeOfPeriod.find(total => period === period_dto_1.default.DAILY
                 ? date_fns_1.isSameHour(item, new Date(total.id))
