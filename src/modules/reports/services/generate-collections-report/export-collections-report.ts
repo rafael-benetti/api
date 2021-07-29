@@ -1,7 +1,7 @@
 /* eslint-disable import/no-duplicates */
 
 import PointOfSale from '@modules/points-of-sale/contracts/models/point-of-sale';
-import { format, subHours } from 'date-fns';
+import { format, subDays, subHours } from 'date-fns';
 import { ptBR } from 'date-fns/locale';
 import ExcelJS from 'exceljs';
 
@@ -69,7 +69,7 @@ export default async function exportCollectionsReport({
     {
       locale: ptBR,
     },
-  )} - ${format(subHours(date.endDate, 3), "dd 'de' MMMM", {
+  )} - ${format(subDays(date.endDate, 1), "dd 'de' MMMM", {
     locale: ptBR,
   })}`;
   sheet.getCell('B5').value = pointOfSale.isPercentage

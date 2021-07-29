@@ -28,7 +28,7 @@ async function exportCollectionsReport({ collectionsAnalytics, pointOfSale, date
         pointOfSale.address.city)}-${pointOfSale.address.state}`;
     sheet.getCell('B4').value = `${date_fns_1.format(date_fns_1.subHours(date.startDate, 3), "dd 'de' MMMM", {
         locale: locale_1.ptBR,
-    })} - ${date_fns_1.format(date_fns_1.subHours(date.endDate, 3), "dd 'de' MMMM", {
+    })} - ${date_fns_1.format(date_fns_1.subDays(date.endDate, 1), "dd 'de' MMMM", {
         locale: locale_1.ptBR,
     })}`;
     sheet.getCell('B5').value = pointOfSale.isPercentage
