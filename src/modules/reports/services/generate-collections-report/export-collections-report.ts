@@ -1,7 +1,7 @@
 /* eslint-disable import/no-duplicates */
 
 import PointOfSale from '@modules/points-of-sale/contracts/models/point-of-sale';
-import { format, subDays, subHours } from 'date-fns';
+import { addHours, format, subDays, subHours } from 'date-fns';
 import { ptBR } from 'date-fns/locale';
 import ExcelJS from 'exceljs';
 
@@ -64,7 +64,7 @@ export default async function exportCollectionsReport({
     pointOfSale.address.city)
   }-${pointOfSale.address.state}`;
   sheet.getCell('B4').value = `${format(
-    subHours(date.startDate, 3),
+    addHours(date.startDate, 3),
     "dd 'de' MMMM",
     {
       locale: ptBR,
