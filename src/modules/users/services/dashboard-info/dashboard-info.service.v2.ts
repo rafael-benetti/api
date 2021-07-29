@@ -313,7 +313,7 @@ export default class DashboardInfoServiceV2 {
     } else {
       interval = eachDayOfInterval({
         start: startDate,
-        end: endDate,
+        end: new Date(endDate),
       });
     }
 
