@@ -11,6 +11,7 @@ import {
   isSameDay,
   isSameHour,
   subDays,
+  subHours,
   subMonths,
   subWeeks,
 } from 'date-fns';
@@ -313,7 +314,7 @@ export default class DashboardInfoServiceV2 {
     } else {
       interval = eachDayOfInterval({
         start: startDate,
-        end: new Date(endDate),
+        end: subHours(endDate, 4),
       });
     }
 
