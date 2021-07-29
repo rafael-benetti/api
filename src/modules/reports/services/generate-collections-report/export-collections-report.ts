@@ -1,7 +1,7 @@
 /* eslint-disable import/no-duplicates */
 
 import PointOfSale from '@modules/points-of-sale/contracts/models/point-of-sale';
-import { format } from 'date-fns';
+import { addHours, format } from 'date-fns';
 import { ptBR } from 'date-fns/locale';
 import ExcelJS from 'exceljs';
 
@@ -63,20 +63,24 @@ export default async function exportCollectionsReport({
     pointOfSale.address.neighborhood,
     pointOfSale.address.city)
   }-${pointOfSale.address.state}`;
-  sheet.getCell('B4').value = `${format(date.startDate, "dd 'MM' MMMM", {
+  sheet.getCell('B4').value = `${format(
+    addHours(date.startDate, 3),
+    "dd 'de' MMMM",
+    {
+      locale: ptBR,
+    },
+  )} - ${format(addHours(date.endDate, 3), "dd 'de' MMMM", {
     locale: ptBR,
-  })} - ${format(date.endDate, "dd 'MM' MMMM", {
-    locale: ptBR,
-  })})`;
+  })}`;
   sheet.getCell('B5').value = pointOfSale.isPercentage
     ? `${pointOfSale.rent} %`
     : pointOfSale.rent;
 
   sheet.getRow(8).values = [
     'Número de série',
-    'Inicial',
-    'Final',
-    'Dias',
+    'Data Inicial',
+    'Data Final',
+    'Qntd. de Dias',
     'Inicial Mecânico Entrada',
     'Final Mecânico Entrada',
     'Diferença Mecânico Entrada',
@@ -101,21 +105,21 @@ export default async function exportCollectionsReport({
       width: 15,
     },
     {
-      key: 'Inicial',
+      key: 'Data Inicial',
       style: {
         alignment: { horizontal: 'center', vertical: 'middle' },
       },
       width: 15,
     },
     {
-      key: 'Final',
+      key: 'Data Final',
       style: {
         alignment: { horizontal: 'center', vertical: 'middle' },
       },
       width: 15,
     },
     {
-      key: 'Dias',
+      key: 'Qntd. de Dias',
       style: {
         alignment: { horizontal: 'center', vertical: 'middle' },
       },
@@ -218,9 +222,9 @@ export default async function exportCollectionsReport({
   collectionsAnalytics.forEach(item => {
     sheet.addRow({
       'Número de série': item.serialNumber,
-      Inicial: item.initialDate,
-      Final: item.finalDate,
-      Dias: item.numberOfDays,
+      'Data Inicial': addHours(item.initialDate, 3),
+      'Data Final': addHours(item.finalDate, 3),
+      'Qntd. de Dias': item.numberOfDays,
       'Inicial Mecânico Entrada': item.initialMechanicalCountIn,
       'Final Mecânico Entrada': item.finalMechanicalCountIn,
       'Diferença Mecânico Entrada': item.mechanicalDiffenceIn,

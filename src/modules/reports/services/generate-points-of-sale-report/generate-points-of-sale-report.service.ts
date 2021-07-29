@@ -190,26 +190,24 @@ class GeneratePointsOfSaleReportService {
     });
 
     const reportsPromises = pointsOfSale.map(async pointOfSale => {
-      const result = await this.telemetryLogsRepository.getIncomeAndPrizesPerMachine(
-        {
+      const result =
+        await this.telemetryLogsRepository.getIncomeAndPrizesPerMachine({
           groupIds,
           pointOfSaleId: pointOfSale.id,
           endDate,
           startDate,
-        },
-      );
+        });
 
       const machineAnalyticsPromises = machines
         .filter(machines => machines.locationId === pointOfSale.id)
         .map(async machine => {
-          const machineLogs = await this.machineLogsRepository.remoteCreditAmount(
-            {
+          const machineLogs =
+            await this.machineLogsRepository.remoteCreditAmount({
               groupId: groupIds,
               machineId: machines.map(machine => machine.id),
               startDate,
               endDate,
-            },
-          );
+            });
 
           const remoteCreditAmount = machineLogs.find(
             machineLog => machineLog.machineId === machine.id,
@@ -252,8 +250,9 @@ class GeneratePointsOfSaleReportService {
 
       const machineAnalytics = await Promise.all(machineAnalyticsPromises);
 
-      const groupLabel = groups.find(group => group.id === pointOfSale.groupId)
-        ?.label;
+      const groupLabel = groups.find(
+        group => group.id === pointOfSale.groupId,
+      )?.label;
 
       const rent = pointOfSale.isPercentage
         ? (machineAnalytics.reduce((a, b) => a + b.income, 0) *

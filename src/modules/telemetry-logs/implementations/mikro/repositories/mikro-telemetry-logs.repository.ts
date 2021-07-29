@@ -17,9 +17,8 @@ import TelemetryLogMapper from '../mappers/telemetry-log-mapper';
 
 @injectable()
 class MikroTelemetryLogsRepository implements TelemetryLogsRepository {
-  private repository = this.ormProvider.entityManager.getRepository(
-    MikroTelemetryLog,
-  );
+  private repository =
+    this.ormProvider.entityManager.getRepository(MikroTelemetryLog);
 
   constructor(
     @inject('OrmProvider')
@@ -37,14 +36,8 @@ class MikroTelemetryLogsRepository implements TelemetryLogsRepository {
   ): Promise<{ telemetryLogs: TelemetryLog[]; count: number }> {
     const query: Record<string, unknown> = {};
 
-    const {
-      groupId,
-      pointOfSaleId,
-      machineId,
-      date,
-      maintenance,
-      type,
-    } = data.filters;
+    const { groupId, pointOfSaleId, machineId, date, maintenance, type } =
+      data.filters;
 
     if (groupId) query.groupId = groupId;
     if (machineId) query.machineId = machineId;
