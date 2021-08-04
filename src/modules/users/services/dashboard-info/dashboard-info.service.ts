@@ -147,12 +147,11 @@ export default class DashboardInfoService {
       populate: ['pointOfSale'],
     });
 
-    const machinesSortedByStock = await this.machinesRepository.machineSortedByStock(
-      {
+    const machinesSortedByStock =
+      await this.machinesRepository.machineSortedByStock({
         groupIds: isOperator ? undefined : groupIds,
         operatorId: isOperator ? user.id : undefined,
-      },
-    );
+      });
 
     const offlineMachines = await this.machinesRepository.count({
       groupIds: isOperator ? undefined : groupIds,

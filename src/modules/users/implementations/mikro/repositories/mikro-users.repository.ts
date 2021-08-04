@@ -58,9 +58,7 @@ class MikroUsersRepository implements UsersRepository {
     return users.map(user => UserMapper.toApi(user));
   }
 
-  async usersInventoryByProduct({
-    filters,
-  }: FindUsersDto): Promise<
+  async usersInventoryByProduct({ filters }: FindUsersDto): Promise<
     {
       prizeId: string;
       prizeLabel: string;
@@ -104,9 +102,7 @@ class MikroUsersRepository implements UsersRepository {
     return response;
   }
 
-  async usersInventoryBySupplies({
-    filters,
-  }: FindUsersDto): Promise<
+  async usersInventoryBySupplies({ filters }: FindUsersDto): Promise<
     {
       supplieId: string;
       supplieLabel: string;
