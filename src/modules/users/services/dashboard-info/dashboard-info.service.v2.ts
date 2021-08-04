@@ -12,6 +12,7 @@ import {
   isSameDay,
   isSameHour,
   subDays,
+  subHours,
   subMonths,
   subWeeks,
 } from 'date-fns';
@@ -19,6 +20,7 @@ import { Promise } from 'bluebird';
 import { inject, injectable } from 'tsyringe';
 import Period from '@modules/machines/contracts/dtos/period.dto';
 import RoutesRepository from '@modules/routes/contracts/repositories/routes.repository';
+import logger from '@config/logger';
 
 interface Request {
   userId: string;
@@ -135,7 +137,8 @@ export default class DashboardInfoServiceV2 {
     }
 
     if (pointOfSaleId) locations = [pointOfSaleId];
-
+    logger.info(startDate);
+    logger.info(endDate);
     const machinesSortedByLastCollectionPromise = this.machinesRepository.find({
       checkLocationExists: true,
       orderByLastCollection: true,
@@ -258,6 +261,8 @@ export default class DashboardInfoServiceV2 {
     let chartData1: ChartData1[] = [];
     let income: number = 0;
     let givenPrizesCount: number = 0;
+    logger.info(startDate);
+    logger.info(endDate);
 
     const incomeOfPeriodPromise = this.telemetryLogsRepository.getGroupIncomePerPeriod(
       {
@@ -309,10 +314,13 @@ export default class DashboardInfoServiceV2 {
       });
     } else {
       interval = eachDayOfInterval({
-        start: addHours(startDate, 3),
-        end: addHours(endDate, 3),
-      });
+        start: startDate,
+        end: subHours(endDate, 4),
+      }).map(item => addHours(item, 4));
     }
+
+    logger.info(interval);
+    logger.info(incomeOfPeriod);
 
     chartData1 = interval.map(item => {
       const incomeInHour =

@@ -51,23 +51,13 @@ class ListPointsOfSaleService {
 
     let pointsOfSaleIds: string[] | undefined;
 
-    if ((operatorId || routeId) && user.role === Role.OPERATOR) {
+    if (operatorId || routeId) {
       const routes = await this.routesRepository.find({
-        operatorId,
+        operatorId: user.role === Role.OPERATOR ? user.id : operatorId,
         id: routeId,
       });
 
       pointsOfSaleIds = routes.flatMap(route => route.pointsOfSaleIds);
-    }
-
-    if (user.role === Role.OPERATOR) {
-      pointsOfSaleIds = (
-        await this.machinesRepository.find({
-          operatorId: user.id,
-        })
-      )
-        .filter(machine => machine.locationId !== undefined)
-        .map(item => item.locationId) as string[];
     }
 
     if (user.role === Role.OWNER) {

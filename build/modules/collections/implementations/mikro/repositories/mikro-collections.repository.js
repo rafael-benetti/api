@@ -48,26 +48,19 @@ class MikroCollectionsRepository {
         return collection ? collections_mapper_1.default.map(collection) : undefined;
     }
     async find(data) {
+        const query = {};
         const [collections, count] = await this.repository.findAndCount({
             ...(data.groupIds && {
                 groupId: {
                     $in: data.groupIds,
                 },
             }),
+            ...(data.startDate && { date: { $gte: data.startDate } }),
+            ...query,
             ...(data.machineId && { machineId: data.machineId }),
             ...(data.routeId && { routeId: data.routeId }),
             ...(data.userId && { userId: data.userId }),
             ...(data.pointOfSaleId && { pointOfSaleId: data.pointOfSaleId }),
-            ...(data.startDate && {
-                date: {
-                    $gte: data.startDate,
-                },
-            }),
-            ...(data.endDate && {
-                date: {
-                    $lte: data.endDate,
-                },
-            }),
         }, {
             limit: data.limit,
             orderBy: {

@@ -85,6 +85,7 @@ let GenerateMachinesReportService = class GenerateMachinesReportService {
         if (machineIds) {
             machines = await this.machinesRepository.find({
                 id: machineIds,
+                isActive: true,
                 populate: ['pointOfSale'],
                 fields: [
                     'id',
@@ -112,6 +113,7 @@ let GenerateMachinesReportService = class GenerateMachinesReportService {
         else {
             machines = await this.machinesRepository.find({
                 groupIds,
+                isActive: true,
                 populate: ['pointOfSale'],
                 fields: [
                     'id',
@@ -130,7 +132,11 @@ let GenerateMachinesReportService = class GenerateMachinesReportService {
         }
         startDate = date_fns_1.startOfDay(startDate);
         endDate = date_fns_1.endOfDay(endDate);
-        const incomePerMachine = await this.telemetryLogsRepository.getIncomePerMachine({ groupIds, endDate, startDate });
+        const incomePerMachine = await this.telemetryLogsRepository.getIncomePerMachine({
+            groupIds,
+            endDate,
+            startDate,
+        });
         const prizesPerMachine = await this.telemetryLogsRepository.getPrizesPerMachine({
             endDate,
             groupIds,
@@ -152,8 +158,7 @@ let GenerateMachinesReportService = class GenerateMachinesReportService {
                 .reduce((a, b) => a + b.quantity, 0);
             const numberOfPlays = Math.floor((incomePerMachine.find(machineIncome => machineIncome.id === machine.id)
                 ?.income || 0) / machine.gameValue);
-            const prizes = prizesPerMachine.find(prizes => prizes.id === machine.id)
-                ?.prizes;
+            const prizes = prizesPerMachine.find(prizes => prizes.id === machine.id)?.prizes;
             const income = incomePerMachine.find(machineIncome => machineIncome.id === machine.id)?.income;
             const groupLabel = groups.find(group => group.id === machine.groupId)?.label ||
                 'Parceria Pessoal';

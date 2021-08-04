@@ -43,7 +43,7 @@ let MikroTelemetryLogsRepository = class MikroTelemetryLogsRepository {
     }
     async findAndCount(data) {
         const query = {};
-        const { groupId, pointOfSaleId, machineId, date, maintenance, type, } = data.filters;
+        const { groupId, pointOfSaleId, machineId, date, maintenance, type } = data.filters;
         if (groupId)
             query.groupId = groupId;
         if (machineId)
@@ -503,8 +503,9 @@ let MikroTelemetryLogsRepository = class MikroTelemetryLogsRepository {
                 $group: {
                     _id: {
                         $dateToString: {
-                            format: `%Y-%m-%d${withHours ? 'T%H:00:00Z' : 'T04:00:00'}`,
+                            format: `%Y-%m-%d${withHours ? 'T%H:00:00Z' : 'T12:00:00Z'}`,
                             date: '$date',
+                            timezone: withHours ? '+00:00' : '-03:00',
                         },
                     },
                     total: {

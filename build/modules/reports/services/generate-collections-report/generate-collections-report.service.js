@@ -26,6 +26,7 @@ const app_error_1 = __importDefault(require("../../../../shared/errors/app-error
 const get_group_universe_1 = __importDefault(require("../../../../shared/utils/get-group-universe"));
 const date_fns_1 = require("date-fns");
 const tsyringe_1 = require("tsyringe");
+const logger_1 = __importDefault(require("../../../../config/logger"));
 const export_collections_report_1 = __importDefault(require("./export-collections-report"));
 let GenerateCollectionsReportService = class GenerateCollectionsReportService {
     constructor(usersRepository, collectionsRepository, pointsOfSaleRepository, counterTypesRepository) {
@@ -59,6 +60,7 @@ let GenerateCollectionsReportService = class GenerateCollectionsReportService {
             startDate,
             endDate,
         });
+        logger_1.default.info(collections);
         const machines = [
             ...new Set(collections.map(collection => collection.machine)),
         ];

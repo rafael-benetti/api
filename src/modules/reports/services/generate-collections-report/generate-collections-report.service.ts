@@ -10,6 +10,7 @@ import getGroupUniverse from '@shared/utils/get-group-universe';
 import { differenceInDays, endOfDay, startOfDay } from 'date-fns';
 import { inject, injectable } from 'tsyringe';
 import ExcelJS from 'exceljs';
+import logger from '@config/logger';
 import exportCollectionsReport from './export-collections-report';
 
 interface Request {
@@ -93,6 +94,8 @@ export default class GenerateCollectionsReportService {
       startDate,
       endDate,
     });
+
+    logger.info(collections);
 
     const machines = [
       ...new Set(collections.map(collection => collection.machine)),

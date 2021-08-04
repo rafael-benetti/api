@@ -9,7 +9,8 @@ import MikroCollection from '../entities/mikro-collection';
 import CollectionsMapper from '../mappers/collections.mapper';
 
 export default class MikroCollectionsRepository
-  implements CollectionsRepository {
+  implements CollectionsRepository
+{
   private repository = container
     .resolve<MikroOrmProvider>('OrmProvider')
     .entityManager.getRepository(MikroCollection);
@@ -57,6 +58,8 @@ export default class MikroCollectionsRepository
   async find(
     data: FindCollectionsDto,
   ): Promise<{ collections: Collection[]; count: number }> {
+    const query: Record<string, unknown> = {};
+
     const [collections, count] = await this.repository.findAndCount(
       {
         ...(data.groupIds && {
@@ -64,20 +67,12 @@ export default class MikroCollectionsRepository
             $in: data.groupIds,
           },
         }),
+        ...(data.startDate && { date: { $gte: data.startDate } }),
+        ...query,
         ...(data.machineId && { machineId: data.machineId }),
         ...(data.routeId && { routeId: data.routeId }),
         ...(data.userId && { userId: data.userId }),
         ...(data.pointOfSaleId && { pointOfSaleId: data.pointOfSaleId }),
-        ...(data.startDate && {
-          date: {
-            $gte: data.startDate,
-          },
-        }),
-        ...(data.endDate && {
-          date: {
-            $lte: data.endDate,
-          },
-        }),
       },
       {
         limit: data.limit,

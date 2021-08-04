@@ -26,32 +26,32 @@ async function exportCollectionsReport({ collectionsAnalytics, pointOfSale, date
     sheet.getCell('B3').value = `${(pointOfSale.address.street,
         pointOfSale.address.neighborhood,
         pointOfSale.address.city)}-${pointOfSale.address.state}`;
-    sheet.getCell('B4').value = `${date_fns_1.format(date.startDate, "dd 'de' MMMM", {
+    sheet.getCell('B4').value = `${date_fns_1.format(date_fns_1.addHours(date.startDate, 3), "dd 'de' MMMM", {
         locale: locale_1.ptBR,
-    })} - ${date_fns_1.format(date.endDate, "dd 'de' MMMM", {
+    })} - ${date_fns_1.format(date_fns_1.subDays(date.endDate, 1), "dd 'de' MMMM", {
         locale: locale_1.ptBR,
-    })})`;
+    })}`;
     sheet.getCell('B5').value = pointOfSale.isPercentage
         ? `${pointOfSale.rent} %`
         : pointOfSale.rent;
     sheet.getRow(8).values = [
         'Número de série',
-        'Inicial',
-        'Final',
-        'Dias',
+        'Data Inicial',
+        'Data Final',
+        'Qntd. de Dias',
         'Inicial Mecânico Entrada',
         'Final Mecânico Entrada',
-        'Resultado Mecânico',
+        'Diferença Mecânico Entrada',
         'Inicial Digital Entrada',
         'Final Digital Entrada',
-        'Resultado Digital',
+        'Diferença Digital Entrada',
         'Recolhido',
         'Inicial Mecânico Saída',
         'Final Mecânico Saída',
-        'Unid. Mecânico',
+        'Diferença Mecânico Saída',
         'Inicial Digital Saída',
         'Final Digital Saída',
-        'Unid. Digital',
+        'Diferença Digital Saída',
     ];
     sheet.columns = [
         {
@@ -62,21 +62,21 @@ async function exportCollectionsReport({ collectionsAnalytics, pointOfSale, date
             width: 15,
         },
         {
-            key: 'Inicial',
+            key: 'Data Inicial',
             style: {
                 alignment: { horizontal: 'center', vertical: 'middle' },
             },
             width: 15,
         },
         {
-            key: 'Final',
+            key: 'Data Final',
             style: {
                 alignment: { horizontal: 'center', vertical: 'middle' },
             },
             width: 15,
         },
         {
-            key: 'Dias',
+            key: 'Qntd. de Dias',
             style: {
                 alignment: { horizontal: 'center', vertical: 'middle' },
             },
@@ -97,7 +97,7 @@ async function exportCollectionsReport({ collectionsAnalytics, pointOfSale, date
             width: 15,
         },
         {
-            key: 'Resultado Mecânico',
+            key: 'Diferença Mecânico Entrada',
             style: {
                 alignment: { horizontal: 'center', vertical: 'middle' },
             },
@@ -118,7 +118,7 @@ async function exportCollectionsReport({ collectionsAnalytics, pointOfSale, date
             width: 15,
         },
         {
-            key: 'Resultado Digital',
+            key: 'Diferença Digital Entrada',
             style: {
                 alignment: { horizontal: 'center', vertical: 'middle' },
             },
@@ -140,14 +140,14 @@ async function exportCollectionsReport({ collectionsAnalytics, pointOfSale, date
             width: 15,
         },
         {
-            key: 'Final Mecânico Saída.',
+            key: 'Final Mecânico Saída',
             style: {
                 alignment: { horizontal: 'center', vertical: 'middle' },
             },
             width: 15,
         },
         {
-            key: 'Unid. Mecânico',
+            key: 'Diferença Mecânico Saída',
             style: {
                 alignment: { horizontal: 'center', vertical: 'middle' },
             },
@@ -168,7 +168,7 @@ async function exportCollectionsReport({ collectionsAnalytics, pointOfSale, date
             width: 15,
         },
         {
-            key: 'Unid. Digital',
+            key: 'Diferença Digital Saída',
             style: {
                 alignment: { horizontal: 'center', vertical: 'middle' },
             },
@@ -178,22 +178,22 @@ async function exportCollectionsReport({ collectionsAnalytics, pointOfSale, date
     collectionsAnalytics.forEach(item => {
         sheet.addRow({
             'Número de série': item.serialNumber,
-            Inicial: item.initialDate,
-            Final: item.finalDate,
-            Dias: item.numberOfDays,
+            'Data Inicial': date_fns_1.subHours(item.initialDate, 3),
+            'Data Final': date_fns_1.subHours(item.finalDate, 3),
+            'Qntd. de Dias': item.numberOfDays,
             'Inicial Mecânico Entrada': item.initialMechanicalCountIn,
             'Final Mecânico Entrada': item.finalMechanicalCountIn,
-            'Resultado Mecânico': item.mechanicalDiffenceIn,
+            'Diferença Mecânico Entrada': item.mechanicalDiffenceIn,
             'Inicial Digital Entrada': item.initialDigitalCountIn,
             'Final Digital Entrada': item.finalDigitalCountIn,
-            'Resultado Digital': item.digitalDiffenceIn,
+            'Diferença Digital Entrada': item.digitalDiffenceIn,
             Recolhido: item.userCount,
             'Inicial Mecânico Saída': item.initialMechanicalCountOut,
             'Final Mecânico Saída': item.finalMechanicalCountOut,
-            'Unid. Mecânico': item.digitalDiffenceOut,
+            'Diferença Mecânico Saída': item.digitalDiffenceOut,
             'Inicial Digital Saída': item.initialMechanicalCountOut,
             'Final Digital Saída': item.finalMechanicalCountOut,
-            'Unid. Digital': item.digitalDiffenceOut,
+            'Diferença Digital Saída': item.digitalDiffenceOut,
         });
     });
     return workbook;

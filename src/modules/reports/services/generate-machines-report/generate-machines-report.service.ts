@@ -128,6 +128,7 @@ class GenerateMachinesReportService {
     if (machineIds) {
       machines = await this.machinesRepository.find({
         id: machineIds,
+        isActive: true,
         populate: ['pointOfSale'],
         fields: [
           'id',
@@ -156,6 +157,7 @@ class GenerateMachinesReportService {
     } else {
       machines = await this.machinesRepository.find({
         groupIds,
+        isActive: true,
         populate: ['pointOfSale'],
         fields: [
           'id',
@@ -176,17 +178,19 @@ class GenerateMachinesReportService {
     startDate = startOfDay(startDate);
     endDate = endOfDay(endDate);
 
-    const incomePerMachine = await this.telemetryLogsRepository.getIncomePerMachine(
-      { groupIds, endDate, startDate },
-    );
+    const incomePerMachine =
+      await this.telemetryLogsRepository.getIncomePerMachine({
+        groupIds,
+        endDate,
+        startDate,
+      });
 
-    const prizesPerMachine = await this.telemetryLogsRepository.getPrizesPerMachine(
-      {
+    const prizesPerMachine =
+      await this.telemetryLogsRepository.getPrizesPerMachine({
         endDate,
         groupIds,
         startDate,
-      },
-    );
+      });
 
     const machineLogs = await this.machineLogsRepository.find({
       groupId: groupIds,
@@ -211,8 +215,9 @@ class GenerateMachinesReportService {
           ?.income || 0) / machine.gameValue,
       );
 
-      const prizes = prizesPerMachine.find(prizes => prizes.id === machine.id)
-        ?.prizes;
+      const prizes = prizesPerMachine.find(
+        prizes => prizes.id === machine.id,
+      )?.prizes;
 
       const income = incomePerMachine.find(
         machineIncome => machineIncome.id === machine.id,

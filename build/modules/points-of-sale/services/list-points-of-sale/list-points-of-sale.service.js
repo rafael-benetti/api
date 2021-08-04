@@ -38,19 +38,12 @@ let ListPointsOfSaleService = class ListPointsOfSaleService {
         if (!user)
             throw app_error_1.default.userNotFound;
         let pointsOfSaleIds;
-        if ((operatorId || routeId) && user.role === role_1.default.OPERATOR) {
+        if (operatorId || routeId) {
             const routes = await this.routesRepository.find({
-                operatorId,
+                operatorId: user.role === role_1.default.OPERATOR ? user.id : operatorId,
                 id: routeId,
             });
             pointsOfSaleIds = routes.flatMap(route => route.pointsOfSaleIds);
-        }
-        if (user.role === role_1.default.OPERATOR) {
-            pointsOfSaleIds = (await this.machinesRepository.find({
-                operatorId: user.id,
-            }))
-                .filter(machine => machine.locationId !== undefined)
-                .map(item => item.locationId);
         }
         if (user.role === role_1.default.OWNER) {
             const response = await this.pointsOfSaleRepository.find({

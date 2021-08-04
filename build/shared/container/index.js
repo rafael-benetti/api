@@ -34,7 +34,7 @@ const mikro_universal_financial_repository_1 = __importDefault(require("../../mo
 const users_repository_1 = __importDefault(require("../../modules/users/contracts/repositories/users.repository"));
 const mikro_users_repository_1 = __importDefault(require("../../modules/users/implementations/mikro/repositories/mikro-users.repository"));
 const tsyringe_1 = require("tsyringe");
-require("../../providers/index");
+require("../../providers");
 tsyringe_1.container.registerSingleton('AdminsRepository', mikro_admins_repository_1.default);
 tsyringe_1.container.registerSingleton('UsersRepository', mikro_users_repository_1.default);
 tsyringe_1.container.registerSingleton('GroupsRepository', mikro_groups_repository_1.default);

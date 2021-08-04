@@ -70,15 +70,15 @@ class MikroMachineLogsRepository implements MachineLogsRepository {
     const remoteCreditAmount = await this.repository.aggregate([
       {
         $match: {
-          _id: {
+          machineId: {
             $in: machineId,
           },
           groupId: {
             $in: groupId,
           },
-          date: {
+          createdAt: {
             $gte: startDate,
-            $lt: endDate,
+            $lte: endDate,
           },
           type: 'REMOTE_CREDIT',
         },
@@ -87,15 +87,15 @@ class MikroMachineLogsRepository implements MachineLogsRepository {
         $group: {
           _id: '$machineId',
           remoteCreditAmount: {
-            $sum: '$quantity',
+            $sum: { $toInt: '$quantity' },
           },
         },
       },
       {
         $project: {
-          _id: 0,
           machineId: '$_id',
           remoteCreditAmount: 1,
+          _id: 0,
         },
       },
     ]);

@@ -91,6 +91,9 @@ let GeneratePointsOfSaleReportService = class GeneratePointsOfSaleReportService 
                 value: pointsOfSaleIds,
                 fields: ['id', 'label', 'address', 'groupId', 'isPercentage', 'rent'],
             })).pointsOfSale;
+            groupIds = [
+                ...new Set(pointsOfSale.map(pointOfSale => pointOfSale.groupId)),
+            ];
         }
         else {
             pointsOfSale = (await this.pointsOfSaleRepository.find({
@@ -98,6 +101,9 @@ let GeneratePointsOfSaleReportService = class GeneratePointsOfSaleReportService 
                 value: groupIds,
                 fields: ['id', 'label', 'address', 'groupId', 'isPercentage', 'rent'],
             })).pointsOfSale;
+            groupIds = [
+                ...new Set(pointsOfSale.map(pointOfSale => pointOfSale.groupId)),
+            ];
         }
         startDate = date_fns_1.startOfDay(startDate);
         endDate = date_fns_1.endOfDay(endDate);
@@ -122,31 +128,29 @@ let GeneratePointsOfSaleReportService = class GeneratePointsOfSaleReportService 
                 'incomePerPrizeGoal',
                 'gameValue',
                 'categoryLabel',
+                'locationId',
             ],
         });
         const reportsPromises = pointsOfSale.map(async (pointOfSale) => {
-            const machineLogsPromise = this.machineLogsRepository.remoteCreditAmount({
-                groupId: groupIds,
-                machineId: machines
-                    .filter(machine => machine.locationId === pointOfSale.id)
-                    .map(machine => machine.id),
-                endDate,
-                startDate,
-            });
-            const resultPromise = this.telemetryLogsRepository.getIncomeAndPrizesPerMachine({
-                groupIds: [],
+            const result = await this.telemetryLogsRepository.getIncomeAndPrizesPerMachine({
+                groupIds,
                 pointOfSaleId: pointOfSale.id,
                 endDate,
                 startDate,
             });
-            const [machineLogs, result] = await bluebird_1.Promise.all([
-                machineLogsPromise,
-                resultPromise,
-            ]);
-            const machineAnalyticsPromises = machines.map(async (machine) => {
+            const machineAnalyticsPromises = machines
+                .filter(machines => machines.locationId === pointOfSale.id)
+                .map(async (machine) => {
+                const machineLogs = await this.machineLogsRepository.remoteCreditAmount({
+                    groupId: groupIds,
+                    machineId: machines.map(machine => machine.id),
+                    startDate,
+                    endDate,
+                });
                 const remoteCreditAmount = machineLogs.find(machineLog => machineLog.machineId === machine.id)?.remoteCreditAmount;
                 const income = result.find(income => income._id === machine.id)?.income || 0;
-                const prizes = result.find(prizes => prizes._id === machine.id)?.numberOfPrizes || 0;
+                const prizes = result.find(prizes => prizes._id === machine.id)?.numberOfPrizes ||
+                    0;
                 const numberOfPlays = income / machine.gameValue;
                 const averagePerDay = Number((income / days).toFixed(2));
                 const { incomePerMonthGoal } = machine;
@@ -170,8 +174,7 @@ let GeneratePointsOfSaleReportService = class GeneratePointsOfSaleReportService 
                 };
             });
             const machineAnalytics = await bluebird_1.Promise.all(machineAnalyticsPromises);
-            const groupLabel = groups.find(group => group.id === pointOfSale.groupId)
-                ?.label;
+            const groupLabel = groups.find(group => group.id === pointOfSale.groupId)?.label;
             const rent = pointOfSale.isPercentage
                 ? (machineAnalytics.reduce((a, b) => a + b.income, 0) *
                     pointOfSale.rent) /

@@ -128,7 +128,7 @@ let GenerateGroupReportService = class GenerateGroupReportService {
                     (pointOfSale.rent / 100)
                 : pointOfSale.rent)
                 .reduce((a, b) => a + b, 0);
-            const remoteCreditCost = machineLogs.reduce((a, b) => a + b.quantity, 0);
+            const remoteCreditCost = machineLogs.reduce((a, b) => a + (Number(b.quantity) || 0), 0);
             const balance = income - (prizePurchaseCost + maintenance + rent);
             return {
                 groupLabel: group.label ? group.label : 'Parceria Pessoal',
