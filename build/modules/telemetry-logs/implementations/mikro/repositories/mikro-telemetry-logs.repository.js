@@ -452,7 +452,6 @@ let MikroTelemetryLogsRepository = class MikroTelemetryLogsRepository {
                             $dateToString: {
                                 format: `%Y-%m-%d${withHours ? 'T%H:00:00' : ''}`,
                                 date: '$date',
-                                timezone: withHours ? '+00:00' : '-03:00',
                             },
                         },
                         type: '$type',
