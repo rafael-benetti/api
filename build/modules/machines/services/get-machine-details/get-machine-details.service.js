@@ -194,8 +194,8 @@ let GetMachineDetailsService = class GetMachineDetailsService {
         // ? CHART DATA PARA PERIODO SEMANAL E MENSAL
         if (period !== period_dto_1.default.DAILY) {
             const daysOfInterval = date_fns_1.eachDayOfInterval({
-                start: date_fns_1.addHours(startDate, 3),
-                end: date_fns_1.addHours(endDate, 3),
+                start: startDate,
+                end: date_fns_1.subHours(endDate, 4),
             }).map(item => date_fns_1.addHours(item, 4));
             chartData = daysOfInterval.map(day => {
                 const incomeInDay = machineIncomePerDay.find(telemetry => date_fns_1.isSameDay(day, new Date(telemetry.id).setUTCHours(3)))?.income || 0;

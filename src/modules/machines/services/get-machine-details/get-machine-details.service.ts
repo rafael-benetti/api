@@ -20,6 +20,7 @@ import {
   isSameHour,
   startOfDay,
   subDays,
+  subHours,
   subMonths,
   subWeeks,
 } from 'date-fns';
@@ -292,8 +293,8 @@ class GetMachineDetailsService {
     // ? CHART DATA PARA PERIODO SEMANAL E MENSAL
     if (period !== Period.DAILY) {
       const daysOfInterval = eachDayOfInterval({
-        start: addHours(startDate, 3),
-        end: addHours(endDate, 3),
+        start: startDate,
+        end: subHours(endDate, 4),
       }).map(item => addHours(item, 4));
 
       chartData = daysOfInterval.map(day => {
