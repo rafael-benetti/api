@@ -11,7 +11,7 @@ class FixMachineStockController {
 FixMachineStockController.validate = celebrate_1.celebrate({
     body: {
         boxId: celebrate_1.Joi.string().required(),
-        quantity: celebrate_1.Joi.number().integer().required(),
+        quantity: celebrate_1.Joi.number().required(),
         observations: celebrate_1.Joi.string().required(),
     },
 });

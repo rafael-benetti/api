@@ -63,7 +63,7 @@ let RemoteCreditService = class RemoteCreditService {
             machineId: machine.id,
             observations,
             type: machine_log_type_1.default.REMOTE_CREDIT,
-            quantity,
+            quantity: Number(quantity),
         });
         await this.ormProvider.commit();
     }
