@@ -8,9 +8,7 @@ export default interface MachineLogsRepository {
   remoteCreditAmount(
     data: FindMachineLogsDto,
   ): Promise<[{ remoteCreditAmount: number; machineId: string }]>;
-  findAndCount(
-    data: FindMachineLogsDto,
-  ): Promise<{
+  findAndCount(data: FindMachineLogsDto): Promise<{
     machineLogs: MachineLog[];
     count: number;
   }>;

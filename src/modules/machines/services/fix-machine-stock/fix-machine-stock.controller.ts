@@ -7,7 +7,7 @@ abstract class FixMachineStockController {
   static validate = celebrate({
     body: {
       boxId: Joi.string().required(),
-      quantity: Joi.number().integer().required(),
+      quantity: Joi.number().required(),
       observations: Joi.string().required(),
     },
   });
