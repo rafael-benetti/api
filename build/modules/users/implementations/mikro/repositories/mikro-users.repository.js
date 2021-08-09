@@ -52,7 +52,7 @@ class MikroUsersRepository {
         });
         return users.map(user => user_mapper_1.default.toApi(user));
     }
-    async usersInventoryByProduct({ filters }) {
+    async usersInventoryByProduct({ filters, }) {
         const stages = [
             {
                 $match: {
@@ -87,7 +87,7 @@ class MikroUsersRepository {
         const response = await this.repository.aggregate(stages);
         return response;
     }
-    async usersInventoryBySupplies({ filters }) {
+    async usersInventoryBySupplies({ filters, }) {
         const stages = [
             {
                 $match: {

@@ -196,7 +196,7 @@ let GetMachineDetailsService = class GetMachineDetailsService {
             const daysOfInterval = date_fns_1.eachDayOfInterval({
                 start: date_fns_1.addHours(startDate, 3),
                 end: date_fns_1.addHours(endDate, 3),
-            });
+            }).map(item => date_fns_1.addHours(item, 4));
             chartData = daysOfInterval.map(day => {
                 const incomeInDay = machineIncomePerDay.find(telemetry => date_fns_1.isSameDay(day, new Date(telemetry.id).setUTCHours(3)))?.income || 0;
                 const prizesCountInDay = machineGivenPrizesPerDay.find(telemetry => date_fns_1.isSameDay(day, new Date(telemetry.id.date).setUTCHours(3)))?.givenPrizes || 0;

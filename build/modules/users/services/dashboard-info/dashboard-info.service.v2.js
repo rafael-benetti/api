@@ -27,7 +27,6 @@ const bluebird_1 = require("bluebird");
 const tsyringe_1 = require("tsyringe");
 const period_dto_1 = __importDefault(require("../../../machines/contracts/dtos/period.dto"));
 const routes_repository_1 = __importDefault(require("../../../routes/contracts/repositories/routes.repository"));
-const logger_1 = __importDefault(require("../../../../config/logger"));
 let DashboardInfoServiceV2 = class DashboardInfoServiceV2 {
     constructor(usersRepository, machinesRepository, groupsRepository, telemetryLogsRepository, routesRepository) {
         this.usersRepository = usersRepository;
@@ -84,8 +83,6 @@ let DashboardInfoServiceV2 = class DashboardInfoServiceV2 {
         }
         if (pointOfSaleId)
             locations = [pointOfSaleId];
-        logger_1.default.info(startDate);
-        logger_1.default.info(endDate);
         const machinesSortedByLastCollectionPromise = this.machinesRepository.find({
             checkLocationExists: true,
             orderByLastCollection: true,
@@ -135,24 +132,28 @@ let DashboardInfoServiceV2 = class DashboardInfoServiceV2 {
             operatorId: isOperator ? user.id : undefined,
             telemetryStatus: 'OFFLINE',
             pointOfSaleId: locations,
+            checkLocationExists: true,
         });
         const machinesNeverConnectedPromise = this.machinesRepository.count({
             groupIds: isOperator ? undefined : groupIds,
             operatorId: isOperator ? user.id : undefined,
             telemetryStatus: 'VIRGIN',
             pointOfSaleId: locations,
+            checkLocationExists: true,
         });
         const onlineMachinesPromise = this.machinesRepository.count({
             groupIds: isOperator ? undefined : groupIds,
             operatorId: isOperator ? user.id : undefined,
             telemetryStatus: 'ONLINE',
             pointOfSaleId: locations,
+            checkLocationExists: true,
         });
         const machinesWithoutTelemetryBoardPromise = this.machinesRepository.count({
             groupIds: isOperator ? undefined : groupIds,
             operatorId: isOperator ? user.id : undefined,
             telemetryStatus: 'NO_TELEMETRY',
             pointOfSaleId: locations,
+            checkLocationExists: true,
         });
         const [machinesSortedByLastCollection, machinesSortedByLastConnection, machinesSortedByStock, offlineMachines, machinesNeverConnected,] = await bluebird_1.Promise.all([
             machinesSortedByLastCollectionPromise,
@@ -193,8 +194,6 @@ let DashboardInfoServiceV2 = class DashboardInfoServiceV2 {
         let chartData1 = [];
         let income = 0;
         let givenPrizesCount = 0;
-        logger_1.default.info(startDate);
-        logger_1.default.info(endDate);
         const incomeOfPeriodPromise = this.telemetryLogsRepository.getGroupIncomePerPeriod({
             groupIds,
             pointsOfSaleIds: locations,
@@ -237,8 +236,6 @@ let DashboardInfoServiceV2 = class DashboardInfoServiceV2 {
                 end: date_fns_1.subHours(endDate, 4),
             }).map(item => date_fns_1.addHours(item, 4));
         }
-        logger_1.default.info(interval);
-        logger_1.default.info(incomeOfPeriod);
         chartData1 = interval.map(item => {
             const incomeInHour = incomeOfPeriod.find(total => period === period_dto_1.default.DAILY
                 ? date_fns_1.isSameHour(item, new Date(total.id))

@@ -107,18 +107,22 @@ let DetailGroupServiceV2 = class DetailGroupServiceV2 {
         const offlineMachinesPromise = this.machinesRepository.count({
             groupIds: [groupId],
             telemetryStatus: 'OFFLINE',
+            checkLocationExists: true,
         });
         const onlineMachinesPromise = this.machinesRepository.count({
             groupIds: [groupId],
             telemetryStatus: 'ONLINE',
+            checkLocationExists: true,
         });
         const machinesNeverConnectedPromise = this.machinesRepository.count({
             groupIds: [groupId],
             telemetryStatus: 'VIRGIN',
+            checkLocationExists: true,
         });
         const machinesWithoutTelemetryBoardPromise = this.machinesRepository.count({
             groupIds: [groupId],
             telemetryStatus: 'NO_TELEMETRY',
+            checkLocationExists: true,
         });
         const [machinesSortedByLastConnection, machinesSortedByStock, offlineMachines, onlineMachines, machinesNeverConnected,] = await bluebird_1.Promise.all([
             machinesSortedByLastConnectionPromise,
@@ -127,7 +131,7 @@ let DetailGroupServiceV2 = class DetailGroupServiceV2 {
             onlineMachinesPromise,
             machinesNeverConnectedPromise,
         ]);
-        const [machinesWithoutTelemetryBoard, machinesSortedByLastCollection,] = await bluebird_1.Promise.all([
+        const [machinesWithoutTelemetryBoard, machinesSortedByLastCollection] = await bluebird_1.Promise.all([
             machinesWithoutTelemetryBoardPromise,
             machinesSortedByLastCollectionPromise,
         ]);
@@ -218,7 +222,7 @@ let DetailGroupServiceV2 = class DetailGroupServiceV2 {
             by: 'groupId',
             value: groupId,
         });
-        const [{ pointsOfSale }, incomePerPointOfSale, lastPurchase,] = await bluebird_1.Promise.all([
+        const [{ pointsOfSale }, incomePerPointOfSale, lastPurchase] = await bluebird_1.Promise.all([
             pointsOfSalePromise,
             incomePerPointOfSalePromise,
             lastPurchasePromise,
