@@ -169,11 +169,10 @@ export default class DetailGroupService {
       populate: ['pointOfSale'],
     });
 
-    const machinesSortedByStockPromise = this.machinesRepository.machineSortedByStock(
-      {
+    const machinesSortedByStockPromise =
+      this.machinesRepository.machineSortedByStock({
         groupIds: [groupId],
-      },
-    );
+      });
 
     const offlineMachinesPromise = this.machinesRepository.count({
       groupIds: [groupId],
@@ -375,28 +374,24 @@ export default class DetailGroupService {
       },
     });
 
-    const incomePerPointOfSalePromise = this.telemetryLogsRepository.incomePerPointOfSale(
-      {
+    const incomePerPointOfSalePromise =
+      this.telemetryLogsRepository.incomePerPointOfSale({
         groupIds: [groupId],
         endDate,
         startDate,
-      },
-    );
+      });
 
     const pointsOfSalePromise = this.pointsOfSaleRepository.find({
       by: 'groupId',
       value: groupId,
     });
 
-    const [
-      { pointsOfSale },
-      incomePerPointOfSale,
-      lastPurchase,
-    ] = await Promise.all([
-      pointsOfSalePromise,
-      incomePerPointOfSalePromise,
-      lastPurchasePromise,
-    ]);
+    const [{ pointsOfSale }, incomePerPointOfSale, lastPurchase] =
+      await Promise.all([
+        pointsOfSalePromise,
+        incomePerPointOfSalePromise,
+        lastPurchasePromise,
+      ]);
 
     const pointsOfSaleSortedByIncomePromises = pointsOfSale.map(
       async pointOfSale => {

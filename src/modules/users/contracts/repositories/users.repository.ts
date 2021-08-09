@@ -7,18 +7,14 @@ interface UsersRepository {
   create(data: CreateUserDto): User;
   findOne(data: FindUserDto): Promise<User | undefined>;
   find(data: FindUsersDto): Promise<User[]>;
-  usersInventoryByProduct({
-    filters,
-  }: FindUsersDto): Promise<
+  usersInventoryByProduct({ filters }: FindUsersDto): Promise<
     {
       prizeId: string;
       prizeLabel: string;
       totalPrizes: string;
     }[]
   >;
-  usersInventoryBySupplies({
-    filters,
-  }: FindUsersDto): Promise<
+  usersInventoryBySupplies({ filters }: FindUsersDto): Promise<
     {
       supplieId: string;
       supplieLabel: string;

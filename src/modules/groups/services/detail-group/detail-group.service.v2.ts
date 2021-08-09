@@ -166,30 +166,33 @@ export default class DetailGroupServiceV2 {
       populate: ['pointOfSale'],
     });
 
-    const machinesSortedByStockPromise = this.machinesRepository.machineSortedByStock(
-      {
+    const machinesSortedByStockPromise =
+      this.machinesRepository.machineSortedByStock({
         groupIds: [groupId],
-      },
-    );
+      });
 
     const offlineMachinesPromise = this.machinesRepository.count({
       groupIds: [groupId],
       telemetryStatus: 'OFFLINE',
+      checkLocationExists: true,
     });
 
     const onlineMachinesPromise = this.machinesRepository.count({
       groupIds: [groupId],
       telemetryStatus: 'ONLINE',
+      checkLocationExists: true,
     });
 
     const machinesNeverConnectedPromise = this.machinesRepository.count({
       groupIds: [groupId],
       telemetryStatus: 'VIRGIN',
+      checkLocationExists: true,
     });
 
     const machinesWithoutTelemetryBoardPromise = this.machinesRepository.count({
       groupIds: [groupId],
       telemetryStatus: 'NO_TELEMETRY',
+      checkLocationExists: true,
     });
 
     const [
@@ -206,13 +209,11 @@ export default class DetailGroupServiceV2 {
       machinesNeverConnectedPromise,
     ]);
 
-    const [
-      machinesWithoutTelemetryBoard,
-      machinesSortedByLastCollection,
-    ] = await Promise.all([
-      machinesWithoutTelemetryBoardPromise,
-      machinesSortedByLastCollectionPromise,
-    ]);
+    const [machinesWithoutTelemetryBoard, machinesSortedByLastCollection] =
+      await Promise.all([
+        machinesWithoutTelemetryBoardPromise,
+        machinesSortedByLastCollectionPromise,
+      ]);
 
     if (!startDate && !endDate && !period) period = Period.DAILY;
 
@@ -233,31 +234,28 @@ export default class DetailGroupServiceV2 {
 
     startDate = startOfHour(startDate);
 
-    const incomeOfPeriodPromise = await this.telemetryLogsRepository.getGroupIncomePerPeriod(
-      {
+    const incomeOfPeriodPromise =
+      await this.telemetryLogsRepository.getGroupIncomePerPeriod({
         groupIds: [groupId],
         type: 'IN',
         withHours: period === Period.DAILY,
         startDate,
         endDate,
-      },
-    );
+      });
 
-    const prizesOfPeriodPromise = await this.telemetryLogsRepository.getGroupIncomePerPeriod(
-      {
+    const prizesOfPeriodPromise =
+      await this.telemetryLogsRepository.getGroupIncomePerPeriod({
         groupIds: [groupId],
         type: 'OUT',
         withHours: period === Period.DAILY,
         startDate,
         endDate,
-      },
-    );
+      });
 
-    const chartData2Promise = this.telemetryLogsRepository.getIncomePerCounterType(
-      {
+    const chartData2Promise =
+      this.telemetryLogsRepository.getIncomePerCounterType({
         groupIds: [groupId],
-      },
-    );
+      });
 
     const [incomeOfPeriod, prizesOfPeriod, chartData2] = await Promise.all([
       incomeOfPeriodPromise,
@@ -314,28 +312,24 @@ export default class DetailGroupServiceV2 {
       };
     });
 
-    const incomePerPointOfSalePromise = this.telemetryLogsRepository.incomePerPointOfSale(
-      {
+    const incomePerPointOfSalePromise =
+      this.telemetryLogsRepository.incomePerPointOfSale({
         groupIds: [groupId],
         endDate,
         startDate,
-      },
-    );
+      });
 
     const pointsOfSalePromise = this.pointsOfSaleRepository.find({
       by: 'groupId',
       value: groupId,
     });
 
-    const [
-      { pointsOfSale },
-      incomePerPointOfSale,
-      lastPurchase,
-    ] = await Promise.all([
-      pointsOfSalePromise,
-      incomePerPointOfSalePromise,
-      lastPurchasePromise,
-    ]);
+    const [{ pointsOfSale }, incomePerPointOfSale, lastPurchase] =
+      await Promise.all([
+        pointsOfSalePromise,
+        incomePerPointOfSalePromise,
+        lastPurchasePromise,
+      ]);
 
     const pointsOfSaleSortedByIncomePromises = pointsOfSale.map(
       async pointOfSale => {

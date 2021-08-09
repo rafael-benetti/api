@@ -348,6 +348,7 @@ class MikroMachinesRepository implements MachinesRepository {
     operatorId,
     groupIds,
     pointOfSaleId,
+    checkLocationExists,
   }: FindMachinesDto): Promise<number> {
     const telemetryStatusQuery: Record<string, unknown> = {};
 
@@ -381,6 +382,8 @@ class MikroMachinesRepository implements MachinesRepository {
       ...(groupIds && { groupId: groupIds }),
       ...(operatorId && { operatorId }),
       ...(pointOfSaleId && { locationId: pointOfSaleId }),
+      ...(checkLocationExists &&
+        !pointOfSaleId && { locationId: { $ne: null } }),
       ...telemetryStatusQuery,
       isActive: true,
     });
@@ -388,9 +391,7 @@ class MikroMachinesRepository implements MachinesRepository {
     return count;
   }
 
-  async machinePerCategory({
-    groupIds,
-  }: FindMachinesDto): Promise<
+  async machinePerCategory({ groupIds }: FindMachinesDto): Promise<
     {
       categoryLabel: string;
       totalInStock: number;
@@ -435,9 +436,7 @@ class MikroMachinesRepository implements MachinesRepository {
     return response;
   }
 
-  async machinesInventoryByProduct({
-    groupIds,
-  }: FindMachinesDto): Promise<
+  async machinesInventoryByProduct({ groupIds }: FindMachinesDto): Promise<
     {
       prizeId: string;
       prizeLabel: string;

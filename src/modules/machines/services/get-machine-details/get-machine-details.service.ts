@@ -115,9 +115,8 @@ class GetMachineDetailsService {
       throw AppError.authorizationError;
 
     // ? ULTIMA COLETA
-    const lastCollectionData = await this.collectionsRepository.findLastCollection(
-      machineId,
-    );
+    const lastCollectionData =
+      await this.collectionsRepository.findLastCollection(machineId);
 
     let lastCollection;
     let collectedBy;
@@ -147,35 +146,32 @@ class GetMachineDetailsService {
       endDate = endOfDay(endDate);
     }
 
-    const machineIncomePerDayPromise = this.telemetryLogsRepository.getMachineIncomePerDay(
-      {
+    const machineIncomePerDayPromise =
+      this.telemetryLogsRepository.getMachineIncomePerDay({
         machineId,
         endDate,
         startDate,
         groupIds: [machine.groupId],
         withHours: period === Period.DAILY,
-      },
-    );
+      });
 
-    const machineGivenPrizesPerDayPromise = this.telemetryLogsRepository.getMachineGivenPrizesPerDay(
-      {
+    const machineGivenPrizesPerDayPromise =
+      this.telemetryLogsRepository.getMachineGivenPrizesPerDay({
         machineId,
         endDate,
         startDate,
         groupIds: [machine.groupId],
         withHours: period === Period.DAILY,
-      },
-    );
+      });
 
-    const machineGivenPrizesPerPinPromise = this.telemetryLogsRepository.getMachineGivenPrizesPerDay(
-      {
+    const machineGivenPrizesPerPinPromise =
+      this.telemetryLogsRepository.getMachineGivenPrizesPerDay({
         machineId,
         startDate: machine.lastCollection,
         endDate: new Date(),
         groupIds: [machine.groupId],
         withHours: false,
-      },
-    );
+      });
 
     // ? HISTORICO DE JOGADAS
     const transactionHistoryPromise = await this.telemetryLogsRepository.find({
@@ -298,7 +294,7 @@ class GetMachineDetailsService {
       const daysOfInterval = eachDayOfInterval({
         start: addHours(startDate, 3),
         end: addHours(endDate, 3),
-      });
+      }).map(item => addHours(item, 4));
 
       chartData = daysOfInterval.map(day => {
         const incomeInDay =
