@@ -1,3 +1,4 @@
+import logger from '@config/logger';
 import Period from '@modules/machines/contracts/dtos/period.dto';
 import Machine from '@modules/machines/contracts/models/machine';
 import MachinesRepository from '@modules/machines/contracts/repositories/machines.repository';
@@ -181,7 +182,7 @@ class DetailRouteService {
       const hoursOfInterval = eachHourOfInterval({
         start: startDate,
         end: endDate,
-      }).map(item => addHours(item, 3));
+      });
 
       chartData1 = hoursOfInterval.map(hour => {
         const incomeInHour = telemetryLogsIn

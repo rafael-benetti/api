@@ -15,6 +15,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
+const logger_1 = __importDefault(require("../../../../config/logger"));
 const period_dto_1 = __importDefault(require("../../../machines/contracts/dtos/period.dto"));
 const machine_1 = __importDefault(require("../../../machines/contracts/models/machine"));
 const machines_repository_1 = __importDefault(require("../../../machines/contracts/repositories/machines.repository"));
@@ -117,7 +118,7 @@ let DetailRouteService = class DetailRouteService {
             const hoursOfInterval = date_fns_1.eachHourOfInterval({
                 start: startDate,
                 end: endDate,
-            }).map(item => date_fns_1.addHours(item, 3));
+            });
             chartData1 = hoursOfInterval.map(hour => {
                 const incomeInHour = telemetryLogsIn
                     .filter(telemetry => date_fns_1.isSameHour(hour, telemetry.date))
