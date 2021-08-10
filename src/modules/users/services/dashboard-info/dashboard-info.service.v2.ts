@@ -317,7 +317,7 @@ export default class DashboardInfoServiceV2 {
       interval = eachHourOfInterval({
         start: startDate,
         end: endDate,
-      }).map(item => addHours(item, 3));
+      });
 
       logger.info(incomeOfPeriod);
       logger.info(startDate);

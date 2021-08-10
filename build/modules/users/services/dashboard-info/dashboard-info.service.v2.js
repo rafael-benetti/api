@@ -235,7 +235,7 @@ let DashboardInfoServiceV2 = class DashboardInfoServiceV2 {
             interval = date_fns_1.eachHourOfInterval({
                 start: startDate,
                 end: endDate,
-            }).map(item => date_fns_1.addHours(item, 3));
+            });
             logger_1.default.info(incomeOfPeriod);
             logger_1.default.info(startDate);
             logger_1.default.info(endDate);
