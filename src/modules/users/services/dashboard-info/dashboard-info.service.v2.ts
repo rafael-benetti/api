@@ -21,7 +21,6 @@ import { Promise } from 'bluebird';
 import { inject, injectable } from 'tsyringe';
 import Period from '@modules/machines/contracts/dtos/period.dto';
 import RoutesRepository from '@modules/routes/contracts/repositories/routes.repository';
-import logger from '@config/logger';
 
 interface Request {
   userId: string;

@@ -142,10 +142,8 @@ class GetMachineDetailsService {
     if (!startDate) throw AppError.unknownError;
     if (!endDate) throw AppError.unknownError;
 
-    if (period !== Period.DAILY) {
-      startDate = startOfDay(startDate);
-      endDate = endOfDay(endDate);
-    }
+    startDate = startOfDay(startDate);
+    endDate = endOfDay(endDate);
 
     const machineIncomePerDayPromise =
       this.telemetryLogsRepository.getMachineIncomePerDay({
@@ -269,7 +267,7 @@ class GetMachineDetailsService {
       const hoursOfInterval = eachHourOfInterval({
         start: startDate,
         end: endDate,
-      });
+      }).map(item => addHours(item, 3));
 
       chartData = hoursOfInterval.map(hour => {
         const incomeInHour =

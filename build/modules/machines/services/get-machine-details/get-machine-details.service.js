@@ -84,10 +84,8 @@ let GetMachineDetailsService = class GetMachineDetailsService {
             throw app_error_1.default.unknownError;
         if (!endDate)
             throw app_error_1.default.unknownError;
-        if (period !== period_dto_1.default.DAILY) {
-            startDate = date_fns_1.startOfDay(startDate);
-            endDate = date_fns_1.endOfDay(endDate);
-        }
+        startDate = date_fns_1.startOfDay(startDate);
+        endDate = date_fns_1.endOfDay(endDate);
         const machineIncomePerDayPromise = this.telemetryLogsRepository.getMachineIncomePerDay({
             machineId,
             endDate,
@@ -180,7 +178,7 @@ let GetMachineDetailsService = class GetMachineDetailsService {
             const hoursOfInterval = date_fns_1.eachHourOfInterval({
                 start: startDate,
                 end: endDate,
-            });
+            }).map(item => date_fns_1.addHours(item, 3));
             chartData = hoursOfInterval.map(hour => {
                 const incomeInHour = machineIncomePerDay.find(telemetry => date_fns_1.isSameHour(hour, new Date(telemetry.id)))?.income || 0;
                 const prizesCountInHour = machineGivenPrizesPerDay.find(telemetry => date_fns_1.isSameHour(hour, new Date(telemetry.id.date)))?.givenPrizes || 0;
