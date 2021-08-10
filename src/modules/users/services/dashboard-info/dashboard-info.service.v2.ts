@@ -11,7 +11,7 @@ import {
   eachHourOfInterval,
   isSameDay,
   isSameHour,
-  subDays,
+  startOfDay,
   subHours,
   subMonths,
   subWeeks,
@@ -251,7 +251,7 @@ export default class DashboardInfoServiceV2 {
 
     if (period) {
       endDate = new Date(Date.now());
-      if (period === Period.DAILY) startDate = subDays(endDate, 1);
+      if (period === Period.DAILY) startDate = startOfDay(endDate);
       if (period === Period.WEEKLY) startDate = subWeeks(endDate, 1);
       if (period === Period.MONTHLY) startDate = subMonths(endDate, 1);
     }
