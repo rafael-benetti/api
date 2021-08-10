@@ -236,10 +236,6 @@ let DashboardInfoServiceV2 = class DashboardInfoServiceV2 {
                 start: startDate,
                 end: endDate,
             }).map(item => date_fns_1.addHours(item, 3));
-            logger_1.default.info(incomeOfPeriod);
-            logger_1.default.info(startDate);
-            logger_1.default.info(endDate);
-            logger_1.default.info(interval);
         }
         else {
             interval = date_fns_1.eachDayOfInterval({
@@ -249,7 +245,7 @@ let DashboardInfoServiceV2 = class DashboardInfoServiceV2 {
         }
         chartData1 = interval.map(item => {
             const incomeInHour = incomeOfPeriod.find(total => period === period_dto_1.default.DAILY
-                ? date_fns_1.isSameHour(item, new Date(total.id))
+                ? date_fns_1.isSameHour(item, date_fns_1.subHours(new Date(total.id), 3))
                 : date_fns_1.isSameDay(item, new Date(total.id)))?.total || 0;
             const prizesCountInHour = prizesOfPeriod.find(total => period === period_dto_1.default.DAILY
                 ? date_fns_1.isSameHour(item, new Date(total.id))

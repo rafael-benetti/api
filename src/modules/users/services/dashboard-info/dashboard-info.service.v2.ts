@@ -318,11 +318,6 @@ export default class DashboardInfoServiceV2 {
         start: startDate,
         end: endDate,
       }).map(item => addHours(item, 3));
-
-      logger.info(incomeOfPeriod);
-      logger.info(startDate);
-      logger.info(endDate);
-      logger.info(interval);
     } else {
       interval = eachDayOfInterval({
         start: startDate,
@@ -334,7 +329,7 @@ export default class DashboardInfoServiceV2 {
       const incomeInHour =
         incomeOfPeriod.find(total =>
           period === Period.DAILY
-            ? isSameHour(item, new Date(total.id))
+            ? isSameHour(item, subHours(new Date(total.id), 3))
             : isSameDay(item, new Date(total.id)),
         )?.total || 0;
 
