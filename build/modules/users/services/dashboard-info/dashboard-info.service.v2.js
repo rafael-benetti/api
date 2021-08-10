@@ -183,7 +183,7 @@ let DashboardInfoServiceV2 = class DashboardInfoServiceV2 {
             endDate = new Date(Date.now());
             if (period === period_dto_1.default.DAILY) {
                 startDate = date_fns_1.startOfDay(endDate);
-                endDate = new Date(date_fns_1.endOfDay(endDate).toUTCString());
+                endDate = date_fns_1.endOfDay(endDate);
             }
             if (period === period_dto_1.default.WEEKLY)
                 startDate = date_fns_1.subWeeks(endDate, 1);
@@ -235,7 +235,7 @@ let DashboardInfoServiceV2 = class DashboardInfoServiceV2 {
             interval = date_fns_1.eachHourOfInterval({
                 start: startDate,
                 end: endDate,
-            });
+            }).map(item => date_fns_1.addHours(item, 3));
             logger_1.default.info(incomeOfPeriod);
             logger_1.default.info(startDate);
             logger_1.default.info(endDate);

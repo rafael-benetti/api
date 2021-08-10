@@ -255,7 +255,7 @@ export default class DashboardInfoServiceV2 {
       endDate = new Date(Date.now());
       if (period === Period.DAILY) {
         startDate = startOfDay(endDate);
-        endDate = new Date(endOfDay(endDate).toUTCString());
+        endDate = endOfDay(endDate);
       }
       if (period === Period.WEEKLY) startDate = subWeeks(endDate, 1);
       if (period === Period.MONTHLY) startDate = subMonths(endDate, 1);
@@ -317,7 +317,7 @@ export default class DashboardInfoServiceV2 {
       interval = eachHourOfInterval({
         start: startDate,
         end: endDate,
-      });
+      }).map(item => addHours(item, 3));
 
       logger.info(incomeOfPeriod);
       logger.info(startDate);
