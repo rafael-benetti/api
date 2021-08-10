@@ -27,6 +27,7 @@ const bluebird_1 = require("bluebird");
 const tsyringe_1 = require("tsyringe");
 const period_dto_1 = __importDefault(require("../../../machines/contracts/dtos/period.dto"));
 const routes_repository_1 = __importDefault(require("../../../routes/contracts/repositories/routes.repository"));
+const logger_1 = __importDefault(require("../../../../config/logger"));
 let DashboardInfoServiceV2 = class DashboardInfoServiceV2 {
     constructor(usersRepository, machinesRepository, groupsRepository, telemetryLogsRepository, routesRepository) {
         this.usersRepository = usersRepository;
@@ -235,6 +236,10 @@ let DashboardInfoServiceV2 = class DashboardInfoServiceV2 {
                 start: startDate,
                 end: endDate,
             }).map(item => date_fns_1.addHours(item, 3));
+            logger_1.default.info(incomeOfPeriod);
+            logger_1.default.info(startDate);
+            logger_1.default.info(endDate);
+            logger_1.default.info(interval);
         }
         else {
             interval = date_fns_1.eachDayOfInterval({
