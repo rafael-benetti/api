@@ -278,7 +278,7 @@ export default class DashboardInfoServiceV2 {
         pointsOfSaleIds: locations,
         type: 'IN',
         withHours: period === Period.DAILY,
-        startDate,
+        startDate: addHours(startDate, 3),
         endDate: addHours(endDate, 3),
       });
 
@@ -288,7 +288,7 @@ export default class DashboardInfoServiceV2 {
         pointsOfSaleIds: locations,
         type: 'OUT',
         withHours: period === Period.DAILY,
-        startDate,
+        startDate: addHours(startDate, 3),
         endDate: addHours(endDate, 3),
       });
 

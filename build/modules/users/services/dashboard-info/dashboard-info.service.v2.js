@@ -205,7 +205,7 @@ let DashboardInfoServiceV2 = class DashboardInfoServiceV2 {
             pointsOfSaleIds: locations,
             type: 'IN',
             withHours: period === period_dto_1.default.DAILY,
-            startDate,
+            startDate: date_fns_1.addHours(startDate, 3),
             endDate: date_fns_1.addHours(endDate, 3),
         });
         const prizesOfPeriodPromise = this.telemetryLogsRepository.getGroupIncomePerPeriod({
@@ -213,7 +213,7 @@ let DashboardInfoServiceV2 = class DashboardInfoServiceV2 {
             pointsOfSaleIds: locations,
             type: 'OUT',
             withHours: period === period_dto_1.default.DAILY,
-            startDate,
+            startDate: date_fns_1.addHours(startDate, 3),
             endDate: date_fns_1.addHours(endDate, 3),
         });
         const chartData2Promise = this.telemetryLogsRepository.getIncomePerCounterType({
