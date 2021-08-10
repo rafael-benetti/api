@@ -101,7 +101,7 @@ let DetailRouteService = class DetailRouteService {
                 routeId,
                 date: {
                     startDate,
-                    endDate,
+                    endDate: date_fns_1.addHours(endDate, 3),
                 },
             },
         });

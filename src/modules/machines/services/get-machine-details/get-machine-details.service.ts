@@ -152,7 +152,7 @@ class GetMachineDetailsService {
     const machineIncomePerDayPromise =
       this.telemetryLogsRepository.getMachineIncomePerDay({
         machineId,
-        endDate,
+        endDate: addHours(endDate, 3),
         startDate,
         groupIds: [machine.groupId],
         withHours: period === Period.DAILY,
@@ -161,7 +161,7 @@ class GetMachineDetailsService {
     const machineGivenPrizesPerDayPromise =
       this.telemetryLogsRepository.getMachineGivenPrizesPerDay({
         machineId,
-        endDate,
+        endDate: addHours(endDate, 3),
         startDate,
         groupIds: [machine.groupId],
         withHours: period === Period.DAILY,

@@ -214,7 +214,7 @@ let DashboardInfoServiceV2 = class DashboardInfoServiceV2 {
             type: 'OUT',
             withHours: period === period_dto_1.default.DAILY,
             startDate,
-            endDate,
+            endDate: date_fns_1.addHours(endDate, 3),
         });
         const chartData2Promise = this.telemetryLogsRepository.getIncomePerCounterType({
             groupIds,

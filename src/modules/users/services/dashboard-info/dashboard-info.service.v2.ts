@@ -289,7 +289,7 @@ export default class DashboardInfoServiceV2 {
         type: 'OUT',
         withHours: period === Period.DAILY,
         startDate,
-        endDate,
+        endDate: addHours(endDate, 3),
       });
 
     const chartData2Promise =

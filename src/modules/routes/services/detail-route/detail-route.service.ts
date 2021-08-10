@@ -19,7 +19,6 @@ import {
   isSameDay,
   isSameHour,
   startOfDay,
-  subDays,
   subHours,
   subMonths,
   subWeeks,
@@ -156,7 +155,7 @@ class DetailRouteService {
         routeId,
         date: {
           startDate,
-          endDate,
+          endDate: addHours(endDate, 3),
         },
       },
     });
