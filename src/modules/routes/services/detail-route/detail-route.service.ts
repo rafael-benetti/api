@@ -182,18 +182,18 @@ class DetailRouteService {
       const hoursOfInterval = eachHourOfInterval({
         start: startDate,
         end: endDate,
-      });
+      }).map(item => addHours(item, 3));
 
       chartData1 = hoursOfInterval.map(hour => {
         const incomeInHour = telemetryLogsIn
-          .filter(telemetry => isSameHour(hour, telemetry.date))
+          .filter(telemetry => isSameHour(hour, addHours(telemetry.date, 3)))
           .reduce(
             (accumulator, currentValue) => accumulator + currentValue.value,
             0,
           );
 
         const prizesCountInHour = telemetryLogsOut
-          .filter(telemetry => isSameHour(hour, telemetry.date))
+          .filter(telemetry => isSameHour(hour, addHours(telemetry.date, 3)))
           .reduce(
             (accumulator, currentValue) => accumulator + currentValue.value,
             0,
@@ -231,14 +231,14 @@ class DetailRouteService {
 
       chartData1 = daysOfInterval.map(day => {
         const incomeInDay = telemetryLogsIn
-          .filter(telemetry => isSameDay(day, telemetry.date))
+          .filter(telemetry => isSameDay(day, addHours(telemetry.date, 3)))
           .reduce(
             (accumulator, currentValue) => accumulator + currentValue.value,
             0,
           );
 
         const prizesCountInDay = telemetryLogsOut
-          .filter(telemetry => isSameDay(day, telemetry.date))
+          .filter(telemetry => isSameDay(day, addHours(telemetry.date, 3)))
           .reduce(
             (accumulator, currentValue) => accumulator + currentValue.value,
             0,

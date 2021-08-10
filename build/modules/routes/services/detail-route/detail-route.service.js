@@ -118,13 +118,13 @@ let DetailRouteService = class DetailRouteService {
             const hoursOfInterval = date_fns_1.eachHourOfInterval({
                 start: startDate,
                 end: endDate,
-            });
+            }).map(item => date_fns_1.addHours(item, 3));
             chartData1 = hoursOfInterval.map(hour => {
                 const incomeInHour = telemetryLogsIn
-                    .filter(telemetry => date_fns_1.isSameHour(hour, telemetry.date))
+                    .filter(telemetry => date_fns_1.isSameHour(hour, date_fns_1.addHours(telemetry.date, 3)))
                     .reduce((accumulator, currentValue) => accumulator + currentValue.value, 0);
                 const prizesCountInHour = telemetryLogsOut
-                    .filter(telemetry => date_fns_1.isSameHour(hour, telemetry.date))
+                    .filter(telemetry => date_fns_1.isSameHour(hour, date_fns_1.addHours(telemetry.date, 3)))
                     .reduce((accumulator, currentValue) => accumulator + currentValue.value, 0);
                 return {
                     date: hour.toISOString(),
@@ -155,10 +155,10 @@ let DetailRouteService = class DetailRouteService {
             }).map(item => date_fns_1.addHours(item, 4));
             chartData1 = daysOfInterval.map(day => {
                 const incomeInDay = telemetryLogsIn
-                    .filter(telemetry => date_fns_1.isSameDay(day, telemetry.date))
+                    .filter(telemetry => date_fns_1.isSameDay(day, date_fns_1.addHours(telemetry.date, 3)))
                     .reduce((accumulator, currentValue) => accumulator + currentValue.value, 0);
                 const prizesCountInDay = telemetryLogsOut
-                    .filter(telemetry => date_fns_1.isSameDay(day, telemetry.date))
+                    .filter(telemetry => date_fns_1.isSameDay(day, date_fns_1.addHours(telemetry.date, 3)))
                     .reduce((accumulator, currentValue) => accumulator + currentValue.value, 0);
                 return {
                     date: day.toISOString(),
