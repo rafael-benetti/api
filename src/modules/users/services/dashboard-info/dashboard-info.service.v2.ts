@@ -21,6 +21,7 @@ import { Promise } from 'bluebird';
 import { inject, injectable } from 'tsyringe';
 import Period from '@modules/machines/contracts/dtos/period.dto';
 import RoutesRepository from '@modules/routes/contracts/repositories/routes.repository';
+import logger from '@config/logger';
 
 interface Request {
   userId: string;
@@ -317,6 +318,11 @@ export default class DashboardInfoServiceV2 {
         start: startDate,
         end: endDate,
       }).map(item => addHours(item, 3));
+
+      logger.info(incomeOfPeriod);
+      logger.info(startDate);
+      logger.info(endDate);
+      logger.info(interval);
     } else {
       interval = eachDayOfInterval({
         start: startDate,
