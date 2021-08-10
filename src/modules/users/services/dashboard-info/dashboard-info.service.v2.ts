@@ -6,6 +6,7 @@ import Role from '@modules/users/contracts/enums/role';
 import UsersRepository from '@modules/users/contracts/repositories/users.repository';
 import AppError from '@shared/errors/app-error';
 import {
+  addHours,
   eachDayOfInterval,
   eachHourOfInterval,
   endOfDay,
@@ -20,6 +21,7 @@ import { Promise } from 'bluebird';
 import { inject, injectable } from 'tsyringe';
 import Period from '@modules/machines/contracts/dtos/period.dto';
 import RoutesRepository from '@modules/routes/contracts/repositories/routes.repository';
+import logger from '@config/logger';
 
 interface Request {
   userId: string;
@@ -310,7 +312,7 @@ export default class DashboardInfoServiceV2 {
       interval = eachHourOfInterval({
         start: startDate,
         end: endDate,
-      });
+      }).map(item => addHours(item, 3));
     } else {
       interval = eachDayOfInterval({
         start: startDate,
