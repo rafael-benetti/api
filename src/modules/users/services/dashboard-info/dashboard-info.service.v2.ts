@@ -329,14 +329,14 @@ export default class DashboardInfoServiceV2 {
         incomeOfPeriod.find(total =>
           period === Period.DAILY
             ? isSameHour(item, new Date(total.id))
-            : isSameDay(item, new Date(total.id).setUTCHours(3)),
+            : isSameDay(item, new Date(total.id)),
         )?.total || 0;
 
       const prizesCountInHour =
         prizesOfPeriod.find(total =>
           period === Period.DAILY
             ? isSameHour(item, new Date(total.id))
-            : isSameDay(item, new Date(total.id).setUTCHours(3)),
+            : isSameDay(item, new Date(total.id)),
         )?.total || 0;
 
       return {

@@ -245,10 +245,10 @@ let DashboardInfoServiceV2 = class DashboardInfoServiceV2 {
         chartData1 = interval.map(item => {
             const incomeInHour = incomeOfPeriod.find(total => period === period_dto_1.default.DAILY
                 ? date_fns_1.isSameHour(item, new Date(total.id))
-                : date_fns_1.isSameDay(item, new Date(total.id).setUTCHours(3)))?.total || 0;
+                : date_fns_1.isSameDay(item, new Date(total.id)))?.total || 0;
             const prizesCountInHour = prizesOfPeriod.find(total => period === period_dto_1.default.DAILY
                 ? date_fns_1.isSameHour(item, new Date(total.id))
-                : date_fns_1.isSameDay(item, new Date(total.id).setUTCHours(3)))?.total || 0;
+                : date_fns_1.isSameDay(item, new Date(total.id)))?.total || 0;
             return {
                 date: item.toISOString(),
                 prizeCount: prizesCountInHour,
