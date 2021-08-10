@@ -9,6 +9,7 @@ import {
   addHours,
   eachDayOfInterval,
   eachHourOfInterval,
+  endOfDay,
   isSameDay,
   isSameHour,
   startOfDay,
@@ -251,7 +252,10 @@ export default class DashboardInfoServiceV2 {
 
     if (period) {
       endDate = new Date(Date.now());
-      if (period === Period.DAILY) startDate = startOfDay(endDate);
+      if (period === Period.DAILY) {
+        startDate = startOfDay(endDate);
+        endDate = endOfDay(endDate);
+      }
       if (period === Period.WEEKLY) startDate = subWeeks(endDate, 1);
       if (period === Period.MONTHLY) startDate = subMonths(endDate, 1);
     }
@@ -307,7 +311,7 @@ export default class DashboardInfoServiceV2 {
       interval = eachHourOfInterval({
         start: startDate,
         end: endDate,
-      });
+      }).map(item => subHours(item, 3));
     } else {
       interval = eachDayOfInterval({
         start: startDate,

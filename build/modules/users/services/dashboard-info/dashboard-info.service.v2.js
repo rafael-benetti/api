@@ -180,8 +180,10 @@ let DashboardInfoServiceV2 = class DashboardInfoServiceV2 {
             period = period_dto_1.default.DAILY;
         if (period) {
             endDate = new Date(Date.now());
-            if (period === period_dto_1.default.DAILY)
+            if (period === period_dto_1.default.DAILY) {
                 startDate = date_fns_1.startOfDay(endDate);
+                endDate = date_fns_1.endOfDay(endDate);
+            }
             if (period === period_dto_1.default.WEEKLY)
                 startDate = date_fns_1.subWeeks(endDate, 1);
             if (period === period_dto_1.default.MONTHLY)
@@ -228,7 +230,7 @@ let DashboardInfoServiceV2 = class DashboardInfoServiceV2 {
             interval = date_fns_1.eachHourOfInterval({
                 start: startDate,
                 end: endDate,
-            });
+            }).map(item => date_fns_1.subHours(item, 3));
         }
         else {
             interval = date_fns_1.eachDayOfInterval({
