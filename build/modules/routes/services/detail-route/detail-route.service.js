@@ -100,7 +100,7 @@ let DetailRouteService = class DetailRouteService {
             filters: {
                 routeId,
                 date: {
-                    startDate,
+                    startDate: date_fns_1.addHours(startDate, 3),
                     endDate: date_fns_1.addHours(endDate, 3),
                 },
             },

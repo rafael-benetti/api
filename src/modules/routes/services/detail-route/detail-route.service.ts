@@ -154,7 +154,7 @@ class DetailRouteService {
       filters: {
         routeId,
         date: {
-          startDate,
+          startDate: addHours(startDate, 3),
           endDate: addHours(endDate, 3),
         },
       },
