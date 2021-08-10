@@ -1,4 +1,3 @@
-import logger from '@config/logger';
 import Period from '@modules/machines/contracts/dtos/period.dto';
 import Machine from '@modules/machines/contracts/models/machine';
 import MachinesRepository from '@modules/machines/contracts/repositories/machines.repository';
@@ -20,6 +19,7 @@ import {
   isSameDay,
   isSameHour,
   startOfDay,
+  subDays,
   subHours,
   subMonths,
   subWeeks,
@@ -186,14 +186,14 @@ class DetailRouteService {
 
       chartData1 = hoursOfInterval.map(hour => {
         const incomeInHour = telemetryLogsIn
-          .filter(telemetry => isSameHour(hour, addHours(telemetry.date, 3)))
+          .filter(telemetry => isSameHour(hour, telemetry.date))
           .reduce(
             (accumulator, currentValue) => accumulator + currentValue.value,
             0,
           );
 
         const prizesCountInHour = telemetryLogsOut
-          .filter(telemetry => isSameHour(hour, addHours(telemetry.date, 3)))
+          .filter(telemetry => isSameHour(hour, telemetry.date))
           .reduce(
             (accumulator, currentValue) => accumulator + currentValue.value,
             0,
@@ -231,14 +231,14 @@ class DetailRouteService {
 
       chartData1 = daysOfInterval.map(day => {
         const incomeInDay = telemetryLogsIn
-          .filter(telemetry => isSameDay(day, addHours(telemetry.date, 3)))
+          .filter(telemetry => isSameDay(day, telemetry.date))
           .reduce(
             (accumulator, currentValue) => accumulator + currentValue.value,
             0,
           );
 
         const prizesCountInDay = telemetryLogsOut
-          .filter(telemetry => isSameDay(day, addHours(telemetry.date, 3)))
+          .filter(telemetry => isSameDay(day, telemetry.date))
           .reduce(
             (accumulator, currentValue) => accumulator + currentValue.value,
             0,

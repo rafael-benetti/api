@@ -15,7 +15,6 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-const logger_1 = __importDefault(require("../../../../config/logger"));
 const period_dto_1 = __importDefault(require("../../../machines/contracts/dtos/period.dto"));
 const machine_1 = __importDefault(require("../../../machines/contracts/models/machine"));
 const machines_repository_1 = __importDefault(require("../../../machines/contracts/repositories/machines.repository"));
@@ -121,10 +120,10 @@ let DetailRouteService = class DetailRouteService {
             }).map(item => date_fns_1.addHours(item, 3));
             chartData1 = hoursOfInterval.map(hour => {
                 const incomeInHour = telemetryLogsIn
-                    .filter(telemetry => date_fns_1.isSameHour(hour, date_fns_1.addHours(telemetry.date, 3)))
+                    .filter(telemetry => date_fns_1.isSameHour(hour, telemetry.date))
                     .reduce((accumulator, currentValue) => accumulator + currentValue.value, 0);
                 const prizesCountInHour = telemetryLogsOut
-                    .filter(telemetry => date_fns_1.isSameHour(hour, date_fns_1.addHours(telemetry.date, 3)))
+                    .filter(telemetry => date_fns_1.isSameHour(hour, telemetry.date))
                     .reduce((accumulator, currentValue) => accumulator + currentValue.value, 0);
                 return {
                     date: hour.toISOString(),
@@ -155,10 +154,10 @@ let DetailRouteService = class DetailRouteService {
             }).map(item => date_fns_1.addHours(item, 4));
             chartData1 = daysOfInterval.map(day => {
                 const incomeInDay = telemetryLogsIn
-                    .filter(telemetry => date_fns_1.isSameDay(day, date_fns_1.addHours(telemetry.date, 3)))
+                    .filter(telemetry => date_fns_1.isSameDay(day, telemetry.date))
                     .reduce((accumulator, currentValue) => accumulator + currentValue.value, 0);
                 const prizesCountInDay = telemetryLogsOut
-                    .filter(telemetry => date_fns_1.isSameDay(day, date_fns_1.addHours(telemetry.date, 3)))
+                    .filter(telemetry => date_fns_1.isSameDay(day, telemetry.date))
                     .reduce((accumulator, currentValue) => accumulator + currentValue.value, 0);
                 return {
                     date: day.toISOString(),
