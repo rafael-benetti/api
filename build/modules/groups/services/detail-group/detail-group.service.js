@@ -258,7 +258,7 @@ let DetailGroupService = class DetailGroupService {
             by: 'groupId',
             value: groupId,
         });
-        const [{ pointsOfSale }, incomePerPointOfSale, lastPurchase,] = await bluebird_1.Promise.all([
+        const [{ pointsOfSale }, incomePerPointOfSale, lastPurchase] = await bluebird_1.Promise.all([
             pointsOfSalePromise,
             incomePerPointOfSalePromise,
             lastPurchasePromise,

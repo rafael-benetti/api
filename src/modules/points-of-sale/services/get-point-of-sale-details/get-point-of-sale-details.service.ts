@@ -17,7 +17,7 @@ import {
   isSameDay,
   isSameHour,
   startOfDay,
-  subDays,
+  subHours,
   subMonths,
   subWeeks,
 } from 'date-fns';
@@ -116,7 +116,10 @@ class GetPointOfSaleDetailsService {
 
     if (period) {
       endDate = new Date(Date.now());
-      if (period === Period.DAILY) startDate = subDays(endDate, 1);
+      if (period === Period.DAILY) {
+        startDate = startOfDay(endDate);
+        endDate = endOfDay(endDate);
+      }
       if (period === Period.WEEKLY) startDate = subWeeks(endDate, 1);
       if (period === Period.MONTHLY) startDate = subMonths(endDate, 1);
     }
@@ -129,14 +132,13 @@ class GetPointOfSaleDetailsService {
       endDate = endOfDay(endDate);
     }
 
-    const telemetryLogs = await this.telemetryLogsRepository.getPointOfSaleIncomePerDate(
-      {
-        endDate,
+    const telemetryLogs =
+      await this.telemetryLogsRepository.getPointOfSaleIncomePerDate({
+        endDate: addHours(endDate, 3),
         pointOfSaleId,
         startDate,
         withHours: period === Period.DAILY,
-      },
-    );
+      });
 
     const telemetryLogsIn = telemetryLogs.filter(
       telemetryLog => telemetryLog.id.type === 'IN',
@@ -159,7 +161,7 @@ class GetPointOfSaleDetailsService {
       const hoursOfInterval = eachHourOfInterval({
         start: startDate,
         end: endDate,
-      });
+      }).map(item => addHours(item, 3));
 
       chartData = hoursOfInterval.map(hour => {
         const incomeInHour =
@@ -183,9 +185,9 @@ class GetPointOfSaleDetailsService {
     // ? CHART DATA PARA PERIODO SEMANAL E MENSAL
     if (period !== Period.DAILY) {
       const daysOfInterval = eachDayOfInterval({
-        start: addHours(startDate, 3),
-        end: addHours(endDate, 3),
-      });
+        start: startDate,
+        end: subHours(endDate, 4),
+      }).map(item => addHours(item, 4));
 
       chartData = daysOfInterval.map(day => {
         const incomeInDay =

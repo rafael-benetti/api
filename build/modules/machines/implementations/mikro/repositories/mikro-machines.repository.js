@@ -261,7 +261,7 @@ class MikroMachinesRepository {
         const machines = await this.repository.aggregate(stages);
         return machines;
     }
-    async count({ ownerId, telemetryStatus, operatorId, groupIds, pointOfSaleId, }) {
+    async count({ ownerId, telemetryStatus, operatorId, groupIds, pointOfSaleId, checkLocationExists, }) {
         const telemetryStatusQuery = {};
         if (telemetryStatus) {
             if (telemetryStatus === 'ONLINE') {
@@ -289,12 +289,14 @@ class MikroMachinesRepository {
             ...(groupIds && { groupId: groupIds }),
             ...(operatorId && { operatorId }),
             ...(pointOfSaleId && { locationId: pointOfSaleId }),
+            ...(checkLocationExists &&
+                !pointOfSaleId && { locationId: { $ne: null } }),
             ...telemetryStatusQuery,
             isActive: true,
         });
         return count;
     }
-    async machinePerCategory({ groupIds, }) {
+    async machinePerCategory({ groupIds }) {
         const stages = [
             {
                 $match: {
@@ -330,7 +332,7 @@ class MikroMachinesRepository {
         const response = await this.repository.aggregate(stages);
         return response;
     }
-    async machinesInventoryByProduct({ groupIds, }) {
+    async machinesInventoryByProduct({ groupIds }) {
         const stages = [
             {
                 $match: {

@@ -100,16 +100,19 @@ let DashboardInfoService = class DashboardInfoService {
             groupIds: isOperator ? undefined : groupIds,
             operatorId: isOperator ? user.id : undefined,
             telemetryStatus: 'OFFLINE',
+            checkLocationExists: true,
         });
         const onlineMachines = await this.machinesRepository.count({
             groupIds: isOperator ? undefined : groupIds,
             operatorId: isOperator ? user.id : undefined,
             telemetryStatus: 'ONLINE',
+            checkLocationExists: true,
         });
         const machinesNeverConnected = await this.machinesRepository.count({
             groupIds: isOperator ? undefined : groupIds,
             operatorId: isOperator ? user.id : undefined,
             telemetryStatus: 'VIRGIN',
+            checkLocationExists: true,
         });
         const machinesWithoutTelemetryBoard = await this.machinesRepository.count({
             groupIds: isOperator ? undefined : groupIds,

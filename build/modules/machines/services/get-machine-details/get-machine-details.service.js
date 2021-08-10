@@ -73,8 +73,10 @@ let GetMachineDetailsService = class GetMachineDetailsService {
         }
         if (period) {
             endDate = new Date(Date.now());
-            if (period === period_dto_1.default.DAILY)
-                startDate = date_fns_1.subDays(endDate, 1);
+            if (period === period_dto_1.default.DAILY) {
+                startDate = date_fns_1.startOfDay(endDate);
+                endDate = date_fns_1.endOfDay(endDate);
+            }
             if (period === period_dto_1.default.WEEKLY)
                 startDate = date_fns_1.subWeeks(endDate, 1);
             if (period === period_dto_1.default.MONTHLY)
@@ -90,14 +92,14 @@ let GetMachineDetailsService = class GetMachineDetailsService {
         }
         const machineIncomePerDayPromise = this.telemetryLogsRepository.getMachineIncomePerDay({
             machineId,
-            endDate,
+            endDate: date_fns_1.addHours(endDate, 3),
             startDate,
             groupIds: [machine.groupId],
             withHours: period === period_dto_1.default.DAILY,
         });
         const machineGivenPrizesPerDayPromise = this.telemetryLogsRepository.getMachineGivenPrizesPerDay({
             machineId,
-            endDate,
+            endDate: date_fns_1.addHours(endDate, 3),
             startDate,
             groupIds: [machine.groupId],
             withHours: period === period_dto_1.default.DAILY,
@@ -180,7 +182,7 @@ let GetMachineDetailsService = class GetMachineDetailsService {
             const hoursOfInterval = date_fns_1.eachHourOfInterval({
                 start: startDate,
                 end: endDate,
-            });
+            }).map(item => date_fns_1.addHours(item, 3));
             chartData = hoursOfInterval.map(hour => {
                 const incomeInHour = machineIncomePerDay.find(telemetry => date_fns_1.isSameHour(hour, new Date(telemetry.id)))?.income || 0;
                 const prizesCountInHour = machineGivenPrizesPerDay.find(telemetry => date_fns_1.isSameHour(hour, new Date(telemetry.id.date)))?.givenPrizes || 0;
@@ -194,12 +196,12 @@ let GetMachineDetailsService = class GetMachineDetailsService {
         // ? CHART DATA PARA PERIODO SEMANAL E MENSAL
         if (period !== period_dto_1.default.DAILY) {
             const daysOfInterval = date_fns_1.eachDayOfInterval({
-                start: date_fns_1.addHours(startDate, 3),
-                end: date_fns_1.addHours(endDate, 3),
-            });
+                start: startDate,
+                end: date_fns_1.subHours(endDate, 4),
+            }).map(item => date_fns_1.addHours(item, 4));
             chartData = daysOfInterval.map(day => {
-                const incomeInDay = machineIncomePerDay.find(telemetry => date_fns_1.isSameDay(day, new Date(telemetry.id).setUTCHours(3)))?.income || 0;
-                const prizesCountInDay = machineGivenPrizesPerDay.find(telemetry => date_fns_1.isSameDay(day, new Date(telemetry.id.date).setUTCHours(3)))?.givenPrizes || 0;
+                const incomeInDay = machineIncomePerDay.find(telemetry => date_fns_1.isSameDay(day, new Date(telemetry.id)))?.income || 0;
+                const prizesCountInDay = machineGivenPrizesPerDay.find(telemetry => date_fns_1.isSameDay(day, new Date(telemetry.id.date)))?.givenPrizes || 0;
                 return {
                     date: day.toISOString(),
                     prizeCount: prizesCountInDay,

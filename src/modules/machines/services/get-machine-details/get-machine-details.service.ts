@@ -19,7 +19,7 @@ import {
   isSameDay,
   isSameHour,
   startOfDay,
-  subDays,
+  subHours,
   subMonths,
   subWeeks,
 } from 'date-fns';
@@ -115,9 +115,8 @@ class GetMachineDetailsService {
       throw AppError.authorizationError;
 
     // ? ULTIMA COLETA
-    const lastCollectionData = await this.collectionsRepository.findLastCollection(
-      machineId,
-    );
+    const lastCollectionData =
+      await this.collectionsRepository.findLastCollection(machineId);
 
     let lastCollection;
     let collectedBy;
@@ -134,7 +133,10 @@ class GetMachineDetailsService {
 
     if (period) {
       endDate = new Date(Date.now());
-      if (period === Period.DAILY) startDate = subDays(endDate, 1);
+      if (period === Period.DAILY) {
+        startDate = startOfDay(endDate);
+        endDate = endOfDay(endDate);
+      }
       if (period === Period.WEEKLY) startDate = subWeeks(endDate, 1);
       if (period === Period.MONTHLY) startDate = subMonths(endDate, 1);
     }
@@ -147,35 +149,32 @@ class GetMachineDetailsService {
       endDate = endOfDay(endDate);
     }
 
-    const machineIncomePerDayPromise = this.telemetryLogsRepository.getMachineIncomePerDay(
-      {
+    const machineIncomePerDayPromise =
+      this.telemetryLogsRepository.getMachineIncomePerDay({
         machineId,
-        endDate,
+        endDate: addHours(endDate, 3),
         startDate,
         groupIds: [machine.groupId],
         withHours: period === Period.DAILY,
-      },
-    );
+      });
 
-    const machineGivenPrizesPerDayPromise = this.telemetryLogsRepository.getMachineGivenPrizesPerDay(
-      {
+    const machineGivenPrizesPerDayPromise =
+      this.telemetryLogsRepository.getMachineGivenPrizesPerDay({
         machineId,
-        endDate,
+        endDate: addHours(endDate, 3),
         startDate,
         groupIds: [machine.groupId],
         withHours: period === Period.DAILY,
-      },
-    );
+      });
 
-    const machineGivenPrizesPerPinPromise = this.telemetryLogsRepository.getMachineGivenPrizesPerDay(
-      {
+    const machineGivenPrizesPerPinPromise =
+      this.telemetryLogsRepository.getMachineGivenPrizesPerDay({
         machineId,
         startDate: machine.lastCollection,
         endDate: new Date(),
         groupIds: [machine.groupId],
         withHours: false,
-      },
-    );
+      });
 
     // ? HISTORICO DE JOGADAS
     const transactionHistoryPromise = await this.telemetryLogsRepository.find({
@@ -272,7 +271,7 @@ class GetMachineDetailsService {
       const hoursOfInterval = eachHourOfInterval({
         start: startDate,
         end: endDate,
-      });
+      }).map(item => addHours(item, 3));
 
       chartData = hoursOfInterval.map(hour => {
         const incomeInHour =
@@ -296,19 +295,19 @@ class GetMachineDetailsService {
     // ? CHART DATA PARA PERIODO SEMANAL E MENSAL
     if (period !== Period.DAILY) {
       const daysOfInterval = eachDayOfInterval({
-        start: addHours(startDate, 3),
-        end: addHours(endDate, 3),
-      });
+        start: startDate,
+        end: subHours(endDate, 4),
+      }).map(item => addHours(item, 4));
 
       chartData = daysOfInterval.map(day => {
         const incomeInDay =
           machineIncomePerDay.find(telemetry =>
-            isSameDay(day, new Date(telemetry.id).setUTCHours(3)),
+            isSameDay(day, new Date(telemetry.id)),
           )?.income || 0;
 
         const prizesCountInDay =
           machineGivenPrizesPerDay.find(telemetry =>
-            isSameDay(day, new Date(telemetry.id.date).setUTCHours(3)),
+            isSameDay(day, new Date(telemetry.id.date)),
           )?.givenPrizes || 0;
 
         return {

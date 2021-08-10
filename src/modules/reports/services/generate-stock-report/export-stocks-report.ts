@@ -25,26 +25,25 @@ export default async function exportGroupsReport({
 
   const sheet = workbook.addWorksheet('tabela 1');
 
-  sheet.mergeCells('A1', 'N1');
-  sheet.getCell('A1').value = 'RELATÓRIO DE ESTOQUE DE USUÁRIO';
+  const columnsPrizesLabel = columnsPrizes.map(prize => {
+    return { key: prize.id, header: prize.label };
+  });
 
-  sheet.getCell('A1').alignment = { horizontal: 'center', vertical: 'middle' };
-
-  const columnsPrizesLabel = columnsPrizes.map(prize => prize.label);
-  const columnsSupliersLabel = columnsSupliers.map(suplie => suplie.label);
+  const columnsSupliersLabel = columnsSupliers.map(supplier => {
+    return { key: supplier.id, header: supplier.label };
+  });
 
   const values = [
-    'Usuário',
-    'Parceria',
+    { key: 'Usuário', header: 'Usuário' },
+    { key: 'Parceria', header: 'Parceria' },
     ...columnsPrizesLabel,
     ...columnsSupliersLabel,
   ];
 
-  sheet.getRow(2).values = values;
-
   const columns = values.map(value => {
     return {
-      key: value,
+      key: value.key,
+      header: value.header,
       style: {
         alignment: { horizontal: 'center', vertical: 'middle' },
       },
@@ -54,6 +53,9 @@ export default async function exportGroupsReport({
 
   sheet.columns = columns;
 
+  logger.info(sheet.columnCount);
+  logger.info(sheet.columns);
+
   users.forEach(item => {
     const groupLabels = `${item.groupLabels}`;
 
@@ -62,17 +64,13 @@ export default async function exportGroupsReport({
       Parceria: groupLabels,
     };
 
-    logger.info(sheet.columns);
-    // logger.info('item.prizes');
-    // logger.info(item.prizes);
-
     columnsPrizes.forEach(value => {
-      row[value.label] =
+      row[value.id] =
         item.prizes?.find(prize => prize.id === value.id)?.quantity || 0;
     });
 
     columnsSupliers.forEach(value => {
-      row[value.label] =
+      row[value.id] =
         item.prizes?.find(suplie => suplie.label === value.id)?.quantity || 0;
     });
 

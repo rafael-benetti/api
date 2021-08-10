@@ -75,7 +75,7 @@ export default class RemoteCreditService {
       machineId: machine.id,
       observations,
       type: MachineLogType.REMOTE_CREDIT,
-      quantity,
+      quantity: Number(quantity),
     });
 
     await this.ormProvider.commit();

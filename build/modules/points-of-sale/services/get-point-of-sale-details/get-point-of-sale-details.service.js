@@ -67,8 +67,10 @@ let GetPointOfSaleDetailsService = class GetPointOfSaleDetailsService {
         }
         if (period) {
             endDate = new Date(Date.now());
-            if (period === period_dto_1.default.DAILY)
-                startDate = date_fns_1.subDays(endDate, 1);
+            if (period === period_dto_1.default.DAILY) {
+                startDate = date_fns_1.startOfDay(endDate);
+                endDate = date_fns_1.endOfDay(endDate);
+            }
             if (period === period_dto_1.default.WEEKLY)
                 startDate = date_fns_1.subWeeks(endDate, 1);
             if (period === period_dto_1.default.MONTHLY)
@@ -83,7 +85,7 @@ let GetPointOfSaleDetailsService = class GetPointOfSaleDetailsService {
             endDate = date_fns_1.endOfDay(endDate);
         }
         const telemetryLogs = await this.telemetryLogsRepository.getPointOfSaleIncomePerDate({
-            endDate,
+            endDate: date_fns_1.addHours(endDate, 3),
             pointOfSaleId,
             startDate,
             withHours: period === period_dto_1.default.DAILY,
@@ -100,7 +102,7 @@ let GetPointOfSaleDetailsService = class GetPointOfSaleDetailsService {
             const hoursOfInterval = date_fns_1.eachHourOfInterval({
                 start: startDate,
                 end: endDate,
-            });
+            }).map(item => date_fns_1.addHours(item, 3));
             chartData = hoursOfInterval.map(hour => {
                 const incomeInHour = telemetryLogsIn
                     .filter(telemetry => date_fns_1.isSameHour(hour, new Date(telemetry.id.date)))
@@ -118,9 +120,9 @@ let GetPointOfSaleDetailsService = class GetPointOfSaleDetailsService {
         // ? CHART DATA PARA PERIODO SEMANAL E MENSAL
         if (period !== period_dto_1.default.DAILY) {
             const daysOfInterval = date_fns_1.eachDayOfInterval({
-                start: date_fns_1.addHours(startDate, 3),
-                end: date_fns_1.addHours(endDate, 3),
-            });
+                start: startDate,
+                end: date_fns_1.subHours(endDate, 4),
+            }).map(item => date_fns_1.addHours(item, 4));
             chartData = daysOfInterval.map(day => {
                 const incomeInDay = telemetryLogsIn
                     .filter(telemetry => date_fns_1.isSameDay(day, new Date(telemetry.id.date)))

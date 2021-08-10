@@ -9,9 +9,10 @@ import {
   addHours,
   eachDayOfInterval,
   eachHourOfInterval,
+  endOfDay,
   isSameDay,
   isSameHour,
-  subDays,
+  startOfDay,
   subHours,
   subMonths,
   subWeeks,
@@ -20,7 +21,6 @@ import { Promise } from 'bluebird';
 import { inject, injectable } from 'tsyringe';
 import Period from '@modules/machines/contracts/dtos/period.dto';
 import RoutesRepository from '@modules/routes/contracts/repositories/routes.repository';
-import logger from '@config/logger';
 
 interface Request {
   userId: string;
@@ -137,8 +137,7 @@ export default class DashboardInfoServiceV2 {
     }
 
     if (pointOfSaleId) locations = [pointOfSaleId];
-    logger.info(startDate);
-    logger.info(endDate);
+
     const machinesSortedByLastCollectionPromise = this.machinesRepository.find({
       checkLocationExists: true,
       orderByLastCollection: true,
@@ -180,19 +179,19 @@ export default class DashboardInfoServiceV2 {
       populate: ['pointOfSale'],
     });
 
-    const machinesSortedByStockPromise = this.machinesRepository.machineSortedByStock(
-      {
+    const machinesSortedByStockPromise =
+      this.machinesRepository.machineSortedByStock({
         groupIds: isOperator ? undefined : groupIds,
         operatorId: isOperator ? user.id : undefined,
         pointOfSaleId: locations,
-      },
-    );
+      });
 
     const offlineMachinesPromise = this.machinesRepository.count({
       groupIds: isOperator ? undefined : groupIds,
       operatorId: isOperator ? user.id : undefined,
       telemetryStatus: 'OFFLINE',
       pointOfSaleId: locations,
+      checkLocationExists: true,
     });
 
     const machinesNeverConnectedPromise = this.machinesRepository.count({
@@ -200,6 +199,7 @@ export default class DashboardInfoServiceV2 {
       operatorId: isOperator ? user.id : undefined,
       telemetryStatus: 'VIRGIN',
       pointOfSaleId: locations,
+      checkLocationExists: true,
     });
 
     const onlineMachinesPromise = this.machinesRepository.count({
@@ -207,6 +207,7 @@ export default class DashboardInfoServiceV2 {
       operatorId: isOperator ? user.id : undefined,
       telemetryStatus: 'ONLINE',
       pointOfSaleId: locations,
+      checkLocationExists: true,
     });
 
     const machinesWithoutTelemetryBoardPromise = this.machinesRepository.count({
@@ -214,6 +215,7 @@ export default class DashboardInfoServiceV2 {
       operatorId: isOperator ? user.id : undefined,
       telemetryStatus: 'NO_TELEMETRY',
       pointOfSaleId: locations,
+      checkLocationExists: true,
     });
 
     const [
@@ -250,7 +252,10 @@ export default class DashboardInfoServiceV2 {
 
     if (period) {
       endDate = new Date(Date.now());
-      if (period === Period.DAILY) startDate = subDays(endDate, 1);
+      if (period === Period.DAILY) {
+        startDate = startOfDay(endDate);
+        endDate = endOfDay(endDate);
+      }
       if (period === Period.WEEKLY) startDate = subWeeks(endDate, 1);
       if (period === Period.MONTHLY) startDate = subMonths(endDate, 1);
     }
@@ -258,40 +263,40 @@ export default class DashboardInfoServiceV2 {
     if (!startDate) throw AppError.unknownError;
     if (!endDate) throw AppError.unknownError;
 
+    if (period !== Period.DAILY) {
+      startDate = startOfDay(startDate);
+      endDate = endOfDay(endDate);
+    }
+
     let chartData1: ChartData1[] = [];
     let income: number = 0;
     let givenPrizesCount: number = 0;
-    logger.info(startDate);
-    logger.info(endDate);
 
-    const incomeOfPeriodPromise = this.telemetryLogsRepository.getGroupIncomePerPeriod(
-      {
+    const incomeOfPeriodPromise =
+      this.telemetryLogsRepository.getGroupIncomePerPeriod({
         groupIds,
         pointsOfSaleIds: locations,
         type: 'IN',
         withHours: period === Period.DAILY,
         startDate,
-        endDate,
-      },
-    );
+        endDate: addHours(endDate, 3),
+      });
 
-    const prizesOfPeriodPromise = this.telemetryLogsRepository.getGroupIncomePerPeriod(
-      {
+    const prizesOfPeriodPromise =
+      this.telemetryLogsRepository.getGroupIncomePerPeriod({
         groupIds,
         pointsOfSaleIds: locations,
         type: 'OUT',
         withHours: period === Period.DAILY,
         startDate,
-        endDate,
-      },
-    );
+        endDate: addHours(endDate, 3),
+      });
 
-    const chartData2Promise = this.telemetryLogsRepository.getIncomePerCounterType(
-      {
+    const chartData2Promise =
+      this.telemetryLogsRepository.getIncomePerCounterType({
         groupIds,
         pointsOfSaleIds: locations,
-      },
-    );
+      });
 
     const [incomeOfPeriod, prizesOfPeriod, chartData2] = await Promise.all([
       incomeOfPeriodPromise,
@@ -311,16 +316,13 @@ export default class DashboardInfoServiceV2 {
       interval = eachHourOfInterval({
         start: startDate,
         end: endDate,
-      });
+      }).map(item => addHours(item, 3));
     } else {
       interval = eachDayOfInterval({
         start: startDate,
         end: subHours(endDate, 4),
       }).map(item => addHours(item, 4));
     }
-
-    logger.info(interval);
-    logger.info(incomeOfPeriod);
 
     chartData1 = interval.map(item => {
       const incomeInHour =

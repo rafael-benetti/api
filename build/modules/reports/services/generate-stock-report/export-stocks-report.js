@@ -10,21 +10,22 @@ const exceljs_1 = __importDefault(require("exceljs"));
 async function exportGroupsReport({ columnsPrizes, columnsSupliers, users, }) {
     const workbook = new exceljs_1.default.Workbook();
     const sheet = workbook.addWorksheet('tabela 1');
-    sheet.mergeCells('A1', 'N1');
-    sheet.getCell('A1').value = 'RELATÓRIO DE ESTOQUE DE USUÁRIO';
-    sheet.getCell('A1').alignment = { horizontal: 'center', vertical: 'middle' };
-    const columnsPrizesLabel = columnsPrizes.map(prize => prize.label);
-    const columnsSupliersLabel = columnsSupliers.map(suplie => suplie.label);
+    const columnsPrizesLabel = columnsPrizes.map(prize => {
+        return { key: prize.id, header: prize.label };
+    });
+    const columnsSupliersLabel = columnsSupliers.map(supplier => {
+        return { key: supplier.id, header: supplier.label };
+    });
     const values = [
-        'Usuário',
-        'Parceria',
+        { key: 'Usuário', header: 'Usuário' },
+        { key: 'Parceria', header: 'Parceria' },
         ...columnsPrizesLabel,
         ...columnsSupliersLabel,
     ];
-    sheet.getRow(2).values = values;
     const columns = values.map(value => {
         return {
-            key: value,
+            key: value.key,
+            header: value.header,
             style: {
                 alignment: { horizontal: 'center', vertical: 'middle' },
             },
@@ -32,21 +33,20 @@ async function exportGroupsReport({ columnsPrizes, columnsSupliers, users, }) {
         };
     });
     sheet.columns = columns;
+    logger_1.default.info(sheet.columnCount);
+    logger_1.default.info(sheet.columns);
     users.forEach(item => {
         const groupLabels = `${item.groupLabels}`;
         const row = {
             Usuário: item.name,
             Parceria: groupLabels,
         };
-        logger_1.default.info(sheet.columns);
-        // logger.info('item.prizes');
-        // logger.info(item.prizes);
         columnsPrizes.forEach(value => {
-            row[value.label] =
+            row[value.id] =
                 item.prizes?.find(prize => prize.id === value.id)?.quantity || 0;
         });
         columnsSupliers.forEach(value => {
-            row[value.label] =
+            row[value.id] =
                 item.prizes?.find(suplie => suplie.label === value.id)?.quantity || 0;
         });
         sheet.addRow(row);
