@@ -85,9 +85,9 @@ let GetPointOfSaleDetailsService = class GetPointOfSaleDetailsService {
             endDate = date_fns_1.endOfDay(endDate);
         }
         const telemetryLogs = await this.telemetryLogsRepository.getPointOfSaleIncomePerDate({
+            startDate: date_fns_1.addHours(startDate, 3),
             endDate: date_fns_1.addHours(endDate, 3),
             pointOfSaleId,
-            startDate,
             withHours: period === period_dto_1.default.DAILY,
         });
         const telemetryLogsIn = telemetryLogs.filter(telemetryLog => telemetryLog.id.type === 'IN');
