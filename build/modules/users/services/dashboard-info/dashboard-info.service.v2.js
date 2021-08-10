@@ -27,7 +27,6 @@ const bluebird_1 = require("bluebird");
 const tsyringe_1 = require("tsyringe");
 const period_dto_1 = __importDefault(require("../../../machines/contracts/dtos/period.dto"));
 const routes_repository_1 = __importDefault(require("../../../routes/contracts/repositories/routes.repository"));
-const logger_1 = __importDefault(require("../../../../config/logger"));
 let DashboardInfoServiceV2 = class DashboardInfoServiceV2 {
     constructor(usersRepository, machinesRepository, groupsRepository, telemetryLogsRepository, routesRepository) {
         this.usersRepository = usersRepository;
@@ -207,7 +206,7 @@ let DashboardInfoServiceV2 = class DashboardInfoServiceV2 {
             type: 'IN',
             withHours: period === period_dto_1.default.DAILY,
             startDate,
-            endDate,
+            endDate: date_fns_1.addHours(endDate, 3),
         });
         const prizesOfPeriodPromise = this.telemetryLogsRepository.getGroupIncomePerPeriod({
             groupIds,
@@ -245,7 +244,7 @@ let DashboardInfoServiceV2 = class DashboardInfoServiceV2 {
         }
         chartData1 = interval.map(item => {
             const incomeInHour = incomeOfPeriod.find(total => period === period_dto_1.default.DAILY
-                ? date_fns_1.isSameHour(item, date_fns_1.subHours(new Date(total.id), 3))
+                ? date_fns_1.isSameHour(item, new Date(total.id))
                 : date_fns_1.isSameDay(item, new Date(total.id)))?.total || 0;
             const prizesCountInHour = prizesOfPeriod.find(total => period === period_dto_1.default.DAILY
                 ? date_fns_1.isSameHour(item, new Date(total.id))

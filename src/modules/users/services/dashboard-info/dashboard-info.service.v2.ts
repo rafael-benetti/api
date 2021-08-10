@@ -21,7 +21,6 @@ import { Promise } from 'bluebird';
 import { inject, injectable } from 'tsyringe';
 import Period from '@modules/machines/contracts/dtos/period.dto';
 import RoutesRepository from '@modules/routes/contracts/repositories/routes.repository';
-import logger from '@config/logger';
 
 interface Request {
   userId: string;
@@ -280,7 +279,7 @@ export default class DashboardInfoServiceV2 {
         type: 'IN',
         withHours: period === Period.DAILY,
         startDate,
-        endDate,
+        endDate: addHours(endDate, 3),
       });
 
     const prizesOfPeriodPromise =
@@ -329,7 +328,7 @@ export default class DashboardInfoServiceV2 {
       const incomeInHour =
         incomeOfPeriod.find(total =>
           period === Period.DAILY
-            ? isSameHour(item, subHours(new Date(total.id), 3))
+            ? isSameHour(item, new Date(total.id))
             : isSameDay(item, new Date(total.id)),
         )?.total || 0;
 
