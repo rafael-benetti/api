@@ -182,7 +182,7 @@ let DashboardInfoServiceV2 = class DashboardInfoServiceV2 {
             endDate = new Date(Date.now());
             if (period === period_dto_1.default.DAILY) {
                 startDate = date_fns_1.startOfDay(endDate);
-                endDate = date_fns_1.endOfDay(endDate);
+                endDate = new Date(date_fns_1.endOfDay(endDate).toUTCString());
             }
             if (period === period_dto_1.default.WEEKLY)
                 startDate = date_fns_1.subWeeks(endDate, 1);

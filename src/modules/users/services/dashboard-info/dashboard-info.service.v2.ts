@@ -254,7 +254,7 @@ export default class DashboardInfoServiceV2 {
       endDate = new Date(Date.now());
       if (period === Period.DAILY) {
         startDate = startOfDay(endDate);
-        endDate = endOfDay(endDate);
+        endDate = new Date(endOfDay(endDate).toUTCString());
       }
       if (period === Period.WEEKLY) startDate = subWeeks(endDate, 1);
       if (period === Period.MONTHLY) startDate = subMonths(endDate, 1);
