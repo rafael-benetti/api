@@ -19,7 +19,6 @@ import {
   isSameDay,
   isSameHour,
   startOfDay,
-  subDays,
   subHours,
   subMonths,
   subWeeks,
@@ -135,7 +134,10 @@ class DetailRouteService {
 
     if (period) {
       endDate = new Date(Date.now());
-      if (period === Period.DAILY) startDate = subDays(endDate, 1);
+      if (period === Period.DAILY) {
+        startDate = startOfDay(endDate);
+        endDate = endOfDay(endDate);
+      }
       if (period === Period.WEEKLY) startDate = subWeeks(endDate, 1);
       if (period === Period.MONTHLY) startDate = subMonths(endDate, 1);
     }
@@ -179,7 +181,7 @@ class DetailRouteService {
       const hoursOfInterval = eachHourOfInterval({
         start: startDate,
         end: endDate,
-      });
+      }).map(item => addHours(item, 3));
 
       chartData1 = hoursOfInterval.map(hour => {
         const incomeInHour = telemetryLogsIn

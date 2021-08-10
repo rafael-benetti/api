@@ -73,8 +73,10 @@ let GetMachineDetailsService = class GetMachineDetailsService {
         }
         if (period) {
             endDate = new Date(Date.now());
-            if (period === period_dto_1.default.DAILY)
-                startDate = date_fns_1.subDays(endDate, 1);
+            if (period === period_dto_1.default.DAILY) {
+                startDate = date_fns_1.startOfDay(endDate);
+                endDate = date_fns_1.endOfDay(endDate);
+            }
             if (period === period_dto_1.default.WEEKLY)
                 startDate = date_fns_1.subWeeks(endDate, 1);
             if (period === period_dto_1.default.MONTHLY)
@@ -84,8 +86,10 @@ let GetMachineDetailsService = class GetMachineDetailsService {
             throw app_error_1.default.unknownError;
         if (!endDate)
             throw app_error_1.default.unknownError;
-        startDate = date_fns_1.startOfDay(startDate);
-        endDate = date_fns_1.endOfDay(endDate);
+        if (period !== period_dto_1.default.DAILY) {
+            startDate = date_fns_1.startOfDay(startDate);
+            endDate = date_fns_1.endOfDay(endDate);
+        }
         const machineIncomePerDayPromise = this.telemetryLogsRepository.getMachineIncomePerDay({
             machineId,
             endDate,

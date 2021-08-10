@@ -67,8 +67,10 @@ let GetPointOfSaleDetailsService = class GetPointOfSaleDetailsService {
         }
         if (period) {
             endDate = new Date(Date.now());
-            if (period === period_dto_1.default.DAILY)
-                startDate = date_fns_1.subDays(endDate, 1);
+            if (period === period_dto_1.default.DAILY) {
+                startDate = date_fns_1.startOfDay(endDate);
+                endDate = date_fns_1.endOfDay(endDate);
+            }
             if (period === period_dto_1.default.WEEKLY)
                 startDate = date_fns_1.subWeeks(endDate, 1);
             if (period === period_dto_1.default.MONTHLY)
@@ -100,7 +102,7 @@ let GetPointOfSaleDetailsService = class GetPointOfSaleDetailsService {
             const hoursOfInterval = date_fns_1.eachHourOfInterval({
                 start: startDate,
                 end: endDate,
-            });
+            }).map(item => date_fns_1.addHours(item, 3));
             chartData = hoursOfInterval.map(hour => {
                 const incomeInHour = telemetryLogsIn
                     .filter(telemetry => date_fns_1.isSameHour(hour, new Date(telemetry.id.date)))

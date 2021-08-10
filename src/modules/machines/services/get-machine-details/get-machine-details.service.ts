@@ -19,7 +19,6 @@ import {
   isSameDay,
   isSameHour,
   startOfDay,
-  subDays,
   subHours,
   subMonths,
   subWeeks,
@@ -134,7 +133,10 @@ class GetMachineDetailsService {
 
     if (period) {
       endDate = new Date(Date.now());
-      if (period === Period.DAILY) startDate = subDays(endDate, 1);
+      if (period === Period.DAILY) {
+        startDate = startOfDay(endDate);
+        endDate = endOfDay(endDate);
+      }
       if (period === Period.WEEKLY) startDate = subWeeks(endDate, 1);
       if (period === Period.MONTHLY) startDate = subMonths(endDate, 1);
     }
@@ -142,8 +144,10 @@ class GetMachineDetailsService {
     if (!startDate) throw AppError.unknownError;
     if (!endDate) throw AppError.unknownError;
 
-    startDate = startOfDay(startDate);
-    endDate = endOfDay(endDate);
+    if (period !== Period.DAILY) {
+      startDate = startOfDay(startDate);
+      endDate = endOfDay(endDate);
+    }
 
     const machineIncomePerDayPromise =
       this.telemetryLogsRepository.getMachineIncomePerDay({
