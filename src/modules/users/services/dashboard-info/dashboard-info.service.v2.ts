@@ -263,6 +263,11 @@ export default class DashboardInfoServiceV2 {
     if (!startDate) throw AppError.unknownError;
     if (!endDate) throw AppError.unknownError;
 
+    if (period !== Period.DAILY) {
+      startDate = startOfDay(startDate);
+      endDate = endOfDay(endDate);
+    }
+
     let chartData1: ChartData1[] = [];
     let income: number = 0;
     let givenPrizesCount: number = 0;
@@ -324,14 +329,14 @@ export default class DashboardInfoServiceV2 {
         incomeOfPeriod.find(total =>
           period === Period.DAILY
             ? isSameHour(item, new Date(total.id))
-            : isSameDay(item, new Date(total.id)),
+            : isSameDay(item, new Date(total.id).setUTCHours(3)),
         )?.total || 0;
 
       const prizesCountInHour =
         prizesOfPeriod.find(total =>
           period === Period.DAILY
             ? isSameHour(item, new Date(total.id))
-            : isSameDay(item, new Date(total.id)),
+            : isSameDay(item, new Date(total.id).setUTCHours(3)),
         )?.total || 0;
 
       return {
