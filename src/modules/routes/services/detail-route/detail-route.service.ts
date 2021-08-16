@@ -134,20 +134,22 @@ class DetailRouteService {
 
     if (period) {
       endDate = new Date();
-      if (period === Period.DAILY) startDate = startOfDay(subHours(endDate, 3));
-      if (period === Period.WEEKLY) startDate = subWeeks(endDate, 1);
-      if (period === Period.MONTHLY) startDate = subMonths(endDate, 1);
+      if (period === Period.DAILY) {
+        startDate = startOfDay(subHours(endDate, 3));
+        endDate = endOfDay(subHours(endDate, 3));
+      }
+      if (period === Period.WEEKLY) {
+        startDate = startOfDay(subWeeks(endDate, 1));
+        endDate = endOfDay(subHours(endDate, 3));
+      }
+      if (period === Period.MONTHLY) {
+        startDate = startOfDay(subMonths(endDate, 1));
+        endDate = endOfDay(subHours(endDate, 3));
+      }
     }
 
     if (!startDate) throw AppError.unknownError;
     if (!endDate) throw AppError.unknownError;
-
-    if (period !== Period.DAILY) {
-      startDate = startOfDay(startDate);
-    }
-
-    endDate = endOfDay(subHours(endDate, 3));
-
     const telemetryLogs = await this.telemetryLogsRepository.find({
       filters: {
         routeId,
