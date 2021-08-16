@@ -73,7 +73,7 @@ let GetMachineDetailsService = class GetMachineDetailsService {
             }))?.name;
         }
         if (period) {
-            endDate = new Date(new Date(Date.now()).setHours(22));
+            endDate = new Date('2021-08-17T02:00:00Z');
             if (period === period_dto_1.default.DAILY)
                 startDate = date_fns_1.startOfDay(endDate);
             if (period === period_dto_1.default.WEEKLY)
@@ -87,6 +87,8 @@ let GetMachineDetailsService = class GetMachineDetailsService {
             throw app_error_1.default.unknownError;
         startDate = date_fns_1.startOfDay(startDate);
         endDate = date_fns_1.endOfDay(endDate);
+        logger_1.default.info(startDate);
+        logger_1.default.info(endDate);
         const machineIncomePerDayPromise = this.telemetryLogsRepository.getMachineIncomePerDay({
             machineId,
             startDate: date_fns_1.addHours(startDate, 3),
@@ -207,13 +209,13 @@ let GetMachineDetailsService = class GetMachineDetailsService {
             });
         }
         return {
-            machine,
             income,
+            chartData,
+            machine,
             lastCollection,
             lastConnection,
             boxesInfo,
             givenPrizes,
-            chartData,
             transactionHistory,
             machineLogs,
             collectedBy,
