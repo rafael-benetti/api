@@ -15,7 +15,6 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-const logger_1 = __importDefault(require("../../../../config/logger"));
 const collections_repository_1 = __importDefault(require("../../../collections/contracts/repositories/collections.repository"));
 const couter_types_repository_1 = __importDefault(require("../../../counter-types/contracts/repositories/couter-types.repository"));
 const machine_log_1 = __importDefault(require("../../../machine-logs/contracts/entities/machine-log"));
@@ -73,7 +72,7 @@ let GetMachineDetailsService = class GetMachineDetailsService {
             }))?.name;
         }
         if (period) {
-            endDate = new Date('2021-08-17T02:00:00Z');
+            endDate = new Date();
             if (period === period_dto_1.default.DAILY)
                 startDate = date_fns_1.startOfDay(date_fns_1.subHours(endDate, 3));
             if (period === period_dto_1.default.WEEKLY)

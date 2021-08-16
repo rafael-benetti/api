@@ -120,7 +120,7 @@ let DashboardInfoService = class DashboardInfoService {
             telemetryStatus: 'NO_TELEMETRY',
         });
         if (period) {
-            endDate = new Date(Date.now());
+            endDate = new Date();
             if (period === period_dto_1.default.DAILY)
                 startDate = date_fns_1.subDays(endDate, 1);
             if (period === period_dto_1.default.WEEKLY)

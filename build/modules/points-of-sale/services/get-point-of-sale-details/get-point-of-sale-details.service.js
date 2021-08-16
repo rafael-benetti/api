@@ -66,11 +66,9 @@ let GetPointOfSaleDetailsService = class GetPointOfSaleDetailsService {
             });
         }
         if (period) {
-            endDate = new Date(Date.now());
-            if (period === period_dto_1.default.DAILY) {
-                startDate = date_fns_1.startOfDay(endDate);
-                endDate = date_fns_1.endOfDay(endDate);
-            }
+            endDate = new Date();
+            if (period === period_dto_1.default.DAILY)
+                startDate = date_fns_1.startOfDay(date_fns_1.subHours(endDate, 3));
             if (period === period_dto_1.default.WEEKLY)
                 startDate = date_fns_1.subWeeks(endDate, 1);
             if (period === period_dto_1.default.MONTHLY)
@@ -82,8 +80,8 @@ let GetPointOfSaleDetailsService = class GetPointOfSaleDetailsService {
             throw app_error_1.default.unknownError;
         if (period !== period_dto_1.default.DAILY) {
             startDate = date_fns_1.startOfDay(startDate);
-            endDate = date_fns_1.endOfDay(endDate);
         }
+        endDate = date_fns_1.endOfDay(date_fns_1.subHours(endDate, 3));
         const telemetryLogs = await this.telemetryLogsRepository.getPointOfSaleIncomePerDate({
             startDate: date_fns_1.addHours(startDate, 3),
             endDate: date_fns_1.addHours(endDate, 3),
