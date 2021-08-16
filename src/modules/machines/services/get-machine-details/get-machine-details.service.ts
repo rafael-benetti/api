@@ -146,7 +146,7 @@ class GetMachineDetailsService {
     if (period !== Period.DAILY) {
       startDate = startOfDay(startDate);
     }
-    endDate = endOfDay(endDate);
+    endDate = endOfDay(subHours(endDate, 3));
 
     const machineIncomePerDayPromise =
       this.telemetryLogsRepository.getMachineIncomePerDay({

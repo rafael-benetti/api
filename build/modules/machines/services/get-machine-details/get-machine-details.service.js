@@ -88,7 +88,7 @@ let GetMachineDetailsService = class GetMachineDetailsService {
         if (period !== period_dto_1.default.DAILY) {
             startDate = date_fns_1.startOfDay(startDate);
         }
-        endDate = date_fns_1.endOfDay(endDate);
+        endDate = date_fns_1.endOfDay(date_fns_1.subHours(endDate, 3));
         const machineIncomePerDayPromise = this.telemetryLogsRepository.getMachineIncomePerDay({
             machineId,
             startDate: date_fns_1.addHours(startDate, 3),
