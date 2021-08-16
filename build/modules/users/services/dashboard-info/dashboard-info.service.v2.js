@@ -180,21 +180,23 @@ let DashboardInfoServiceV2 = class DashboardInfoServiceV2 {
             period = period_dto_1.default.DAILY;
         if (period) {
             endDate = new Date();
-            if (period === period_dto_1.default.DAILY)
+            if (period === period_dto_1.default.DAILY) {
                 startDate = date_fns_1.startOfDay(date_fns_1.subHours(endDate, 3));
-            if (period === period_dto_1.default.WEEKLY)
-                startDate = date_fns_1.subWeeks(endDate, 1);
-            if (period === period_dto_1.default.MONTHLY)
-                startDate = date_fns_1.subMonths(endDate, 1);
+                endDate = date_fns_1.endOfDay(date_fns_1.subHours(endDate, 3));
+            }
+            if (period === period_dto_1.default.WEEKLY) {
+                startDate = date_fns_1.startOfDay(date_fns_1.subWeeks(endDate, 1));
+                endDate = date_fns_1.endOfDay(date_fns_1.subHours(endDate, 3));
+            }
+            if (period === period_dto_1.default.MONTHLY) {
+                startDate = date_fns_1.startOfDay(date_fns_1.subMonths(endDate, 1));
+                endDate = date_fns_1.endOfDay(date_fns_1.subHours(endDate, 3));
+            }
         }
         if (!startDate)
             throw app_error_1.default.unknownError;
         if (!endDate)
             throw app_error_1.default.unknownError;
-        if (period !== period_dto_1.default.DAILY) {
-            startDate = date_fns_1.startOfDay(startDate);
-        }
-        endDate = date_fns_1.endOfDay(date_fns_1.subHours(endDate, 3));
         let chartData1 = [];
         let income = 0;
         let givenPrizesCount = 0;
@@ -237,7 +239,7 @@ let DashboardInfoServiceV2 = class DashboardInfoServiceV2 {
         else {
             interval = date_fns_1.eachDayOfInterval({
                 start: startDate,
-                end: date_fns_1.addHours(endDate, 3),
+                end: date_fns_1.addHours(endDate, 4),
             });
         }
         chartData1 = interval.map(item => {
