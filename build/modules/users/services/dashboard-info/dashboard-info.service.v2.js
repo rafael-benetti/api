@@ -237,7 +237,7 @@ let DashboardInfoServiceV2 = class DashboardInfoServiceV2 {
         else {
             interval = date_fns_1.eachDayOfInterval({
                 start: startDate,
-                end: endDate,
+                end: date_fns_1.addHours(endDate, 3),
             });
         }
         chartData1 = interval.map(item => {
