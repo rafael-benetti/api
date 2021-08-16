@@ -48,6 +48,7 @@ interface BoxInfo {
 }
 
 interface Response {
+  date: Date;
   machine: Machine;
   lastConnection?: Date;
   lastCollection?: Date;
@@ -133,7 +134,7 @@ class GetMachineDetailsService {
     }
 
     if (period) {
-      endDate = new Date('2021-08-17T02:00:00Z');
+      endDate = new Date(new Date('2021-08-17T02:00:00Z').setUTCHours(-3));
       if (period === Period.DAILY) startDate = startOfDay(endDate);
       if (period === Period.WEEKLY) startDate = subWeeks(endDate, 1);
       if (period === Period.MONTHLY) startDate = subMonths(endDate, 1);
@@ -142,7 +143,9 @@ class GetMachineDetailsService {
     if (!startDate) throw AppError.unknownError;
     if (!endDate) throw AppError.unknownError;
 
-    startDate = startOfDay(startDate);
+    if (period !== Period.DAILY) {
+      startDate = startOfDay(startDate);
+    }
     endDate = endOfDay(endDate);
 
     logger.info(startDate);
@@ -318,6 +321,7 @@ class GetMachineDetailsService {
     }
 
     return {
+      date: new Date(Date.now()),
       income,
       chartData,
       machine,
