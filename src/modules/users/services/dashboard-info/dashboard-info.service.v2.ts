@@ -321,8 +321,8 @@ export default class DashboardInfoServiceV2 {
     } else {
       interval = eachDayOfInterval({
         start: startDate,
-        end: addHours(endDate, 4),
-      });
+        end: subHours(endDate, 4),
+      }).map(item => addHours(item, 4));
     }
 
     chartData1 = interval.map(item => {
