@@ -134,8 +134,8 @@ class GetMachineDetailsService {
     }
 
     if (period) {
-      endDate = new Date(new Date('2021-08-17T02:00:00Z').setUTCHours(-3));
-      if (period === Period.DAILY) startDate = startOfDay(endDate);
+      endDate = new Date('2021-08-17T02:00:00Z');
+      if (period === Period.DAILY) startDate = startOfDay(subHours(endDate, 3));
       if (period === Period.WEEKLY) startDate = subWeeks(endDate, 1);
       if (period === Period.MONTHLY) startDate = subMonths(endDate, 1);
     }
@@ -147,9 +147,6 @@ class GetMachineDetailsService {
       startDate = startOfDay(startDate);
     }
     endDate = endOfDay(endDate);
-
-    logger.info(startDate);
-    logger.info(endDate);
 
     const machineIncomePerDayPromise =
       this.telemetryLogsRepository.getMachineIncomePerDay({
@@ -323,8 +320,9 @@ class GetMachineDetailsService {
     return {
       date: {
         now: new Date(),
-        startDate: startOfDay(new Date()),
-        endOfDay: endOfDay(new Date()),
+        startDate,
+        endDate,
+        utc: new Date(new Date().setUTCHours(-3)),
       },
       income,
       chartData,
