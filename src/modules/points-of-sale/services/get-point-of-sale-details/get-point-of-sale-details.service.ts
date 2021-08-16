@@ -115,11 +115,8 @@ class GetPointOfSaleDetailsService {
     }
 
     if (period) {
-      endDate = new Date(Date.now());
-      if (period === Period.DAILY) {
-        startDate = startOfDay(endDate);
-        endDate = endOfDay(endDate);
-      }
+      endDate = new Date();
+      if (period === Period.DAILY) startDate = startOfDay(subHours(endDate, 3));
       if (period === Period.WEEKLY) startDate = subWeeks(endDate, 1);
       if (period === Period.MONTHLY) startDate = subMonths(endDate, 1);
     }
@@ -129,8 +126,8 @@ class GetPointOfSaleDetailsService {
 
     if (period !== Period.DAILY) {
       startDate = startOfDay(startDate);
-      endDate = endOfDay(endDate);
     }
+    endDate = endOfDay(subHours(endDate, 3));
 
     const telemetryLogs =
       await this.telemetryLogsRepository.getPointOfSaleIncomePerDate({

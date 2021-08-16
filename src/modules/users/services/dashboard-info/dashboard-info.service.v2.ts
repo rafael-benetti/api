@@ -251,11 +251,8 @@ export default class DashboardInfoServiceV2 {
     if (!startDate && !endDate && !period) period = Period.DAILY;
 
     if (period) {
-      endDate = new Date(Date.now());
-      if (period === Period.DAILY) {
-        startDate = startOfDay(endDate);
-        endDate = endOfDay(endDate);
-      }
+      endDate = new Date();
+      if (period === Period.DAILY) startDate = startOfDay(subHours(endDate, 3));
       if (period === Period.WEEKLY) startDate = subWeeks(endDate, 1);
       if (period === Period.MONTHLY) startDate = subMonths(endDate, 1);
     }
@@ -265,8 +262,8 @@ export default class DashboardInfoServiceV2 {
 
     if (period !== Period.DAILY) {
       startDate = startOfDay(startDate);
-      endDate = endOfDay(endDate);
     }
+    endDate = endOfDay(subHours(endDate, 3));
 
     let chartData1: ChartData1[] = [];
     let income: number = 0;

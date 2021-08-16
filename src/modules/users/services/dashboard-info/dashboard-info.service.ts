@@ -181,7 +181,7 @@ export default class DashboardInfoService {
     });
 
     if (period) {
-      endDate = new Date(Date.now());
+      endDate = new Date();
       if (period === Period.DAILY) startDate = subDays(endDate, 1);
       if (period === Period.WEEKLY) startDate = subWeeks(endDate, 1);
       if (period === Period.MONTHLY) startDate = subMonths(endDate, 1);
