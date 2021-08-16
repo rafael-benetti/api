@@ -15,6 +15,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
+const logger_1 = __importDefault(require("../../../../config/logger"));
 const collections_repository_1 = __importDefault(require("../../../collections/contracts/repositories/collections.repository"));
 const couter_types_repository_1 = __importDefault(require("../../../counter-types/contracts/repositories/couter-types.repository"));
 const machine_log_1 = __importDefault(require("../../../machine-logs/contracts/entities/machine-log"));
@@ -72,11 +73,9 @@ let GetMachineDetailsService = class GetMachineDetailsService {
             }))?.name;
         }
         if (period) {
-            endDate = new Date(Date.now());
-            if (period === period_dto_1.default.DAILY) {
+            endDate = new Date(new Date(Date.now()).setHours(22));
+            if (period === period_dto_1.default.DAILY)
                 startDate = date_fns_1.startOfDay(endDate);
-                endDate = date_fns_1.endOfDay(endDate);
-            }
             if (period === period_dto_1.default.WEEKLY)
                 startDate = date_fns_1.subWeeks(endDate, 1);
             if (period === period_dto_1.default.MONTHLY)
@@ -86,10 +85,8 @@ let GetMachineDetailsService = class GetMachineDetailsService {
             throw app_error_1.default.unknownError;
         if (!endDate)
             throw app_error_1.default.unknownError;
-        if (period !== period_dto_1.default.DAILY) {
-            startDate = date_fns_1.startOfDay(startDate);
-            endDate = date_fns_1.endOfDay(endDate);
-        }
+        startDate = date_fns_1.startOfDay(startDate);
+        endDate = date_fns_1.endOfDay(endDate);
         const machineIncomePerDayPromise = this.telemetryLogsRepository.getMachineIncomePerDay({
             machineId,
             startDate: date_fns_1.addHours(startDate, 3),
