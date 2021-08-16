@@ -48,7 +48,7 @@ interface BoxInfo {
 }
 
 interface Response {
-  date: Date;
+  date: any;
   machine: Machine;
   lastConnection?: Date;
   lastCollection?: Date;
@@ -321,7 +321,11 @@ class GetMachineDetailsService {
     }
 
     return {
-      date: new Date(Date.now()),
+      date: {
+        now: new Date(),
+        startDate: startOfDay(new Date()),
+        endOfDay: endOfDay(new Date()),
+      },
       income,
       chartData,
       machine,

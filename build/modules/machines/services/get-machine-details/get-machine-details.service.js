@@ -211,7 +211,11 @@ let GetMachineDetailsService = class GetMachineDetailsService {
             });
         }
         return {
-            date: new Date(Date.now()),
+            date: {
+                now: new Date(),
+                startDate: date_fns_1.startOfDay(new Date()),
+                endOfDay: date_fns_1.endOfDay(new Date()),
+            },
             income,
             chartData,
             machine,
