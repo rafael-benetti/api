@@ -19,8 +19,7 @@ import {
   isSameDay,
   isSameHour,
   startOfDay,
-  startOfHour,
-  subDays,
+  subHours,
   subMonths,
   subWeeks,
 } from 'date-fns';
@@ -218,21 +217,23 @@ export default class DetailGroupServiceV2 {
     if (!startDate && !endDate && !period) period = Period.DAILY;
 
     if (period) {
-      endDate = new Date(Date.now());
-      if (period === Period.DAILY) startDate = subDays(endDate, 1);
-      if (period === Period.WEEKLY) startDate = subWeeks(endDate, 1);
-      if (period === Period.MONTHLY) startDate = subMonths(endDate, 1);
+      endDate = new Date();
+      if (period === Period.DAILY) {
+        startDate = startOfDay(subHours(endDate, 3));
+        endDate = endOfDay(subHours(endDate, 3));
+      }
+      if (period === Period.WEEKLY) {
+        startDate = startOfDay(subWeeks(endDate, 1));
+        endDate = endOfDay(subHours(endDate, 3));
+      }
+      if (period === Period.MONTHLY) {
+        startDate = startOfDay(subMonths(endDate, 1));
+        endDate = endOfDay(subHours(endDate, 3));
+      }
     }
 
     if (!startDate) throw AppError.unknownError;
     if (!endDate) throw AppError.unknownError;
-
-    if (period !== Period.DAILY) {
-      startDate = startOfDay(startDate);
-      endDate = endOfDay(endDate);
-    }
-
-    startDate = startOfHour(startDate);
 
     const incomeOfPeriodPromise =
       await this.telemetryLogsRepository.getGroupIncomePerPeriod({
@@ -282,12 +283,12 @@ export default class DetailGroupServiceV2 {
       interval = eachHourOfInterval({
         start: startDate,
         end: endDate,
-      });
+      }).map(item => addHours(item, 3));
     } else {
       interval = eachDayOfInterval({
-        start: addHours(startDate, 3),
-        end: addHours(endDate, 3),
-      });
+        start: startDate,
+        end: subHours(endDate, 4),
+      }).map(item => addHours(item, 4));
     }
 
     const chartData1 = interval.map(item => {
