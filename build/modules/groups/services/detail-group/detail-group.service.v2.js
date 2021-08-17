@@ -138,23 +138,24 @@ let DetailGroupServiceV2 = class DetailGroupServiceV2 {
         if (!startDate && !endDate && !period)
             period = period_dto_1.default.DAILY;
         if (period) {
-            endDate = new Date(Date.now());
-            if (period === period_dto_1.default.DAILY)
-                startDate = date_fns_1.subDays(endDate, 1);
-            if (period === period_dto_1.default.WEEKLY)
-                startDate = date_fns_1.subWeeks(endDate, 1);
-            if (period === period_dto_1.default.MONTHLY)
-                startDate = date_fns_1.subMonths(endDate, 1);
+            endDate = new Date();
+            if (period === period_dto_1.default.DAILY) {
+                startDate = date_fns_1.startOfDay(date_fns_1.subHours(endDate, 3));
+                endDate = date_fns_1.endOfDay(date_fns_1.subHours(endDate, 3));
+            }
+            if (period === period_dto_1.default.WEEKLY) {
+                startDate = date_fns_1.startOfDay(date_fns_1.subWeeks(endDate, 1));
+                endDate = date_fns_1.endOfDay(date_fns_1.subHours(endDate, 3));
+            }
+            if (period === period_dto_1.default.MONTHLY) {
+                startDate = date_fns_1.startOfDay(date_fns_1.subMonths(endDate, 1));
+                endDate = date_fns_1.endOfDay(date_fns_1.subHours(endDate, 3));
+            }
         }
         if (!startDate)
             throw app_error_1.default.unknownError;
         if (!endDate)
             throw app_error_1.default.unknownError;
-        if (period !== period_dto_1.default.DAILY) {
-            startDate = date_fns_1.startOfDay(startDate);
-            endDate = date_fns_1.endOfDay(endDate);
-        }
-        startDate = date_fns_1.startOfHour(startDate);
         const incomeOfPeriodPromise = await this.telemetryLogsRepository.getGroupIncomePerPeriod({
             groupIds: [groupId],
             type: 'IN',
@@ -192,13 +193,13 @@ let DetailGroupServiceV2 = class DetailGroupServiceV2 {
             interval = date_fns_1.eachHourOfInterval({
                 start: startDate,
                 end: endDate,
-            });
+            }).map(item => date_fns_1.addHours(item, 3));
         }
         else {
             interval = date_fns_1.eachDayOfInterval({
-                start: date_fns_1.addHours(startDate, 3),
-                end: date_fns_1.addHours(endDate, 3),
-            });
+                start: startDate,
+                end: date_fns_1.subHours(endDate, 4),
+            }).map(item => date_fns_1.addHours(item, 4));
         }
         const chartData1 = interval.map(item => {
             const incomeInHour = incomeOfPeriod.find(total => period === period_dto_1.default.DAILY
