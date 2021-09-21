@@ -1,7 +1,7 @@
 module.exports = {
   apps: [
     {
-      name: 'benv:server',
+      name: 'black-telemetry:server',
       script: './build/shared/server/express/server.js',
       node_args: '-r dotenv/config',
     },

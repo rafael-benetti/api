@@ -52,7 +52,7 @@ class ResertPasswordService {
     this.mailProvider.send({
       receiverName: user.name,
       receiverEmail: user.email,
-      subject: 'Sua nova senha Sttigma está aqui',
+      subject: 'Sua nova senha Black Telemetry está aqui',
       html: `<p>Sua nova senha: ${password}</p>`,
       text: `Sua nova senha: ${password}`,
     });
