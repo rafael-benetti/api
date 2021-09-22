@@ -17,7 +17,7 @@ class NodemailerMailProvider implements MailProvider {
     this.transporter.sendMail({
       from: {
         name: 'Equipe Black Telemetry',
-        address: 'no-reply@blacktelemetyr.com',
+        address: 'no-reply@blacktelemetry.com',
       },
       to: {
         name: data.receiverName,
