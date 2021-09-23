@@ -4,6 +4,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 const group_1 = __importDefault(require("../../../groups/contracts/models/group"));
+const user_1 = __importDefault(require("../../../users/contracts/models/user"));
 const create_telemetry_board_dto_1 = __importDefault(require("../dtos/create-telemetry-board.dto"));
 class TelemetryBoard {
     constructor(data) {

@@ -16,6 +16,11 @@ interface CreateUserDto {
   ownerId?: string;
   isActive?: boolean;
   deviceToken?: string;
+  type?: 'INDIVIDUAL' | 'COMPANY';
+  stateRegistration?: string | undefined;
+  document?: string;
+  subscriptionPrice?: string;
+  subscriptionExpirationDate?: Date;
 }
 
 export default CreateUserDto;

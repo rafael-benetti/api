@@ -22,9 +22,15 @@ let GetAllTelemetryBoardsService = class GetAllTelemetryBoardsService {
     constructor(telemetryBoardsRepository) {
         this.telemetryBoardsRepository = telemetryBoardsRepository;
     }
-    async execute() {
-        const { telemetryBoards } = await this.telemetryBoardsRepository.find({
-            filters: {},
+    async execute({ id, limit, offset, ownerId, groupId, }) {
+        const telemetryBoards = await this.telemetryBoardsRepository.find({
+            filters: {
+                ...(id && { id: [id] }),
+                ...(groupId && { groupIds: [groupId] }),
+                ownerId,
+            },
+            limit,
+            offset,
         });
         return telemetryBoards;
     }

@@ -1,4 +1,5 @@
 import Group from '@modules/groups/contracts/models/group';
+import User from '@modules/users/contracts/models/user';
 import CreateTelemetryBoardDto from '../dtos/create-telemetry-board.dto';
 
 class TelemetryBoard {
@@ -17,6 +18,8 @@ class TelemetryBoard {
   connectionStrength?: string;
 
   connectionType?: string;
+
+  owner?: User;
 
   ownerId: string;
 

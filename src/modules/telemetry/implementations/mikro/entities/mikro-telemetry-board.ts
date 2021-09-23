@@ -3,6 +3,7 @@ import MikroGroup from '@modules/groups/implementations/mikro/models/mikro-group
 import MikroMachine from '@modules/machines/implementations/mikro/models/mikro-machine';
 import CreateTelemetryBoardDto from '@modules/telemetry/contracts/dtos/create-telemetry-board.dto';
 import TelemetryBoard from '@modules/telemetry/contracts/entities/telemetry-board';
+import MikroUser from '@modules/users/implementations/mikro/models/mikro-user';
 
 @Entity({ collection: 'telemetry-boards' })
 class MikroTelemetryBoard implements TelemetryBoard {
@@ -11,6 +12,9 @@ class MikroTelemetryBoard implements TelemetryBoard {
 
   @Property()
   ownerId: string;
+
+  @OneToOne({ name: 'ownerId' })
+  owner?: MikroUser;
 
   @Property()
   groupId: string;

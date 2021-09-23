@@ -1,11 +1,34 @@
+import { celebrate, Joi } from 'celebrate';
 import { RequestHandler } from 'express';
 import { container } from 'tsyringe';
 import CreateOwnerService from './create-owner.service';
 
 abstract class CreateOwnerController {
+  static validate = celebrate({
+    body: {
+      email: Joi.string().required(),
+      name: Joi.string().required(),
+      type: Joi.string().valid('INDIVIDUAL', 'COMPANY').required(),
+      phoneNumber: Joi.string().required(),
+      stateRegistration: Joi.string(),
+      document: Joi.string().required(),
+      subscriptionPrice: Joi.number().required(),
+      subscriptionExpirationDate: Joi.date().required(),
+    },
+  });
+
   static handle: RequestHandler = async (req, res) => {
     const { userId } = req;
-    const { email, name } = req.body;
+    const {
+      email,
+      name,
+      type,
+      phoneNumber,
+      stateRegistration,
+      document,
+      subscriptionPrice,
+      subscriptionExpirationDate,
+    } = req.body;
 
     const createOwner = container.resolve(CreateOwnerService);
 
@@ -13,6 +36,12 @@ abstract class CreateOwnerController {
       adminId: userId,
       email,
       name,
+      type,
+      phoneNumber,
+      stateRegistration,
+      document,
+      subscriptionPrice,
+      subscriptionExpirationDate,
     });
 
     return res.json(owner);

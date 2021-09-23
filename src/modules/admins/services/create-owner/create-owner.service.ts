@@ -16,6 +16,12 @@ interface Request {
   adminId: string;
   email: string;
   name: string;
+  phoneNumber: string;
+  type: 'INDIVIDUAL' | 'COMPANY';
+  stateRegistration: string | undefined;
+  document: string;
+  subscriptionPrice: string;
+  subscriptionExpirationDate: Date;
 }
 
 @injectable()
@@ -43,7 +49,17 @@ class CreateOwnerService {
     private ormProvider: OrmProvider,
   ) {}
 
-  async execute({ adminId, email, name }: Request): Promise<void> {
+  async execute({
+    adminId,
+    email,
+    name,
+    document,
+    phoneNumber,
+    stateRegistration,
+    subscriptionExpirationDate,
+    subscriptionPrice,
+    type,
+  }: Request): Promise<void> {
     const admin = await this.adminsRepository.findOne({
       by: 'id',
       value: adminId,
@@ -63,10 +79,17 @@ class CreateOwnerService {
     const password = randomBytes(3).toString('hex');
 
     const user = this.usersRepository.create({
+      name,
       email,
       password: this.hashProvider.hash(password),
-      name,
       role: Role.OWNER,
+      phoneNumber,
+      isActive: true,
+      type,
+      stateRegistration,
+      document,
+      subscriptionPrice,
+      subscriptionExpirationDate,
     });
 
     const mailData = signUpEmailTemplate({

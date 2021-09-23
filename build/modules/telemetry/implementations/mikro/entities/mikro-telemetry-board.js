@@ -17,6 +17,7 @@ const mikro_group_1 = __importDefault(require("../../../../groups/implementation
 const mikro_machine_1 = __importDefault(require("../../../../machines/implementations/mikro/models/mikro-machine"));
 const create_telemetry_board_dto_1 = __importDefault(require("../../../contracts/dtos/create-telemetry-board.dto"));
 const telemetry_board_1 = __importDefault(require("../../../contracts/entities/telemetry-board"));
+const mikro_user_1 = __importDefault(require("../../../../users/implementations/mikro/models/mikro-user"));
 let MikroTelemetryBoard = class MikroTelemetryBoard {
     constructor(data) {
         if (data) {
@@ -38,6 +39,10 @@ __decorate([
     core_1.Property(),
     __metadata("design:type", String)
 ], MikroTelemetryBoard.prototype, "ownerId", void 0);
+__decorate([
+    core_1.OneToOne({ name: 'ownerId' }),
+    __metadata("design:type", mikro_user_1.default)
+], MikroTelemetryBoard.prototype, "owner", void 0);
 __decorate([
     core_1.Property(),
     __metadata("design:type", String)

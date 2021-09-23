@@ -32,6 +32,16 @@ class User {
 
   deviceToken?: string;
 
+  type?: 'INDIVIDUAL' | 'COMPANY';
+
+  stateRegistration?: string | undefined;
+
+  document?: string;
+
+  subscriptionPrice?: string;
+
+  subscriptionExpirationDate?: Date;
+
   constructor(data?: CreateUserDto) {
     if (data) {
       this.id = v4();
@@ -47,6 +57,11 @@ class User {
       this.isActive = data.isActive;
       this.ownerId = data.ownerId;
       this.deviceToken = data.deviceToken;
+      this.type = data.type;
+      this.stateRegistration = data.stateRegistration;
+      this.document = data.deviceToken;
+      this.subscriptionPrice = data.subscriptionPrice;
+      this.subscriptionExpirationDate = data.subscriptionExpirationDate;
     }
   }
 }

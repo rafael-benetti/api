@@ -57,24 +57,26 @@ let MikroTelemetryBoardsRepository = class MikroTelemetryBoardsRepository {
     }
     async find(data) {
         const query = {};
-        if (data.filters.groupIds)
+        if (data.filters.groupIds && data.filters.groupIds.length > 0)
             query.groupId = {
                 $in: data.filters.groupIds,
             };
-        if (data.filters.id)
+        if (data.filters.id) {
             query.id = {
                 $in: data.filters.id,
             };
+        }
         if (data.filters.ownerId)
             query.ownerId = data.filters.ownerId;
         const [telemetryBoards, count] = await this.repository.findAndCount({ ...query }, {
             limit: data.limit,
             offset: data.offset,
-            populate: ['machine', 'group'],
+            populate: ['machine', 'group', 'owner'],
             fields: [
                 'ownerId',
                 'groupId',
                 'group',
+                'owner',
                 'machineId',
                 'machine.serialNumber',
                 'lastConnection',

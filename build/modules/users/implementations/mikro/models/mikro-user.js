@@ -36,6 +36,11 @@ let MikroUser = class MikroUser {
             this.isActive = data.isActive;
             this.ownerId = data.ownerId;
             this.deviceToken = data.deviceToken;
+            this.type = data.type;
+            this.stateRegistration = data.stateRegistration;
+            this.document = data.deviceToken;
+            this.subscriptionPrice = data.subscriptionPrice;
+            this.subscriptionExpirationDate = data.subscriptionExpirationDate;
         }
     }
 };
@@ -91,6 +96,26 @@ __decorate([
     core_1.Property(),
     __metadata("design:type", String)
 ], MikroUser.prototype, "deviceToken", void 0);
+__decorate([
+    core_1.Property(),
+    __metadata("design:type", String)
+], MikroUser.prototype, "type", void 0);
+__decorate([
+    core_1.Property(),
+    __metadata("design:type", String)
+], MikroUser.prototype, "stateRegistration", void 0);
+__decorate([
+    core_1.Property(),
+    __metadata("design:type", String)
+], MikroUser.prototype, "document", void 0);
+__decorate([
+    core_1.Property(),
+    __metadata("design:type", String)
+], MikroUser.prototype, "subscriptionPrice", void 0);
+__decorate([
+    core_1.Property(),
+    __metadata("design:type", Date)
+], MikroUser.prototype, "subscriptionExpirationDate", void 0);
 MikroUser = __decorate([
     core_1.Entity({ collection: 'users' }),
     __metadata("design:paramtypes", [Object])

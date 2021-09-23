@@ -9,9 +9,8 @@ import TelemetryBoardMapper from '../mappers/telemetry-board.mapper';
 
 @injectable()
 class MikroTelemetryBoardsRepository implements TelemetryBoardsRepository {
-  private repository = this.ormProvider.entityManager.getRepository(
-    MikroTelemetryBoard,
-  );
+  private repository =
+    this.ormProvider.entityManager.getRepository(MikroTelemetryBoard);
 
   constructor(
     @inject('OrmProvider')
@@ -52,23 +51,22 @@ class MikroTelemetryBoardsRepository implements TelemetryBoardsRepository {
       : undefined;
   }
 
-  async find(
-    data: FindTelemetryBoardsDto,
-  ): Promise<{
+  async find(data: FindTelemetryBoardsDto): Promise<{
     telemetryBoards: TelemetryBoard[];
     count: number;
   }> {
     const query: { [key: string]: unknown } = {};
 
-    if (data.filters.groupIds)
+    if (data.filters.groupIds && data.filters.groupIds.length > 0)
       query.groupId = {
         $in: data.filters.groupIds,
       };
 
-    if (data.filters.id)
+    if (data.filters.id) {
       query.id = {
         $in: data.filters.id,
       };
+    }
 
     if (data.filters.ownerId) query.ownerId = data.filters.ownerId;
 
@@ -77,11 +75,12 @@ class MikroTelemetryBoardsRepository implements TelemetryBoardsRepository {
       {
         limit: data.limit,
         offset: data.offset,
-        populate: ['machine', 'group'],
+        populate: ['machine', 'group', 'owner'],
         fields: [
           'ownerId',
           'groupId',
           'group',
+          'owner',
           'machineId',
           'machine.serialNumber',
           'lastConnection',

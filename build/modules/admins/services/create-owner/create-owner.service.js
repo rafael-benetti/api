@@ -38,7 +38,7 @@ let CreateOwnerService = class CreateOwnerService {
         this.hashProvider = hashProvider;
         this.ormProvider = ormProvider;
     }
-    async execute({ adminId, email, name }) {
+    async execute({ adminId, email, name, document, phoneNumber, stateRegistration, subscriptionExpirationDate, subscriptionPrice, type, }) {
         const admin = await this.adminsRepository.findOne({
             by: 'id',
             value: adminId,
@@ -54,10 +54,17 @@ let CreateOwnerService = class CreateOwnerService {
             throw app_error_1.default.emailAlreadyUsed;
         const password = crypto_1.randomBytes(3).toString('hex');
         const user = this.usersRepository.create({
+            name,
             email,
             password: this.hashProvider.hash(password),
-            name,
             role: role_1.default.OWNER,
+            phoneNumber,
+            isActive: true,
+            type,
+            stateRegistration,
+            document,
+            subscriptionPrice,
+            subscriptionExpirationDate,
         });
         const mailData = sign_up_email_template_1.default({
             receiverName: user.name,
