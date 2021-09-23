@@ -11,6 +11,11 @@ interface Request {
   email: string;
   name: string;
   password: string;
+  phoneNumber: string;
+  stateRegistration: string | undefined;
+  document: string;
+  subscriptionPrice: string;
+  subscriptionExpirationDate: Date;
 }
 
 @injectable()
@@ -35,6 +40,11 @@ class EditOwnerService {
     name,
     password,
     adminId,
+    document,
+    phoneNumber,
+    stateRegistration,
+    subscriptionExpirationDate,
+    subscriptionPrice,
   }: Request): Promise<void> {
     const admin = await this.adminsRepository.findOne({
       by: 'id',
@@ -55,6 +65,17 @@ class EditOwnerService {
     if (email) user.name = email;
 
     if (name) user.name = name;
+
+    if (document) user.document = document;
+
+    if (phoneNumber) user.phoneNumber = phoneNumber;
+
+    if (stateRegistration) user.stateRegistration = stateRegistration;
+
+    if (subscriptionExpirationDate)
+      user.subscriptionExpirationDate = subscriptionExpirationDate;
+
+    if (subscriptionPrice) user.subscriptionPrice = subscriptionPrice;
 
     this.usersRepository.save(user);
 

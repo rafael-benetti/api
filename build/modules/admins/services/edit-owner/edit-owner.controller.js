@@ -9,7 +9,7 @@ class CreateOwnerController {
 }
 CreateOwnerController.handle = async (req, res) => {
     const { userId } = req;
-    const { email, name, ownerId, password } = req.body;
+    const { email, name, ownerId, password, phoneNumber, stateRegistration, document, subscriptionPrice, subscriptionExpirationDate, } = req.body;
     const editOwnerService = tsyringe_1.container.resolve(edit_owner_service_1.default);
     const owner = await editOwnerService.execute({
         adminId: userId,
@@ -17,6 +17,11 @@ CreateOwnerController.handle = async (req, res) => {
         name,
         ownerId,
         password,
+        phoneNumber,
+        stateRegistration,
+        document,
+        subscriptionPrice,
+        subscriptionExpirationDate,
     });
     return res.json(owner);
 };

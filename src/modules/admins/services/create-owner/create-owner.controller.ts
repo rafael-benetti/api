@@ -8,8 +8,8 @@ abstract class CreateOwnerController {
     body: {
       email: Joi.string().required(),
       name: Joi.string().required(),
-      type: Joi.string().valid('INDIVIDUAL', 'COMPANY').required(),
       phoneNumber: Joi.string().required(),
+      type: Joi.string().valid('INDIVIDUAL', 'COMPANY').required(),
       stateRegistration: Joi.string(),
       document: Joi.string().required(),
       subscriptionPrice: Joi.number().required(),

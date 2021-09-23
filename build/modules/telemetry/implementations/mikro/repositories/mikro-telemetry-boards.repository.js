@@ -72,6 +72,9 @@ let MikroTelemetryBoardsRepository = class MikroTelemetryBoardsRepository {
             limit: data.limit,
             offset: data.offset,
             populate: ['machine', 'group', 'owner'],
+            orderBy: {
+                _id: 'ASC',
+            },
             fields: [
                 'ownerId',
                 'groupId',

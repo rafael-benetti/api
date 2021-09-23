@@ -28,7 +28,7 @@ let EditOwnerService = class EditOwnerService {
         this.hashProvider = hashProvider;
         this.ormProvider = ormProvider;
     }
-    async execute({ ownerId, email, name, password, adminId, }) {
+    async execute({ ownerId, email, name, password, adminId, document, phoneNumber, stateRegistration, subscriptionExpirationDate, subscriptionPrice, }) {
         const admin = await this.adminsRepository.findOne({
             by: 'id',
             value: adminId,
@@ -47,6 +47,16 @@ let EditOwnerService = class EditOwnerService {
             user.name = email;
         if (name)
             user.name = name;
+        if (document)
+            user.document = document;
+        if (phoneNumber)
+            user.phoneNumber = phoneNumber;
+        if (stateRegistration)
+            user.stateRegistration = stateRegistration;
+        if (subscriptionExpirationDate)
+            user.subscriptionExpirationDate = subscriptionExpirationDate;
+        if (subscriptionPrice)
+            user.subscriptionPrice = subscriptionPrice;
         this.usersRepository.save(user);
         await this.ormProvider.commit();
     }

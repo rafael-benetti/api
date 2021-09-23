@@ -12,8 +12,8 @@ CreateOwnerController.validate = celebrate_1.celebrate({
     body: {
         email: celebrate_1.Joi.string().required(),
         name: celebrate_1.Joi.string().required(),
-        type: celebrate_1.Joi.string().valid('INDIVIDUAL', 'COMPANY').required(),
         phoneNumber: celebrate_1.Joi.string().required(),
+        type: celebrate_1.Joi.string().valid('INDIVIDUAL', 'COMPANY').required(),
         stateRegistration: celebrate_1.Joi.string(),
         document: celebrate_1.Joi.string().required(),
         subscriptionPrice: celebrate_1.Joi.number().required(),

@@ -5,7 +5,17 @@ import EditOwnerService from './edit-owner.service';
 abstract class CreateOwnerController {
   static handle: RequestHandler = async (req, res) => {
     const { userId } = req;
-    const { email, name, ownerId, password } = req.body;
+    const {
+      email,
+      name,
+      ownerId,
+      password,
+      phoneNumber,
+      stateRegistration,
+      document,
+      subscriptionPrice,
+      subscriptionExpirationDate,
+    } = req.body;
 
     const editOwnerService = container.resolve(EditOwnerService);
 
@@ -15,6 +25,11 @@ abstract class CreateOwnerController {
       name,
       ownerId,
       password,
+      phoneNumber,
+      stateRegistration,
+      document,
+      subscriptionPrice,
+      subscriptionExpirationDate,
     });
 
     return res.json(owner);

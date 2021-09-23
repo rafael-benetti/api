@@ -77,17 +77,15 @@ class ListTelemetryBoardsService {
 
     if (telemetryBoardId !== undefined) telemetryBoardIds = [telemetryBoardId];
 
-    const {
-      telemetryBoards,
-      count,
-    } = await this.telemetryBoardsRepository.find({
-      filters: {
-        id: telemetryBoardIds,
-        groupIds,
-      },
-      limit,
-      offset,
-    });
+    const { telemetryBoards, count } =
+      await this.telemetryBoardsRepository.find({
+        filters: {
+          id: telemetryBoardIds,
+          groupIds,
+        },
+        limit,
+        offset,
+      });
 
     return { telemetryBoards, count };
   }
