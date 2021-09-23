@@ -19,12 +19,7 @@ adminsRoutes.post('/', (req, _, next) => {
     if (req.headers.authorization !== 'charanko')
         throw app_error_1.default.authorizationError;
     return next();
-}, celebrate_1.celebrate({
-    body: {
-        email: celebrate_1.Joi.string().email().required(),
-        name: celebrate_1.Joi.string().required(),
-    },
-}, { abortEarly: false }), create_admin_controller_1.default.handle);
+}, create_admin_controller_1.default.handle);
 adminsRoutes.post('/auth', celebrate_1.celebrate({
     body: {
         email: celebrate_1.Joi.string().email().required(),
