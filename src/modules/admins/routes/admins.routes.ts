@@ -21,15 +21,6 @@ adminsRoutes.post(
 
     return next();
   },
-  celebrate(
-    {
-      body: {
-        email: Joi.string().email().required(),
-        name: Joi.string().required(),
-      },
-    },
-    { abortEarly: false },
-  ),
   CreateAdminController.handle,
 );
 
