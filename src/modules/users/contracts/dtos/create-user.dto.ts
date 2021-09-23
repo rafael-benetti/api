@@ -20,7 +20,7 @@ interface CreateUserDto {
   stateRegistration?: string | undefined;
   document?: string;
   subscriptionPrice?: string;
-  subscriptionExpirationDate?: Date;
+  subscriptionExpirationDate?: string;
 }
 
 export default CreateUserDto;

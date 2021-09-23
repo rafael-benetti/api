@@ -61,7 +61,7 @@ class MikroUser implements User {
   subscriptionPrice?: string;
 
   @Property()
-  subscriptionExpirationDate?: Date;
+  subscriptionExpirationDate?: string;
 
   constructor(data?: CreateUserDto) {
     if (data) {

@@ -8,14 +8,13 @@ import { injectable, inject } from 'tsyringe';
 interface Request {
   ownerId: string;
   adminId: string;
-  email: string;
-  name: string;
-  password: string;
-  phoneNumber: string;
-  stateRegistration: string | undefined;
-  document: string;
-  subscriptionPrice: string;
-  subscriptionExpirationDate: Date;
+  name?: string;
+  password?: string;
+  phoneNumber?: string;
+  stateRegistration?: string | undefined;
+  document?: string;
+  subscriptionPrice?: string;
+  subscriptionExpirationDate?: string;
 }
 
 @injectable()
@@ -36,7 +35,6 @@ class EditOwnerService {
 
   async execute({
     ownerId,
-    email,
     name,
     password,
     adminId,
@@ -51,7 +49,7 @@ class EditOwnerService {
       value: adminId,
     });
 
-    if (admin) throw AppError.authorizationError;
+    if (!admin) throw AppError.authorizationError;
 
     const user = await this.usersRepository.findOne({
       by: 'id',
@@ -61,8 +59,6 @@ class EditOwnerService {
     if (!user) throw AppError.userNotFound;
 
     if (password) user.password = this.hashProvider.hash(password);
-
-    if (email) user.name = email;
 
     if (name) user.name = name;
 

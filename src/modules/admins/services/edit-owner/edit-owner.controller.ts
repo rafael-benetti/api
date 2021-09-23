@@ -2,13 +2,12 @@ import { RequestHandler } from 'express';
 import { container } from 'tsyringe';
 import EditOwnerService from './edit-owner.service';
 
-abstract class CreateOwnerController {
+abstract class EditOwnerController {
   static handle: RequestHandler = async (req, res) => {
     const { userId } = req;
+    const { ownerId } = req.params;
     const {
-      email,
       name,
-      ownerId,
       password,
       phoneNumber,
       stateRegistration,
@@ -21,7 +20,6 @@ abstract class CreateOwnerController {
 
     const owner = await editOwnerService.execute({
       adminId: userId,
-      email,
       name,
       ownerId,
       password,
@@ -36,4 +34,4 @@ abstract class CreateOwnerController {
   };
 }
 
-export default CreateOwnerController;
+export default EditOwnerController;

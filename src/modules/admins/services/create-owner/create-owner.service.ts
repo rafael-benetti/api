@@ -21,7 +21,7 @@ interface Request {
   stateRegistration: string | undefined;
   document: string;
   subscriptionPrice: string;
-  subscriptionExpirationDate: Date;
+  subscriptionExpirationDate: string;
 }
 
 @injectable()

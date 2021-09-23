@@ -40,7 +40,7 @@ class User {
 
   subscriptionPrice?: string;
 
-  subscriptionExpirationDate?: Date;
+  subscriptionExpirationDate?: string;
 
   constructor(data?: CreateUserDto) {
     if (data) {

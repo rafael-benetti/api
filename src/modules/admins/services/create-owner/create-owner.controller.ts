@@ -8,12 +8,12 @@ abstract class CreateOwnerController {
     body: {
       email: Joi.string().required(),
       name: Joi.string().required(),
-      phoneNumber: Joi.string().required(),
+      phoneNumber: Joi.string(),
       type: Joi.string().valid('INDIVIDUAL', 'COMPANY').required(),
       stateRegistration: Joi.string(),
-      document: Joi.string().required(),
-      subscriptionPrice: Joi.number().required(),
-      subscriptionExpirationDate: Joi.date().required(),
+      document: Joi.string(),
+      subscriptionPrice: Joi.number(),
+      subscriptionExpirationDate: Joi.string(),
     },
   });
 
