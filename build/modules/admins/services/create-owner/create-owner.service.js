@@ -28,6 +28,7 @@ const tsyringe_1 = require("tsyringe");
 const mail_provider_1 = __importDefault(require("../../../../providers/mail-provider/contracts/models/mail.provider"));
 const sign_up_email_template_1 = __importDefault(require("../../../../providers/mail-provider/templates/sign-up-email-template"));
 const type_1 = __importDefault(require("../../../counter-types/contracts/enums/type"));
+const user_1 = __importDefault(require("../../../users/contracts/models/user"));
 let CreateOwnerService = class CreateOwnerService {
     constructor(adminsRepository, usersRepository, groupsRepository, counterTypesRepository, mailProvider, hashProvider, ormProvider) {
         this.adminsRepository = adminsRepository;
@@ -108,6 +109,7 @@ let CreateOwnerService = class CreateOwnerService {
             ownerId: user.id,
         });
         await this.ormProvider.commit();
+        return user;
     }
 };
 CreateOwnerService = __decorate([

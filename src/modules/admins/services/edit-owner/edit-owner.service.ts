@@ -1,4 +1,5 @@
 import AdminsRepository from '@modules/admins/contracts/repositories/admins.repository';
+import User from '@modules/users/contracts/models/user';
 import UsersRepository from '@modules/users/contracts/repositories/users.repository';
 import HashProvider from '@providers/hash-provider/contracts/models/hash-provider';
 import OrmProvider from '@providers/orm-provider/contracts/models/orm-provider';
@@ -43,7 +44,7 @@ class EditOwnerService {
     stateRegistration,
     subscriptionExpirationDate,
     subscriptionPrice,
-  }: Request): Promise<void> {
+  }: Request): Promise<User> {
     const admin = await this.adminsRepository.findOne({
       by: 'id',
       value: adminId,
@@ -76,6 +77,8 @@ class EditOwnerService {
     this.usersRepository.save(user);
 
     await this.ormProvider.commit();
+
+    return user;
   }
 }
 

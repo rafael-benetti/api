@@ -16,6 +16,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 const admins_repository_1 = __importDefault(require("../../contracts/repositories/admins.repository"));
+const user_1 = __importDefault(require("../../../users/contracts/models/user"));
 const users_repository_1 = __importDefault(require("../../../users/contracts/repositories/users.repository"));
 const hash_provider_1 = __importDefault(require("../../../../providers/hash-provider/contracts/models/hash-provider"));
 const orm_provider_1 = __importDefault(require("../../../../providers/orm-provider/contracts/models/orm-provider"));
@@ -57,6 +58,7 @@ let EditOwnerService = class EditOwnerService {
             user.subscriptionPrice = subscriptionPrice;
         this.usersRepository.save(user);
         await this.ormProvider.commit();
+        return user;
     }
 };
 EditOwnerService = __decorate([

@@ -11,6 +11,7 @@ import { injectable, inject } from 'tsyringe';
 import MailProvider from '@providers/mail-provider/contracts/models/mail.provider';
 import signUpEmailTemplate from '@providers/mail-provider/templates/sign-up-email-template';
 import Type from '@modules/counter-types/contracts/enums/type';
+import User from '@modules/users/contracts/models/user';
 
 interface Request {
   adminId: string;
@@ -59,7 +60,7 @@ class CreateOwnerService {
     subscriptionExpirationDate,
     subscriptionPrice,
     type,
-  }: Request): Promise<void> {
+  }: Request): Promise<User> {
     const admin = await this.adminsRepository.findOne({
       by: 'id',
       value: adminId,
@@ -142,6 +143,8 @@ class CreateOwnerService {
     });
 
     await this.ormProvider.commit();
+
+    return user;
   }
 }
 
