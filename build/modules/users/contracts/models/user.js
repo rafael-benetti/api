@@ -27,7 +27,7 @@ class User {
             this.deviceToken = data.deviceToken;
             this.type = data.type;
             this.stateRegistration = data.stateRegistration;
-            this.document = data.deviceToken;
+            this.document = data.document;
             this.subscriptionPrice = data.subscriptionPrice;
             this.subscriptionExpirationDate = data.subscriptionExpirationDate;
         }
