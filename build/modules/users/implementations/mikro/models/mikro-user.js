@@ -114,7 +114,7 @@ __decorate([
 ], MikroUser.prototype, "subscriptionPrice", void 0);
 __decorate([
     core_1.Property(),
-    __metadata("design:type", Date)
+    __metadata("design:type", String)
 ], MikroUser.prototype, "subscriptionExpirationDate", void 0);
 MikroUser = __decorate([
     core_1.Entity({ collection: 'users' }),

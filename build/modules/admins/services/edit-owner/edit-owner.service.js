@@ -28,12 +28,12 @@ let EditOwnerService = class EditOwnerService {
         this.hashProvider = hashProvider;
         this.ormProvider = ormProvider;
     }
-    async execute({ ownerId, email, name, password, adminId, document, phoneNumber, stateRegistration, subscriptionExpirationDate, subscriptionPrice, }) {
+    async execute({ ownerId, name, password, adminId, document, phoneNumber, stateRegistration, subscriptionExpirationDate, subscriptionPrice, }) {
         const admin = await this.adminsRepository.findOne({
             by: 'id',
             value: adminId,
         });
-        if (admin)
+        if (!admin)
             throw app_error_1.default.authorizationError;
         const user = await this.usersRepository.findOne({
             by: 'id',
@@ -43,8 +43,6 @@ let EditOwnerService = class EditOwnerService {
             throw app_error_1.default.userNotFound;
         if (password)
             user.password = this.hashProvider.hash(password);
-        if (email)
-            user.name = email;
         if (name)
             user.name = name;
         if (document)

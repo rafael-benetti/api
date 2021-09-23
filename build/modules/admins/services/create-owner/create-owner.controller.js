@@ -12,12 +12,12 @@ CreateOwnerController.validate = celebrate_1.celebrate({
     body: {
         email: celebrate_1.Joi.string().required(),
         name: celebrate_1.Joi.string().required(),
-        phoneNumber: celebrate_1.Joi.string().required(),
+        phoneNumber: celebrate_1.Joi.string(),
         type: celebrate_1.Joi.string().valid('INDIVIDUAL', 'COMPANY').required(),
         stateRegistration: celebrate_1.Joi.string(),
-        document: celebrate_1.Joi.string().required(),
-        subscriptionPrice: celebrate_1.Joi.number().required(),
-        subscriptionExpirationDate: celebrate_1.Joi.date().required(),
+        document: celebrate_1.Joi.string(),
+        subscriptionPrice: celebrate_1.Joi.number(),
+        subscriptionExpirationDate: celebrate_1.Joi.string(),
     },
 });
 CreateOwnerController.handle = async (req, res) => {
