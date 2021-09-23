@@ -19,7 +19,12 @@ adminsRoutes.post('/', (req, _, next) => {
     if (req.headers.authorization !== 'charanko')
         throw app_error_1.default.authorizationError;
     return next();
-}, create_admin_controller_1.default.handle);
+}, celebrate_1.celebrate({
+    body: {
+        email: celebrate_1.Joi.string().email().required(),
+        name: celebrate_1.Joi.string().required(),
+    },
+}, { abortEarly: false }), create_admin_controller_1.default.handle);
 adminsRoutes.post('/auth', celebrate_1.celebrate({
     body: {
         email: celebrate_1.Joi.string().email().required(),
@@ -27,12 +32,7 @@ adminsRoutes.post('/auth', celebrate_1.celebrate({
     },
 }, { abortEarly: false }), authenticate_admin_controller_1.default.handle);
 adminsRoutes.use(auth_handler_1.default);
-adminsRoutes.post('/owners', celebrate_1.celebrate({
-    body: {
-        email: celebrate_1.Joi.string().email().required(),
-        name: celebrate_1.Joi.string().required(),
-    },
-}, { abortEarly: false }), create_owner_controller_1.default.handle);
+adminsRoutes.post('/owners', create_owner_controller_1.default.handle);
 adminsRoutes.get('/owners', list_owners_controller_1.default.handle);
 adminsRoutes.post('/telemetry-boards', create_telemetry_board_controller_1.default.validate, create_telemetry_board_controller_1.default.handle);
 adminsRoutes.patch('/owners/:ownerId', edit_owner_controller_1.default.handle);

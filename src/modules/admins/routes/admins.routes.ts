@@ -21,6 +21,15 @@ adminsRoutes.post(
 
     return next();
   },
+  celebrate(
+    {
+      body: {
+        email: Joi.string().email().required(),
+        name: Joi.string().required(),
+      },
+    },
+    { abortEarly: false },
+  ),
   CreateAdminController.handle,
 );
 
@@ -40,19 +49,7 @@ adminsRoutes.post(
 
 adminsRoutes.use(authHandler);
 
-adminsRoutes.post(
-  '/owners',
-  celebrate(
-    {
-      body: {
-        email: Joi.string().email().required(),
-        name: Joi.string().required(),
-      },
-    },
-    { abortEarly: false },
-  ),
-  CreateOwnerController.handle,
-);
+adminsRoutes.post('/owners', CreateOwnerController.handle);
 
 adminsRoutes.get('/owners', ListOwnersController.handle);
 
