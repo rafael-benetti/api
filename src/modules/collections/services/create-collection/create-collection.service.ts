@@ -142,9 +142,8 @@ class CreateCollectionService {
       pointsOfSaleId: machine.locationId,
     });
 
-    const previousCollection = await this.collectionsRepository.findLastCollection(
-      machineId,
-    );
+    const previousCollection =
+      await this.collectionsRepository.findLastCollection(machineId);
 
     const telemetryLogs = await this.telemetryLogsRepository.find({
       filters: {
@@ -223,7 +222,6 @@ class CreateCollectionService {
 
     machine.lastCollection = collection.date;
 
-    this.collectionsRepository.save(collection);
     this.machinesRepository.save(machine);
 
     await this.ormProvider.commit();

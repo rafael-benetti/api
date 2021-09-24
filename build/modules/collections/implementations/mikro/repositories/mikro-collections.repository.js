@@ -19,6 +19,7 @@ class MikroCollectionsRepository {
     }
     create(data) {
         const collection = new mikro_collection_1.default(data);
+        this.repository.persist(collection);
         return collections_mapper_1.default.map(collection);
     }
     async findOne(collectionId) {

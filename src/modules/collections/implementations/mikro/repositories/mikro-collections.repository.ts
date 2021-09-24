@@ -1,6 +1,5 @@
 import createCollectionDto from '@modules/collections/contracts/dtos/create-collection.dto';
 import FindCollectionsDto from '@modules/collections/contracts/dtos/find-collections.dto';
-
 import Collection from '@modules/collections/contracts/entities/collection';
 import CollectionsRepository from '@modules/collections/contracts/repositories/collections.repository';
 import MikroOrmProvider from '@providers/orm-provider/implementations/mikro/mikro-orm-provider';
@@ -17,6 +16,7 @@ export default class MikroCollectionsRepository
 
   create(data: createCollectionDto): Collection {
     const collection = new MikroCollection(data);
+    this.repository.persist(collection);
     return CollectionsMapper.map(collection);
   }
 

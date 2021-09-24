@@ -148,7 +148,6 @@ let CreateCollectionService = class CreateCollectionService {
             startLocation,
         });
         machine.lastCollection = collection.date;
-        this.collectionsRepository.save(collection);
         this.machinesRepository.save(machine);
         await this.ormProvider.commit();
         Object.assign(collection, {
