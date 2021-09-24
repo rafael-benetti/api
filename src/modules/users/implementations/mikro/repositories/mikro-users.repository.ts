@@ -147,7 +147,8 @@ class MikroUsersRepository implements UsersRepository {
   }
 
   save(data: User): void {
-    const user = UserMapper.toOrm(data);
+    const reference = this.repository.getReference(data.id);
+    const user = this.repository.assign(reference, data);
     this.repository.persist(user);
   }
 

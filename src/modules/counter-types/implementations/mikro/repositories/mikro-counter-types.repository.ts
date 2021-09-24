@@ -49,7 +49,9 @@ class MikroCounterTypesRepository implements CounterTypesRepository {
   }
 
   save(data: CounterType): void {
-    this.repository.persist(CounterTypeMapper.toMikroEntity(data));
+    const reference = this.repository.getReference(data.id);
+    const counterType = this.repository.assign(reference, data);
+    this.repository.persist(counterType);
   }
 }
 

@@ -9,7 +9,8 @@ import MikroProductLog from '../entities/mikro-product-log';
 import ProductLogMapper from '../mappers/product-log-mapper';
 
 export default class MikroProductLogsRepository
-  implements ProductLogsRepository {
+  implements ProductLogsRepository
+{
   private repository = container
     .resolve<MikroOrmProvider>('OrmProvider')
     .entityManager.getRepository(MikroProductLog);

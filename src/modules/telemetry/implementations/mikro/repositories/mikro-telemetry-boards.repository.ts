@@ -102,7 +102,8 @@ class MikroTelemetryBoardsRepository implements TelemetryBoardsRepository {
   }
 
   save(data: TelemetryBoard): void {
-    const telemetryBoard = TelemetryBoardMapper.toOrm(data);
+    const reference = this.repository.getReference(data.id);
+    const telemetryBoard = this.repository.assign(reference, data);
     this.repository.persist(telemetryBoard);
   }
 }

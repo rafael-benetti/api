@@ -58,12 +58,14 @@ class MikroPointsOfSaleRepository implements PointsOfSaleRepository {
   }
 
   save(data: PointOfSale): void {
-    const pointOfSale = PointOfSaleMapper.toOrm(data);
+    const reference = this.repository.getReference(data.id);
+    const pointOfSale = this.repository.assign(reference, data);
     this.repository.persist(pointOfSale);
   }
 
   delete(data: PointOfSale): void {
-    const pointOfSale = PointOfSaleMapper.toOrm(data);
+    const reference = this.repository.getReference(data.id);
+    const pointOfSale = this.repository.assign(reference, data);
     this.repository.remove(pointOfSale);
   }
 }

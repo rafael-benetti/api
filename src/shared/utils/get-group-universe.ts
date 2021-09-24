@@ -4,9 +4,8 @@ import User from '@modules/users/contracts/models/user';
 import { container } from 'tsyringe';
 
 const getGroupUniverse = async (user: User): Promise<string[]> => {
-  const groupsRepository = container.resolve<GroupsRepository>(
-    'GroupsRepository',
-  );
+  const groupsRepository =
+    container.resolve<GroupsRepository>('GroupsRepository');
 
   if (user.role === Role.OWNER) {
     const groupUniverse = await groupsRepository

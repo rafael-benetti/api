@@ -101,7 +101,8 @@ export default class MikroCollectionsRepository
   }
 
   save(data: Collection): void {
-    const collection = CollectionsMapper.map(data);
+    const reference = this.repository.getReference(data.id);
+    const collection = this.repository.assign(reference, data);
     this.repository.persist(collection);
   }
 }

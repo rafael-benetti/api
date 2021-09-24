@@ -27,7 +27,8 @@ class MikroAdminsRepository implements AdminsRepository {
   }
 
   save(data: Admin): void {
-    const admin = AdminMapper.toOrm(data);
+    const reference = this.repository.getReference(data.id);
+    const admin = this.repository.assign(reference, data);
     this.repository.persist(admin);
   }
 

@@ -150,7 +150,9 @@ class MikroMachineLogsRepository implements MachineLogsRepository {
   }
 
   save(data: MachineLog): void {
-    this.repository.persist(MachineLogMapper.toMikroEntity(data));
+    const reference = this.repository.getReference(data.id);
+    const machineLog = this.repository.assign(reference, data);
+    this.repository.persist(machineLog);
   }
 }
 
