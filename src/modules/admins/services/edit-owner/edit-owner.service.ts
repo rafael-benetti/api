@@ -12,7 +12,7 @@ interface Request {
   name?: string;
   password?: string;
   phoneNumber?: string;
-  stateRegistration?: string | undefined;
+  stateRegistration?: string;
   document?: string;
   subscriptionPrice?: string;
   subscriptionExpirationDate?: string;

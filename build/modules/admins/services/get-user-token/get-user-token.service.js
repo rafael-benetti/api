@@ -16,38 +16,42 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 const admins_repository_1 = __importDefault(require("../../contracts/repositories/admins.repository"));
-const telemetry_board_1 = __importDefault(require("../../../telemetry/contracts/entities/telemetry-board"));
-const telemetry_boards_repository_1 = __importDefault(require("../../../telemetry/contracts/repositories/telemetry-boards.repository"));
+const user_1 = __importDefault(require("../../../users/contracts/models/user"));
+const users_repository_1 = __importDefault(require("../../../users/contracts/repositories/users.repository"));
+const session_provider_1 = __importDefault(require("../../../../providers/session-provider/contracts/models/session.provider"));
 const app_error_1 = __importDefault(require("../../../../shared/errors/app-error"));
 const tsyringe_1 = require("tsyringe");
-let GetAllTelemetryBoardsService = class GetAllTelemetryBoardsService {
-    constructor(telemetryBoardsRepository, adminsRepository) {
-        this.telemetryBoardsRepository = telemetryBoardsRepository;
+let GetUserTokenService = class GetUserTokenService {
+    constructor(usersRepository, adminsRepository, sessionProvider) {
+        this.usersRepository = usersRepository;
         this.adminsRepository = adminsRepository;
+        this.sessionProvider = sessionProvider;
     }
-    async execute({ userId, id, limit, offset, ownerId, groupId, }) {
+    async execute({ adminId, userId, }) {
         const admin = await this.adminsRepository.findOne({
             by: 'id',
-            value: userId,
+            value: adminId,
         });
         if (!admin)
             throw app_error_1.default.authorizationError;
-        const telemetryBoards = await this.telemetryBoardsRepository.find({
-            filters: {
-                ...(id && { id: [id] }),
-                ...(groupId && { groupIds: [groupId] }),
-                ownerId,
-            },
-            limit,
-            offset,
+        const user = await this.usersRepository.findOne({
+            by: 'id',
+            value: userId,
         });
-        return telemetryBoards;
+        if (!user)
+            throw app_error_1.default.authorizationError;
+        const token = await this.sessionProvider.createToken(user.id);
+        return {
+            user,
+            token,
+        };
     }
 };
-GetAllTelemetryBoardsService = __decorate([
+GetUserTokenService = __decorate([
     tsyringe_1.injectable(),
-    __param(0, tsyringe_1.inject('TelemetryBoardsRepository')),
+    __param(0, tsyringe_1.inject('UsersRepository')),
     __param(1, tsyringe_1.inject('AdminsRepository')),
-    __metadata("design:paramtypes", [Object, Object])
-], GetAllTelemetryBoardsService);
-exports.default = GetAllTelemetryBoardsService;
+    __param(2, tsyringe_1.inject('SessionProvider')),
+    __metadata("design:paramtypes", [Object, Object, Object])
+], GetUserTokenService);
+exports.default = GetUserTokenService;
