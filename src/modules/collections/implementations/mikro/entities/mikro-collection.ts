@@ -15,7 +15,7 @@ export default class MikroCollection implements Collection {
   @PrimaryKey({ fieldName: '_id' })
   id: string;
 
-  @Property()
+  @Property({ nullable: true })
   previousCollectionId?: string;
 
   @OneToOne({ name: 'previousCollectionId' })
@@ -39,16 +39,16 @@ export default class MikroCollection implements Collection {
   @OneToOne({ name: 'userId' })
   user: MikroUser;
 
-  @Property()
+  @Property({ nullable: true })
   pointOfSaleId?: string;
 
-  @OneToOne({ name: 'pointOfSaleId' })
+  @OneToOne({ name: 'pointOfSaleId', nullable: true })
   pointOfSale?: MikroPointOfSale;
 
-  @Property()
+  @Property({ nullable: true })
   routeId?: string;
 
-  @OneToOne({ name: 'routeId' })
+  @OneToOne({ name: 'routeId', nullable: true })
   route?: MikroRoute;
 
   @Property()
@@ -63,13 +63,13 @@ export default class MikroCollection implements Collection {
   @Property()
   startTime: Date;
 
-  @Property()
+  @Property({ nullable: true })
   startLocation?: Geolocation;
 
-  @Property()
+  @Property({ nullable: true })
   endLocation?: Geolocation;
 
-  @Property()
+  @Property({ nullable: true })
   reviewedData?: {
     date: Date;
     reviewedBy: string;

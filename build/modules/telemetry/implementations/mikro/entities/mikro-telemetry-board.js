@@ -40,7 +40,7 @@ __decorate([
     __metadata("design:type", String)
 ], MikroTelemetryBoard.prototype, "ownerId", void 0);
 __decorate([
-    core_1.OneToOne({ name: 'ownerId' }),
+    core_1.OneToOne({ name: 'ownerId', nullable: true }),
     __metadata("design:type", mikro_user_1.default)
 ], MikroTelemetryBoard.prototype, "owner", void 0);
 __decorate([
@@ -48,15 +48,15 @@ __decorate([
     __metadata("design:type", String)
 ], MikroTelemetryBoard.prototype, "groupId", void 0);
 __decorate([
-    core_1.OneToOne({ name: 'groupId' }),
+    core_1.OneToOne({ name: 'groupId', nullable: true }),
     __metadata("design:type", mikro_group_1.default)
 ], MikroTelemetryBoard.prototype, "group", void 0);
 __decorate([
-    core_1.Property(),
+    core_1.Property({ nullable: true }),
     __metadata("design:type", String)
 ], MikroTelemetryBoard.prototype, "integratedCircuitCardId", void 0);
 __decorate([
-    core_1.Property(),
+    core_1.Property({ nullable: true }),
     __metadata("design:type", String)
 ], MikroTelemetryBoard.prototype, "machineId", void 0);
 __decorate([
@@ -64,19 +64,20 @@ __decorate([
         owner: true,
         orphanRemoval: true,
         name: 'machineId',
+        nullable: true,
     }),
     __metadata("design:type", mikro_machine_1.default)
 ], MikroTelemetryBoard.prototype, "machine", void 0);
 __decorate([
-    core_1.Property(),
+    core_1.Property({ nullable: true }),
     __metadata("design:type", Date)
 ], MikroTelemetryBoard.prototype, "lastConnection", void 0);
 __decorate([
-    core_1.Property(),
+    core_1.Property({ nullable: true }),
     __metadata("design:type", String)
 ], MikroTelemetryBoard.prototype, "connectionStrength", void 0);
 __decorate([
-    core_1.Property(),
+    core_1.Property({ nullable: true }),
     __metadata("design:type", String)
 ], MikroTelemetryBoard.prototype, "connectionType", void 0);
 MikroTelemetryBoard = __decorate([

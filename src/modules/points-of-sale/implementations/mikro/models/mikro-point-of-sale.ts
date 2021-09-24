@@ -23,10 +23,10 @@ class MikroPointOfSale implements PointOfSale {
   @Property()
   groupId: string;
 
-  @OneToOne({ name: 'groupId' })
+  @OneToOne({ name: 'groupId', nullable: true })
   group: MikroGroup;
 
-  @Property()
+  @Property({ nullable: true })
   routeId?: string;
 
   @ManyToOne(() => MikroRoute)
@@ -41,7 +41,7 @@ class MikroPointOfSale implements PointOfSale {
   @Property()
   primaryPhoneNumber: string;
 
-  @Property()
+  @Property({ nullable: true })
   secondaryPhoneNumber?: string;
 
   @Property()

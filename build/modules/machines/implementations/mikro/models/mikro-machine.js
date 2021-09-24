@@ -49,7 +49,7 @@ __decorate([
     __metadata("design:type", String)
 ], MikroMachine.prototype, "id", void 0);
 __decorate([
-    core_1.Property(),
+    core_1.Property({ nullable: true }),
     __metadata("design:type", String)
 ], MikroMachine.prototype, "categoryId", void 0);
 __decorate([
@@ -61,16 +61,17 @@ __decorate([
     __metadata("design:type", String)
 ], MikroMachine.prototype, "groupId", void 0);
 __decorate([
-    core_1.OneToOne({ name: 'groupId' }),
+    core_1.OneToOne({ name: 'groupId', nullable: true }),
     __metadata("design:type", mikro_group_1.default)
 ], MikroMachine.prototype, "group", void 0);
 __decorate([
-    core_1.Property(),
+    core_1.Property({ nullable: true }),
     __metadata("design:type", Number)
 ], MikroMachine.prototype, "telemetryBoardId", void 0);
 __decorate([
     core_1.OneToOne(() => mikro_telemetry_board_1.default, mikroTelemetryBoard => mikroTelemetryBoard.machine, {
         name: 'telemetryBoardId',
+        nullable: true,
     }),
     __metadata("design:type", mikro_telemetry_board_1.default)
 ], MikroMachine.prototype, "telemetryBoard", void 0);
@@ -83,19 +84,19 @@ __decorate([
     __metadata("design:type", Number)
 ], MikroMachine.prototype, "gameValue", void 0);
 __decorate([
-    core_1.Property(),
+    core_1.Property({ nullable: true }),
     __metadata("design:type", String)
 ], MikroMachine.prototype, "operatorId", void 0);
 __decorate([
-    core_1.OneToOne({ name: 'operatorId' }),
+    core_1.OneToOne({ name: 'operatorId', nullable: true }),
     __metadata("design:type", mikro_user_1.default)
 ], MikroMachine.prototype, "operator", void 0);
 __decorate([
-    core_1.Property(),
+    core_1.Property({ nullable: true }),
     __metadata("design:type", String)
 ], MikroMachine.prototype, "locationId", void 0);
 __decorate([
-    core_1.OneToOne({ name: 'locationId' }),
+    core_1.OneToOne({ name: 'locationId', nullable: true }),
     __metadata("design:type", mikro_point_of_sale_1.default)
 ], MikroMachine.prototype, "pointOfSale", void 0);
 __decorate([
@@ -115,27 +116,27 @@ __decorate([
     __metadata("design:type", Boolean)
 ], MikroMachine.prototype, "maintenance", void 0);
 __decorate([
-    core_1.Property(),
+    core_1.Property({ nullable: true }),
     __metadata("design:type", Number)
 ], MikroMachine.prototype, "minimumPrizeCount", void 0);
 __decorate([
-    core_1.Property(),
+    core_1.Property({ nullable: true }),
     __metadata("design:type", Object)
 ], MikroMachine.prototype, "typeOfPrize", void 0);
 __decorate([
-    core_1.Property(),
+    core_1.Property({ nullable: true }),
     __metadata("design:type", Date)
 ], MikroMachine.prototype, "lastConnection", void 0);
 __decorate([
-    core_1.Property(),
+    core_1.Property({ nullable: true }),
     __metadata("design:type", Date)
 ], MikroMachine.prototype, "lastCollection", void 0);
 __decorate([
-    core_1.Property(),
+    core_1.Property({ nullable: true }),
     __metadata("design:type", Number)
 ], MikroMachine.prototype, "incomePerPrizeGoal", void 0);
 __decorate([
-    core_1.Property(),
+    core_1.Property({ nullable: true }),
     __metadata("design:type", Number)
 ], MikroMachine.prototype, "incomePerMonthGoal", void 0);
 MikroMachine = __decorate([

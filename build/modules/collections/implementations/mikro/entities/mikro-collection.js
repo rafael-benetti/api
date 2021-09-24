@@ -53,7 +53,7 @@ __decorate([
     __metadata("design:type", String)
 ], MikroCollection.prototype, "id", void 0);
 __decorate([
-    core_1.Property(),
+    core_1.Property({ nullable: true }),
     __metadata("design:type", String)
 ], MikroCollection.prototype, "previousCollectionId", void 0);
 __decorate([
@@ -85,19 +85,19 @@ __decorate([
     __metadata("design:type", mikro_user_1.default)
 ], MikroCollection.prototype, "user", void 0);
 __decorate([
-    core_1.Property(),
+    core_1.Property({ nullable: true }),
     __metadata("design:type", String)
 ], MikroCollection.prototype, "pointOfSaleId", void 0);
 __decorate([
-    core_1.OneToOne({ name: 'pointOfSaleId' }),
+    core_1.OneToOne({ name: 'pointOfSaleId', nullable: true }),
     __metadata("design:type", mikro_point_of_sale_1.default)
 ], MikroCollection.prototype, "pointOfSale", void 0);
 __decorate([
-    core_1.Property(),
+    core_1.Property({ nullable: true }),
     __metadata("design:type", String)
 ], MikroCollection.prototype, "routeId", void 0);
 __decorate([
-    core_1.OneToOne({ name: 'routeId' }),
+    core_1.OneToOne({ name: 'routeId', nullable: true }),
     __metadata("design:type", mikro_route_1.default)
 ], MikroCollection.prototype, "route", void 0);
 __decorate([
@@ -117,15 +117,15 @@ __decorate([
     __metadata("design:type", Date)
 ], MikroCollection.prototype, "startTime", void 0);
 __decorate([
-    core_1.Property(),
+    core_1.Property({ nullable: true }),
     __metadata("design:type", Object)
 ], MikroCollection.prototype, "startLocation", void 0);
 __decorate([
-    core_1.Property(),
+    core_1.Property({ nullable: true }),
     __metadata("design:type", Object)
 ], MikroCollection.prototype, "endLocation", void 0);
 __decorate([
-    core_1.Property(),
+    core_1.Property({ nullable: true }),
     __metadata("design:type", Object)
 ], MikroCollection.prototype, "reviewedData", void 0);
 MikroCollection = __decorate([

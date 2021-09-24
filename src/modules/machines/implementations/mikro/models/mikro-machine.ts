@@ -13,7 +13,7 @@ class MikroMachine implements Machine {
   @PrimaryKey({ fieldName: '_id' })
   id: string;
 
-  @Property()
+  @Property({ nullable: true })
   categoryId?: string;
 
   @Property()
@@ -22,10 +22,10 @@ class MikroMachine implements Machine {
   @Property()
   groupId: string;
 
-  @OneToOne({ name: 'groupId' })
+  @OneToOne({ name: 'groupId', nullable: true })
   group: MikroGroup;
 
-  @Property()
+  @Property({ nullable: true })
   telemetryBoardId?: number;
 
   @OneToOne(
@@ -33,6 +33,7 @@ class MikroMachine implements Machine {
     mikroTelemetryBoard => mikroTelemetryBoard.machine,
     {
       name: 'telemetryBoardId',
+      nullable: true,
     },
   )
   telemetryBoard?: MikroTelemetryBoard;
@@ -43,16 +44,16 @@ class MikroMachine implements Machine {
   @Property()
   gameValue: number;
 
-  @Property()
+  @Property({ nullable: true })
   operatorId?: string;
 
-  @OneToOne({ name: 'operatorId' })
+  @OneToOne({ name: 'operatorId', nullable: true })
   operator?: MikroUser;
 
-  @Property()
+  @Property({ nullable: true })
   locationId?: string;
 
-  @OneToOne({ name: 'locationId' })
+  @OneToOne({ name: 'locationId', nullable: true })
   pointOfSale?: MikroPointOfSale;
 
   @Property()
@@ -67,22 +68,22 @@ class MikroMachine implements Machine {
   @Property()
   maintenance: boolean;
 
-  @Property()
+  @Property({ nullable: true })
   minimumPrizeCount?: number;
 
-  @Property()
+  @Property({ nullable: true })
   typeOfPrize?: { id: string; label: string };
 
-  @Property()
+  @Property({ nullable: true })
   lastConnection?: Date;
 
-  @Property()
+  @Property({ nullable: true })
   lastCollection?: Date;
 
-  @Property()
+  @Property({ nullable: true })
   incomePerPrizeGoal?: number;
 
-  @Property()
+  @Property({ nullable: true })
   incomePerMonthGoal?: number;
 
   constructor(data?: CreateMachineDto) {

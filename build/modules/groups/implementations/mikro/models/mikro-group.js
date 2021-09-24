@@ -36,7 +36,7 @@ __decorate([
     __metadata("design:type", String)
 ], MikroGroup.prototype, "id", void 0);
 __decorate([
-    core_1.Property(),
+    core_1.Property({ nullable: true }),
     __metadata("design:type", String)
 ], MikroGroup.prototype, "label", void 0);
 __decorate([

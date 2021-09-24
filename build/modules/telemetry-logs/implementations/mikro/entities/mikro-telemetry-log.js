@@ -48,11 +48,11 @@ __decorate([
     __metadata("design:type", String)
 ], MikroTelemetryLog.prototype, "machineId", void 0);
 __decorate([
-    core_1.Property(),
+    core_1.Property({ nullable: true }),
     __metadata("design:type", String)
 ], MikroTelemetryLog.prototype, "pointOfSaleId", void 0);
 __decorate([
-    core_1.Property(),
+    core_1.Property({ nullable: true }),
     __metadata("design:type", String)
 ], MikroTelemetryLog.prototype, "routeId", void 0);
 __decorate([
@@ -68,7 +68,7 @@ __decorate([
     __metadata("design:type", Date)
 ], MikroTelemetryLog.prototype, "date", void 0);
 __decorate([
-    core_1.Property(),
+    core_1.Property({ nullable: true }),
     __metadata("design:type", String)
 ], MikroTelemetryLog.prototype, "pin", void 0);
 __decorate([
@@ -80,7 +80,7 @@ __decorate([
     __metadata("design:type", Boolean)
 ], MikroTelemetryLog.prototype, "maintenance", void 0);
 __decorate([
-    core_1.Property(),
+    core_1.Property({ nullable: true }),
     __metadata("design:type", Number)
 ], MikroTelemetryLog.prototype, "numberOfPlays", void 0);
 __decorate([

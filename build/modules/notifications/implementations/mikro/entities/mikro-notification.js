@@ -43,7 +43,7 @@ __decorate([
     __metadata("design:type", Array)
 ], MikroNotification.prototype, "receivers", void 0);
 __decorate([
-    core_1.Property(),
+    core_1.Property({ nullable: true }),
     __metadata("design:type", String)
 ], MikroNotification.prototype, "machineId", void 0);
 __decorate([

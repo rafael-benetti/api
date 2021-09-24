@@ -14,7 +14,7 @@ class MikroNotification implements Notification {
   @Property()
   receivers: string[];
 
-  @Property()
+  @Property({ nullable: true })
   machineId?: string;
 
   @Property()
