@@ -22,7 +22,7 @@ class MikroMachine implements Machine {
   @Property()
   groupId: string;
 
-  @OneToOne({ name: 'groupId' })
+  @OneToOne({ name: 'groupId', nullable: true })
   group: MikroGroup;
 
   @Property({ nullable: true })
@@ -33,6 +33,7 @@ class MikroMachine implements Machine {
     mikroTelemetryBoard => mikroTelemetryBoard.machine,
     {
       name: 'telemetryBoardId',
+      nullable: true,
     },
   )
   telemetryBoard?: MikroTelemetryBoard;

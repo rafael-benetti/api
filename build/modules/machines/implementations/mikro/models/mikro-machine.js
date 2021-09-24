@@ -61,7 +61,7 @@ __decorate([
     __metadata("design:type", String)
 ], MikroMachine.prototype, "groupId", void 0);
 __decorate([
-    core_1.OneToOne({ name: 'groupId' }),
+    core_1.OneToOne({ name: 'groupId', nullable: true }),
     __metadata("design:type", mikro_group_1.default)
 ], MikroMachine.prototype, "group", void 0);
 __decorate([
@@ -71,6 +71,7 @@ __decorate([
 __decorate([
     core_1.OneToOne(() => mikro_telemetry_board_1.default, mikroTelemetryBoard => mikroTelemetryBoard.machine, {
         name: 'telemetryBoardId',
+        nullable: true,
     }),
     __metadata("design:type", mikro_telemetry_board_1.default)
 ], MikroMachine.prototype, "telemetryBoard", void 0);

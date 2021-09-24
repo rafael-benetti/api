@@ -64,6 +64,7 @@ __decorate([
         owner: true,
         orphanRemoval: true,
         name: 'machineId',
+        nullable: true,
     }),
     __metadata("design:type", mikro_machine_1.default)
 ], MikroTelemetryBoard.prototype, "machine", void 0);

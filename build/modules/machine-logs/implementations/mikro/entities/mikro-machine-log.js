@@ -61,7 +61,7 @@ __decorate([
     __metadata("design:type", String)
 ], MikroMachineLog.prototype, "createdBy", void 0);
 __decorate([
-    core_1.OneToOne({ name: 'createdBy' }),
+    core_1.OneToOne({ name: 'createdBy', nullable: true }),
     __metadata("design:type", mikro_user_1.default)
 ], MikroMachineLog.prototype, "user", void 0);
 __decorate([

@@ -32,6 +32,7 @@ class MikroTelemetryBoard implements TelemetryBoard {
     owner: true,
     orphanRemoval: true,
     name: 'machineId',
+    nullable: true,
   })
   machine?: MikroMachine;
 

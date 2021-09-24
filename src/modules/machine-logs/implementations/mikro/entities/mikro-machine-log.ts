@@ -28,7 +28,7 @@ class MikroMachineLog implements MachineLog {
   @Property()
   createdBy: string;
 
-  @OneToOne({ name: 'createdBy' })
+  @OneToOne({ name: 'createdBy', nullable: true })
   user?: MikroUser;
 
   @Property()

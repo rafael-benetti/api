@@ -23,7 +23,7 @@ class MikroPointOfSale implements PointOfSale {
   @Property()
   groupId: string;
 
-  @OneToOne({ name: 'groupId' })
+  @OneToOne({ name: 'groupId', nullable: true })
   group: MikroGroup;
 
   @Property({ nullable: true })

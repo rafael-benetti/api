@@ -48,7 +48,7 @@ __decorate([
     __metadata("design:type", String)
 ], MikroPointOfSale.prototype, "groupId", void 0);
 __decorate([
-    core_1.OneToOne({ name: 'groupId' }),
+    core_1.OneToOne({ name: 'groupId', nullable: true }),
     __metadata("design:type", mikro_group_1.default)
 ], MikroPointOfSale.prototype, "group", void 0);
 __decorate([
