@@ -24,43 +24,43 @@ class MikroUser implements User {
   @Enum(() => Role)
   role: Role;
 
-  @Property()
+  @Property({ nullable: true })
   groupIds?: string[];
 
-  @Property()
+  @Property({ nullable: true })
   permissions?: Permissions;
 
-  @Property()
+  @Property({ nullable: true })
   stock?: UserStock;
 
-  @Property()
+  @Property({ nullable: true })
   photo?: Photo;
 
-  @Property()
+  @Property({ nullable: true })
   phoneNumber?: string;
 
-  @Property()
+  @Property({ nullable: true })
   isActive?: boolean;
 
-  @Property()
+  @Property({ nullable: true })
   ownerId?: string;
 
-  @Property()
+  @Property({ nullable: true })
   deviceToken?: string;
 
-  @Property()
+  @Property({ nullable: true })
   type?: 'INDIVIDUAL' | 'COMPANY';
 
-  @Property()
+  @Property({ nullable: true })
   stateRegistration?: string;
 
-  @Property()
+  @Property({ nullable: true })
   document?: string;
 
-  @Property()
+  @Property({ nullable: true })
   subscriptionPrice?: string;
 
-  @Property()
+  @Property({ nullable: true })
   subscriptionExpirationDate?: string;
 
   constructor(data?: CreateUserDto) {

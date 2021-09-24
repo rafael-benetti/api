@@ -9,9 +9,8 @@ import NotificationMapper from '../mappers/notification.mapper';
 
 @injectable()
 class MikroNotificationsRepository implements NotificationsRepository {
-  private repository = this.ormProvider.entityManager.getRepository(
-    MikroNotification,
-  );
+  private repository =
+    this.ormProvider.entityManager.getRepository(MikroNotification);
 
   constructor(
     @inject('OrmProvider')
@@ -24,11 +23,7 @@ class MikroNotificationsRepository implements NotificationsRepository {
     return NotificationMapper.toApi(mikroNotification);
   }
 
-  async find({
-    userId,
-    limit,
-    offset,
-  }: FindNotificationsDto): Promise<{
+  async find({ userId, limit, offset }: FindNotificationsDto): Promise<{
     notifications: Notification[];
     count: number;
   }> {
@@ -64,7 +59,8 @@ class MikroNotificationsRepository implements NotificationsRepository {
   }
 
   save(data: Notification): void {
-    const notification = NotificationMapper.toOrm(data);
+    const reference = this.repository.getReference(data.id);
+    const notification = this.repository.assign(reference, data);
     this.repository.persist(notification);
   }
 }

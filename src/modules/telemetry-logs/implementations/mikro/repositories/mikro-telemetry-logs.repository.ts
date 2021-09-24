@@ -696,7 +696,8 @@ class MikroTelemetryLogsRepository implements TelemetryLogsRepository {
   }
 
   save(data: TelemetryLog): void {
-    const telemetryLog = TelemetryLogMapper.toOrm(data);
+    const reference = this.repository.getReference(data.id);
+    const telemetryLog = this.repository.assign(reference, data);
     this.repository.persist(telemetryLog);
   }
 }

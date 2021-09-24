@@ -503,7 +503,9 @@ class MikroMachinesRepository implements MachinesRepository {
   }
 
   save(data: Machine): void {
-    this.repository.persist(MachineMapper.toMikroEntity(data));
+    const reference = this.repository.getReference(data.id);
+    const machine = this.repository.assign(reference, data);
+    this.repository.persist(machine);
   }
 }
 

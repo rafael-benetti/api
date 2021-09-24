@@ -56,9 +56,7 @@ class MikroGroupsRepository implements GroupsRepository {
     return groups.map(group => GroupMapper.toApi(group));
   }
 
-  async groupsInvertoryByProduct({
-    filters,
-  }: FindGroupsDto): Promise<
+  async groupsInvertoryByProduct({ filters }: FindGroupsDto): Promise<
     {
       prizeId: string;
       prizeLabel: string;
@@ -102,9 +100,7 @@ class MikroGroupsRepository implements GroupsRepository {
     return response;
   }
 
-  async groupsInvertoryBySupplies({
-    filters,
-  }: FindGroupsDto): Promise<
+  async groupsInvertoryBySupplies({ filters }: FindGroupsDto): Promise<
     {
       supplieId: string;
       supplieLabel: string;
@@ -149,12 +145,14 @@ class MikroGroupsRepository implements GroupsRepository {
   }
 
   save(data: Group): void {
-    const group = GroupMapper.toOrm(data);
+    const reference = this.repository.getReference(data.id);
+    const group = this.repository.assign(reference, data);
     this.repository.persist(group);
   }
 
   delete(data: Group): void {
-    const group = GroupMapper.toOrm(data);
+    const reference = this.repository.getReference(data.id);
+    const group = this.repository.assign(reference, data);
     this.repository.remove(group);
   }
 }
