@@ -9,7 +9,7 @@ class MikroGroup implements Group {
   @PrimaryKey({ name: '_id' })
   id: string;
 
-  @Property()
+  @Property({ nullable: true })
   label?: string;
 
   @Property()

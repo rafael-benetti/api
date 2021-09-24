@@ -13,19 +13,19 @@ class MikroTelemetryBoard implements TelemetryBoard {
   @Property()
   ownerId: string;
 
-  @OneToOne({ name: 'ownerId' })
+  @OneToOne({ name: 'ownerId', nullable: true })
   owner?: MikroUser;
 
   @Property()
   groupId: string;
 
-  @OneToOne({ name: 'groupId' })
+  @OneToOne({ name: 'groupId', nullable: true })
   group?: MikroGroup;
 
-  @Property()
+  @Property({ nullable: true })
   integratedCircuitCardId?: string;
 
-  @Property()
+  @Property({ nullable: true })
   machineId?: string;
 
   @OneToOne(() => MikroMachine, mikroMachine => mikroMachine.telemetryBoard, {
@@ -35,13 +35,13 @@ class MikroTelemetryBoard implements TelemetryBoard {
   })
   machine?: MikroMachine;
 
-  @Property()
+  @Property({ nullable: true })
   lastConnection?: Date;
 
-  @Property()
+  @Property({ nullable: true })
   connectionStrength?: string;
 
-  @Property()
+  @Property({ nullable: true })
   connectionType?: string;
 
   constructor(data?: CreateTelemetryBoardDto) {

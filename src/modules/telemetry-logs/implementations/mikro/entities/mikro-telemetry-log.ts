@@ -14,10 +14,10 @@ class MikroTelemetryLog implements TelemetryLog {
   @Property()
   machineId: string;
 
-  @Property()
+  @Property({ nullable: true })
   pointOfSaleId?: string;
 
-  @Property()
+  @Property({ nullable: true })
   routeId?: string;
 
   @Property()
@@ -29,7 +29,7 @@ class MikroTelemetryLog implements TelemetryLog {
   @Property()
   date: Date;
 
-  @Property()
+  @Property({ nullable: true })
   pin?: string;
 
   @Property()
@@ -38,7 +38,7 @@ class MikroTelemetryLog implements TelemetryLog {
   @Property()
   maintenance: boolean;
 
-  @Property()
+  @Property({ nullable: true })
   numberOfPlays?: number;
 
   @Property()
