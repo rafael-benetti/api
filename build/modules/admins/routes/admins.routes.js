@@ -13,6 +13,7 @@ const create_owner_controller_1 = __importDefault(require("../services/create-ow
 const create_telemetry_board_controller_1 = __importDefault(require("../services/create-telemetry-board/create-telemetry-board.controller"));
 const edit_owner_controller_1 = __importDefault(require("../services/edit-owner/edit-owner.controller"));
 const get_all_telemetry_boards_controller_1 = __importDefault(require("../services/get-all-telemetry-boards/get-all-telemetry-boards.controller"));
+const get_user_token_controller_1 = __importDefault(require("../services/get-user-token/get-user-token.controller"));
 const list_owners_controller_1 = __importDefault(require("../services/list-owners/list-owners.controller"));
 const adminsRoutes = express_1.Router();
 adminsRoutes.post('/', (req, _, next) => {
@@ -37,4 +38,5 @@ adminsRoutes.get('/owners', list_owners_controller_1.default.handle);
 adminsRoutes.post('/telemetry-boards', create_telemetry_board_controller_1.default.validate, create_telemetry_board_controller_1.default.handle);
 adminsRoutes.patch('/owners/:ownerId', edit_owner_controller_1.default.handle);
 adminsRoutes.get('/telemetry-boards', get_all_telemetry_boards_controller_1.default.handle);
+adminsRoutes.post('/owners/auth/:userId', get_user_token_controller_1.default.handle);
 exports.default = adminsRoutes;

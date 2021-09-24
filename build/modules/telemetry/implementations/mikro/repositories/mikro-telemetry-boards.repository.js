@@ -93,7 +93,8 @@ let MikroTelemetryBoardsRepository = class MikroTelemetryBoardsRepository {
         };
     }
     save(data) {
-        const telemetryBoard = telemetry_board_mapper_1.default.toOrm(data);
+        const reference = this.repository.getReference(data.id);
+        const telemetryBoard = this.repository.assign(reference, data);
         this.repository.persist(telemetryBoard);
     }
 };
