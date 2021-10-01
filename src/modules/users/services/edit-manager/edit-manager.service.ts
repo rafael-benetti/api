@@ -1,3 +1,5 @@
+import LogType from '@modules/logs/contracts/enums/log-type.enum';
+import LogsRepository from '@modules/logs/contracts/repositories/logs-repository';
 import Role from '@modules/users/contracts/enums/role';
 import Permissions from '@modules/users/contracts/models/permissions';
 import User from '@modules/users/contracts/models/user';
@@ -23,6 +25,9 @@ class EditManagerService {
   constructor(
     @inject('UsersRepository')
     private usersRepository: UsersRepository,
+
+    @inject('LogsRepository')
+    private logsRepository: LogsRepository,
 
     @inject('OrmProvider')
     private ormProvider: OrmProvider,
@@ -100,6 +105,14 @@ class EditManagerService {
     if (isActive !== undefined) manager.isActive = isActive;
 
     this.usersRepository.save(manager);
+
+    this.logsRepository.create({
+      createdBy: user.id,
+      groupId: undefined,
+      ownerId: user.ownerId || user.id,
+      type: LogType.EDIT_MANAGER,
+      userId: manager.id,
+    });
 
     await this.ormProvider.commit();
 

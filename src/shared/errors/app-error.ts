@@ -17,6 +17,12 @@ export default class AppError {
     statusCode: 409,
   });
 
+  static userIsInactive = new AppError({
+    errorCode: 'USER_IS_INACTIVE',
+    message: 'This user is inactive.',
+    statusCode: 409,
+  });
+
   static collectionAlreadyReviewed = new AppError({
     errorCode: 'COLLECTION_ALREADY_REVIEWED',
     message: 'This collections already been reviewed .',

@@ -10,6 +10,7 @@ import EditOwnerController from '../services/edit-owner/edit-owner.controller';
 
 import GetAllTelemetryBoardsController from '../services/get-all-telemetry-boards/get-all-telemetry-boards.controller';
 import GetUserTokenController from '../services/get-user-token/get-user-token.controller';
+import ListLogsController from '../services/list-logs/list-logs.controller';
 import ListOwnersController from '../services/list-owners/list-owners.controller';
 
 const adminsRoutes = Router();
@@ -65,5 +66,7 @@ adminsRoutes.patch('/owners/:ownerId', EditOwnerController.handle);
 adminsRoutes.get('/telemetry-boards', GetAllTelemetryBoardsController.handle);
 
 adminsRoutes.post('/owners/auth/:userId', GetUserTokenController.handle);
+
+adminsRoutes.get('/logs', ListLogsController.handle);
 
 export default adminsRoutes;

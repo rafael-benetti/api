@@ -12,6 +12,8 @@ import AppError from '@shared/errors/app-error';
 import getGroupUniverse from '@shared/utils/get-group-universe';
 import isInGroupUniverse from '@shared/utils/is-in-group-universe';
 import { inject, injectable } from 'tsyringe';
+import LogType from '@modules/logs/contracts/enums/log-type.enum';
+import LogsRepository from '@modules/logs/contracts/repositories/logs-repository';
 
 interface Request {
   userId: string;
@@ -33,6 +35,9 @@ class CreateOperatorService {
 
     @inject('MailProvider')
     private mailProvider: MailProvider,
+
+    @inject('LogsRepository')
+    private logsRepository: LogsRepository,
 
     @inject('OrmProvider')
     private ormProvider: OrmProvider,
@@ -114,6 +119,14 @@ class CreateOperatorService {
       subject: mailData.subject,
       html: mailData.htmlBody,
       text: mailData.plainText,
+    });
+
+    this.logsRepository.create({
+      createdBy: user.id,
+      groupId: undefined,
+      ownerId: user.ownerId || user.id,
+      type: LogType.CREATE_OPERATOR,
+      userId: operator.id,
     });
 
     await this.ormProvider.commit();

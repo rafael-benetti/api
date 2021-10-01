@@ -1,4 +1,6 @@
 import GroupsRepository from '@modules/groups/contracts/repositories/groups.repository';
+import LogType from '@modules/logs/contracts/enums/log-type.enum';
+import LogsRepository from '@modules/logs/contracts/repositories/logs-repository';
 import MachinesRepository from '@modules/machines/contracts/repositories/machines.repository';
 import ProductLogsRepository from '@modules/products/contracts/repositories/product-logs.repository';
 import Role from '@modules/users/contracts/enums/role';
@@ -41,6 +43,9 @@ class TransferProductService {
 
     @inject('ProductLogsRepository')
     private productLogsRepository: ProductLogsRepository,
+
+    @inject('LogsRepository')
+    private logsRepository: LogsRepository,
 
     @inject('OrmProvider')
     private ormProvider: OrmProvider,
@@ -220,8 +225,6 @@ class TransferProductService {
 
       if (!machine) throw AppError.machineNotFound;
 
-      if (!machine) throw AppError.machineNotFound;
-
       if (user.role === Role.OPERATOR) {
         if (machine.operatorId !== user.id) throw AppError.authorizationError;
       } else {
@@ -266,6 +269,88 @@ class TransferProductService {
       });
     }
 
+    if (from.type === 'USER' && to.type === 'USER') {
+      this.logsRepository.create({
+        createdBy: from.id,
+        userId: to.id,
+        ownerId: user.ownerId || user.id,
+        quantity: productQuantity,
+        productName: fromProduct?.label,
+        type: LogType.TRANSFER_STOCK_USER_TO_USER,
+      });
+    }
+
+    if (from.type === 'USER' && to.type === 'GROUP') {
+      const group = await this.groupsRepository.findOne({
+        by: 'id',
+        value: to.id,
+      });
+
+      if (!group) throw AppError.groupNotFound;
+
+      this.logsRepository.create({
+        createdBy: from.id,
+        groupId: to.id,
+        ownerId: group.ownerId,
+        quantity: productQuantity,
+        productName: fromProduct?.label,
+        type: LogType.TRANSFER_STOCK_USER_TO_GROUP,
+      });
+    }
+    if (from.type === 'USER' && to.type === 'MACHINE') {
+      const machine = await this.machinesRepository.findOne({
+        by: 'id',
+        value: to.id,
+      });
+
+      if (!machine) throw AppError.machineNotFound;
+
+      this.logsRepository.create({
+        createdBy: from.id,
+        machineId: to.id,
+        groupId: machine.groupId,
+        ownerId: user.ownerId || user.id,
+        quantity: productQuantity,
+        productName: fromProduct?.label,
+        type: LogType.TRANSFER_STOCK_USER_TO_MACHINE,
+      });
+    }
+    if (from.type === 'GROUP' && to.type === 'GROUP') {
+      const group = await this.groupsRepository.findOne({
+        by: 'id',
+        value: from.id,
+      });
+
+      if (!group) throw AppError.groupNotFound;
+
+      this.logsRepository.create({
+        createdBy: user.id,
+        groupId: from.id,
+        ownerId: group.ownerId,
+        affectedGroupId: to.id,
+        quantity: productQuantity,
+        productName: fromProduct?.label,
+        type: LogType.TRANSFER_STOCK_GROUP_TO_GROUP,
+      });
+    }
+    if (from.type === 'GROUP' && to.type === 'USER') {
+      const group = await this.groupsRepository.findOne({
+        by: 'id',
+        value: from.id,
+      });
+
+      if (!group) throw AppError.groupNotFound;
+
+      this.logsRepository.create({
+        createdBy: user.id,
+        groupId: from.id,
+        ownerId: group.ownerId,
+        userId: to.id,
+        quantity: productQuantity,
+        productName: fromProduct?.label,
+        type: LogType.TRANSFER_STOCK_GROUP_TO_USER,
+      });
+    }
     await this.ormProvider.commit();
   }
 }

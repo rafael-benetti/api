@@ -18,8 +18,8 @@
     "migrate": "DEBUG=api* ts-node-dev -r dotenv/config -r tsconfig-paths/register --transpile-only --inspect --no-notify src/migration-script/start.ts"
   },
   "dependencies": {
-    "@mikro-orm/core": "^4.5.0",
-    "@mikro-orm/mongodb": "^4.4.4",
+    "@mikro-orm/core": "4.5.7",
+    "@mikro-orm/mongodb": "4.5.7",
     "@types/bluebird": "^3.5.34",
     "aws-sdk": "^2.843.0",
     "axios": "^0.21.1",

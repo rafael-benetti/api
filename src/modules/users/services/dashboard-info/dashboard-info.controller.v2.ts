@@ -19,14 +19,8 @@ export default abstract class DashboardInfoControllerV2 {
   static async handle(req: Request, res: Response): Promise<Response> {
     const { userId } = req;
 
-    const {
-      startDate,
-      endDate,
-      period,
-      groupId,
-      routeId,
-      pointOfSaleId,
-    } = req.query;
+    const { startDate, endDate, period, groupId, routeId, pointOfSaleId } =
+      req.query;
 
     const dashboardInfoService = container.resolve(DashboardInfoServiceV2);
 

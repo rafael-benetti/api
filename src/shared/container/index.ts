@@ -8,6 +8,8 @@ import CounterTypesRepository from '@modules/counter-types/contracts/repositorie
 import MikroCounterTypesRepository from '@modules/counter-types/implementations/mikro/repositories/mikro-counter-types.repository';
 import GroupsRepository from '@modules/groups/contracts/repositories/groups.repository';
 import MikroGroupsRepository from '@modules/groups/implementations/mikro/repositories/mikro-groups.repository';
+import LogsRepository from '@modules/logs/contracts/repositories/logs-repository';
+import MikroLogsRepository from '@modules/logs/implementations/mikro/repositories/mikro-logs-repository';
 import MachineLogsRepository from '@modules/machine-logs/contracts/repositories/machine-logs.repository';
 import MikroMachineLogsRepository from '@modules/machine-logs/implementations/mikro/repositories/mikro-machine-logs.repository';
 import MachinesRepository from '@modules/machines/contracts/repositories/machines.repository';
@@ -104,4 +106,9 @@ container.registerSingleton<UniversalFinancialRepository>(
 container.registerSingleton<MachineLogsRepository>(
   'MachineLogsRepository',
   MikroMachineLogsRepository,
+);
+
+container.registerSingleton<LogsRepository>(
+  'LogsRepository',
+  MikroLogsRepository,
 );

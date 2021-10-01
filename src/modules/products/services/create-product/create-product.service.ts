@@ -1,4 +1,6 @@
 import GroupsRepository from '@modules/groups/contracts/repositories/groups.repository';
+import LogType from '@modules/logs/contracts/enums/log-type.enum';
+import LogsRepository from '@modules/logs/contracts/repositories/logs-repository';
 import ProductLogsRepository from '@modules/products/contracts/repositories/product-logs.repository';
 import Role from '@modules/users/contracts/enums/role';
 import Product from '@modules/users/contracts/models/product';
@@ -30,6 +32,9 @@ class CreateProductService {
 
     @inject('ProductLogsRepository')
     private productLogsRepository: ProductLogsRepository,
+
+    @inject('LogsRepository')
+    private logsRepository: LogsRepository,
 
     @inject('OrmProvider')
     private ormProvider: OrmProvider,
@@ -90,6 +95,15 @@ class CreateProductService {
     else group.stock.supplies.push(product);
 
     this.groupsRepository.save(group);
+
+    this.logsRepository.create({
+      createdBy: user.id,
+      groupId: group.id,
+      ownerId: group.ownerId,
+      type: LogType.CREATE_STOCK,
+      productName: product.label,
+      quantity: product.quantity,
+    });
 
     await this.ormProvider.commit();
 

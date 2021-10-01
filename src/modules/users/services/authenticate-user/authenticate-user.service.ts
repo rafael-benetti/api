@@ -36,7 +36,18 @@ class AuthenticateUserService {
 
     if (!user) throw AppError.incorrectEmailOrPassword;
 
-    if (user.isActive === false) throw AppError.incorrectEmailOrPassword;
+    if (user.isActive === false) throw AppError.userIsInactive;
+
+    if (user?.ownerId) {
+      const owner = await this.usersRepository.findOne({
+        by: 'id',
+        value: user.ownerId,
+      });
+
+      if (!owner) throw AppError.authorizationError;
+
+      if (owner.isActive === false) throw AppError.userIsInactive;
+    }
 
     if (!this.hashProvider.compare(password, user.password))
       throw AppError.incorrectEmailOrPassword;

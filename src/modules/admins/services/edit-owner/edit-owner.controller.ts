@@ -14,6 +14,7 @@ abstract class EditOwnerController {
       document,
       subscriptionPrice,
       subscriptionExpirationDate,
+      isActive,
     } = req.body;
 
     const editOwnerService = container.resolve(EditOwnerService);
@@ -28,6 +29,7 @@ abstract class EditOwnerController {
       document,
       subscriptionPrice,
       subscriptionExpirationDate,
+      isActive,
     });
 
     return res.json(owner);

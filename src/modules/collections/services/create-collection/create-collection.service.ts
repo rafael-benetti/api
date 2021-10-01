@@ -1,6 +1,8 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import Collection from '@modules/collections/contracts/entities/collection';
 import CollectionsRepository from '@modules/collections/contracts/repositories/collections.repository';
+import LogType from '@modules/logs/contracts/enums/log-type.enum';
+import LogsRepository from '@modules/logs/contracts/repositories/logs-repository';
 import MachinesRepository from '@modules/machines/contracts/repositories/machines.repository';
 import PointsOfSaleRepository from '@modules/points-of-sale/contracts/repositories/points-of-sale.repository';
 import RoutesRepository from '@modules/routes/contracts/repositories/routes.repository';
@@ -63,6 +65,9 @@ class CreateCollectionService {
 
     @inject('CollectionsRepository')
     private collectionsRepository: CollectionsRepository,
+
+    @inject('LogsRepository')
+    private logsRepository: LogsRepository,
 
     @inject('OrmProvider')
     private ormProvider: OrmProvider,
@@ -223,6 +228,15 @@ class CreateCollectionService {
     machine.lastCollection = collection.date;
 
     this.machinesRepository.save(machine);
+
+    this.logsRepository.create({
+      createdBy: user.id,
+      groupId: machine.groupId,
+      ownerId: machine?.ownerId,
+      type: LogType.CREATE_COLLECTION,
+      collectionId: collection.id,
+      machineId: machine.id,
+    });
 
     await this.ormProvider.commit();
 

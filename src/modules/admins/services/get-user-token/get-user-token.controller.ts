@@ -9,12 +9,12 @@ abstract class GetUserTokenController {
 
     const getUserToken = container.resolve(GetUserTokenService);
 
-    const telemetryBoards = await getUserToken.execute({
+    const userToken = await getUserToken.execute({
       adminId,
       userId,
     });
 
-    return response.json(telemetryBoards);
+    return response.json(userToken);
   };
 }
 

@@ -1,5 +1,7 @@
 import Group from '@modules/groups/contracts/models/group';
 import GroupsRepository from '@modules/groups/contracts/repositories/groups.repository';
+import LogType from '@modules/logs/contracts/enums/log-type.enum';
+import LogsRepository from '@modules/logs/contracts/repositories/logs-repository';
 import Role from '@modules/users/contracts/enums/role';
 import UsersRepository from '@modules/users/contracts/repositories/users.repository';
 import OrmProvider from '@providers/orm-provider/contracts/models/orm-provider';
@@ -19,6 +21,9 @@ class CreateGroupService {
 
     @inject('GroupsRepository')
     private groupsRepository: GroupsRepository,
+
+    @inject('LogsRepository')
+    private logsRepository: LogsRepository,
 
     @inject('OrmProvider')
     private ormProvider: OrmProvider,
@@ -45,6 +50,13 @@ class CreateGroupService {
       user.groupIds?.push(group.id);
       this.usersRepository.save(user);
     }
+
+    this.logsRepository.create({
+      createdBy: user.id,
+      ownerId: group.ownerId,
+      type: LogType.CREATE_GROUP,
+      groupId: group.id,
+    });
 
     await this.ormProvider.commit();
 

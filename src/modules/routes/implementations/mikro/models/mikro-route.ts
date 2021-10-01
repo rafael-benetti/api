@@ -12,8 +12,8 @@ class MikroRoute implements Route {
   @Property()
   label: string;
 
-  @Property()
-  operatorId: string;
+  @Property({ nullable: true })
+  operatorId?: string;
 
   @Property()
   groupIds: string[];

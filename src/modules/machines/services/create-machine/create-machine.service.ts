@@ -12,6 +12,8 @@ import { inject, injectable } from 'tsyringe';
 import GroupsRepository from '@modules/groups/contracts/repositories/groups.repository';
 import CounterTypesRepository from '@modules/counter-types/contracts/repositories/couter-types.repository';
 import TelemetryBoardsRepository from '@modules/telemetry/contracts/repositories/telemetry-boards.repository';
+import LogsRepository from '@modules/logs/contracts/repositories/logs-repository';
+import LogType from '@modules/logs/contracts/enums/log-type.enum';
 
 interface Request {
   userId: string;
@@ -55,6 +57,9 @@ class CreateMachineService {
 
     @inject('TelemetryBoardsRepository')
     private telemetryBoardsRepository: TelemetryBoardsRepository,
+
+    @inject('LogsRepository')
+    private logsRepository: LogsRepository,
   ) {}
 
   public async execute({
@@ -158,12 +163,15 @@ class CreateMachineService {
     }
 
     let typeOfPrize: { id: string; label: string } | undefined;
-    if (typeOfPrizeId) {
-      const group = await this.groupsRepository.findOne({
-        by: 'id',
-        value: groupId,
-      });
 
+    const group = await this.groupsRepository.findOne({
+      by: 'id',
+      value: groupId,
+    });
+
+    if (!group) throw AppError.groupNotFound;
+
+    if (typeOfPrizeId) {
       const prize = group?.stock.prizes.find(
         prize => prize.id === typeOfPrizeId,
       );
@@ -214,6 +222,14 @@ class CreateMachineService {
 
       this.telemetryBoardsRepository.save(telemetryBoard);
     }
+
+    this.logsRepository.create({
+      createdBy: user.id,
+      groupId,
+      ownerId: group?.ownerId,
+      type: LogType.CREATE_MACHINE,
+      machineId: machine.id,
+    });
 
     await this.ormProvider.commit();
 

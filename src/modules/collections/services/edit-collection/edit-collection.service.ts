@@ -11,6 +11,9 @@ import StorageProvider from '@providers/storage-provider/contracts/models/storag
 import OrmProvider from '@providers/orm-provider/contracts/models/orm-provider';
 import AppError from '@shared/errors/app-error';
 import { inject, injectable } from 'tsyringe';
+import LogsRepository from '@modules/logs/contracts/repositories/logs-repository';
+import GroupsRepository from '@modules/groups/contracts/repositories/groups.repository';
+import LogType from '@modules/logs/contracts/enums/log-type.enum';
 
 interface Request {
   userId: string;
@@ -53,6 +56,12 @@ class EditCollectionService {
 
     @inject('OrmProvider')
     private ormProvider: OrmProvider,
+
+    @inject('LogsRepository')
+    private logsRepository: LogsRepository,
+
+    @inject('GroupsRepository')
+    private groupsRepository: GroupsRepository,
 
     @inject('StorageProvider')
     private storageProvider: StorageProvider,
@@ -231,6 +240,23 @@ class EditCollectionService {
     await this.ormProvider.commit();
 
     this.collectionsRepository.save(lastCollection);
+
+    const group = await this.groupsRepository.findOne({
+      by: 'id',
+      value: lastCollection.groupId,
+    });
+
+    if (!group) throw AppError.groupNotFound;
+
+    this.logsRepository.create({
+      createdBy: user.id,
+      groupId: lastCollection.groupId,
+      ownerId: group.ownerId,
+      type: LogType.EDIT_COLLECTION,
+      machineId: machine.id,
+      collectionId: lastCollection.id,
+    });
+
     await this.ormProvider.commit();
 
     Object.assign(lastCollection, {

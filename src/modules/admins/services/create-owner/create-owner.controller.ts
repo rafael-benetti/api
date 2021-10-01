@@ -6,8 +6,8 @@ import CreateOwnerService from './create-owner.service';
 abstract class CreateOwnerController {
   static validate = celebrate({
     body: {
-      email: Joi.string().required(),
-      name: Joi.string().required(),
+      email: Joi.string().email().required(),
+      name: Joi.string().required().min(1),
       phoneNumber: Joi.string(),
       type: Joi.string().valid('INDIVIDUAL', 'COMPANY').required(),
       stateRegistration: Joi.string(),

@@ -1,4 +1,6 @@
 import GroupsRepository from '@modules/groups/contracts/repositories/groups.repository';
+import LogType from '@modules/logs/contracts/enums/log-type.enum';
+import LogsRepository from '@modules/logs/contracts/repositories/logs-repository';
 import MachinesRepository from '@modules/machines/contracts/repositories/machines.repository';
 import UsersRepository from '@modules/users/contracts/repositories/users.repository';
 import OrmProvider from '@providers/orm-provider/contracts/models/orm-provider';
@@ -27,6 +29,9 @@ export default class RemoveFromMachineService {
 
     @inject('GroupsRepository')
     private groupsRepository: GroupsRepository,
+
+    @inject('LogsRepository')
+    private logsRepository: LogsRepository,
 
     @inject('OrmProvider')
     private ormProvider: OrmProvider,
@@ -104,6 +109,15 @@ export default class RemoveFromMachineService {
 
       this.usersRepository.save(user);
     }
+
+    this.logsRepository.create({
+      createdBy: user.id,
+      ownerId: user.ownerId || user.id,
+      groupId: machine.groupId,
+      type: LogType.REMOVE_STOCK_FROM_MACHINE,
+      machineId: machine.id,
+      quantity,
+    });
 
     await this.ormProvider.commit();
   }

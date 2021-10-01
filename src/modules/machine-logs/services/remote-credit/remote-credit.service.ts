@@ -1,3 +1,5 @@
+import LogType from '@modules/logs/contracts/enums/log-type.enum';
+import LogsRepository from '@modules/logs/contracts/repositories/logs-repository';
 import MachineLogType from '@modules/machine-logs/contracts/enums/machine-log-type';
 import MachineLogsRepository from '@modules/machine-logs/contracts/repositories/machine-logs.repository';
 import MachinesRepository from '@modules/machines/contracts/repositories/machines.repository';
@@ -29,6 +31,9 @@ export default class RemoteCreditService {
 
     @inject('MqttProvider')
     private mqttProvider: MqttProvider,
+
+    @inject('LogsRepository')
+    private logsRepository: LogsRepository,
 
     @inject('OrmProvider')
     private ormProvider: OrmProvider,
@@ -75,6 +80,15 @@ export default class RemoteCreditService {
       machineId: machine.id,
       observations,
       type: MachineLogType.REMOTE_CREDIT,
+      quantity: Number(quantity),
+    });
+
+    this.logsRepository.create({
+      createdBy: user.id,
+      groupId: machine.groupId,
+      ownerId: machine.ownerId,
+      type: LogType.REMOTE_CREDIT,
+      machineId: machine.id,
       quantity: Number(quantity),
     });
 

@@ -1,4 +1,6 @@
 import GroupsRepository from '@modules/groups/contracts/repositories/groups.repository';
+import LogType from '@modules/logs/contracts/enums/log-type.enum';
+import LogsRepository from '@modules/logs/contracts/repositories/logs-repository';
 import ProductLogsRepository from '@modules/products/contracts/repositories/product-logs.repository';
 import Role from '@modules/users/contracts/enums/role';
 import UsersRepository from '@modules/users/contracts/repositories/users.repository';
@@ -28,6 +30,9 @@ class AddToStockService {
 
     @inject('ProductLogsRepository')
     private productLogsRepository: ProductLogsRepository,
+
+    @inject('LogsRepository')
+    private logsRepository: LogsRepository,
 
     @inject('OrmProvider')
     private ormProvider: OrmProvider,
@@ -88,6 +93,26 @@ class AddToStockService {
     });
 
     this.groupsRepository.save(group);
+
+    if (quantity < 0) {
+      this.logsRepository.create({
+        createdBy: user.id,
+        ownerId: user.ownerId || user.id,
+        type: LogType.REMOVE_STOCK_FROM_GROUP,
+        quantity: quantity * -1,
+        groupId: group.id,
+        productName: product.label,
+      });
+    } else {
+      this.logsRepository.create({
+        createdBy: user.id,
+        ownerId: user.ownerId || user.id,
+        type: LogType.ADD_TO_STOCK,
+        quantity,
+        groupId: group.id,
+        productName: product.label,
+      });
+    }
 
     await this.ormProvider.commit();
   }

@@ -13,6 +13,8 @@ import PointsOfSaleRepository from '@modules/points-of-sale/contracts/repositori
 import CounterTypesRepository from '@modules/counter-types/contracts/repositories/couter-types.repository';
 import RoutesRepository from '@modules/routes/contracts/repositories/routes.repository';
 import TelemetryBoardsRepository from '@modules/telemetry/contracts/repositories/telemetry-boards.repository';
+import LogsRepository from '@modules/logs/contracts/repositories/logs-repository';
+import LogType from '@modules/logs/contracts/enums/log-type.enum';
 
 interface Request {
   userId: string;
@@ -62,6 +64,9 @@ class EditMachineService {
 
     @inject('TelemetryBoardsRepository')
     private telemetryBoardsRepository: TelemetryBoardsRepository,
+
+    @inject('LogsRepository')
+    private logsRepository: LogsRepository,
   ) {}
 
   public async execute({
@@ -128,6 +133,21 @@ class EditMachineService {
         if (!user.groupIds?.includes(groupId))
           throw AppError.authorizationError;
       }
+
+      const group = await this.groupsRepository.findOne({
+        by: 'id',
+        value: machine.groupId,
+      });
+
+      if (!group) throw AppError.groupNotFound;
+
+      this.logsRepository.create({
+        createdBy: user.id,
+        groupId: group.id,
+        ownerId: group.ownerId,
+        type: LogType.TRANSFER_MACHINE_TO_GROUP,
+        machineId: machine.id,
+      });
 
       machine.groupId = groupId;
 
@@ -210,17 +230,19 @@ class EditMachineService {
           throw AppError.authorizationError;
 
         machine.operatorId = operatorId;
-      } else if (operatorId === null) delete machine.operatorId;
+      } else if (operatorId === null) machine.operatorId = undefined;
     }
 
     if (gameValue) machine.gameValue = gameValue;
 
-    if (typeOfPrizeId !== undefined && typeOfPrizeId !== null) {
-      const group = await this.groupsRepository.findOne({
-        by: 'id',
-        value: machine.groupId,
-      });
+    const group = await this.groupsRepository.findOne({
+      by: 'id',
+      value: machine.groupId,
+    });
 
+    if (!group) throw AppError.groupNotFound;
+
+    if (typeOfPrizeId !== undefined && typeOfPrizeId !== null) {
       const prize = group?.stock.prizes.find(
         prize => prize.id === typeOfPrizeId,
       );
@@ -365,6 +387,35 @@ class EditMachineService {
     }
 
     this.machinesRepository.save(machine);
+
+    if (locationId !== undefined && locationId !== null) {
+      this.logsRepository.create({
+        createdBy: user.id,
+        groupId: group.id,
+        ownerId: group.ownerId,
+        type: LogType.TRANSFER_MACHINE_TO_POS,
+        destinationId: locationId,
+        machineId: machine.id,
+      });
+    } else if (locationId === null) {
+      this.logsRepository.create({
+        createdBy: user.id,
+        groupId: group.id,
+        ownerId: group.ownerId,
+        type: LogType.TRANSFER_MACHINE_TO_POS,
+        destinationId: undefined,
+        machineId: machine.id,
+      });
+    } else {
+      this.logsRepository.create({
+        createdBy: user.id,
+        groupId: group.id,
+        ownerId: group.ownerId,
+        type:
+          isActive === false ? LogType.DELETE_MACHINE : LogType.EDIT_MACHINE,
+        machineId: machine.id,
+      });
+    }
 
     await this.ormProvider.commit();
 

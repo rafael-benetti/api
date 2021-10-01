@@ -15,7 +15,7 @@ class TelemetryBoard {
 
   lastConnection?: Date;
 
-  connectionStrength?: string;
+  connectionStrength?: number;
 
   connectionType?: string;
 

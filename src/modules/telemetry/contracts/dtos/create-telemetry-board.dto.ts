@@ -4,7 +4,7 @@ interface CreateTelemetryDto {
   integratedCircuitCardId?: string;
   machineId?: string;
   lastConnection?: Date;
-  connectionStrength?: string;
+  connectionStrength?: number;
   connectionType?: string;
 }
 

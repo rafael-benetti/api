@@ -1,4 +1,6 @@
 import GroupsRepository from '@modules/groups/contracts/repositories/groups.repository';
+import LogType from '@modules/logs/contracts/enums/log-type.enum';
+import LogsRepository from '@modules/logs/contracts/repositories/logs-repository';
 import Address from '@modules/points-of-sale/contracts/models/address';
 import PointOfSale from '@modules/points-of-sale/contracts/models/point-of-sale';
 import PointsOfSaleRepository from '@modules/points-of-sale/contracts/repositories/points-of-sale.repository';
@@ -31,6 +33,9 @@ class CreatePointOfSaleService {
 
     @inject('PointsOfSaleRepository')
     private pointsOfSaleRepository: PointsOfSaleRepository,
+
+    @inject('LogsRepository')
+    private logsRepository: LogsRepository,
 
     @inject('OrmProvider')
     private ormProvider: OrmProvider,
@@ -78,6 +83,14 @@ class CreatePointOfSaleService {
       rent,
       isPercentage,
       address,
+    });
+
+    this.logsRepository.create({
+      createdBy: user.id,
+      groupId,
+      ownerId: user.ownerId || user.id,
+      type: LogType.CREATE_POS,
+      posId: pointOfSale.id,
     });
 
     await this.ormProvider.commit();

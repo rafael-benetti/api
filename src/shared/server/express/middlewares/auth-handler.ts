@@ -1,3 +1,4 @@
+import UsersRepository from '@modules/users/contracts/repositories/users.repository';
 import SessionProvider from '@providers/session-provider/contracts/models/session.provider';
 import AppError from '@shared/errors/app-error';
 import { Request, Response, NextFunction } from 'express';
@@ -21,6 +22,24 @@ export default async function authHandler(
   const userId = await sessionProvider.getTokenOwner(token);
 
   if (!userId) throw AppError.invalidToken;
+
+  const usersRepository = container.resolve<UsersRepository>('UsersRepository');
+
+  const user = await usersRepository.findOne({
+    by: 'id',
+    value: userId,
+  });
+
+  if (user?.ownerId) {
+    const owner = await usersRepository.findOne({
+      by: 'id',
+      value: user.ownerId,
+    });
+
+    if (!owner) throw AppError.authorizationError;
+
+    if (owner.isActive === false) throw AppError.userIsInactive;
+  }
 
   req.userId = userId;
 

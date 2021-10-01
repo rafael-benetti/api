@@ -7,18 +7,14 @@ interface GroupsRepository {
   create(data: CreateGroupDto): Group;
   findOne(data: FindGroupDto): Promise<Group | undefined>;
   find(data: FindGroupsDto): Promise<Group[]>;
-  groupsInvertoryByProduct({
-    filters,
-  }: FindGroupsDto): Promise<
+  groupsInvertoryByProduct({ filters }: FindGroupsDto): Promise<
     {
       prizeId: string;
       prizeLabel: string;
       totalPrizes: string;
     }[]
   >;
-  groupsInvertoryBySupplies({
-    filters,
-  }: FindGroupsDto): Promise<
+  groupsInvertoryBySupplies({ filters }: FindGroupsDto): Promise<
     {
       supplieId: string;
       supplieLabel: string;

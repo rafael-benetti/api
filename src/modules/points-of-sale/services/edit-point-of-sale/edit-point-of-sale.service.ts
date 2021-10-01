@@ -1,3 +1,5 @@
+import LogType from '@modules/logs/contracts/enums/log-type.enum';
+import LogsRepository from '@modules/logs/contracts/repositories/logs-repository';
 import Address from '@modules/points-of-sale/contracts/models/address';
 import PointOfSale from '@modules/points-of-sale/contracts/models/point-of-sale';
 import PointsOfSaleRepository from '@modules/points-of-sale/contracts/repositories/points-of-sale.repository';
@@ -27,6 +29,9 @@ class EditPointOfSaleService {
 
     @inject('PointsOfSaleRepository')
     private pointsOfSaleRepository: PointsOfSaleRepository,
+
+    @inject('LogsRepository')
+    private logsRepository: LogsRepository,
 
     @inject('OrmProvider')
     private ormProvider: OrmProvider,
@@ -75,6 +80,14 @@ class EditPointOfSaleService {
     if (address) pointOfSale.address.extraInfo = address.extraInfo;
 
     this.pointsOfSaleRepository.save(pointOfSale);
+
+    this.logsRepository.create({
+      createdBy: user.id,
+      groupId: pointOfSale.groupId,
+      ownerId: user.ownerId || user.id,
+      type: LogType.EDIT_POS,
+      posId: pointOfSale.id,
+    });
 
     await this.ormProvider.commit();
 

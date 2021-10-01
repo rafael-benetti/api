@@ -16,6 +16,7 @@ interface Request {
   document?: string;
   subscriptionPrice?: string;
   subscriptionExpirationDate?: string;
+  isActive?: boolean;
 }
 
 @injectable()
@@ -44,6 +45,7 @@ class EditOwnerService {
     stateRegistration,
     subscriptionExpirationDate,
     subscriptionPrice,
+    isActive,
   }: Request): Promise<User> {
     const admin = await this.adminsRepository.findOne({
       by: 'id',
@@ -66,6 +68,8 @@ class EditOwnerService {
     if (document) user.document = document;
 
     if (phoneNumber) user.phoneNumber = phoneNumber;
+
+    if (isActive !== undefined) user.isActive = false;
 
     if (stateRegistration) user.stateRegistration = stateRegistration;
 

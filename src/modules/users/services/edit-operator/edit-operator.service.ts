@@ -1,3 +1,5 @@
+import LogType from '@modules/logs/contracts/enums/log-type.enum';
+import LogsRepository from '@modules/logs/contracts/repositories/logs-repository';
 import MachinesRepository from '@modules/machines/contracts/repositories/machines.repository';
 import RoutesRepository from '@modules/routes/contracts/repositories/routes.repository';
 import Role from '@modules/users/contracts/enums/role';
@@ -31,6 +33,9 @@ class EditOperatorService {
 
     @inject('MachinesRepository')
     private machinesRepository: MachinesRepository,
+
+    @inject('LogsRepository')
+    private logsRepository: LogsRepository,
 
     @inject('OrmProvider')
     private ormProvider: OrmProvider,
@@ -138,6 +143,14 @@ class EditOperatorService {
     if (isActive !== undefined) operator.isActive = isActive;
 
     this.usersRepository.save(operator);
+
+    this.logsRepository.create({
+      createdBy: user.id,
+      groupId: undefined,
+      ownerId: user.ownerId || user.id,
+      type: LogType.EDIT_OPERATOR,
+      userId: operator.id,
+    });
 
     await this.ormProvider.commit();
 

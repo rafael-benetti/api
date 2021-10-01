@@ -12,6 +12,8 @@ import isInGroupUniverse from '@shared/utils/is-in-group-universe';
 import { inject, injectable } from 'tsyringe';
 import MailProvider from '@providers/mail-provider/contracts/models/mail.provider';
 import signUpEmailTemplate from '@providers/mail-provider/templates/sign-up-email-template';
+import LogsRepository from '@modules/logs/contracts/repositories/logs-repository';
+import LogType from '@modules/logs/contracts/enums/log-type.enum';
 
 interface Request {
   userId: string;
@@ -33,6 +35,9 @@ class CreateManagerService {
 
     @inject('HashProvider')
     private hashProvider: HashProvider,
+
+    @inject('LogsRepository')
+    private logsRepository: LogsRepository,
 
     @inject('OrmProvider')
     private ormProvider: OrmProvider,
@@ -114,6 +119,14 @@ class CreateManagerService {
       subject: mailData.subject,
       html: mailData.htmlBody,
       text: mailData.plainText,
+    });
+
+    this.logsRepository.create({
+      createdBy: user.id,
+      groupId: undefined,
+      ownerId: user.ownerId || user.id,
+      type: LogType.CREATE_MANAGER,
+      userId: manager.id,
     });
 
     await this.ormProvider.commit();

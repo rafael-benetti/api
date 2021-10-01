@@ -8,6 +8,8 @@ import AppError from '@shared/errors/app-error';
 import { inject, injectable } from 'tsyringe';
 import OrmProvider from '@providers/orm-provider/contracts/models/orm-provider';
 import PointsOfSaleRepository from '@modules/points-of-sale/contracts/repositories/points-of-sale.repository';
+import LogType from '@modules/logs/contracts/enums/log-type.enum';
+import LogsRepository from '@modules/logs/contracts/repositories/logs-repository';
 
 interface Request {
   userId: string;
@@ -34,6 +36,9 @@ class EditRouteService {
 
     @inject('PointsOfSaleRepository')
     private pointsOfSaleRepository: PointsOfSaleRepository,
+
+    @inject('LogsRepository')
+    private logsRepository: LogsRepository,
 
     @inject('OrmProvider')
     private ormProvider: OrmProvider,
@@ -189,10 +194,33 @@ class EditRouteService {
         this.pointsOfSaleRepository.save(p);
       });
 
+      const newPos = pointsOfSale.filter(
+        newPos => !route.pointsOfSaleIds.includes(newPos.id),
+      );
+
+      newPos.forEach(pos => {
+        this.logsRepository.create({
+          createdBy: user.id,
+          ownerId: user.ownerId || user.id,
+          type: LogType.ADD_POS_TO_ROUTE,
+          posId: pos.id,
+          destinationId: route.id,
+          groupId: pos.groupId,
+        });
+      });
+
       route.pointsOfSaleIds = pointsOfSaleIds;
     }
 
     this.routesRepository.save(route);
+
+    this.logsRepository.create({
+      createdBy: user.id,
+      groupId: undefined,
+      ownerId: route.ownerId,
+      type: LogType.EDIT_ROUTE,
+      routeId: route.id,
+    });
 
     await this.ormProvider.commit();
 

@@ -8,6 +8,8 @@ import AppError from '@shared/errors/app-error';
 import { inject, injectable } from 'tsyringe';
 import OrmProvider from '@providers/orm-provider/contracts/models/orm-provider';
 import PointsOfSaleRepository from '@modules/points-of-sale/contracts/repositories/points-of-sale.repository';
+import LogsRepository from '@modules/logs/contracts/repositories/logs-repository';
+import LogType from '@modules/logs/contracts/enums/log-type.enum';
 
 interface Request {
   userId: string;
@@ -33,6 +35,9 @@ class CreateRouteService {
 
     @inject('PointsOfSaleRepository')
     private pointsOfSaleRepository: PointsOfSaleRepository,
+
+    @inject('LogsRepository')
+    private logsRepository: LogsRepository,
 
     @inject('OrmProvider')
     private ormProvider: OrmProvider,
@@ -134,6 +139,14 @@ class CreateRouteService {
     machines.forEach(machine => {
       machine.operatorId = operatorId;
       this.machinesRepository.save(machine);
+    });
+
+    this.logsRepository.create({
+      createdBy: user.id,
+      groupId: undefined,
+      ownerId: route.ownerId,
+      type: LogType.CREATE_ROUTE,
+      routeId: route.id,
     });
 
     await this.ormProvider.commit();
