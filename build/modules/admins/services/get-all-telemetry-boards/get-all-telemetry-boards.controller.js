@@ -9,7 +9,7 @@ class GetAllTelemetryBoardsController {
 }
 GetAllTelemetryBoardsController.handle = async (request, response) => {
     const { userId } = request;
-    const { id, groupId, ownerId, limit, offset } = request.query;
+    const { id, groupId, ownerId, orderBy, limit, offset } = request.query;
     const getTelemetryBoards = tsyringe_1.container.resolve(get_all_telemetry_boards_service_1.default);
     const telemetryBoards = await getTelemetryBoards.execute({
         userId,
@@ -18,6 +18,7 @@ GetAllTelemetryBoardsController.handle = async (request, response) => {
         offset: offset ? Number(offset) : undefined,
         groupId: groupId ? groupId : undefined,
         ownerId: ownerId ? ownerId : undefined,
+        orderBy: orderBy ? orderBy : 'ASC',
     });
     return response.json(telemetryBoards);
 };

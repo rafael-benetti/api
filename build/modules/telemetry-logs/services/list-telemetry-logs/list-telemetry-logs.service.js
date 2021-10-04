@@ -48,7 +48,7 @@ let ListTelemetryLogsService = class ListTelemetryLogsService {
         else if (user.role === role_1.default.MANAGER &&
             !user.groupIds?.includes(machine.groupId))
             throw app_error_1.default.authorizationError;
-        const { telemetryLogs, count, } = await this.telemetryLogsRepository.findAndCount({
+        const { telemetryLogs, count } = await this.telemetryLogsRepository.findAndCount({
             filters: {
                 machineId,
                 type,

@@ -25,7 +25,7 @@ let GetAllTelemetryBoardsService = class GetAllTelemetryBoardsService {
         this.telemetryBoardsRepository = telemetryBoardsRepository;
         this.adminsRepository = adminsRepository;
     }
-    async execute({ userId, id, limit, offset, ownerId, groupId, }) {
+    async execute({ userId, id, limit, offset, orderBy, ownerId, groupId, }) {
         const admin = await this.adminsRepository.findOne({
             by: 'id',
             value: userId,
@@ -38,6 +38,7 @@ let GetAllTelemetryBoardsService = class GetAllTelemetryBoardsService {
                 ...(groupId && { groupIds: [groupId] }),
                 ownerId,
             },
+            ...(orderBy && { orderBy }),
             limit,
             offset,
         });
