@@ -101,7 +101,7 @@ __decorate([
     __metadata("design:type", String)
 ], MikroLog.prototype, "affectedGroupId", void 0);
 __decorate([
-    core_1.OneToOne({ name: 'effectedGroup', nullable: true }),
+    core_1.OneToOne({ name: 'affectedGroupId', nullable: true }),
     __metadata("design:type", mikro_group_1.default)
 ], MikroLog.prototype, "affectedGroup", void 0);
 __decorate([
