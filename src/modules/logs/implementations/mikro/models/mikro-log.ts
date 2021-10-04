@@ -54,7 +54,7 @@ class MikroLog implements Log {
   @Property({ nullable: true })
   affectedGroupId?: string;
 
-  @OneToOne({ name: 'effectedGroup', nullable: true })
+  @OneToOne({ name: 'affectedGroupId', nullable: true })
   affectedGroup?: MikroGroup;
 
   @Property({ nullable: true })
