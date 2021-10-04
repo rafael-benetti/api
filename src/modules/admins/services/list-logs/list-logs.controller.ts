@@ -1,4 +1,3 @@
-import logger from '@config/logger';
 import LogType from '@modules/logs/contracts/enums/log-type.enum';
 import { RequestHandler } from 'express';
 import { container } from 'tsyringe';
@@ -17,8 +16,6 @@ abstract class ListLogsController {
       offset,
     } = req.query;
     const listLogs = container.resolve(ListLogsService);
-
-    logger.info(userId);
 
     const logs = await listLogs.execute({
       adminId: userId,

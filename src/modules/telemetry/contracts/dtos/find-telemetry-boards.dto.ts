@@ -7,6 +7,7 @@ interface FindTelemetryBoardsDto {
   limit?: number;
   offset?: number;
   populate?: string[];
+  orderBy?: 'ASC' | 'DESC';
 }
 
 export default FindTelemetryBoardsDto;

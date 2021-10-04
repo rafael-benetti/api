@@ -11,6 +11,7 @@ interface Request {
   offset?: number;
   groupId?: string;
   ownerId?: string;
+  orderBy?: 'ASC' | 'DESC';
 }
 
 @injectable()
@@ -28,6 +29,7 @@ class GetAllTelemetryBoardsService {
     id,
     limit,
     offset,
+    orderBy,
     ownerId,
     groupId,
   }: Request): Promise<{ telemetryBoards: TelemetryBoard[]; count: number }> {
@@ -44,6 +46,7 @@ class GetAllTelemetryBoardsService {
         ...(groupId && { groupIds: [groupId] }),
         ownerId,
       },
+      ...(orderBy && { orderBy }),
       limit,
       offset,
     });

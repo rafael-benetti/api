@@ -5,7 +5,7 @@ import GetAllTelemetryBoardsService from './get-all-telemetry-boards.service';
 abstract class GetAllTelemetryBoardsController {
   static handle: RequestHandler = async (request, response) => {
     const { userId } = request;
-    const { id, groupId, ownerId, limit, offset } = request.query;
+    const { id, groupId, ownerId, orderBy, limit, offset } = request.query;
 
     const getTelemetryBoards = container.resolve(GetAllTelemetryBoardsService);
 
@@ -16,6 +16,7 @@ abstract class GetAllTelemetryBoardsController {
       offset: offset ? Number(offset) : undefined,
       groupId: groupId ? (groupId as string) : undefined,
       ownerId: ownerId ? (ownerId as string) : undefined,
+      orderBy: orderBy ? (orderBy as 'ASC' | 'DESC') : 'ASC',
     });
 
     return response.json(telemetryBoards);

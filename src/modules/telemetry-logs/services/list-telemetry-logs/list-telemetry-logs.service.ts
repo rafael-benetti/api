@@ -62,21 +62,19 @@ class ListTelemetryLogsService {
     )
       throw AppError.authorizationError;
 
-    const {
-      telemetryLogs,
-      count,
-    } = await this.telemetryLogsRepository.findAndCount({
-      filters: {
-        machineId,
-        type,
-        date: {
-          startDate,
-          endDate,
+    const { telemetryLogs, count } =
+      await this.telemetryLogsRepository.findAndCount({
+        filters: {
+          machineId,
+          type,
+          date: {
+            startDate,
+            endDate,
+          },
         },
-      },
-      limit,
-      offset,
-    });
+        limit,
+        offset,
+      });
 
     return { telemetryLogs, count };
   }

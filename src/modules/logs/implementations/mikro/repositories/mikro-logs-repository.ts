@@ -1,4 +1,3 @@
-import logger from '@config/logger';
 import CreateLogDto from '@modules/logs/contracts/dtos/create-log.dto';
 import FindAndCountLogsDto from '@modules/logs/contracts/dtos/list-log.dto';
 import Log from '@modules/logs/contracts/models/log';
@@ -24,7 +23,6 @@ class MikroLogsRepository implements LogsRepository {
     limit,
     offset,
   }: FindAndCountLogsDto): Promise<{ logs: Log[]; count: number }> {
-    logger.info(filters);
     const [mikroLogs, count] = await this.repository.findAndCount(
       {
         ...(filters.startDate && { createdAt: { $gte: filters.startDate } }),
@@ -35,6 +33,9 @@ class MikroLogsRepository implements LogsRepository {
       {
         limit,
         offset,
+        orderBy: {
+          createdAt: 'DESC',
+        },
         populate: [
           'user',
           'machine',
