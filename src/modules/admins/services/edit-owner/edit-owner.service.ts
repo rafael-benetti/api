@@ -69,7 +69,7 @@ class EditOwnerService {
 
     if (phoneNumber) user.phoneNumber = phoneNumber;
 
-    if (isActive !== undefined) user.isActive = isActive;
+    if (isActive !== undefined && isActive !== null) user.isActive = isActive;
 
     if (stateRegistration) user.stateRegistration = stateRegistration;
 

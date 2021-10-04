@@ -50,8 +50,8 @@ let EditOwnerService = class EditOwnerService {
             user.document = document;
         if (phoneNumber)
             user.phoneNumber = phoneNumber;
-        if (isActive !== undefined)
-            user.isActive = false;
+        if (isActive !== undefined && isActive !== null)
+            user.isActive = isActive;
         if (stateRegistration)
             user.stateRegistration = stateRegistration;
         if (subscriptionExpirationDate)
