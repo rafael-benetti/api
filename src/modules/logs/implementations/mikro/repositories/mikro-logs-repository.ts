@@ -1,4 +1,5 @@
 import CreateLogDto from '@modules/logs/contracts/dtos/create-log.dto';
+import DeleteLogsDto from '@modules/logs/contracts/dtos/delete-logs.dto';
 import FindAndCountLogsDto from '@modules/logs/contracts/dtos/list-log.dto';
 import Log from '@modules/logs/contracts/models/log';
 import LogsRepository from '@modules/logs/contracts/repositories/logs-repository';
@@ -55,6 +56,18 @@ class MikroLogsRepository implements LogsRepository {
       logs: mikroLogs.map(mikroLog => LogMapper.toEntity(mikroLog)),
       count,
     };
+  }
+
+  async delete({ startDate, ownerId, type }: DeleteLogsDto): Promise<number> {
+    const count = await this.repository.nativeDelete({
+      createdAt: {
+        $lte: startDate,
+      },
+      ...(ownerId && { ownerId }),
+      ...(type && { type }),
+    });
+
+    return count;
   }
 }
 

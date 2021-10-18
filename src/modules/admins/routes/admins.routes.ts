@@ -6,6 +6,7 @@ import AuthenticateAdminController from '../services/authenticate-admin/authenti
 import CreateAdminController from '../services/create-admin/create-admin.controller';
 import CreateOwnerController from '../services/create-owner/create-owner.controller';
 import CreateTelemetryBoardController from '../services/create-telemetry-board/create-telemetry-board.controller';
+import DeleteLogsController from '../services/delete-logs/delete-logs.controller';
 import EditOwnerController from '../services/edit-owner/edit-owner.controller';
 
 import GetAllTelemetryBoardsController from '../services/get-all-telemetry-boards/get-all-telemetry-boards.controller';
@@ -68,5 +69,7 @@ adminsRoutes.get('/telemetry-boards', GetAllTelemetryBoardsController.handle);
 adminsRoutes.post('/owners/auth/:userId', GetUserTokenController.handle);
 
 adminsRoutes.get('/logs', ListLogsController.handle);
+
+adminsRoutes.delete('/logs', DeleteLogsController.handle);
 
 export default adminsRoutes;
