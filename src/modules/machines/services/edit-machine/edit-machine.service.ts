@@ -327,13 +327,13 @@ class EditMachineService {
             machine.telemetryBoardId,
           );
           if (telemetryBoard) {
-            delete telemetryBoard?.machineId;
+            telemetryBoard.machineId = undefined;
             this.telemetryBoardsRepository.save(telemetryBoard);
           }
         }
 
         machine.lastConnection = undefined;
-        delete machine.telemetryBoardId;
+        machine.telemetryBoardId = undefined;
       } else if (telemetryBoardId !== machine.telemetryBoardId) {
         const telemetryBoard = await this.telemetryBoardsRepository.findById(
           telemetryBoardId,
@@ -357,7 +357,7 @@ class EditMachineService {
           );
 
           if (oldTelemetry) {
-            delete oldTelemetry.machineId;
+            oldTelemetry.machineId = undefined;
             this.telemetryBoardsRepository.save(oldTelemetry);
           }
         }
