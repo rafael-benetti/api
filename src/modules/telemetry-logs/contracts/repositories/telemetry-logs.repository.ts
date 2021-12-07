@@ -68,9 +68,7 @@ interface TelemetryLogsRepository {
     data: GetGroupIncomePerPeriodDto,
   ): Promise<{ total: number; id: string; date: Date }[]>;
 
-  getIncomeAndPrizesPerMachine(
-    data: GetIncomePerMachineDto,
-  ): Promise<
+  getIncomeAndPrizesPerMachine(data: GetIncomePerMachineDto): Promise<
     {
       _id: string;
       income: number;

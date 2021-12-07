@@ -293,16 +293,9 @@ export default class DashboardInfoServiceV2 {
         endDate: addHours(endDate, 3),
       });
 
-    const chartData2Promise =
-      this.telemetryLogsRepository.getIncomePerCounterType({
-        groupIds,
-        pointsOfSaleIds: locations,
-      });
-
-    const [incomeOfPeriod, prizesOfPeriod, chartData2] = await Promise.all([
+    const [incomeOfPeriod, prizesOfPeriod] = await Promise.all([
       incomeOfPeriodPromise,
       prizesOfPeriodPromise,
-      chartData2Promise,
     ]);
 
     // ? FATURAMENTO
@@ -356,7 +349,6 @@ export default class DashboardInfoServiceV2 {
       machinesWithoutTelemetryBoard,
       machinesSortedByStock,
       chartData1,
-      chartData2,
       income,
       givenPrizesCount,
     };
