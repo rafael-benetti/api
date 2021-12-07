@@ -216,14 +216,9 @@ let DashboardInfoServiceV2 = class DashboardInfoServiceV2 {
             startDate: date_fns_1.addHours(startDate, 3),
             endDate: date_fns_1.addHours(endDate, 3),
         });
-        const chartData2Promise = this.telemetryLogsRepository.getIncomePerCounterType({
-            groupIds,
-            pointsOfSaleIds: locations,
-        });
-        const [incomeOfPeriod, prizesOfPeriod, chartData2] = await bluebird_1.Promise.all([
+        const [incomeOfPeriod, prizesOfPeriod] = await bluebird_1.Promise.all([
             incomeOfPeriodPromise,
             prizesOfPeriodPromise,
-            chartData2Promise,
         ]);
         // ? FATURAMENTO
         income = incomeOfPeriod.reduce((a, b) => a + b.total, 0);
@@ -264,7 +259,6 @@ let DashboardInfoServiceV2 = class DashboardInfoServiceV2 {
             machinesWithoutTelemetryBoard,
             machinesSortedByStock,
             chartData1,
-            chartData2,
             income,
             givenPrizesCount,
         };
